@@ -10,3 +10,5 @@ apps/*/dist/
 apps/docs/public/r/
 *.tsbuildinfo
 .DS_Store
+.quarantine/
+packages/*/.dart_tool/
