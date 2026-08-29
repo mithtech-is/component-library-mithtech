@@ -49,23 +49,14 @@ button, input, select { font: inherit; }
 .actions { display: flex; align-items: center; gap: var(--td-sp-5); }
 
 /* A passive surface grooves inward. */
-.actions input {
-  width: min(32vw, 320px); min-height: 38px; padding: 0 var(--td-sp-7);
-  border: 0; border-radius: var(--td-radius-4);
-  background: color-mix(in srgb, var(--td-surface) 94%, black);
-  color: var(--td-ink);
-  box-shadow:
-    inset 2px 2px 4px color-mix(in srgb, var(--td-shadow-dark) 55%, transparent),
-    inset -1px -1px 3px color-mix(in srgb, var(--td-shadow-light) 45%, transparent);
-}
-.actions input::placeholder { color: var(--td-ink-3); }
-.actions input:focus-visible {
-  outline: none;
-  box-shadow:
-    inset 2px 2px 4px color-mix(in srgb, var(--td-shadow-dark) 55%, transparent),
-    inset -1px -1px 3px color-mix(in srgb, var(--td-shadow-light) 45%, transparent),
-    0 0 0 1.5px color-mix(in srgb, var(--td-accent) 55%, transparent);
-}
+/* The search field is the library's own SearchBar, so it brings its own
+   carved field, its own focus ring and its own clear button. The docs only say
+   how wide it is — restyling a shipped component here is exactly the thing the
+   library exists to stop. */
+
+/* The header's search is a trigger, not a field — sized to its one word and
+   its chip rather than to what somebody might type into it. */
+.actions .td-react-search--trigger { width: clamp(160px, 18vw, 220px); }
 
 /* A control at rest is softly raised; hover presses it into a shallow well.
    Scoped off `.td-iconbtn`: the ThemeToggle lives in this bar and is a round
@@ -336,7 +327,7 @@ main { min-width: 0; overflow-x: clip; overflow-y: visible; }
 @media (max-width: 760px) {
   .shell { display: block; }
   .top { min-height: 68px; padding: var(--td-sp-5); }
-  .actions input { display: none; }
+  .actions .td-react-search { display: none; }
   aside {
     position: static; height: auto; display: block;
     overflow-x: auto; padding: var(--td-sp-4) var(--td-sp-5);
@@ -441,7 +432,13 @@ main { min-width: 0; overflow-x: clip; overflow-y: visible; }
 .pg-field:first-child { flex: 1 1 260px; }
 .pg-field > span, .pg-tone > span { color: var(--td-ink-3); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
 .pg-field > span b { color: var(--td-brand-text); font-family: var(--td-font-mono); }
-.playground input[type="text"], .playground input:not([type]), .playground select {
+/* Only the controls the library does not ship. The text fields in a playground
+   are the library's own `Input` and `Textarea` now — the docs are the first
+   consumer, so anything wrong with them shows up here first, and a hand-rolled
+   field beside a real one is a field nobody is testing. A bare `textarea` was
+   never in this list at all, which is why the RectTitle playground's headline
+   box arrived with the browser's own chrome on it. */
+.playground select {
   min-height: 34px; padding: 0 var(--td-sp-5);
   border: 0; border-radius: var(--td-radius-3);
   background: color-mix(in srgb, var(--td-surface) 94%, black);
@@ -450,9 +447,14 @@ main { min-width: 0; overflow-x: clip; overflow-y: visible; }
     inset 2px 2px 4px color-mix(in srgb, var(--td-shadow-dark) 55%, transparent),
     inset -1px -1px 3px color-mix(in srgb, var(--td-shadow-light) 45%, transparent);
 }
-.playground input:focus-visible, .playground select:focus-visible { outline: 2px solid var(--td-accent); outline-offset: 2px; }
-.playground input[type="range"] { accent-color: var(--td-brand); min-width: 120px; }
-.pg-check { display: inline-flex; align-items: center; gap: var(--td-sp-4); color: var(--td-ink-2); font-size: 0.84rem; }
+.playground select:focus-visible { outline: 2px solid var(--td-accent); outline-offset: 2px; }
+/* The sliders are the library's `Range` now, which brings its own track, label
+   row and value readout. All the playground owes it is a width. */
+.pg-range { min-width: 180px; flex: 1 1 180px; }
+/* `.pg-check` is gone from the markup — the playgrounds use the library's own
+   Checkbox now, like their fields. The rule stays only to align one inside the
+   controls row, which is a layout concern rather than a control style. */
+.playground-controls .td-react-check { align-self: end; padding-bottom: var(--td-sp-2); }
 
 /* ── The icon index ──────────────────────────────────────────────────
    One tile per role. Raised rather than inset: a swatch is a value to
@@ -701,3 +703,183 @@ main { min-width: 0; overflow-x: clip; overflow-y: visible; }
 @media (max-width: 900px) {
   .mega-stage { height: auto; min-height: 420px; }
 }
+
+/* ── "When to use it" ─────────────────────────────────────────────────
+   Rendered from guidance.ts on every component page. It sits under the preview
+   and above the options: the thing itself is still the argument, but "is this
+   even the right component" is the question a reader arrives with. */
+.guidance h3 {
+  margin: var(--td-sp-9) 0 var(--td-sp-5);
+  font-family: var(--td-font-ui);
+  font-size: 0.86rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--td-ink);
+}
+/* The jobs, as chips. They are the search corpus, so showing them is also
+   showing the reader what to type — the vocabulary that finds this page. */
+.usecases {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--td-sp-4);
+  margin: var(--td-sp-6) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.usecases > li {
+  padding: 3px 10px;
+  border-radius: var(--td-radius-pill);
+  font-family: var(--td-font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.02em;
+  color: var(--td-ink-2);
+  background: var(--td-surface);
+  box-shadow:
+    inset 1.5px 1.5px 3px color-mix(in srgb, var(--td-shadow-dark) 44%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 40%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+
+/* ── The family page ──────────────────────────────────────────────────
+   Every variant side by side under the question it answers, because the point
+   of a family page is that the reader picks in ten seconds. */
+.family { display: grid; gap: var(--td-sp-11); }
+.family-case { display: grid; gap: var(--td-sp-6); }
+.family-case > .hint { margin: 0; }
+.family-case > .hint code { font-size: 0.78rem; }
+
+/* The reading bar's specimens. The live component is fixed to the viewport, so
+   the well shows the shape at three positions rather than the thing itself. */
+.readingbar { height: 2px; background: color-mix(in srgb, var(--td-ink) 8%, transparent); }
+.readingbar + .readingbar { margin-top: var(--td-sp-8); }
+.readingbar-fill { display: block; height: 100%; background: var(--td-brand); }
+.readingbar-fill--a { width: 12%; }
+.readingbar-fill--b { width: 38%; }
+.readingbar-fill--c { width: 86%; }
+
+/* ── Search results ───────────────────────────────────────────────────
+   They take the sidebar's place while a query is live, so the reader's eye
+   does not have to move: the list they were scanning is replaced by the list
+   they asked for, in the same column. An empty query restores it unchanged. */
+.results { display: grid; gap: 2px; align-content: start; }
+.results-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 0 var(--td-sp-5);
+  font-family: var(--td-font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--td-ink-3);
+}
+.results-head kbd {
+  padding: 1px 5px;
+  border-radius: var(--td-radius-2);
+  font-family: var(--td-font-mono);
+  font-size: 9px;
+  text-transform: none;
+  letter-spacing: 0;
+  box-shadow: 0 0 0 1px var(--td-edge);
+}
+.results-empty {
+  margin: 0;
+  padding: var(--td-sp-7) var(--td-sp-5);
+  font-size: 0.78rem;
+  line-height: 1.55;
+  color: var(--td-ink-2);
+}
+
+.result {
+  display: grid;
+  gap: 1px;
+  padding: var(--td-sp-5) var(--td-sp-6);
+  border-radius: var(--td-radius-5);
+  text-decoration: none;
+  color: inherit;
+  /* A row presses; it never tints. The pointer and the keyboard cursor land on
+     the same state, so only one row is ever highlighted. */
+  box-shadow: var(--td-row-rest);
+  transition: box-shadow var(--td-t-fast) var(--td-ease);
+}
+.result.active { box-shadow: var(--td-row-selected); }
+.result:active { box-shadow: var(--td-row-press); }
+.result-name { font-family: var(--td-font-ui); font-size: 0.82rem; font-weight: 600; color: var(--td-ink); }
+.result.active .result-name { color: var(--td-brand-text); }
+/* WHY it matched. A reader who typed "show a migration" and got back
+   "Timeline" learns nothing; one who sees the use case that matched has both
+   the answer and the vocabulary. */
+.result-why {
+  font-family: var(--td-font-sans);
+  font-size: 0.74rem;
+  line-height: 1.45;
+  color: var(--td-ink-2);
+}
+.result-group {
+  font-family: var(--td-font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--td-ink-3);
+}
+.scope kbd {
+  padding: 1px 5px;
+  border-radius: var(--td-radius-2);
+  font-family: var(--td-font-mono);
+  font-size: 9.5px;
+  box-shadow: 0 0 0 1px var(--td-edge);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .result { transition: none; }
+}
+
+
+/* The logo bench's mark list. Each row is the artwork, its editable name and a
+   way out — a name alone is not enough to tell two client logos apart, which
+   is how the wrong one kept getting removed. */
+.pg-marks { display: flex; flex-wrap: wrap; gap: var(--td-sp-5); margin-top: var(--td-sp-6); }
+.pg-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--td-sp-5);
+  padding: var(--td-sp-3) var(--td-sp-4) var(--td-sp-3) var(--td-sp-5);
+  border-radius: var(--td-radius-6);
+  background: var(--td-surface);
+  box-shadow: var(--td-inset-soft);
+}
+.pg-mark-art { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 22px; flex: 0 0 auto; }
+.pg-mark-art img { max-width: 100%; max-height: 100%; width: auto; display: block; }
+.pg-mark-x {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px; border-radius: 50%;
+  font-family: var(--td-font-mono); font-size: 0.62rem; font-weight: 700;
+  color: var(--td-brand-text);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--td-brand-text) 40%, transparent);
+}
+/* The name is editable in place: a file called `Untitled-707-x-212-px` is the
+   alternative text a screen reader would read out, and correcting it is the
+   point of trying artwork here. */
+.pg-mark-name {
+  width: 11ch;
+  min-width: 0;
+  padding: var(--td-sp-2) var(--td-sp-3);
+  border: 0;
+  border-radius: var(--td-radius-3);
+  background: transparent;
+  box-shadow: none;
+  font-family: var(--td-font-ui);
+  font-size: 0.74rem;
+  color: var(--td-ink);
+  transition: box-shadow var(--td-t-base) var(--td-ease);
+}
+.pg-mark-name:hover { box-shadow: inset 0 0 0 1px var(--td-edge); }
+.pg-mark-name:focus { outline: none; box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--td-accent) 60%, transparent); }
+.pg-mark-note { font-family: var(--td-font-mono); font-size: 0.6rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--td-brand-text); }
+.pg-mark.is-failed { opacity: 0.8; }
+
+/* Files can be dropped straight onto the wall. The frame lights rather than
+   growing, so nothing below it moves while a file is over it. */
+.pg-drop { transition: box-shadow var(--td-t-base) var(--td-ease); }
+.pg-drop.is-dragging { box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--td-accent) 55%, transparent); }

@@ -248,6 +248,11 @@
       "open",
       "boolean",
       "—"
+    ],
+    [
+      "variant",
+      "TooltipVariant",
+      "\"hint\""
     ]
   ],
   "dialog": [
@@ -820,6 +825,11 @@
       "\"elapsed\""
     ],
     [
+      "marker",
+      "TimelineMarker",
+      "\"dot\""
+    ],
+    [
       "currentLabel",
       "string",
       "\"Current phase\""
@@ -828,6 +838,445 @@
       "doneLabel",
       "string",
       "\"Complete\""
+    ]
+  ],
+  "reading-progress": [
+    [
+      "target",
+      "string",
+      "—"
+    ],
+    [
+      "tone",
+      "ProgressTone",
+      "\"brand\""
+    ],
+    [
+      "height",
+      "number",
+      "2"
+    ],
+    [
+      "label",
+      "string",
+      "\"Reading progress\""
+    ]
+  ],
+  "counter": [
+    [
+      "value",
+      "number",
+      "required"
+    ],
+    [
+      "label",
+      "ReactNode",
+      "required"
+    ],
+    [
+      "suffix",
+      "ReactNode",
+      "—"
+    ],
+    [
+      "precision",
+      "number",
+      "0"
+    ],
+    [
+      "duration",
+      "number",
+      "1200"
+    ]
+  ],
+  "testimonial": [
+    [
+      "children",
+      "ReactNode",
+      "required"
+    ],
+    [
+      "name",
+      "ReactNode",
+      "required"
+    ],
+    [
+      "role",
+      "ReactNode",
+      "—"
+    ],
+    [
+      "initials",
+      "string",
+      "—"
+    ],
+    [
+      "avatar",
+      "ReactNode",
+      "—"
+    ],
+    [
+      "source",
+      "string",
+      "—"
+    ]
+  ],
+  "iso-stack": [
+    [
+      "cards",
+      "IsoStackCard[]",
+      "required"
+    ],
+    [
+      "label",
+      "string",
+      "—"
+    ],
+    [
+      "renderLink",
+      "(props: { className: string; href: string; children: ReactNode }) => ReactNode",
+      "—"
+    ]
+  ],
+  "terminal": [
+    [
+      "lines",
+      "TerminalLine[]",
+      "required"
+    ],
+    [
+      "title",
+      "ReactNode",
+      "—"
+    ],
+    [
+      "prompt",
+      "string",
+      "\"$\""
+    ],
+    [
+      "live",
+      "boolean",
+      "false"
+    ],
+    [
+      "label",
+      "string",
+      "\"Terminal output\""
+    ]
+  ],
+  "file-preview": [
+    [
+      "name",
+      "ReactNode",
+      "required"
+    ],
+    [
+      "meta",
+      "ReactNode",
+      "—"
+    ],
+    [
+      "actions",
+      "ReactNode",
+      "—"
+    ],
+    [
+      "thumbnail",
+      "ReactNode",
+      "—"
+    ],
+    [
+      "href",
+      "string",
+      "—"
+    ],
+    [
+      "renderLink",
+      "(props: { className: string; href: string; children: ReactNode }) => ReactNode",
+      "—"
+    ]
+  ],
+  "sub-nav": [
+    [
+      "sections",
+      "SubNavSection[]",
+      "required"
+    ],
+    [
+      "label",
+      "string",
+      "—"
+    ],
+    [
+      "plate",
+      "boolean",
+      "true"
+    ],
+    [
+      "renderLink",
+      "(props: { className: string; href: string; children: ReactNode; \"aria-current\"?: \"page\" }) => ReactNode",
+      "—"
+    ]
+  ],
+  "page-nav": [
+    [
+      "items",
+      "PageNavItem[]",
+      "required"
+    ],
+    [
+      "title",
+      "ReactNode",
+      "—"
+    ],
+    [
+      "eyebrow",
+      "ReactNode",
+      "—"
+    ],
+    [
+      "actions",
+      "ReactNode",
+      "—"
+    ],
+    [
+      "sticky",
+      "boolean",
+      "true"
+    ],
+    [
+      "label",
+      "string",
+      "\"Section\""
+    ],
+    [
+      "renderLink",
+      "(props: { className: string; href: string; children: ReactNode; \"aria-current\"?: \"page\" }) => ReactNode",
+      "—"
+    ]
+  ],
+  "chat-launcher": [
+    [
+      "label",
+      "ReactNode",
+      "\"Chat with us\""
+    ],
+    [
+      "title",
+      "ReactNode",
+      "\"Chat with us\""
+    ],
+    [
+      "description",
+      "ReactNode",
+      "—"
+    ],
+    [
+      "presence",
+      "ChatPresence",
+      "\"online\""
+    ],
+    [
+      "presenceLabel",
+      "Record<ChatPresence, string>",
+      "—"
+    ],
+    [
+      "ai",
+      "boolean",
+      "false"
+    ],
+    [
+      "aiSpeed",
+      "number",
+      "—"
+    ],
+    [
+      "open",
+      "boolean",
+      "—"
+    ],
+    [
+      "defaultOpen",
+      "boolean",
+      "false"
+    ],
+    [
+      "onOpenChange",
+      "(open: boolean) => void",
+      "—"
+    ],
+    [
+      "children",
+      "ReactNode",
+      "—"
+    ],
+    [
+      "footer",
+      "ReactNode",
+      "—"
+    ],
+    [
+      "closeLabel",
+      "string",
+      "\"Close chat\""
+    ],
+    [
+      "side",
+      "\"start\" | \"end\"",
+      "\"end\""
+    ],
+    [
+      "avatar",
+      "ReactNode",
+      "—"
+    ],
+    [
+      "unread",
+      "number",
+      "—"
+    ],
+    [
+      "teaser",
+      "ReactNode",
+      "—"
+    ],
+    [
+      "teaserDismissLabel",
+      "string",
+      "\"Dismiss\""
+    ],
+    [
+      "pinned",
+      "boolean",
+      "true"
+    ]
+  ],
+  "confirm-button": [
+    [
+      "label",
+      "string",
+      "required"
+    ],
+    [
+      "confirmLabel",
+      "string",
+      "\"Sure?\""
+    ],
+    [
+      "onConfirm",
+      "() => void",
+      "—"
+    ],
+    [
+      "timeout",
+      "number",
+      "3000"
+    ]
+  ],
+  "multi-step": [
+    [
+      "steps",
+      "MultiStepItem[]",
+      "required"
+    ],
+    [
+      "value",
+      "number",
+      "—"
+    ],
+    [
+      "defaultValue",
+      "number",
+      "0"
+    ],
+    [
+      "onValueChange",
+      "(index: number) => void",
+      "—"
+    ],
+    [
+      "onComplete",
+      "() => void",
+      "—"
+    ],
+    [
+      "backLabel",
+      "string",
+      "\"Back\""
+    ],
+    [
+      "nextLabel",
+      "string",
+      "\"Next\""
+    ],
+    [
+      "completeLabel",
+      "string",
+      "\"Submit\""
+    ],
+    [
+      "label",
+      "string",
+      "—"
+    ]
+  ],
+  "spotlight": [
+    [
+      "open",
+      "boolean",
+      "required"
+    ],
+    [
+      "onOpenChange",
+      "(open: boolean) => void",
+      "required"
+    ],
+    [
+      "actions",
+      "SpotlightAction[]",
+      "required"
+    ],
+    [
+      "query",
+      "string",
+      "—"
+    ],
+    [
+      "onQueryChange",
+      "(query: string) => void",
+      "—"
+    ],
+    [
+      "onSelect",
+      "(action: SpotlightAction) => void",
+      "—"
+    ],
+    [
+      "placeholder",
+      "string",
+      "\"Search…\""
+    ],
+    [
+      "empty",
+      "ReactNode",
+      "\"No matches.\""
+    ],
+    [
+      "label",
+      "string",
+      "\"Search\""
+    ],
+    [
+      "shortcut",
+      "boolean | string",
+      "true"
+    ],
+    [
+      "origin",
+      "\"top\" | \"top-start\" | \"top-end\" | \"center\"",
+      "\"top\""
     ]
   ],
   "prose": [
@@ -1050,6 +1499,21 @@
       "clearLabel",
       "string",
       "\"Clear search\""
+    ],
+    [
+      "trigger",
+      "boolean",
+      "false"
+    ],
+    [
+      "expand",
+      "boolean",
+      "false"
+    ],
+    [
+      "shortcut",
+      "ReactNode | false",
+      "—"
     ]
   ],
   "frame": [
@@ -1114,6 +1578,11 @@
       "showValue",
       "boolean",
       "true"
+    ],
+    [
+      "status",
+      "ReactNode",
+      "—"
     ],
     [
       "tone",
@@ -1193,11 +1662,6 @@
       "single",
       "boolean",
       "false"
-    ],
-    [
-      "variant",
-      "FaqVariant",
-      "\"plate\""
     ],
     [
       "label",
@@ -1434,6 +1898,11 @@
       "wrap",
       "boolean",
       "false"
+    ],
+    [
+      "diff",
+      "boolean",
+      "false"
     ]
   ],
   "breadcrumbs": [
@@ -1511,22 +1980,7 @@
     ],
     [
       "renderLink",
-      "(props: { className: string",
-      "—"
-    ],
-    [
-      "href",
-      "string",
-      "required"
-    ],
-    [
-      "children",
-      "ReactNode",
-      "required"
-    ],
-    [
-      "aria-label",
-      "string }) => ReactNode",
+      "(props: { className: string; href: string; children: ReactNode; \"aria-label\"?: string }) => ReactNode",
       "—"
     ]
   ],
@@ -1560,6 +2014,105 @@
       "showLabels",
       "boolean",
       "true"
+    ]
+  ],
+  "whatsapp-form": [
+    [
+      "phone",
+      "string",
+      "required"
+    ],
+    [
+      "label",
+      "ReactNode",
+      "\"WhatsApp us\""
+    ],
+    [
+      "title",
+      "ReactNode",
+      "\"Message us on WhatsApp\""
+    ],
+    [
+      "description",
+      "ReactNode",
+      "\"Fill this in and it opens WhatsApp with the message ready to send. Nothing is submitted here.\""
+    ],
+    [
+      "submitLabel",
+      "ReactNode",
+      "\"Open WhatsApp\""
+    ],
+    [
+      "services",
+      "string[]",
+      "—"
+    ],
+    [
+      "industries",
+      "string[]",
+      "—"
+    ],
+    [
+      "page",
+      "string",
+      "—"
+    ],
+    [
+      "includePage",
+      "boolean",
+      "true"
+    ],
+    [
+      "open",
+      "boolean",
+      "—"
+    ],
+    [
+      "defaultOpen",
+      "boolean",
+      "false"
+    ],
+    [
+      "onOpenChange",
+      "(open: boolean) => void",
+      "—"
+    ],
+    [
+      "onSend",
+      "(message: string, values: WhatsAppFormValues) => boolean | void",
+      "—"
+    ]
+  ],
+  "social-button": [
+    [
+      "network",
+      "SocialNetwork",
+      "required"
+    ],
+    [
+      "href",
+      "string",
+      "—"
+    ],
+    [
+      "size",
+      "SocialButtonSize",
+      "\"md\""
+    ],
+    [
+      "tone",
+      "SocialButtonTone",
+      "\"brand\""
+    ],
+    [
+      "label",
+      "string",
+      "—"
+    ],
+    [
+      "renderLink",
+      "(props: { className: string; href: string; \"aria-label\": string; children: ReactNode; style?: CSSProperties }) => ReactNode",
+      "—"
     ]
   ],
   "profile-card": [
