@@ -1,3 +1,6 @@
+/* The four --td-font-* tokens and the @font-face blocks arrive through this
+   import, not from this file — tonaldepth-core is a hard dependency. See
+   "Font tokens live in packages/core" in the README before adding them here. */
 @import "@mithtech-bengaluru/tonaldepth-core";
 
 /* Component-scoped rules now ship beside their component and are imported by it,
