@@ -5,7 +5,7 @@ static/examples/*/dist/
 static/examples/*/.next/
 components/packages/*/dist/
 apps/*/dist/
-# Written by `pnpm registry:build` from registry/tonaldepth — regenerated on
+# Written by `pnpm registry:build` from components/registry/tonaldepth — regenerated on
 # every build, so the source of truth is the registry directory, not this copy.
 apps/docs/public/r/
 *.tsbuildinfo
