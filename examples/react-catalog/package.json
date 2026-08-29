@@ -8,7 +8,7 @@
     "build": "vite build"
   },
   "dependencies": {
-    "@mithtech-bengaluru/tonaldepth-react": "0.1.0-alpha.0",
+    "@mithtech-bengaluru/tonaldepth-react": "workspace:*",
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },
