@@ -1,0 +1,68 @@
+/* TonalDepth Input — self-contained. Requires @tonaldepth/tokens. */
+
+.td-input-wrap {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  min-height: 38px;
+  min-width: 0;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--td-surface) 88%, black);
+  border: 1px solid color-mix(in srgb, var(--td-surface) 76%, black);
+  box-shadow:
+    inset 2px 2px 4px rgba(0, 0, 0, 0.18),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 50%, transparent);
+  padding: 0 10px 0 11px;
+  gap: 7px;
+  transition:
+    box-shadow var(--td-t-base) var(--td-ease),
+    border-color var(--td-t-fast) var(--td-ease),
+    background var(--td-t-base) var(--td-ease);
+}
+.td-input-wrap:hover { border-color: color-mix(in srgb, var(--td-surface) 68%, black); }
+.td-input-wrap:focus-within {
+  border-color: color-mix(in srgb, #00AAFF 70%, var(--td-btn-border-rest));
+  box-shadow:
+    inset 2px 2px 4px rgba(0, 0, 0, 0.14),
+    inset -1px -1px 2px rgba(255, 255, 255, 0.5),
+    0 0 0 1.5px color-mix(in srgb, #00AAFF 16%, transparent);
+}
+.td-input {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  font: inherit;
+  font-family: var(--td-font-ui);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--td-ink);
+  caret-color: var(--td-accent);
+  width: 100%;
+  min-width: 0;
+  padding: 8px 0;
+  letter-spacing: 0.005em;
+}
+.td-input::placeholder { color: var(--td-ink-3); font-weight: 500; opacity: 1; }
+.td-input-icon,
+.td-input-trailing { color: var(--td-ink-2); flex: 0 0 auto; display: inline-flex; align-items: center; }
+.td-input-icon { width: 13px; height: 13px; }
+.td-input-trailing { font-family: var(--td-font-mono); font-size: 10.5px; }
+.td-input-wrap:focus-within .td-input-icon,
+.td-input-wrap:focus-within .td-input-trailing { color: var(--td-ink); }
+.td-input-wrap[data-state="error"] { border-color: var(--td-brand); }
+.td-input-wrap[data-state="error"]:focus-within {
+  box-shadow:
+    inset 2px 2px 4px rgba(0, 0, 0, 0.18),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 50%, transparent),
+    0 0 0 1.5px color-mix(in srgb, var(--td-brand) 28%, transparent);
+}
+.td-input-wrap:has(input:disabled) { cursor: not-allowed; }
+.td-input-wrap:has(input:disabled),
+.td-input-wrap[data-disabled="true"] {
+  opacity: 0.5;
+  box-shadow:
+    inset 1px 1px 2px rgba(0, 0, 0, 0.08),
+    inset -0.5px -0.5px 1px color-mix(in srgb, var(--td-shadow-light) 35%, transparent);
+}
+.td-input-wrap:has(input:disabled) .td-input { cursor: not-allowed; }

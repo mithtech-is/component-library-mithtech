@@ -1,0 +1,328 @@
+/* The mega-menu family — deltas over `.td-mega-*` in packages/core.
+
+   Three panels, one grid. The base layer already ships `.td-mega-inner` with
+   the three tracks the cascade needs, and `.td-mega-list` / `.td-mega-content`
+   as wells — so what this file adds is the second-column behaviour the base
+   layer never had, the two-column variant, the card grid, and the row ladder.
+
+   Every column is a WELL. That is the part that is easy to lose: a panel whose
+   content sits directly on the sheet has the things you are choosing between at
+   the same depth as their housing, and nothing reads as contained ([[L32]]). */
+
+.td-mega-inner.td-react-mega-inner { min-width: 0; }
+
+/* Two columns rather than three: the rail, then everything else. */
+.td-react-mega-inner--two { grid-template-columns: minmax(220px, 280px) minmax(0, 1fr); }
+
+.td-mega-list.td-react-mega-list { min-width: 0; }
+
+/* The row. `.td-mega-option` is the design this system's whole row grammar
+   comes from ([[L34]]), so it takes the shared ladder like every other row —
+   which is also what gets it a visible press in dark mode. */
+.td-mega-option.td-react-mega-option {
+  display: flex;
+  align-items: center;
+  gap: var(--td-sp-5);
+  width: 100%;
+  min-width: 0;
+  padding: var(--td-sp-5) var(--td-sp-6);
+  border: 0;
+  border-radius: var(--td-radius-4);
+  cursor: pointer;
+  text-align: start;
+  font: inherit;
+  color: var(--td-ink-2);
+  background: transparent;
+  box-shadow: var(--td-row-rest);
+  transition: color var(--td-t-base) var(--td-ease), background var(--td-t-base) var(--td-ease), box-shadow var(--td-t-base) var(--td-ease);
+}
+.td-mega-option.td-react-mega-option:hover { color: var(--td-ink); background: var(--td-surface); box-shadow: var(--td-row-hover); }
+.td-mega-option.td-react-mega-option:active { color: var(--td-ink); background: var(--td-surface); box-shadow: var(--td-row-press); }
+/* The chosen row rests recessed — the grammar every selected row in the system
+   uses, and the reason a cascade reads as a path rather than a list. */
+.td-mega-option.td-react-mega-option[aria-selected="true"] {
+  color: var(--td-ink);
+  background: var(--td-surface);
+  box-shadow: var(--td-row-selected);
+}
+.td-mega-option.td-react-mega-option:focus-visible { outline: 2px solid var(--td-accent); outline-offset: -2px; }
+
+.td-react-mega-option .td-mega-op-copy { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1 1 auto; }
+.td-react-mega-option .td-mega-op-copy strong { font-family: var(--td-font-ui); font-size: 0.82rem; font-weight: 600; color: inherit; }
+.td-react-mega-option .td-mega-op-copy span { font-family: var(--td-font-sans); font-size: 0.72rem; line-height: 1.4; color: var(--td-ink-3); }
+
+/* The tile rides above the row at rest and sinks with it — its own button
+   inside the row, the same anatomy the filament tab has ([[L33]]). */
+.td-mega-op-icon.td-react-mega-op-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 1.95em;
+  height: 1.95em;
+  border: 0;
+  border-radius: var(--td-radius-3);
+  color: var(--td-ink-3);
+  background: var(--td-raise-fill);
+  box-shadow:
+    1.5px 1.5px 4px color-mix(in srgb, var(--td-shadow-dark) 38%, transparent),
+    -2px -2px 4px color-mix(in srgb, var(--td-shadow-light) 85%, transparent),
+    inset 0 0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    inset 0 0 0 0 rgb(from var(--td-shadow-light) r g b / 0),
+    0 0 0 1px var(--td-edge);
+  transition: color var(--td-t-base) var(--td-ease), box-shadow var(--td-t-base) var(--td-ease);
+}
+.td-react-mega-op-icon > svg { width: 1.15em; height: 1.15em; fill: currentColor; stroke: none; }
+.td-react-mega-option:hover .td-react-mega-op-icon,
+.td-react-mega-option[aria-selected="true"] .td-react-mega-op-icon {
+  color: var(--td-brand-text);
+  box-shadow:
+    0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    0 0 0 rgb(from var(--td-shadow-light) r g b / 0),
+    inset 1px 1px 2.5px color-mix(in srgb, var(--td-shadow-dark) 35%, transparent),
+    inset -0.5px -0.5px 2px color-mix(in srgb, var(--td-shadow-light) 30%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+
+.td-mega-content.td-react-mega-content { min-width: 0; }
+.td-mega-pane.td-react-mega-pane { display: flex; }
+.td-react-mega-pane > h4 {
+  margin: 0;
+  font-family: var(--td-font-ui);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--td-ink);
+}
+
+.td-react-mega-items { display: flex; flex-direction: column; gap: 1px; margin: 0; padding: 0; list-style: none; min-width: 0; }
+.td-react-mega-items a {
+  display: block;
+  min-width: 0;
+  padding: var(--td-sp-4) var(--td-sp-5);
+  border-radius: var(--td-radius-3);
+  font-family: var(--td-font-ui);
+  font-size: 0.79rem;
+  color: var(--td-ink-2);
+  text-decoration: none;
+  box-shadow: var(--td-row-rest);
+  transition: color var(--td-t-base) var(--td-ease), background var(--td-t-base) var(--td-ease), box-shadow var(--td-t-base) var(--td-ease);
+}
+.td-react-mega-items a:hover { color: var(--td-ink); background: var(--td-surface); box-shadow: var(--td-row-hover); }
+.td-react-mega-items a:active { color: var(--td-ink); background: var(--td-surface); box-shadow: var(--td-row-press); }
+.td-react-mega-items a:focus-visible { outline: 2px solid var(--td-accent); outline-offset: -2px; }
+.td-react-mega-detail { color: var(--td-ink-3); }
+
+/* The card grid, in the well. `--td-mega-card-min` comes from the `min` prop. */
+.td-react-mega-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--td-mega-card-min, 220px), 1fr));
+  gap: var(--td-sp-6);
+  align-content: start;
+}
+
+.td-react-mega-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--td-sp-5); }
+
+@media (max-width: 900px) {
+  /* Three tracks do not fit a phone. The rails stack above the pane and each
+     one scrolls itself, so the sheet still opens to a fixed size ([[L10]])
+     rather than growing to whatever the deepest category needs. */
+  .td-mega-inner.td-react-mega-inner,
+  .td-react-mega-inner--two { grid-template-columns: minmax(0, 1fr); grid-auto-rows: minmax(0, auto); }
+  .td-mega-list.td-react-mega-list { flex-direction: row; overflow-x: auto; max-height: none; }
+  .td-mega-option.td-react-mega-option { width: auto; flex: 0 0 auto; }
+  .td-react-mega-option .td-mega-op-copy span { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .td-mega-option.td-react-mega-option,
+  .td-react-mega-items a { transition: none; }
+}
+
+/* A card in a menu is a target, not a page card: it is read in a glance on the
+   way to a click, so it carries less of everything. Scoped to the grid so the
+   same FeatureCard on a page is untouched. */
+.td-react-mega-grid .td-mk-feature { padding: var(--td-sp-6); gap: var(--td-sp-3); border-radius: var(--td-radius-5); }
+.td-react-mega-grid .td-mk-feature-title { font-size: 0.84rem; }
+.td-react-mega-grid .td-mk-feature-body { font-size: 0.74rem; line-height: 1.5; }
+.td-react-mega-grid .td-mk-feature-points { font-size: 0.7rem; gap: 2px; }
+.td-react-mega-grid .td-mk-feature-icon { width: 28px; height: 28px; border-radius: var(--td-radius-3); }
+.td-react-mega-grid .td-mk-feature-icon > svg { width: 0.95em; height: 0.95em; }
+
+/* ── the linked columns ────────────────────────────────────────────────────
+   The widest panel: a feature that makes the case, then columns of
+   destinations a reader scans. Every column is a well; every link is a row. */
+.td-react-mega-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--td-sp-7);
+  min-width: 0;
+  min-height: 0;
+}
+/* With a feature, the first track is fixed and the columns share the rest. The
+   feature is an argument, not a column, so it does not compete for width. */
+.td-react-mega-columns--featured { grid-template-columns: minmax(260px, 320px) minmax(0, 1fr); }
+.td-react-mega-feature-slot { min-width: 0; display: flex; }
+.td-react-mega-cols {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--td-sp-7);
+  min-width: 0;
+  min-height: 0;
+}
+.td-react-mega-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--td-sp-4);
+  min-width: 0;
+  min-height: 0;
+  padding: var(--td-sp-6);
+  border-radius: var(--td-radius-7);
+  background: var(--td-surface);
+  box-shadow: var(--td-inset-soft);
+  overflow-y: auto;
+}
+/* A label, not a divider. A rule across the whole column reads as a section
+   break; a short mark beside the words reads as a heading. */
+.td-react-mega-col-label {
+  display: flex;
+  align-items: center;
+  gap: var(--td-sp-4);
+  margin: 0 0 var(--td-sp-2);
+  font-family: var(--td-font-mono);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--td-ink-3);
+}
+.td-react-mega-col-label::before {
+  content: "";
+  width: 3px;
+  height: 0.9em;
+  border-radius: 999px;
+  background: var(--td-brand);
+  flex: 0 0 auto;
+}
+
+.td-react-mega-links { display: flex; flex-direction: column; gap: 1px; margin: 0; padding: 0; list-style: none; min-width: 0; }
+.td-react-mega-link {
+  display: flex;
+  align-items: center;
+  gap: var(--td-sp-5);
+  min-width: 0;
+  padding: var(--td-sp-4) var(--td-sp-5);
+  border-radius: var(--td-radius-4);
+  text-decoration: none;
+  color: var(--td-ink-2);
+  box-shadow: var(--td-row-rest);
+  transition: color var(--td-t-base) var(--td-ease), background var(--td-t-base) var(--td-ease), box-shadow var(--td-t-base) var(--td-ease);
+}
+.td-react-mega-link:hover { color: var(--td-ink); background: var(--td-surface); box-shadow: var(--td-row-hover); }
+.td-react-mega-link:active { color: var(--td-ink); background: var(--td-surface); box-shadow: var(--td-row-press); }
+.td-react-mega-link:focus-visible { outline: 2px solid var(--td-accent); outline-offset: -2px; }
+.td-react-mega-link:hover .td-react-mega-op-icon { color: var(--td-brand-text); }
+.td-react-mega-link-copy { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.td-react-mega-link-copy strong { font-family: var(--td-font-ui); font-size: 0.82rem; font-weight: 600; color: var(--td-ink); }
+.td-react-mega-link-copy span { font-family: var(--td-font-sans); font-size: 0.72rem; line-height: 1.4; color: var(--td-ink-3); }
+
+/* A rail across the foot, outside the columns' scroll. */
+.td-react-mega-footer {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--td-sp-6);
+  padding-top: var(--td-sp-6);
+  border-top: 1px solid var(--td-edge);
+}
+
+/* ── the feature panel ─────────────────────────────────────────────────────
+   Not a coloured card. The shape this is drawn from fills the panel with a
+   brand green and sets white on it, which is the one move the system forbids
+   ([[L11]]). It is a well — the argument is content, and content is recessed
+   ([[L32]]) — and papaya arrives as INK on the eyebrow and the step numbers,
+   which is where the emphasis was doing real work in the original. */
+.td-react-mega-feature {
+  display: flex;
+  flex-direction: column;
+  gap: var(--td-sp-5);
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: var(--td-sp-9);
+  border-radius: var(--td-radius-7);
+  background: var(--td-surface);
+  box-shadow: var(--td-inset-soft);
+  overflow-y: auto;
+}
+.td-react-mega-feature-icon {
+  display: grid;
+  place-items: center;
+  width: 2.6em;
+  height: 2.6em;
+  flex: 0 0 auto;
+  border-radius: var(--td-radius-4);
+  color: var(--td-brand-text);
+  background: var(--td-raise-fill);
+  box-shadow:
+    2px 2px 6px color-mix(in srgb, var(--td-shadow-dark) 52%, transparent),
+    -2px -2px 5px color-mix(in srgb, var(--td-shadow-light) 48%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+}
+.td-react-mega-feature-icon > svg { width: 1.2em; height: 1.2em; fill: currentColor; stroke: none; }
+.td-react-mega-feature-eyebrow {
+  margin: 0;
+  font-family: var(--td-font-mono);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--td-brand-text);
+}
+.td-react-mega-feature-title { margin: 0; font-family: var(--td-font-ui); font-size: 1.05rem; font-weight: 600; color: var(--td-ink); }
+.td-react-mega-feature-body { margin: 0; font-family: var(--td-font-sans); font-size: 0.79rem; line-height: 1.6; color: var(--td-ink-2); }
+
+/* The steps: lamps in sockets on a rail — Timeline's anatomy, because a
+   numbered sequence and a phase sequence are the same object at two scales. */
+.td-react-mega-steps { position: relative; display: flex; flex-direction: column; gap: var(--td-sp-5); margin: var(--td-sp-2) 0 0; padding: 0; list-style: none; }
+.td-react-mega-steps::before {
+  content: "";
+  position: absolute;
+  left: 11px;
+  top: 12px;
+  bottom: 12px;
+  width: 2px;
+  border-radius: 1px;
+  background: color-mix(in srgb, var(--td-shadow-dark) 55%, transparent);
+  box-shadow: 1px 0 0 color-mix(in srgb, var(--td-shadow-light) 45%, transparent);
+}
+.td-react-mega-step { position: relative; display: flex; align-items: flex-start; gap: var(--td-sp-5); min-width: 0; }
+.td-react-mega-step-n {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-family: var(--td-font-mono);
+  font-size: 0.66rem;
+  font-weight: 700;
+  color: var(--td-brand-text);
+  background: var(--td-surface);
+  box-shadow:
+    inset 1.5px 1.5px 3px color-mix(in srgb, var(--td-shadow-dark) 62%, transparent),
+    inset -1.5px -1.5px 3px color-mix(in srgb, var(--td-shadow-light) 58%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+.td-react-mega-step-copy { font-family: var(--td-font-ui); font-size: 0.79rem; font-weight: 600; line-height: 1.45; color: var(--td-ink); padding-top: 3px; min-width: 0; }
+.td-react-mega-feature-action { margin-top: auto; padding-top: var(--td-sp-5); }
+
+@media (max-width: 900px) {
+  .td-react-mega-columns,
+  .td-react-mega-columns--featured,
+  .td-react-mega-cols { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .td-react-mega-link { transition: none; }
+}

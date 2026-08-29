@@ -1,0 +1,13 @@
+/* Tabs — deltas over `.td-tab` in packages/core, at (0,2,0).
+
+   The selected tab lifts out of the tablist's well on `0 1px 2px` of shade and
+   a 1px inset ring — a shade with no highlight opposite it, which on paper
+   reads as a smudge rather than a lift. Light falls from the top-left, so the
+   highlight is not decoration: it is the other half of the same light. */
+.td-tab.td-react-tab[aria-selected="true"] {
+  box-shadow:
+    2px 2px 5px color-mix(in srgb, var(--td-shadow-dark) 44%, transparent),
+    -2px -2px 5px color-mix(in srgb, var(--td-shadow-light) 55%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+}

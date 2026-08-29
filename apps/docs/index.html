@@ -1,0 +1,25 @@
+<!doctype html>
+<!-- Dark, because dark is the canonical look and the one a component is
+     judged by ([[L02]]). This stamp is the docs' default only: ThemeToggle
+     persists a reader's choice under `td-theme` and restores it at mount, and
+     every preview carries its own toggle. -->
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="description" content="Local TonalDepth component documentation" />
+    <title>TonalDepth Docs</title>
+    <!--
+      No font <link> here on purpose. The four families arrive through the
+      package itself: main.tsx imports tonaldepth-react/styles.css, which
+      imports tonaldepth-core, which imports dist/fonts.css. Declaring them
+      again here would shadow those faces and fetch each file twice.
+      The preconnect just makes the first CDN request cheaper.
+    -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

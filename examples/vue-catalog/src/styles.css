@@ -1,0 +1,6 @@
+.vue-catalog { max-width: var(--td-container-4); margin: 0 auto; padding: var(--td-sp-11); }
+.vue-catalog-head { display: flex; justify-content: space-between; align-items: end; gap: var(--td-sp-9); margin-bottom: var(--td-sp-11); }
+.vue-catalog-head h1 { margin: var(--td-sp-5) 0; }
+.vue-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: var(--td-sp-9); }
+.vue-form { grid-column: 1/-1; }
+@media(max-width:760px){.vue-catalog{padding:var(--td-sp-8)}.vue-catalog-head{align-items:start;flex-direction:column}.vue-grid{grid-template-columns:1fr}}

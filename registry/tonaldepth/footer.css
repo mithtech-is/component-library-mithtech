@@ -1,0 +1,292 @@
+/*
+ * The `.td-footer-*` family — the band, the grid, the columns, the contact
+ * well, the bottom rule — already ships in the design system, so this file is
+ * deliberately thin. What it carries is composition: the spacing between the
+ * footer's own bands, which only exists once a footer is assembled out of
+ * them.
+ */
+
+/*
+ * The banner is the footer's first band and the grid brings its own bottom
+ * margin, so the gap between the two has to come from here. Sized to match
+ * `.td-footer-grid`'s 32px so the footer's internal rhythm stays even.
+ */
+.td-registry-footer > .td-mk-cta {
+  margin-bottom: 32px;
+}
+
+/* ── Base rules, inlined from the design system ──────────────────────
+   A registry item is copied into a consumer's tree on its own, with no
+   `tonaldepth-core` to inherit from, so its stylesheet has to carry every
+   class it emits. These are the upstream `.td-*` rules this component
+   depends on, copied verbatim from packages/core/src/compat.css.
+   Regenerate rather than hand-edit: they must stay identical to upstream. */
+
+.td-footer {
+margin-top: 80px;
+  background: var(--td-surface);
+  box-shadow: var(--td-raised);
+  border-radius: 22px 22px 0 0;
+  padding: 48px 32px 28px;
+  /* Near-full width, with just enough side margin for the raise to read
+     as a lifted slab rather than a flush band. */
+  max-width: none;
+  margin-left: 14px;
+  margin-right: 14px;
+}
+.td-footer-grid {
+display: grid;
+  /* The classic elegant footer: the voice in one narrow column, the
+     links in four even ones beside it. A full-width brand band left a
+     dead void and doubled the footer's height. */
+  grid-template-columns: minmax(240px, 1.15fr) repeat(4, minmax(0, 1fr));
+  column-gap: 44px;
+  row-gap: 32px;
+  margin-bottom: 32px;
+}
+.td-footer-brand {
+  display: flex; flex-direction: column; min-width: 0;
+}
+.td-footer-brand-copy, .td-footer-brand-act {
+  min-width: 0;
+}
+@media (min-width: 641px) and (max-width: 1080px) {
+.td-footer-grid {
+  grid-template-columns: minmax(0, 1.2fr) repeat(2, minmax(0, 1fr));
+}
+}
+.td-footer-social {
+  display: flex; align-items: center; gap: 8px;
+}
+.td-footer-social .td-glowicon {
+width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: var(--td-ink-2);
+  background: var(--td-raise-fill);
+  box-shadow:
+    1.5px 1.5px 4px color-mix(in srgb, var(--td-shadow-dark) 34%, transparent),
+    -1.5px -1.5px 3px color-mix(in srgb, var(--td-shadow-light) 78%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+}
+.td-footer-social .td-glowicon svg {
+  width: 14px; height: 14px; filter: none;
+}
+.td-footer-social .td-glowicon:hover {
+color: var(--td-ink);
+  /* Hover presses the tile in a touch — the shadow flips from lift to a
+     shallow well, so the interaction is felt, not just tinted. */
+  background: var(--td-surface);
+  box-shadow:
+    inset 1px 1px 3px color-mix(in srgb, var(--td-shadow-dark) 32%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 36%, transparent),
+    0 0 0 1px color-mix(in srgb, #00AAFF 40%, transparent);
+}
+.td-footer-social .td-glowicon--li:hover {
+  color: #0A66C2;
+}
+.td-footer-social .td-glowicon--x:hover {
+  color: var(--td-ink);
+}
+.td-footer-social .td-glowicon--ig:hover {
+  color: #C13584;
+}
+.td-footer-social .td-glowicon--fb:hover {
+  color: #1877F2;
+}
+.td-footer-social .td-glowicon--yt:hover {
+  color: #E62117;
+}
+.td-footer-social .td-glowicon--li[aria-pressed="true"] {
+  color: #0A66C2;
+}
+.td-footer-social .td-glowicon--ig[aria-pressed="true"] {
+  color: #C13584;
+}
+.td-footer-social .td-glowicon--fb[aria-pressed="true"] {
+  color: #1877F2;
+}
+.td-footer-social .td-glowicon--yt[aria-pressed="true"] {
+  color: #E62117;
+}
+.td-footer-social .td-glowicon--x[aria-pressed="true"] {
+  color: var(--td-ink);
+}
+.td-footer-social .td-glowicon:active svg,
+.td-footer-social .td-glowicon[aria-pressed="true"] svg {
+  filter: none; transform: none;
+}
+.td-footer-social .td-glowicon--wa,
+.td-footer-social .td-glowicon--fb,
+.td-footer-social .td-glowicon--ig,
+.td-footer-social .td-glowicon--x,
+.td-footer-social .td-glowicon--li,
+.td-footer-social .td-glowicon--yt,
+:root[data-theme="dark"] .td-footer-social .td-glowicon--wa,
+:root[data-theme="dark"] .td-footer-social .td-glowicon--fb,
+:root[data-theme="dark"] .td-footer-social .td-glowicon--ig,
+:root[data-theme="dark"] .td-footer-social .td-glowicon--x,
+:root[data-theme="dark"] .td-footer-social .td-glowicon--li,
+:root[data-theme="dark"] .td-footer-social .td-glowicon--yt {
+background-color: var(--td-raise-fill);
+  background-image: none;
+  color: var(--td-ink-2);
+  box-shadow:
+    1.5px 1.5px 4px color-mix(in srgb, var(--td-shadow-dark) 34%, transparent),
+    -1.5px -1.5px 3px color-mix(in srgb, var(--td-shadow-light) 78%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+}
+.td-footer-social .td-glowicon--wa svg,
+.td-footer-social .td-glowicon--fb svg,
+.td-footer-social .td-glowicon--ig svg,
+.td-footer-social .td-glowicon--x svg,
+.td-footer-social .td-glowicon--li svg,
+.td-footer-social .td-glowicon--yt svg {
+  filter: none;
+}
+.td-footer-social .td-glowicon--wa:hover,
+.td-footer-social .td-glowicon--fb:hover,
+.td-footer-social .td-glowicon--ig:hover,
+.td-footer-social .td-glowicon--x:hover,
+.td-footer-social .td-glowicon--li:hover,
+.td-footer-social .td-glowicon--yt:hover,
+:root[data-theme="dark"] .td-footer-social .td-glowicon--wa:hover,
+:root[data-theme="dark"] .td-footer-social .td-glowicon--fb:hover,
+:root[data-theme="dark"] .td-footer-social .td-glowicon--ig:hover,
+:root[data-theme="dark"] .td-footer-social .td-glowicon--x:hover,
+:root[data-theme="dark"] .td-footer-social .td-glowicon--li:hover,
+:root[data-theme="dark"] .td-footer-social .td-glowicon--yt:hover {
+background-color: var(--td-surface);
+  background-image: none;
+  box-shadow:
+    inset 1px 1px 3px color-mix(in srgb, var(--td-shadow-dark) 32%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 36%, transparent),
+    0 0 0 1px color-mix(in srgb, #00AAFF 40%, transparent);
+}
+.td-footer-social .td-glowicon--wa:active,
+.td-footer-social .td-glowicon--fb:active,
+.td-footer-social .td-glowicon--ig:active,
+.td-footer-social .td-glowicon--x:active,
+.td-footer-social .td-glowicon--li:active,
+.td-footer-social .td-glowicon--yt:active,
+:root[data-theme="dark"] .td-footer-social .td-glowicon--wa:active,
+:root[data-theme="dark"] .td-footer-social .td-glowicon--fb:active,
+:root[data-theme="dark"] .td-footer-social .td-glowicon--ig:active,
+:root[data-theme="dark"] .td-footer-social .td-glowicon--x:active,
+:root[data-theme="dark"] .td-footer-social .td-glowicon--li:active,
+:root[data-theme="dark"] .td-footer-social .td-glowicon--yt:active {
+background-color: var(--td-surface);
+  background-image: none;
+  box-shadow:
+    inset 2px 2px 5px color-mix(in srgb, var(--td-shadow-dark) 52%, transparent),
+    inset -1.5px -1.5px 3px color-mix(in srgb, var(--td-shadow-light) 38%, transparent);
+}
+.td-footer-social .td-glowicon--wa[aria-pressed="true"],
+.td-footer-social .td-glowicon--fb[aria-pressed="true"],
+.td-footer-social .td-glowicon--ig[aria-pressed="true"],
+.td-footer-social .td-glowicon--x[aria-pressed="true"],
+.td-footer-social .td-glowicon--li[aria-pressed="true"],
+.td-footer-social .td-glowicon--yt[aria-pressed="true"],
+:root[data-theme="dark"] .td-footer-social .td-glowicon--wa[aria-pressed="true"],
+:root[data-theme="dark"] .td-footer-social .td-glowicon--fb[aria-pressed="true"],
+:root[data-theme="dark"] .td-footer-social .td-glowicon--ig[aria-pressed="true"],
+:root[data-theme="dark"] .td-footer-social .td-glowicon--x[aria-pressed="true"],
+:root[data-theme="dark"] .td-footer-social .td-glowicon--li[aria-pressed="true"],
+:root[data-theme="dark"] .td-footer-social .td-glowicon--yt[aria-pressed="true"] {
+background-color: var(--td-surface);
+  background-image: none;
+  box-shadow:
+    inset 2px 2px 5px color-mix(in srgb, var(--td-shadow-dark) 52%, transparent),
+    inset -1.5px -1.5px 3px color-mix(in srgb, var(--td-shadow-light) 38%, transparent);
+}
+.td-footer-bottom {
+  align-items: center; gap: 16px;
+}
+.td-footer-brand strong {
+  font-family: var(--td-font-ui); font-size: 18px; color: var(--td-ink); letter-spacing: 0.005em;
+}
+.td-footer-brand p {
+  font-family: var(--td-font-sans); font-size: 13px; line-height: 1.55; color: var(--td-ink-2); margin: 10px 0 0; max-width: 36ch;
+}
+.td-footer-col h5 {
+  position: relative; font-family: var(--td-font-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--td-ink-2); margin: 0 0 14px; padding-bottom: 10px;
+}
+.td-footer-col h5::after {
+  content: ""; position: absolute; left: 0; bottom: 0; width: 18px; height: 2px; border-radius: 2px; background: color-mix(in srgb, #00AAFF 70%, transparent);
+}
+.td-footer-col ul {
+  list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px;
+}
+.td-footer-col a {
+  font-family: var(--td-font-ui); font-size: 13px; color: var(--td-ink); text-decoration: none;
+}
+.td-footer-col a:hover {
+  color: #00AAFF;
+}
+@media (max-width: 640px) {
+.td-footer {
+  margin-left: 0; margin-right: 0; border-radius: 18px 18px 0 0; padding: 36px 20px 24px;
+}
+}
+@media (max-width: 640px) {
+.td-footer-grid {
+  grid-template-columns: 1fr 1fr; gap: 24px;
+}
+}
+@media (max-width: 640px) {
+.td-footer-contactwell-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+}
+@media (max-width: 640px) {
+.td-footer-brand {
+  grid-column: 1 / -1;
+}
+}
+@media (max-width: 640px) {
+.td-footer-bottom {
+  flex-direction: column; align-items: flex-start; gap: 12px;
+}
+}
+.td-footer-contactwell {
+margin: 4px 0 28px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  background: var(--td-surface);
+  box-shadow:
+    inset 2px 2px 6px color-mix(in srgb, var(--td-shadow-dark) 38%, transparent),
+    inset -1.5px -1.5px 4px color-mix(in srgb, var(--td-shadow-light) 40%, transparent);
+}
+.td-footer-contactwell-label {
+  display: block; font-family: var(--td-font-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--td-ink-3); margin-bottom: 14px;
+}
+.td-footer-contactwell-grid {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px 28px;
+}
+.td-footer-contactitem {
+  display: flex; flex-direction: column; gap: 4px; min-width: 0;
+}
+.td-footer-contactitem-k {
+  font-family: var(--td-font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--td-ink-3);
+}
+.td-footer-contactitem a {
+  font-family: var(--td-font-ui); font-size: 13.5px; font-weight: 600; color: var(--td-ink); text-decoration: none;
+}
+.td-footer-contactitem a:hover {
+  color: var(--td-brand-text);
+}
+.td-footer-contactitem .td-footer-addr,
+.td-footer-contactitem .td-footer-hours {
+  font-family: var(--td-font-sans); font-size: 12.5px; line-height: 1.5; color: var(--td-ink-2);
+}
+.td-footer-bottom-links {
+  display: flex; gap: 18px;
+}
+.td-footer-bottom a {
+  color: var(--td-ink-2); text-decoration: none;
+}
+.td-footer-bottom a:hover {
+  color: var(--td-brand-text);
+}

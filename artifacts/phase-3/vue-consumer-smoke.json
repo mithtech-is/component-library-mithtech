@@ -1,0 +1,22 @@
+{
+  "packages": [
+    "mithtech-bengaluru-tonaldepth-core-0.1.0-alpha.0.tgz",
+    "mithtech-bengaluru-tonaldepth-vue-0.1.0-alpha.0.tgz"
+  ],
+  "vue_version": "3.5.41",
+  "nuxt_version": "4.5.2",
+  "vite": {
+    "status": "verified",
+    "dist_files": [
+      "assets/index-BQ5i_3da.js",
+      "assets/index-DDYH-agx.css",
+      "index.html"
+    ]
+  },
+  "nuxt": {
+    "status": "verified",
+    "server_entry": true,
+    "public_assets": true
+  },
+  "workspace_aliases_used": false
+}

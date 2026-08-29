@@ -1,0 +1,84 @@
+/* TableOfContents — self-contained. Requires @tonaldepth/tokens.
+
+   A registry consumer has no `tonaldepth-core`, so the base classes are
+   declared here rather than compounded against a copy that is not there.
+
+   Original note: the on-this-page rail.
+
+   The seam is a filament ([[L33]]): one line, always present, off and grey,
+   and the current section lights its own segment. Only colour moves, so the
+   rail never reflows while the reader scrolls past it — which is the whole
+   reason a table of contents is a rail and not a list of buttons.
+
+   The item itself takes the row press every row in the system takes
+   ([[L34]]) — hover sinks it, the press sinks it deeper. */
+
+.td-toc.td-registry-toc {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  /* The seam is drawn here, unlit, so every item has a line to light. */
+  border-left: 1px solid var(--td-edge);
+}
+
+.td-toc-label.td-registry-toc-label {
+  font-family: var(--td-font-mono);
+  font-size: 0.63rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--td-ink-3);
+  padding: 0 0 var(--td-sp-5) var(--td-sp-8);
+}
+
+.td-toc-item.td-registry-toc-item {
+  display: block;
+  min-width: 0;
+  padding: var(--td-sp-4) var(--td-sp-6) var(--td-sp-4) var(--td-sp-8);
+  margin-left: -1px;
+  /* The lit segment of the seam. Off is grey glass, never a colour at zero
+     alpha and never `transparent` — the line is always there ([[L20]]). */
+  border-left: 2px solid color-mix(in srgb, var(--td-ink-3) 45%, var(--td-surface));
+  border-radius: 0 var(--td-radius-2) var(--td-radius-2) 0;
+  font-family: var(--td-font-ui);
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--td-ink-2);
+  text-decoration: none;
+  background: transparent;
+  box-shadow: var(--td-row-rest);
+  transition:
+    color var(--td-t-base) var(--td-ease),
+    border-color var(--td-t-base) var(--td-ease),
+    background var(--td-t-base) var(--td-ease),
+    box-shadow var(--td-t-base) var(--td-ease);
+}
+.td-registry-toc-item--sub { padding-left: var(--td-sp-11); font-size: 0.76rem; }
+
+.td-toc-item.td-registry-toc-item:hover {
+  color: var(--td-ink);
+  border-left-color: color-mix(in srgb, var(--td-brand) 55%, var(--td-surface));
+  background: var(--td-surface);
+  box-shadow: var(--td-row-hover);
+}
+.td-toc-item.td-registry-toc-item:active {
+  color: var(--td-ink);
+  background: var(--td-surface);
+  box-shadow: var(--td-row-press);
+}
+/* The section being read: the filament is lit and the row rests recessed. */
+.td-toc-item.td-registry-toc-item[aria-current="true"] {
+  color: var(--td-ink);
+  font-weight: 600;
+  border-left-color: var(--td-brand);
+  background: var(--td-surface);
+  box-shadow: var(--td-row-selected);
+}
+.td-toc-item.td-registry-toc-item:focus-visible { outline: 2px solid var(--td-accent); outline-offset: -2px; }
+
+.td-registry-toc-slot { display: contents; }
+
+@media (prefers-reduced-motion: reduce) {
+  .td-toc-item.td-registry-toc-item { transition: none; }
+}

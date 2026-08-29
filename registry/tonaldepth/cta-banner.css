@@ -1,0 +1,80 @@
+/* TonalDepth CtaBanner — the closing ask.
+   It carries weight by being deeper, larger and better placed. It is not
+   filled with the brand colour: papaya arrives as ink on the eyebrow only. */
+
+.td-mk-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--td-sp-11);
+  min-width: 0;
+  padding: var(--td-sp-13) var(--td-sp-12);
+  border-radius: var(--td-radius-9);
+  background: var(--td-raise-fill);
+  box-shadow:
+    5px 6px 14px color-mix(in srgb, var(--td-shadow-dark) 62%, transparent),
+    -5px -6px 12px color-mix(in srgb, var(--td-shadow-light) 78%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+}
+
+.td-mk-cta--split {
+  align-items: center;
+  justify-content: space-between;
+}
+.td-mk-cta--center {
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.td-mk-cta-body { display: flex; flex-direction: column; gap: var(--td-sp-5); min-width: 0; flex: 1 1 380px; }
+.td-mk-cta--center .td-mk-cta-body { flex: 0 1 auto; align-items: center; }
+
+.td-mk-cta-eyebrow {
+  margin: 0;
+  font-family: var(--td-font-ui);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--td-brand-text);
+}
+
+.td-mk-cta-title {
+  margin: 0;
+  font-family: var(--td-font-display);
+  font-size: clamp(26px, 3.4vw, 40px);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--td-ink);
+}
+
+.td-mk-cta-description {
+  margin: 0;
+  max-width: 56ch;
+  font-family: var(--td-font-sans);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--td-ink-2);
+}
+
+.td-mk-cta-side { display: flex; flex-direction: column; gap: var(--td-sp-5); flex: 0 0 auto; }
+.td-mk-cta--center .td-mk-cta-side { align-items: center; }
+.td-mk-cta-actions { display: flex; flex-wrap: wrap; gap: var(--td-sp-5); }
+
+.td-mk-cta-assurance {
+  margin: 0;
+  font-family: var(--td-font-ui);
+  font-size: 11.5px;
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--td-ink-3);
+}
+
+@media (max-width: 560px) {
+  .td-mk-cta { padding: var(--td-sp-12) var(--td-sp-10); gap: var(--td-sp-10); }
+  .td-mk-cta-actions { width: 100%; }
+  .td-mk-cta-actions > * { flex: 1 1 auto; justify-content: center; }
+}

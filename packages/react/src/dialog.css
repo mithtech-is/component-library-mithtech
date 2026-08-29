@@ -1,0 +1,39 @@
+/* Dialog — a panel on a scrim, not a panel on the page.
+   .td-modal uses var(--td-raised), which is correct for a panel on the
+   page ground: a warm dark shade, a bright inner highlight, a pale edge
+   ring. Over .td-overlay-backdrop (a #000 50% scrim) that highlight
+   reads as a bloom around the panel and the pale edge ring reads as an
+   outline instead of an edge. Dark mode is unaffected — its highlight
+   is 0.062 alpha and the scrim is 0.92 alpha shade, so the interaction
+   is invisible there. Scoped to .td-react-dialog (not .td-modal) so
+   other placements of .td-modal on the page keep --td-raised. */
+.td-react-dialog {
+  box-shadow:
+    0 20px 40px -12px rgba(0, 0, 0, 0.55),
+    0 8px 16px -8px rgba(0, 0, 0, 0.4),
+    0 0 0 1px color-mix(in srgb, var(--td-ink) 12%, transparent);
+}
+
+:root[data-theme="dark"] .td-react-dialog {
+  box-shadow:
+    0 22px 42px -10px rgba(0, 0, 0, 0.75),
+    0 10px 20px -8px rgba(0, 0, 0, 0.55),
+    0 0 0 1px color-mix(in srgb, var(--td-ink) 15%, transparent);
+}
+
+/* The scrim is glass, not paint.
+
+   `.td-overlay-backdrop` in the base layer is a flat `#000 50%` wash, which
+   hides the page rather than deactivating it. Blurring it says the same thing
+   — you cannot reach this — while leaving the reader oriented in the page they
+   opened the dialog from. Same treatment as the mega sheet's scrim, because it
+   is the same moment.
+
+   The tint drops as the blur takes over: at 50% black over a blur the panel
+   sits in a hole. `backdrop-filter` is progressive — where it is unsupported
+   the tint alone still reads as inactive. */
+.td-react-overlay {
+  background: color-mix(in srgb, #000 34%, transparent);
+  backdrop-filter: blur(14px) saturate(1.1);
+  -webkit-backdrop-filter: blur(14px) saturate(1.1);
+}

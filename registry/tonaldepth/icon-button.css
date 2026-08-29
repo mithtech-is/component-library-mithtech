@@ -1,0 +1,514 @@
+/* TonalDepth IconButton — self-contained. Requires @tonaldepth/tokens.
+
+   The lamp: the housing takes the depth ladder, the ICON carries the state —
+   unlit at rest, lit on hover, brighter on press — and the label never rides
+   that ramp.
+
+   The `.td-glowicon` family below is copied verbatim from the design system
+   (packages/core/src/compat.css) because a registry consumer has no
+   `tonaldepth-core` to inherit from. The deltas after it soften the glow,
+   contain it inside the housing, and strip the housing-level bloom — they are
+   what this component actually renders with. */
+
+.td-glowicon {
+  appearance: none;
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  background: var(--td-raise-fill);
+  /* Icon is the lamp: OFF at rest — unlit grey, zero glow. */
+  color: color-mix(in srgb, var(--td-ink-3) 75%, var(--td-surface));
+  box-shadow:
+    3px 3px 8px color-mix(in srgb, var(--td-shadow-dark) 48%, transparent),
+    -3px -3px 12px color-mix(in srgb, var(--td-shadow-light) 50%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil), 0 0 0 1px var(--td-edge);
+  transition:
+    box-shadow var(--td-t-base) var(--td-ease),
+    background var(--td-t-base) var(--td-ease),
+    color var(--td-t-base) var(--td-ease);
+}
+.td-glowicon svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+  stroke: none;
+  transition: filter var(--td-t-base) var(--td-ease), transform var(--td-t-slow) var(--td-ease);
+}
+.td-glowicon:hover,
+.td-glowicon[data-state="hover"] {
+  background: var(--td-raise-fill-hover);
+  color: color-mix(in srgb, var(--td-green) 65%, var(--td-ink-2));
+  box-shadow:
+    4px 4px 10px color-mix(in srgb, var(--td-shadow-dark) 52%, transparent),
+    -3px -3px 12px color-mix(in srgb, var(--td-shadow-light) 55%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil), 0 0 0 1px var(--td-edge);
+}
+.td-glowicon:hover svg,
+.td-glowicon[data-state="hover"] svg {
+  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--td-green) 45%, transparent));
+}
+.td-glowicon:active,
+.td-glowicon[data-state="active"] {
+  background: var(--td-surface);
+  color: var(--td-green);
+  box-shadow:
+    inset 2px 2px 6px color-mix(in srgb, var(--td-shadow-dark) 58%, transparent),
+    inset -2px -2px 5px color-mix(in srgb, var(--td-shadow-light) 34%, transparent);
+}
+.td-glowicon:active svg,
+.td-glowicon[data-state="active"] svg {
+  transform: translate(1px, 1px);
+  filter: drop-shadow(0 0 5px var(--td-green)) drop-shadow(0 0 12px color-mix(in srgb, var(--td-green) 70%, transparent));
+}
+.td-glowicon:focus-visible {
+  outline: 2px solid var(--td-accent); outline-offset: 3px;
+}
+.td-glowicon:disabled {
+  cursor: not-allowed; box-shadow: none; background: color-mix(in srgb, var(--td-ink-2) 8%, var(--td-surface)); color: var(--td-ink-3);
+}
+.td-glowicon:disabled svg {
+  filter: none;
+}
+.td-glowicon--papaya {
+  background: var(--td-brand); color: rgba(0, 0, 0, 0.34);
+}
+.td-glowicon--papaya:hover,
+.td-glowicon--papaya[data-state="hover"] {
+  background: color-mix(in srgb, var(--td-brand) 92%, white); color: #fff;
+}
+.td-glowicon--papaya:active,
+.td-glowicon--papaya[data-state="active"] {
+  background: color-mix(in srgb, var(--td-brand) 84%, white); color: #fff;
+}
+.td-glowicon--azure {
+  background: var(--td-accent); color: rgba(0, 0, 0, 0.34);
+}
+.td-glowicon--azure:hover,
+.td-glowicon--azure[data-state="hover"] {
+  background: color-mix(in srgb, var(--td-accent) 90%, white); color: #fff;
+}
+.td-glowicon--azure:active,
+.td-glowicon--azure[data-state="active"] {
+  background: color-mix(in srgb, var(--td-accent) 82%, white); color: #fff;
+}
+.td-glowicon--papaya:hover svg, .td-glowicon--azure:hover svg,
+.td-glowicon--papaya[data-state="hover"] svg, .td-glowicon--azure[data-state="hover"] svg {
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.55));
+}
+.td-glowicon--papaya:active svg, .td-glowicon--azure:active svg,
+.td-glowicon--papaya[data-state="active"] svg, .td-glowicon--azure[data-state="active"] svg {
+  filter: drop-shadow(0 0 5px #fff) drop-shadow(0 0 12px rgba(255, 255, 255, 0.6));
+}
+.td-glowicon--papaya:disabled {
+  background: color-mix(in srgb, var(--td-brand) 30%, var(--td-surface)); color: rgba(255, 255, 255, 0.6);
+}
+.td-glowicon--azure:disabled {
+  background: color-mix(in srgb, var(--td-accent) 30%, var(--td-surface)); color: rgba(255, 255, 255, 0.6);
+}
+.td-glowicon--invert {
+  background: var(--td-ink); color: color-mix(in srgb, var(--td-bg) 30%, var(--td-ink));
+}
+.td-glowicon--invert:hover,
+.td-glowicon--invert[data-state="hover"] {
+  background: color-mix(in srgb, var(--td-ink) 88%, var(--td-bg)); color: var(--td-bg);
+}
+.td-glowicon--invert:hover svg,
+.td-glowicon--invert[data-state="hover"] svg {
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.5));
+}
+.td-glowicon--invert:active,
+.td-glowicon--invert[data-state="active"],
+.td-glowicon--invert:active svg,
+.td-glowicon--invert[data-state="active"] svg {
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.95)) drop-shadow(0 0 12px rgba(255, 255, 255, 0.55));
+}
+.td-glowicon--invert:disabled {
+  background: color-mix(in srgb, var(--td-ink) 30%, var(--td-surface)); color: color-mix(in srgb, var(--td-bg) 55%, transparent);
+}
+/* A labelled lamp is a CTA, so it takes the system's large control height
+   rather than the secondary one. A pill reads smaller than a rectangle of the
+   same height, and next to a 600-weight label an 18px filled glyph is
+   optically the lightest thing in the button. The round, unlabelled housing is
+   unchanged — an icon-only control in a toolbar is not a CTA. */
+.td-glowicon--text {
+  width: auto;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  padding: 0 22px 0 17px;
+  min-height: var(--td-btn-h-lg, 50px);
+  font-family: var(--td-font-ui);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+/* 21px against this rule's own 14px label — stated as the ratio so it stays in
+   step with Button, SplitButton and FilamentButton, which now share it ([[L28]]). */
+.td-glowicon--text .td-registry-iconbutton-lamp > svg { width: 1.5em; height: 1.5em; }
+.td-glowicon--text .td-glowicon-label {
+  color: var(--td-ink); transition: transform var(--td-t-slow) var(--td-ease);
+}
+.td-glowicon--text:active .td-glowicon-label {
+  transform: translate(1px, 1px);
+}
+.td-glowicon--papaya .td-glowicon-label,
+.td-glowicon--azure .td-glowicon-label {
+  color: #fff;
+}
+.td-glowicon--invert .td-glowicon-label {
+  color: var(--td-bg);
+}
+.td-glowicon--text:disabled .td-glowicon-label {
+  color: inherit;
+}
+.td-glowicon--wa {
+  background: #25D366;
+}
+.td-glowicon--wa:hover, .td-glowicon--wa[data-state="hover"] {
+  background: color-mix(in srgb, #25D366 88%, white);
+}
+.td-glowicon--fb {
+  background: #1877F2;
+}
+.td-glowicon--fb:hover, .td-glowicon--fb[data-state="hover"] {
+  background: color-mix(in srgb, #1877F2 88%, white);
+}
+.td-glowicon--ig {
+  background: #E4405F;
+}
+.td-glowicon--ig:hover, .td-glowicon--ig[data-state="hover"] {
+  background: color-mix(in srgb, #E4405F 88%, white);
+}
+.td-glowicon--x {
+  background: #0F1419;
+}
+.td-glowicon--x:hover, .td-glowicon--x[data-state="hover"] {
+  background: color-mix(in srgb, #0F1419 82%, white);
+}
+.td-glowicon--li {
+  background: #0A66C2;
+}
+.td-glowicon--li:hover, .td-glowicon--li[data-state="hover"] {
+  background: color-mix(in srgb, #0A66C2 88%, white);
+}
+.td-glowicon--yt {
+  background: #FF0000;
+}
+.td-glowicon--yt:hover, .td-glowicon--yt[data-state="hover"] {
+  background: color-mix(in srgb, #FF0000 88%, white);
+}
+.td-glowicon--wa, .td-glowicon--fb, .td-glowicon--ig, .td-glowicon--x, .td-glowicon--li, .td-glowicon--yt {
+  color: rgba(0, 0, 0, 0.62);
+}
+.td-glowicon--x {
+  color: rgba(255, 255, 255, 0.55);
+}
+:root[data-theme="dark"] .td-glowicon--x {
+  background: #1F262E; box-shadow: 0 0 0 1px var(--td-edge), 2px 2px 5px color-mix(in srgb, var(--td-shadow-dark) 44%, transparent), -2px -2px 5px color-mix(in srgb, var(--td-shadow-light) 55%, transparent);
+}
+.td-glowicon--wa:hover, .td-glowicon--fb:hover, .td-glowicon--ig:hover, .td-glowicon--x:hover, .td-glowicon--li:hover, .td-glowicon--yt:hover,
+.td-glowicon--wa[data-state="hover"], .td-glowicon--fb[data-state="hover"], .td-glowicon--ig[data-state="hover"], .td-glowicon--x[data-state="hover"], .td-glowicon--li[data-state="hover"], .td-glowicon--yt[data-state="hover"] {
+  color: #fff;
+}
+.td-glowicon--wa:hover svg, .td-glowicon--fb:hover svg, .td-glowicon--ig:hover svg, .td-glowicon--x:hover svg, .td-glowicon--li:hover svg, .td-glowicon--yt:hover svg {
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.55));
+}
+.td-glowicon--wa:active, .td-glowicon--fb:active, .td-glowicon--ig:active, .td-glowicon--x:active, .td-glowicon--li:active, .td-glowicon--yt:active,
+.td-glowicon--wa:active svg, .td-glowicon--fb:active svg, .td-glowicon--ig:active svg, .td-glowicon--x:active svg, .td-glowicon--li:active svg, .td-glowicon--yt:active svg {
+  filter: drop-shadow(0 0 5px #fff) drop-shadow(0 0 12px rgba(255, 255, 255, 0.6));
+}
+.td-glowicon--wa .td-glowicon-label, .td-glowicon--fb .td-glowicon-label, .td-glowicon--ig .td-glowicon-label, .td-glowicon--x .td-glowicon-label, .td-glowicon--li .td-glowicon-label, .td-glowicon--yt .td-glowicon-label {
+  color: #fff;
+}
+.td-glowicon--wa-inv {
+  color: color-mix(in srgb, var(--td-ink-3) 75%, var(--td-surface));
+}
+.td-glowicon--wa-inv:hover, .td-glowicon--wa-inv[data-state="hover"] {
+  color: #25D366;
+}
+.td-glowicon--wa-inv:hover svg, .td-glowicon--wa-inv[data-state="hover"] svg {
+  filter: drop-shadow(0 0 3px rgba(37, 211, 102, 0.5));
+}
+.td-glowicon--wa-inv:active, .td-glowicon--wa-inv[data-state="active"] {
+  color: #25D366;
+}
+.td-glowicon--wa-inv:active svg, .td-glowicon--wa-inv[data-state="active"] svg {
+  filter: drop-shadow(0 0 5px #25D366) drop-shadow(0 0 12px rgba(37, 211, 102, 0.65));
+}
+.td-glowicon--wa-inv .td-glowicon-label {
+  color: #25D366;
+}
+.td-footer-social .td-glowicon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: var(--td-ink-2);
+  background: var(--td-raise-fill);
+  box-shadow:
+    1.5px 1.5px 4px color-mix(in srgb, var(--td-shadow-dark) 34%, transparent),
+    -1.5px -1.5px 3px color-mix(in srgb, var(--td-shadow-light) 78%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+}
+.td-footer-social .td-glowicon svg {
+  width: 14px; height: 14px; filter: none;
+}
+.td-footer-social .td-glowicon:hover {
+  color: var(--td-ink);
+  /* Hover presses the tile in a touch — the shadow flips from lift to a
+     shallow well, so the interaction is felt, not just tinted. */
+  background: var(--td-surface);
+  box-shadow:
+    inset 1px 1px 3px color-mix(in srgb, var(--td-shadow-dark) 32%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 36%, transparent),
+    0 0 0 1px color-mix(in srgb, #00AAFF 40%, transparent);
+}
+.td-footer-social .td-glowicon--li:hover {
+  color: #0A66C2;
+}
+.td-footer-social .td-glowicon--x:hover {
+  color: var(--td-ink);
+}
+.td-footer-social .td-glowicon--ig:hover {
+  color: #C13584;
+}
+.td-footer-social .td-glowicon--fb:hover {
+  color: #1877F2;
+}
+.td-footer-social .td-glowicon--yt:hover {
+  color: #E62117;
+}
+.td-footer-social .td-glowicon--li[aria-pressed="true"] {
+  color: #0A66C2;
+}
+.td-footer-social .td-glowicon--ig[aria-pressed="true"] {
+  color: #C13584;
+}
+.td-footer-social .td-glowicon--fb[aria-pressed="true"] {
+  color: #1877F2;
+}
+.td-footer-social .td-glowicon--yt[aria-pressed="true"] {
+  color: #E62117;
+}
+.td-footer-social .td-glowicon--x[aria-pressed="true"] {
+  color: var(--td-ink);
+}
+.td-footer-social .td-glowicon:active svg,
+.td-footer-social .td-glowicon[aria-pressed="true"] svg {
+  filter: none; transform: none;
+}
+.td-footer-social .td-glowicon--wa,
+.td-footer-social .td-glowicon--fb,
+.td-footer-social .td-glowicon--ig,
+.td-footer-social .td-glowicon--x,
+.td-footer-social .td-glowicon--li,
+.td-footer-social .td-glowicon--yt,
+:root[data-theme="dark"] .td-footer-social .td-glowicon--wa,
+:root[data-theme="dark"] .td-footer-social .td-glowicon--fb,
+:root[data-theme="dark"] .td-footer-social .td-glowicon--ig,
+:root[data-theme="dark"] .td-footer-social .td-glowicon--x,
+:root[data-theme="dark"] .td-footer-social .td-glowicon--li,
+:root[data-theme="dark"] .td-footer-social .td-glowicon--yt {
+  background-color: var(--td-raise-fill);
+  background-image: none;
+  color: var(--td-ink-2);
+  box-shadow:
+    1.5px 1.5px 4px color-mix(in srgb, var(--td-shadow-dark) 34%, transparent),
+    -1.5px -1.5px 3px color-mix(in srgb, var(--td-shadow-light) 78%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+}
+.td-footer-social .td-glowicon--wa svg,
+.td-footer-social .td-glowicon--fb svg,
+.td-footer-social .td-glowicon--ig svg,
+.td-footer-social .td-glowicon--x svg,
+.td-footer-social .td-glowicon--li svg,
+.td-footer-social .td-glowicon--yt svg {
+  filter: none;
+}
+.td-footer-social .td-glowicon--wa:hover,
+.td-footer-social .td-glowicon--fb:hover,
+.td-footer-social .td-glowicon--ig:hover,
+.td-footer-social .td-glowicon--x:hover,
+.td-footer-social .td-glowicon--li:hover,
+.td-footer-social .td-glowicon--yt:hover,
+:root[data-theme="dark"] .td-footer-social .td-glowicon--wa:hover,
+:root[data-theme="dark"] .td-footer-social .td-glowicon--fb:hover,
+:root[data-theme="dark"] .td-footer-social .td-glowicon--ig:hover,
+:root[data-theme="dark"] .td-footer-social .td-glowicon--x:hover,
+:root[data-theme="dark"] .td-footer-social .td-glowicon--li:hover,
+:root[data-theme="dark"] .td-footer-social .td-glowicon--yt:hover {
+  background-color: var(--td-surface);
+  background-image: none;
+  box-shadow:
+    inset 1px 1px 3px color-mix(in srgb, var(--td-shadow-dark) 32%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 36%, transparent),
+    0 0 0 1px color-mix(in srgb, #00AAFF 40%, transparent);
+}
+.td-footer-social .td-glowicon--wa:active,
+.td-footer-social .td-glowicon--fb:active,
+.td-footer-social .td-glowicon--ig:active,
+.td-footer-social .td-glowicon--x:active,
+.td-footer-social .td-glowicon--li:active,
+.td-footer-social .td-glowicon--yt:active,
+:root[data-theme="dark"] .td-footer-social .td-glowicon--wa:active,
+:root[data-theme="dark"] .td-footer-social .td-glowicon--fb:active,
+:root[data-theme="dark"] .td-footer-social .td-glowicon--ig:active,
+:root[data-theme="dark"] .td-footer-social .td-glowicon--x:active,
+:root[data-theme="dark"] .td-footer-social .td-glowicon--li:active,
+:root[data-theme="dark"] .td-footer-social .td-glowicon--yt:active {
+  background-color: var(--td-surface);
+  background-image: none;
+  box-shadow:
+    inset 2px 2px 5px color-mix(in srgb, var(--td-shadow-dark) 52%, transparent),
+    inset -1.5px -1.5px 3px color-mix(in srgb, var(--td-shadow-light) 38%, transparent);
+}
+.td-footer-social .td-glowicon--wa[aria-pressed="true"],
+.td-footer-social .td-glowicon--fb[aria-pressed="true"],
+.td-footer-social .td-glowicon--ig[aria-pressed="true"],
+.td-footer-social .td-glowicon--x[aria-pressed="true"],
+.td-footer-social .td-glowicon--li[aria-pressed="true"],
+.td-footer-social .td-glowicon--yt[aria-pressed="true"],
+:root[data-theme="dark"] .td-footer-social .td-glowicon--wa[aria-pressed="true"],
+:root[data-theme="dark"] .td-footer-social .td-glowicon--fb[aria-pressed="true"],
+:root[data-theme="dark"] .td-footer-social .td-glowicon--ig[aria-pressed="true"],
+:root[data-theme="dark"] .td-footer-social .td-glowicon--x[aria-pressed="true"],
+:root[data-theme="dark"] .td-footer-social .td-glowicon--li[aria-pressed="true"],
+:root[data-theme="dark"] .td-footer-social .td-glowicon--yt[aria-pressed="true"] {
+  background-color: var(--td-surface);
+  background-image: none;
+  box-shadow:
+    inset 2px 2px 5px color-mix(in srgb, var(--td-shadow-dark) 52%, transparent),
+    inset -1.5px -1.5px 3px color-mix(in srgb, var(--td-shadow-light) 38%, transparent);
+}
+.td-footer-wa .td-glowicon--text {
+  min-height: 40px;
+}
+
+/* IconButton — the lamp.
+   The housing takes the depth ladder; the ICON carries the state. Unlit ink
+   at rest, lit with a soft glow on hover, brighter on press. The label, when
+   there is one, never rides that ramp ([[L15]]).
+
+   The `.td-glowicon` family this layers over ships in packages/core. Only the
+   deltas live here. Modifiers are written at (0,3,0) to match button.css —
+   a consumer that raises the base's specificity (mith.tech ships
+   `:root[data-theme="dark"] .td-primary`) would otherwise win. */
+
+/* A lamp sizes to its content. `.td-glowicon--text` is inline-flex, which CSS
+   blockifies to `flex` as a grid or flex item and then stretches to the whole
+   track — the same bug that made badges and buttons span their column. */
+.td-registry-iconbutton {
+  width: fit-content;
+  max-width: 100%;
+  flex: 0 0 auto;
+  /* The glow stays inside the housing. A `drop-shadow` is painted around the
+     glyph with no regard for the button's edge, so the upstream 12px bloom
+     spilled onto the page and read as the button leaking light rather than
+     holding a lamp. `overflow: hidden` clips it to the border-radius; the
+     housing's own box-shadow is unaffected, because overflow clips
+     descendants, not the element's own shadow. */
+  overflow: hidden;
+}
+
+/* The glow's colour, per housing. Declared once so the two state rules below
+   stay single rules instead of one pair per tone. */
+.td-registry-iconbutton { --td-lamp-glow: var(--td-green); }
+.td-registry-iconbutton:is(.td-glowicon--papaya, .td-glowicon--azure, .td-glowicon--invert,
+  .td-glowicon--wa, .td-glowicon--fb, .td-glowicon--ig, .td-glowicon--x,
+  .td-glowicon--li, .td-glowicon--yt) { --td-lamp-glow: #fff; }
+.td-registry-iconbutton.td-glowicon--wa-inv { --td-lamp-glow: #25D366; }
+
+/* The quiet channel tones: a carved surface housing whose lamp lights the
+   platform's own colour. This is the form a social row wants — a row of solid
+   platform-coloured discs is a wall of fills, which is the one move the system
+   forbids ([[L11]]).
+
+   Only the lamp takes the colour. The housing is the same surface button every
+   other neutral IconButton is, so a row of six reads as one material. */
+.td-registry-iconbutton.td-glowicon--fb-inv { --td-lamp-glow: #1877F2; }
+.td-registry-iconbutton.td-glowicon--ig-inv { --td-lamp-glow: #C13584; }
+.td-registry-iconbutton.td-glowicon--x-inv { --td-lamp-glow: var(--td-ink); }
+.td-registry-iconbutton.td-glowicon--li-inv { --td-lamp-glow: #0A66C2; }
+.td-registry-iconbutton.td-glowicon--yt-inv { --td-lamp-glow: #E62117; }
+
+/* The glow ladder: OFF at rest, a soft bloom on hover, a solid core plus a
+   wide halo on press. All three are tokens (`--td-lamp-off/-hover/-active`),
+   so the whole system's ladder is retuned from tokens/source/tokens.json.
+
+   Rest is two EXPLICIT zero shadows, never `none`: transitioning from `none`
+   lets the engine invent the start value and it flashes a dark shadow behind
+   the icon, and a state with a different shadow count snaps rather than
+   interpolating — which is why press used to look the same as hover.
+   (0,3,1) beats the base's (0,2,1), so these win without !important. */
+.td-registry-iconbutton .td-registry-iconbutton-lamp > svg { filter: var(--td-lamp-off); }
+.td-registry-iconbutton:hover .td-registry-iconbutton-lamp > svg,
+.td-registry-iconbutton[data-state="hover"] .td-registry-iconbutton-lamp > svg { filter: var(--td-lamp-hover); }
+.td-registry-iconbutton:active .td-registry-iconbutton-lamp > svg,
+.td-registry-iconbutton[data-state="active"] .td-registry-iconbutton-lamp > svg { filter: var(--td-lamp-active); }
+.td-registry-iconbutton:disabled .td-registry-iconbutton-lamp > svg { filter: var(--td-lamp-off); }
+
+/* The state is carried by the GLYPH'S COLOUR, and the halo only sweetens it.
+   A filament brightens because the metal gets hotter, not because something
+   appears behind it — so the icon steps from unlit ink to the full lamp colour
+   and the drop-shadow stays a hint. This is also what keeps the ladder legible
+   when the halo is nearly invisible, as it is on a pale surface ([[L20]]). */
+.td-registry-iconbutton .td-registry-iconbutton-lamp { color: var(--td-ink-3); transition: color var(--td-t-base) var(--td-ease); }
+.td-registry-iconbutton:hover .td-registry-iconbutton-lamp,
+.td-registry-iconbutton[data-state="hover"] .td-registry-iconbutton-lamp { color: color-mix(in srgb, var(--td-lamp-glow) 70%, var(--td-ink-2)); }
+.td-registry-iconbutton:active .td-registry-iconbutton-lamp,
+.td-registry-iconbutton[data-state="active"] .td-registry-iconbutton-lamp { color: var(--td-lamp-glow); }
+.td-registry-iconbutton:disabled .td-registry-iconbutton-lamp { color: var(--td-ink-3); }
+/* A filled housing already supplies the contrast, so its glyph stays white and
+   only the halo moves — recolouring it to `#fff` at every step is a no-op that
+   would just fight the housing's own hover colour. */
+.td-registry-iconbutton:is(.td-glowicon--papaya, .td-glowicon--azure, .td-glowicon--invert,
+  .td-glowicon--wa, .td-glowicon--fb, .td-glowicon--ig, .td-glowicon--x,
+  .td-glowicon--li, .td-glowicon--yt) .td-registry-iconbutton-lamp { color: inherit; }
+
+/* The glow belongs to the LAMP, never to the housing.
+   Upstream, the `--invert` and channel variants put their pressed-state
+   `drop-shadow` on a selector list that includes the button itself, not only
+   its `svg` — so the whole housing bloomed. `overflow: hidden` cannot contain
+   that: overflow clips an element's descendants, never its own filter, so the
+   halo painted straight onto the page. Stripping the housing filter here
+   leaves the icon's glow as the only light, which is the pattern.
+   (0,3,0) beats the base's (0,2,0). */
+.td-registry-iconbutton.td-glowicon:hover,
+.td-registry-iconbutton.td-glowicon:active,
+.td-registry-iconbutton.td-glowicon[data-state="hover"],
+.td-registry-iconbutton.td-glowicon[data-state="active"] { filter: none; }
+/* The round form is a fixed 42px housing; `width: fit-content` would collapse
+   it to the glyph, so the base's own sizing is restored. */
+.td-registry-iconbutton:not(.td-glowicon--text) { width: 42px; }
+
+/* The lamp wrapper exists so the glyph can be sized and glowed without the
+   component dictating the SVG's own attributes. */
+.td-registry-iconbutton .td-registry-iconbutton-lamp {
+  display: inline-grid;
+  place-items: center;
+  line-height: 0;
+}
+.td-registry-iconbutton .td-registry-iconbutton-lamp > svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+  stroke: none;
+}
+
+/* L15 correction, applied upstream rather than at the call site.
+   `.td-glowicon--wa-inv .td-glowicon-label` ships green, which makes the
+   label ride the lamp's ramp — the one thing the lamp pattern forbids. The
+   channel is already signalled by the icon; the label holds its ink. */
+.td-registry-iconbutton:is(.td-glowicon--wa-inv, .td-glowicon--fb-inv, .td-glowicon--ig-inv, .td-glowicon--x-inv, .td-glowicon--li-inv, .td-glowicon--yt-inv) .td-glowicon-label { color: var(--td-ink); }
+
+@media (prefers-reduced-motion: reduce) {
+  .td-registry-iconbutton,
+  .td-registry-iconbutton .td-registry-iconbutton-lamp > svg { transition: none; }
+  .td-registry-iconbutton:active .td-registry-iconbutton-lamp > svg { transform: none; }
+}

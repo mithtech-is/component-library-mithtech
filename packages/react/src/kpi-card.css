@@ -1,0 +1,13 @@
+/* KPI card — deltas over `.td-kpi` in packages/core, at (0,2,0).
+
+   The base rides `--td-btn-rest`, which on paper is a 0.105-alpha shade under
+   a 0.18-alpha white highlight and no edge ring. A tile whose fill is already
+   the page colour then has nothing but a faint bottom-right smudge to separate
+   it, and a grid of them reads as one flat sheet. All three sides, always. */
+.td-kpi.td-react-kpi {
+  box-shadow:
+    4px 4px 12px color-mix(in srgb, var(--td-shadow-dark) 70%, transparent),
+    -4px -4px 12px color-mix(in srgb, var(--td-shadow-light) 66%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+}

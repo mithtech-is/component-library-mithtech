@@ -1,0 +1,64 @@
+/* Progress — self-contained. Requires @tonaldepth/tokens.
+
+   Original note: a carved track with one measured length in it.
+
+   The track is pressed into the surface; the filled length is the only thing
+   that takes colour, because it is a measured quantity rather than decoration
+   — the same licence a chart series has. Everything else is depth. */
+
+.td-registry-progress-wrap { display: flex; flex-direction: column; gap: var(--td-sp-3); min-width: 0; }
+
+.td-registry-progress-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--td-sp-5);
+  margin: 0;
+  font-family: var(--td-font-mono);
+  font-size: 0.69rem;
+  color: var(--td-ink-2);
+}
+.td-registry-progress-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.td-registry-progress-sep { color: var(--td-ink-3); }
+/* The count is the machine face of the label, so it holds the mono face the
+   head already sets and only steps its ink. */
+.td-registry-progress-detail { color: var(--td-ink-3); }
+.td-registry-progress-value { flex: 0 0 auto; color: var(--td-progress-ink, var(--td-brand-text)); font-weight: 700; }
+
+.td-progress.td-registry-progress {
+  --td-progress-fill: var(--td-brand);
+  --td-progress-ink: var(--td-brand-text);
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--td-surface) 92%, black);
+  box-shadow:
+    inset 1px 1px 2px color-mix(in srgb, var(--td-shadow-dark) 38%, transparent),
+    inset -1px -1px 1.5px color-mix(in srgb, var(--td-shadow-light) 34%, transparent);
+  overflow: hidden;
+}
+.td-registry-progress--accent { --td-progress-fill: var(--td-accent); --td-progress-ink: var(--td-accent-text); }
+.td-registry-progress--green { --td-progress-fill: var(--td-green); --td-progress-ink: var(--td-green-text); }
+.td-registry-progress--error { --td-progress-fill: var(--td-error); --td-progress-ink: var(--td-error-text); }
+
+.td-progress-bar.td-registry-progress-bar {
+  height: 100%;
+  border-radius: 3px;
+  background: var(--td-progress-fill);
+  transition: width var(--td-t-base) var(--td-ease);
+}
+
+/* Indeterminate: a short length sweeping the track. The track keeps its own
+   depth, so the surface still reads as carved while nothing is known. */
+.td-registry-progress--indeterminate .td-registry-progress-bar {
+  width: 35%;
+  animation: td-registry-progress-sweep 1.4s var(--td-ease) infinite;
+}
+@keyframes td-registry-progress-sweep {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(340%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .td-registry-progress-bar { transition: none; }
+  .td-registry-progress--indeterminate .td-registry-progress-bar { animation: none; width: 100%; opacity: 0.5; }
+}

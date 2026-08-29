@@ -1,0 +1,163 @@
+/* TonalDepth ComparisonTable — criteria down, options across. The column the
+   page argues for takes the selected step of the ladder: a pressed well with
+   papaya ink, never a coloured fill. */
+
+.td-mk-visually-hidden {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.td-mk-compare {
+  position: relative;
+  min-width: 0;
+  border-radius: var(--td-radius-8);
+  background: var(--td-raise-fill);
+  box-shadow:
+    3px 3px 12px color-mix(in srgb, var(--td-shadow-dark) 68%, transparent),
+    -3px -3px 12px color-mix(in srgb, var(--td-shadow-light) 64%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+}
+
+.td-mk-compare-scroll {
+  overflow-x: auto;
+  border-radius: inherit;
+  scrollbar-width: thin;
+}
+.td-mk-compare-scroll:focus-visible { outline: 2px solid var(--td-accent); outline-offset: 2px; }
+
+.td-mk-compare-table {
+  width: 100%;
+  min-width: 520px;
+  border-collapse: collapse;
+  font-family: var(--td-font-ui);
+  font-size: 13px;
+  text-align: left;
+}
+
+.td-mk-compare-caption {
+  padding: var(--td-sp-10) var(--td-sp-11) var(--td-sp-6);
+  font-family: var(--td-font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--td-ink-3);
+  text-align: left;
+}
+
+/* Header seam — shade hairline over highlight hairline. */
+.td-mk-compare-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: var(--td-sp-7) var(--td-sp-8);
+  vertical-align: bottom;
+  background: var(--td-raise-fill);
+  border-bottom: 1px solid color-mix(in srgb, var(--td-shadow-dark) 50%, transparent);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--td-shadow-light) 60%, transparent);
+}
+
+.td-mk-compare-col { min-width: 116px; }
+.td-mk-compare-col-label {
+  display: block;
+  font-family: var(--td-font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--td-ink);
+}
+.td-mk-compare-col-note {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--td-font-ui);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--td-ink-3);
+}
+.td-mk-compare-col--selected .td-mk-compare-col-label,
+.td-mk-compare-col--selected .td-mk-compare-col-note { color: var(--td-brand-text); }
+
+.td-mk-compare-criterion {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  min-width: 168px;
+  padding: var(--td-sp-7) var(--td-sp-8);
+  background: var(--td-raise-fill);
+  font-weight: 600;
+  color: var(--td-ink);
+}
+.td-mk-compare-table thead .td-mk-compare-criterion {
+  z-index: 3;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--td-ink-3);
+}
+.td-mk-compare-row-label { display: block; }
+.td-mk-compare-row-note {
+  display: block;
+  margin-top: 2px;
+  font-family: var(--td-font-sans);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.45;
+  color: var(--td-ink-2);
+}
+
+.td-mk-compare-cell {
+  padding: var(--td-sp-7) var(--td-sp-8);
+  vertical-align: top;
+  font-family: var(--td-font-sans);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--td-ink-2);
+}
+
+.td-mk-compare-table tbody tr:not(:last-child) > * {
+  border-bottom: 1px solid color-mix(in srgb, var(--td-shadow-dark) 34%, transparent);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--td-shadow-light) 42%, transparent);
+}
+
+/* Selected column — pressed into the surface on every row it crosses. */
+.td-mk-compare-col--selected,
+.td-mk-compare-cell--selected {
+  background: color-mix(in srgb, var(--td-surface) 96%, black);
+  box-shadow:
+    inset 2px 0 5px -2px color-mix(in srgb, var(--td-shadow-dark) 62%, transparent),
+    inset -2px 0 5px -2px color-mix(in srgb, var(--td-shadow-dark) 62%, transparent);
+}
+.td-mk-compare-cell--selected { color: var(--td-ink); }
+.td-mk-compare-table tbody tr:last-child .td-mk-compare-cell--selected {
+  box-shadow:
+    inset 2px 0 5px -2px color-mix(in srgb, var(--td-shadow-dark) 62%, transparent),
+    inset -2px 0 5px -2px color-mix(in srgb, var(--td-shadow-dark) 62%, transparent),
+    inset 0 -2px 5px -2px color-mix(in srgb, var(--td-shadow-dark) 62%, transparent);
+}
+
+.td-mk-compare-mark { display: inline-flex; }
+.td-mk-compare-mark--yes { color: var(--td-green-text); }
+.td-mk-compare-mark--no { color: var(--td-ink-3); }
+.td-mk-compare-empty { color: var(--td-ink-3); }
+
+/* The scrolled-off edge gets a fade so the table reads as cut, not ended. */
+.td-mk-compare::after {
+  content: "";
+  position: absolute;
+  top: 1px; right: 1px; bottom: 1px;
+  width: 28px;
+  border-radius: 0 var(--td-radius-8) var(--td-radius-8) 0;
+  background: linear-gradient(to right, transparent, var(--td-raise-fill));
+  pointer-events: none;
+}
+@media (min-width: 720px) {
+  .td-mk-compare::after { display: none; }
+}

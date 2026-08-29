@@ -1,0 +1,47 @@
+face,family,style,weight,display,source_kind,source_reference,source_mime,payload_bytes,payload_sha256,license_status
+1,Anton,normal,400,swap,bundler-manifest,dee763e7-c9ea-4094-b87a-fbb6fb846773,font/woff2,5188,889f979804fc6c2ddb3c9577805caf156bfd092a5b6e58d680535d65267b933e,unverified
+2,Anton,normal,400,swap,bundler-manifest,70bb5fd0-cb67-4e5e-af86-65f8f82e3fe4,font/woff2,21296,ae1a8ac1c2899a66eed47a851201bb78a56664bf8da6d34a9ee226582d15ac19,unverified
+3,Anton,normal,400,swap,bundler-manifest,29dd6730-3426-4ce0-bc92-4555be43b36e,font/woff2,12004,23aab0b2692a0c89eb7997d3c7cf5bda41276d6cd4ab6cc0edc3edfcece32b09,unverified
+4,Hanken Grotesk,italic,100 900,swap,bundler-manifest,bba3fc25-3786-4400-8a82-e0f5f016f80f,font/woff2,1724,bb57f3deea368fb497c2cb943916c4c299f8e773cfa1819935e8688e243bb7aa,unverified
+5,Hanken Grotesk,italic,100 900,swap,bundler-manifest,6a0a4e7f-4be5-4dfe-b762-3e12e1d501de,font/woff2,9828,6b49aea2043a7cc59e451d639ef3f9896a663f794fff6ed1137a4683e67704ab,unverified
+6,Hanken Grotesk,italic,100 900,swap,bundler-manifest,fbc99a4e-ffc2-483b-8234-82506dac606b,font/woff2,20288,80b363f717e9762ac3a0114d5efd759ce4c2daa143296ccbf3962d2acc34e322,unverified
+7,Hanken Grotesk,italic,100 900,swap,bundler-manifest,4d83f2e7-ddb7-4fc0-8758-5169a30a3209,font/woff2,35684,99721f51a4d5925d9d08021fb5575ef017fa18a40578ca897485808ce68bc19a,unverified
+8,Hanken Grotesk,normal,100 900,swap,bundler-manifest,ea37bc06-0129-4ed1-9804-18dd3d8bb00f,font/woff2,1644,2f52020a90793104e4178b0ae3ccd30eea28cac27e0fea8fcf4f246151777f74,unverified
+9,Hanken Grotesk,normal,100 900,swap,bundler-manifest,bede1ee8-885e-4eb8-b21f-8ad5b49183d0,font/woff2,9364,2f467719b2167cc4778b5780a2fb42fadf5203b29d0fb5f1482bbab32b1b7999,unverified
+10,Hanken Grotesk,normal,100 900,swap,bundler-manifest,95b37961-88f6-40b6-99c5-c1684c9c464c,font/woff2,19572,a1376a563717f1efa2f5286ab23da2b61ae8dec827a77b97adfa01cad4ec4ee2,unverified
+11,Hanken Grotesk,normal,100 900,swap,bundler-manifest,c27cd014-91d7-4113-bbe4-046ce1d1e2c0,font/woff2,34664,1f21c6eaa0000f3329cfcfac966b43d5bebf5aa610303e33294ac31bc6f4bb59,unverified
+12,JetBrains Mono,italic,100 800,swap,bundler-manifest,49a4a96e-9559-4a60-b4fe-4c8e78ff31bc,font/woff2,2124,b1991e2a6e2ee044aa012ebd3a8ad1b7b36c068ca516dc0e8c35e1ad7fa67801,unverified
+13,JetBrains Mono,italic,100 800,swap,bundler-manifest,7582dfcc-eeff-4fbb-bfea-c07978f75fc1,font/woff2,13364,1e9a92863e564a1699e0dd92fed98c2d1a7471f64356296c4cd45e8b444ed62b,unverified
+14,JetBrains Mono,italic,100 800,swap,bundler-manifest,0105f399-499d-4a66-a2e7-12b8c58f328e,font/woff2,9472,91ebeb80254315f4ada3ac7c2fd0829bf6fabe0f26f4f63d70f30e9309703222,unverified
+15,JetBrains Mono,italic,100 800,swap,bundler-manifest,25a89958-33c8-4f55-a22a-50bcf055916c,font/woff2,8124,2f71cd14770c41446be2b9c2cad8e5e7ba8981e0a11496427e26cccd804c9f59,unverified
+16,JetBrains Mono,italic,100 800,swap,bundler-manifest,71c2597d-6304-4b42-b106-3337a8b8b87c,font/woff2,16540,bdce8a4f00f61bed7141af8ac231a91be56de82f41ca2b981b34ff48359c288a,unverified
+17,JetBrains Mono,italic,100 800,swap,bundler-manifest,6a78432c-ec05-4cd1-9f3d-08355aa8b8fb,font/woff2,42928,6548575d68391672486bf3815a8dd9fe0ae251d1087875581ac8912d5cb52baa,unverified
+18,JetBrains Mono,normal,100 800,swap,bundler-manifest,c13681f6-48f5-46aa-ae75-2b98e00d8067,font/woff2,2020,992eea2f70210457ddd1196de4df3240919ffe068ad188c79d985fba4565d3bf,unverified
+19,JetBrains Mono,normal,100 800,swap,bundler-manifest,e48a213d-9cec-4073-b17b-50a06d820ff2,font/woff2,12064,af7486955880be1c2b972e9c766acffb776768d669b6576ed9a0919ce72e7ca6,unverified
+20,JetBrains Mono,normal,100 800,swap,bundler-manifest,7aa7ddb8-1118-461c-9456-b3c8d936c7ff,font/woff2,9084,3edf363dbf9d5fa0cdc784ae2b431a8a4152f4055a8a8858028c0bd668808273,unverified
+21,JetBrains Mono,normal,100 800,swap,bundler-manifest,9fae2eca-f49d-4030-991a-617030ac291f,font/woff2,7468,1390e86cc2823e759358918c01c4fcc1b6e4f01bca915bdbeb6d68eb5c244405,unverified
+22,JetBrains Mono,normal,100 800,swap,bundler-manifest,e9127365-3f6b-458f-8cc0-a1c614f2acd5,font/woff2,15204,7db7affbce1fdee69c1ffc2641bbca289b049867f524c9d861fe35ab6670bf29,unverified
+23,JetBrains Mono,normal,100 800,swap,bundler-manifest,b09d0942-ea13-4d86-817d-49aa0e6317e4,font/woff2,40480,1e06740a02a443fb7f3eeda8fcaa685a0f6c620e3f01e6666e847295469ce3ad,unverified
+24,Source Sans 3,italic,200 900,swap,bundler-manifest,09b6f124-dcc3-40c4-8464-8dde8ea1413a,font/woff2,10988,518b9960ec10783cf5e6ed6b996c312a2d7ea80c62045a1270c58788da39f70c,unverified
+25,Source Sans 3,italic,200 900,swap,bundler-manifest,5a90eceb-1938-4c69-9474-cae193ee4af4,font/woff2,18764,aa6d16964ec15f361cf1edf8a3ece88ca18eb005bf0643b9e2d125213dcda705,unverified
+26,Source Sans 3,italic,200 900,swap,bundler-manifest,f520da8b-66d1-45a7-b333-b34636a111e3,font/woff2,9780,3dd74f1ba6c89d3a88544de917bc7f21ab9c38045c29da60149d052eafcab8a9,unverified
+27,Source Sans 3,italic,200 900,swap,bundler-manifest,eecd73f2-3ef9-4f18-97b2-475c3804778a,font/woff2,14920,5491f0305823aa575d6add08c04c75502cf0eb995ac44cc9d405643f8dd45c6a,unverified
+28,Source Sans 3,italic,200 900,swap,bundler-manifest,982ba36f-d969-4c95-a684-9b0c860c3e7c,font/woff2,10712,fac203539b91269bcb81a229bff802d91fcf2c06c50c605a864a9cfac45986de,unverified
+29,Source Sans 3,italic,200 900,swap,bundler-manifest,73f1d39f-41de-41b3-9c5c-fa6fc40d8533,font/woff2,59368,daff22b9d8482f797b1ffb84f253cad6f7d61ca35afa7a46bba0884ee9e31998,unverified
+30,Source Sans 3,italic,200 900,swap,bundler-manifest,1f3a21c4-6f01-4dd5-a76b-b32265c1ab4c,font/woff2,28464,dba77455b9c188678eb9103c4b6b7fb8105968c3a4b5828204c350f6781c1638,unverified
+31,Source Sans 3,normal,200 900,swap,bundler-manifest,e0d46b64-47d3-45b0-ae14-15e0c89dfc27,font/woff2,10684,ce21e07f81120c29845d627644a977b85027fc564b68e23349ea599402e55e96,unverified
+32,Source Sans 3,normal,200 900,swap,bundler-manifest,d393b7d1-c30a-4ccd-bf8b-469664fb0fed,font/woff2,18400,44aa5fb37c5aa2a2b44ceab9c077b42de47d50d47c0dcbefa2555082c38df8dd,unverified
+33,Source Sans 3,normal,200 900,swap,bundler-manifest,17bfdf59-1d45-47db-9fea-8cac4ae313e5,font/woff2,9796,cd19f948c227b68e6feb8af39da356315dd47f8bd1406cc8bab78baf2c6ea85e,unverified
+34,Source Sans 3,normal,200 900,swap,bundler-manifest,1a081377-e30c-4111-8d51-208f80acacb5,font/woff2,14580,5045881eda8b85134f65682ac27163c2b060d1aeed619e21498f98f5448239d1,unverified
+35,Source Sans 3,normal,200 900,swap,bundler-manifest,c7dc8bc7-1785-4f4c-a0cc-a7807d724ba9,font/woff2,10336,7a9ba93945d3cd9e6c2ad459d242c2281b423dd305e3ccb9956279f12deddfd3,unverified
+36,Source Sans 3,normal,200 900,swap,bundler-manifest,ee1129a4-fac2-4e12-a509-a8e4f7581f81,font/woff2,60048,ed3571ea9ff752f1c846f1c9ad2b0006de42f478a2db9163a74db0729a4eb281,unverified
+37,Source Sans 3,normal,200 900,swap,bundler-manifest,0f10aeca-b321-48a4-ae7d-3d2fad3b7a6a,font/woff2,28792,ac057a5593cbe3df0d2585da5dd5f33b8efa84aa30550c710fe061b37fc5c54b,unverified
+38,Anton Offline,normal,400,swap,bundler-manifest,c7b892e5-66c7-4d09-ad21-7edcba845dac,font/woff2,12004,23aab0b2692a0c89eb7997d3c7cf5bda41276d6cd4ab6cc0edc3edfcece32b09,unverified
+39,Anton Offline,normal,400,swap,bundler-manifest,7968d4c6-41a2-4100-ba66-aed46f5a29be,font/woff2,21296,ae1a8ac1c2899a66eed47a851201bb78a56664bf8da6d34a9ee226582d15ac19,unverified
+40,Anton Offline,normal,400,swap,bundler-manifest,869728cd-ef89-4cb4-846e-21252268f673,font/woff2,5188,889f979804fc6c2ddb3c9577805caf156bfd092a5b6e58d680535d65267b933e,unverified
+41,Source Sans 3 Offline,normal,200 900,swap,bundler-manifest,89e290a7-3374-41d7-a510-2523a02cf188,font/ttf,642476,800f5dca8b08b34304d233fc5f97446d479e8f56c4de58fcefa7eb431b4de36c,unverified
+42,Source Sans 3 Offline,italic,200 900,swap,bundler-manifest,84c9a7b1-b6d0-48d4-aacc-62342cd9ebc4,font/ttf,391460,1211c2ebab00958efc21707ba8de2edca142ebe3f40be89e8c3a9c26f61c3ddf,unverified
+43,Hanken Grotesk Offline,normal,100 900,swap,bundler-manifest,42d26d68-b5ea-44f9-8468-dd4ff2e1e696,font/ttf,129508,c4828929151ec9a455122afa06c31eb65e80ad8622f1d5510ecba8e195c57d38,unverified
+44,Hanken Grotesk Offline,italic,100 900,swap,bundler-manifest,3e45d4a2-6f65-4293-a2f0-75ef74ccd6b2,font/ttf,138676,49000473ba71b9408c19b6302a3b9707b2f7e235e15c9eb3c9df2a7fcfe98a57,unverified
+45,JetBrains Mono Offline,normal,100 800,swap,bundler-manifest,9bb66eaf-5fd8-44dd-8323-19313a212294,font/ttf,189028,192a3158a926768d1fa520164f0fb0f40a6ad085435aa854e43eb14cb40d1aab,unverified
+46,JetBrains Mono Offline,italic,100 800,swap,bundler-manifest,5cb586fa-698b-4e23-b602-7018ca1e39a5,font/ttf,193160,2d8ac6a590c2df8f63ae44807c40cac63bc481d197c4cb91d48f1a0f587fb32e,unverified

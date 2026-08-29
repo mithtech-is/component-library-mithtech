@@ -1,0 +1,16 @@
+.td-react-page-pattern { display: grid; gap: var(--td-sp-9); min-width: 0; }
+.td-react-pattern-metrics > .td-kpi-grid { width: 100%; }
+.td-react-pattern-footer { display: flex; align-items: center; justify-content: flex-end; gap: var(--td-sp-5); }
+.td-react-pattern-actions { display: flex; justify-content: center; gap: var(--td-sp-5); }
+.td-react-page-state--error .td-empty-art { color: var(--td-error-text); }
+
+/* Same as Card's raised depth: the base panel rides `--td-btn-rest`, whose
+   0.105-alpha shade and 0.18-alpha highlight leave a page-coloured plate on a
+   page-coloured ground. A bento of them read as one flat sheet on paper. */
+.td-panel.td-react-panel {
+  box-shadow:
+    4px 4px 12px color-mix(in srgb, var(--td-shadow-dark) 70%, transparent),
+    -4px -4px 12px color-mix(in srgb, var(--td-shadow-light) 66%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+}

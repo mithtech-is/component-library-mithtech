@@ -1,0 +1,15 @@
+{
+  "name": "@mithtech-bengaluru/tonaldepth-react-native",
+  "version": "0.1.0-alpha.0",
+  "description": "TonalDepth native components for React Native and Expo",
+  "license": "UNLICENSED",
+  "type": "module",
+  "files": ["dist", "README.md"],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
+  "scripts": { "build": "node scripts/clean.mjs && tsc -p tsconfig.json", "test": "vitest run --pool=forks --maxWorkers=1" },
+  "dependencies": { "@mithtech-bengaluru/tonaldepth-nativewind": "0.1.0-alpha.0" },
+  "peerDependencies": { "nativewind": "^4.2.0", "react": "^19.2.0", "react-native": "^0.87.0" },
+  "publishConfig": { "registry": "https://npm.po5.in", "access": "restricted" }
+}

@@ -1,0 +1,19 @@
+.td-react-card--flat { box-shadow: none; }
+/* A well is carved, not outlined — the base panel's edge would read as a line
+   drawn around a hollow. */
+.td-react-card--inset { box-shadow: var(--td-inset-soft); border-color: transparent; }
+.td-react-card--flush { padding: 0; gap: 0; }
+.td-react-card-content { min-width: 0; }
+
+/* Light carves shallower than dark. `--td-btn-rest`, which the base panel
+   uses, is a 0.105-alpha shade under a 0.18-alpha white highlight and carries
+   no edge ring at all — on a `#F5F5F5` page whose `--td-raise-fill` IS the page
+   colour, that leaves a card with nothing but a faint bottom-right smudge. The
+   raised panel gets all three sides: the shade, the highlight, and the ring. */
+.td-panel.td-react-card--raised {
+  box-shadow:
+    4px 4px 12px color-mix(in srgb, var(--td-shadow-dark) 70%, transparent),
+    -4px -4px 12px color-mix(in srgb, var(--td-shadow-light) 66%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+}

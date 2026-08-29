@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mith.tech/schemas/tonaldepth-tokens.schema.json",
+  "title": "TonalDepth canonical token document",
+  "type": "object",
+  "required": ["schemaVersion", "metadata", "tokens"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "metadata": { "type": "object" },
+    "tokens": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "$type", "$value", "$description", "$extensions"]
+      }
+    }
+  }
+}
+

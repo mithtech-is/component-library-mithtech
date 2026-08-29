@@ -1,0 +1,122 @@
+/* ProfileCard — self-contained. Requires @tonaldepth/tokens.
+
+   A registry consumer has no `tonaldepth-core`, so every class is declared
+   here rather than compounded against a copy that is not there.
+
+   Original note: a person.
+
+   One card for `05-cards/profile` and `10-marketing/team`: the same parts in a
+   different reading order, so they are two layouts rather than two components.
+
+   Five shadow slots, in this order, in every rung of the ladder: outer shade,
+   outer highlight, inset shade, inset highlight, edge ring ([[L18]], [[L27]]).
+   Unused slots are the shadow's own colour at zero alpha, never `transparent`
+   ([[L20]]).
+
+   The team card's avatar is a brand-to-accent gradient with white initials.
+   Filling with the brand colour is the one move the system forbids ([[L11]]),
+   so the mark is the profile card's own: a disc carved from the surface. Its
+   role line is papaya too; a role is not a category, and a wall of eight people
+   would put papaya on all of them, so the role is ink. */
+
+.td-mk-profile {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  padding: var(--td-sp-9);
+  border-radius: var(--td-radius-7);
+  background: var(--td-raise-fill);
+  box-shadow:
+    3px 3px 12px color-mix(in srgb, var(--td-shadow-dark) 68%, transparent),
+    -3px -3px 12px color-mix(in srgb, var(--td-shadow-light) 64%, transparent),
+    inset 0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+  transition: box-shadow var(--td-t-base) var(--td-ease), background var(--td-t-base) var(--td-ease);
+}
+.td-mk-profile--row { flex-direction: row; align-items: center; gap: var(--td-sp-7); }
+.td-mk-profile--stack { flex-direction: column; align-items: flex-start; gap: var(--td-sp-6); }
+
+.td-mk-profile--link:hover {
+  background: var(--td-raise-fill-hover);
+  box-shadow:
+    1px 1px 4px color-mix(in srgb, var(--td-shadow-dark) 44%, transparent),
+    -2px -2px 5px color-mix(in srgb, var(--td-shadow-light) 85%, transparent),
+    inset 2px 2px 4px color-mix(in srgb, var(--td-shadow-dark) 38%, transparent),
+    inset -2px -2px 6px color-mix(in srgb, var(--td-shadow-light) 32%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+.td-mk-profile--link:active {
+  background: var(--td-surface);
+  box-shadow:
+    0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    0 0 0 rgb(from var(--td-shadow-light) r g b / 0),
+    inset 3px 3px 7px color-mix(in srgb, var(--td-shadow-dark) 58%, transparent),
+    inset -2px -2px 5px color-mix(in srgb, var(--td-shadow-light) 34%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+.td-mk-profile--link:focus-within { outline: 2px solid var(--td-accent); outline-offset: 3px; }
+
+/* The mark: a disc carved from the surface, with an ink rim so it reads as a
+   seat rather than a hole. Never a fill. */
+.td-mk-profile-avatar {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  overflow: hidden;
+  border-radius: 50%;
+  font-family: var(--td-font-display);
+  letter-spacing: 0.02em;
+  color: var(--td-ink);
+  background: var(--td-surface);
+  box-shadow:
+    inset 1.5px 1.5px 4px color-mix(in srgb, var(--td-shadow-dark) 58%, transparent),
+    inset -1.5px -1.5px 4px color-mix(in srgb, var(--td-shadow-light) 52%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+.td-mk-profile-avatar > img,
+.td-mk-profile-avatar > svg { width: 100%; height: 100%; object-fit: cover; display: block; }
+.td-mk-profile--row .td-mk-profile-avatar { width: 52px; height: 52px; font-size: 1.15rem; }
+.td-mk-profile--stack .td-mk-profile-avatar { width: 64px; height: 64px; font-size: 1.4rem; }
+
+.td-mk-profile-body { display: flex; flex-direction: column; gap: var(--td-sp-2); min-width: 0; }
+
+.td-mk-profile-name {
+  margin: 0;
+  font-family: var(--td-font-ui);
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--td-ink);
+}
+.td-mk-profile-namelink { color: inherit; text-decoration: none; }
+.td-mk-profile-namelink:hover { color: var(--td-brand-text); }
+.td-mk-profile-namelink:focus-visible { outline: 2px solid var(--td-accent); outline-offset: 2px; }
+/* The whole card is the target only when nothing else in it is. */
+.td-mk-profile-namelink--cover:focus-visible { outline: none; }
+.td-mk-profile-namelink--cover::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
+
+.td-mk-profile-role {
+  margin: 0;
+  font-family: var(--td-font-mono);
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--td-ink-2);
+}
+
+.td-mk-profile-bio {
+  margin: var(--td-sp-3) 0 0;
+  max-width: 46ch;
+  font-family: var(--td-font-sans);
+  font-size: 0.79rem;
+  line-height: 1.6;
+  color: var(--td-ink-2);
+}
+
+.td-mk-profile-actions { display: flex; flex-wrap: wrap; gap: var(--td-sp-4); margin-top: var(--td-sp-5); }
+
+@media (prefers-reduced-motion: reduce) {
+  .td-mk-profile { transition: none; }
+}

@@ -1,0 +1,110 @@
+/* Range — a carved track with a raised thumb.
+
+   A real `input[type=range]`, styled through the vendor pseudo-elements. The
+   track is pressed into the surface and the thumb rides above it, so the two
+   read as opposite directions of the same material. The filled length is the
+   one thing carrying colour, because it is a measured quantity — the same
+   licence Progress's bar has.
+
+   The two engines are addressed separately on purpose: WebKit paints the fill
+   as a gradient on the track, Firefox has a real `::-moz-range-progress`. They
+   cannot be written as one rule and a shared selector list drops BOTH. */
+
+.td-react-range-wrap { display: flex; flex-direction: column; gap: var(--td-sp-3); min-width: 0; }
+
+.td-react-range-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--td-sp-5);
+}
+.td-react-range-label { font-family: var(--td-font-ui); font-size: 0.8rem; color: var(--td-ink-2); }
+.td-react-range-value { font-family: var(--td-font-mono); font-size: 0.75rem; font-weight: 700; color: var(--td-brand-text); }
+.td-react-range-bounds {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--td-font-mono);
+  font-size: 0.65rem;
+  color: var(--td-ink-3);
+}
+
+.td-range.td-react-range {
+  appearance: none;
+  width: 100%;
+  height: 22px;
+  background: transparent;
+  outline: 0;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+}
+.td-range.td-react-range:disabled { cursor: not-allowed; opacity: 0.55; }
+
+/* ── WebKit ──────────────────────────────────────────────────────────────── */
+.td-range.td-react-range::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 3px;
+  background:
+    linear-gradient(to right, var(--td-brand) 0 var(--pct, 0%), color-mix(in srgb, var(--td-surface) 92%, black) var(--pct, 0%) 100%);
+  box-shadow:
+    inset 1px 1px 2px color-mix(in srgb, var(--td-shadow-dark) 38%, transparent),
+    inset -1px -1px 1.5px color-mix(in srgb, var(--td-shadow-light) 34%, transparent);
+}
+.td-range.td-react-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  margin-top: -6px;
+  border-radius: 50%;
+  background: var(--td-raise-fill);
+  /* Four slots in a fixed order — focus ring, shade, highlight, edge ring —
+     with the focus ring unlit here so focusing interpolates instead of
+     snapping, and in the ring's own colour at zero alpha rather than
+     `transparent` ([[L18]], [[L20]]). */
+  box-shadow:
+    0 0 0 0 rgb(from var(--td-accent) r g b / 0),
+    2px 2px 5px color-mix(in srgb, var(--td-shadow-dark) 46%, transparent),
+    -2px -2px 4px color-mix(in srgb, var(--td-shadow-light) 70%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+.td-range.td-react-range:focus-visible::-webkit-slider-thumb {
+  box-shadow:
+    0 0 0 4px color-mix(in srgb, var(--td-accent) 30%, transparent),
+    2px 2px 5px color-mix(in srgb, var(--td-shadow-dark) 46%, transparent),
+    -2px -2px 4px color-mix(in srgb, var(--td-shadow-light) 70%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+
+/* ── Firefox ─────────────────────────────────────────────────────────────── */
+.td-range.td-react-range::-moz-range-track {
+  height: 6px;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--td-surface) 92%, black);
+  box-shadow:
+    inset 1px 1px 2px color-mix(in srgb, var(--td-shadow-dark) 38%, transparent),
+    inset -1px -1px 1.5px color-mix(in srgb, var(--td-shadow-light) 34%, transparent);
+}
+.td-range.td-react-range::-moz-range-progress { height: 6px; border-radius: 3px; background: var(--td-brand); }
+.td-range.td-react-range::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--td-raise-fill);
+  /* Four slots in a fixed order — focus ring, shade, highlight, edge ring —
+     with the focus ring unlit here so focusing interpolates instead of
+     snapping, and in the ring's own colour at zero alpha rather than
+     `transparent` ([[L18]], [[L20]]). */
+  box-shadow:
+    0 0 0 0 rgb(from var(--td-accent) r g b / 0),
+    2px 2px 5px color-mix(in srgb, var(--td-shadow-dark) 46%, transparent),
+    -2px -2px 4px color-mix(in srgb, var(--td-shadow-light) 70%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+.td-range.td-react-range:focus-visible::-moz-range-thumb {
+  box-shadow:
+    0 0 0 4px color-mix(in srgb, var(--td-accent) 30%, transparent),
+    2px 2px 5px color-mix(in srgb, var(--td-shadow-dark) 46%, transparent),
+    -2px -2px 4px color-mix(in srgb, var(--td-shadow-light) 70%, transparent),
+    0 0 0 1px var(--td-edge);
+}

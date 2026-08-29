@@ -1,0 +1,42 @@
+/* TonalDepth Card — self-contained. Requires @tonaldepth/tokens. */
+
+.td-panel {
+  background: var(--td-surface);
+  border: 1px solid var(--td-btn-border-rest);
+  border-radius: 14px;
+  box-shadow:
+    4px 4px 10px color-mix(in srgb, var(--td-shadow-dark) 46%, transparent),
+    -4px -4px 12px color-mix(in srgb, var(--td-shadow-light) 52%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  overflow: hidden;
+}
+.td-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.td-panel-title {
+  margin: 0;
+  font-family: var(--td-font-ui);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--td-ink);
+}
+
+/* Registry-scoped depth modifiers. */
+/* Raised is the panel's own depth, above; these are the other two rungs. */
+.td-registry-card--raised { }
+.td-registry-card--flat { box-shadow: none; }
+/* A well is carved, not outlined — the base panel's edge would read as a line
+   drawn around a hollow. */
+.td-registry-card--inset { box-shadow: var(--td-inset-soft); border-color: transparent; }
+.td-registry-card--flush { padding: 0; gap: 0; }
+.td-registry-card-content { min-width: 0; }

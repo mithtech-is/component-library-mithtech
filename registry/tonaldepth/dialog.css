@@ -1,0 +1,84 @@
+/* TonalDepth Dialog — self-contained. Requires @tonaldepth/tokens. */
+
+.td-overlay-backdrop {
+  position: fixed;
+  inset: 0;
+  background: color-mix(in srgb, #000 50%, transparent);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  animation: td-overlay-fade 200ms var(--td-ease) both;
+}
+.td-overlay-backdrop[data-state="open"] { display: flex; }
+.td-modal {
+  background: var(--td-surface);
+  border-radius: 20px;
+  box-shadow: var(--td-raised);
+  padding: 24px;
+  width: min(560px, calc(100vw - 40px));
+  max-height: calc(100vh - 80px);
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: td-overlay-pop 220ms var(--td-ease) both;
+}
+
+/* Modal on a scrim needs a different elevation than a panel on the page.
+   var(--td-raised) is correct against the page ground; over the #000 50%
+   backdrop its warm inner highlight reads as a halo and the pale
+   --td-edge ring reads as an outline. Scoped to .td-registry-dialog so
+   other placements of .td-modal keep --td-raised. */
+.td-registry-dialog {
+  box-shadow:
+    0 20px 40px -12px rgba(0, 0, 0, 0.55),
+    0 8px 16px -8px rgba(0, 0, 0, 0.4),
+    0 0 0 1px color-mix(in srgb, var(--td-ink) 12%, transparent);
+}
+:root[data-theme="dark"] .td-registry-dialog {
+  box-shadow:
+    0 22px 42px -10px rgba(0, 0, 0, 0.75),
+    0 10px 20px -8px rgba(0, 0, 0, 0.55),
+    0 0 0 1px color-mix(in srgb, var(--td-ink) 15%, transparent);
+}
+.td-modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.td-modal-title { font-family: var(--td-font-ui); font-size: 18px; font-weight: 600; color: var(--td-ink); margin: 0; }
+.td-modal-desc { font-family: var(--td-font-ui); font-size: 13px; line-height: 1.55; color: var(--td-ink-2); margin: 0; }
+.td-modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 6px; }
+
+/* Reused close-button styling (matches td-alert-close). */
+.td-alert-close {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  color: var(--td-ink-2);
+  cursor: pointer;
+  font-size: 18px;
+  display: grid;
+  place-items: center;
+}
+.td-alert-close:hover { color: var(--td-ink); background: color-mix(in srgb, var(--td-surface) 92%, black); }
+
+@keyframes td-overlay-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes td-overlay-pop { from { opacity: 0; transform: translateY(8px) scale(0.98); } to { opacity: 1; transform: none; } }
+
+/* The scrim is glass, not paint.
+
+   `.td-overlay-backdrop` in the base layer is a flat `#000 50%` wash, which
+   hides the page rather than deactivating it. Blurring it says the same thing
+   — you cannot reach this — while leaving the reader oriented in the page they
+   opened the dialog from. Same treatment as the mega sheet's scrim, because it
+   is the same moment.
+
+   The tint drops as the blur takes over: at 50% black over a blur the panel
+   sits in a hole. `backdrop-filter` is progressive — where it is unsupported
+   the tint alone still reads as inactive. */
+.td-registry-overlay {
+  background: color-mix(in srgb, #000 34%, transparent);
+  backdrop-filter: blur(14px) saturate(1.1);
+  -webkit-backdrop-filter: blur(14px) saturate(1.1);
+}

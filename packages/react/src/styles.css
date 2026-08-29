@@ -1,0 +1,67 @@
+@import "@mithtech-bengaluru/tonaldepth-core";
+
+/* Component-scoped rules now ship beside their component and are imported by it,
+   so they reach consumers that serve the `.td-*` base layer themselves. */
+@import "./button.css";
+@import "./icon-button.css";
+@import "./badge.css";
+@import "./alert.css";
+@import "./card.css";
+@import "./input.css";
+@import "./selection.css";
+@import "./toast.css";
+@import "./kpi-card.css";
+@import "./dropdown-menu.css";
+@import "./tabs.css";
+@import "./dialog.css";
+@import "./chart-container.css";
+@import "./page-patterns.css";
+@import "./article-card.css";
+@import "./case-card.css";
+@import "./feature-card.css";
+@import "./comparison-table.css";
+@import "./cta-banner.css";
+@import "./timeline.css";
+@import "./prose.css";
+@import "./theme-toggle.css";
+@import "./breadcrumbs.css";
+@import "./code-block.css";
+@import "./copy-chip.css";
+@import "./data-list.css";
+@import "./faq.css";
+@import "./filament-button.css";
+@import "./file-tree.css";
+@import "./footer.css";
+@import "./frame.css";
+@import "./link-cells.css";
+@import "./logo-strip.css";
+@import "./map.css";
+@import "./mega-menu.css";
+@import "./pagination.css";
+@import "./pricing-table.css";
+@import "./profile-card.css";
+@import "./progress.css";
+@import "./range.css";
+@import "./rect-title.css";
+@import "./search-bar.css";
+@import "./side-tabs.css";
+@import "./site-navigation.css";
+@import "./split-button.css";
+@import "./table.css";
+@import "./toc.css";
+
+/* Rules below re-declare names the design system already owns. They stay in the
+   aggregate stylesheet only: a consumer serving its own `.td-*` layer would get
+   these applied twice at equal specificity, and source order would decide. */
+.td-badge { padding: 3px 9px; font-size: 10.5px; background: color-mix(in srgb, var(--td-ink) 6%, var(--td-surface)); }
+.td-badge--brand { background: color-mix(in srgb, var(--td-brand) 14%, var(--td-surface)); }
+.td-badge--green { background: color-mix(in srgb, var(--td-green) 18%, var(--td-surface)); }
+.td-badge--accent { background: color-mix(in srgb, var(--td-accent) 14%, var(--td-surface)); }
+.td-badge--ink { background: color-mix(in srgb, var(--td-ink) 10%, var(--td-surface)); }
+.td-input-wrap:has([aria-invalid="true"]), .td-textarea-wrap:has([aria-invalid="true"]) { border-color: var(--td-brand); }
+.td-dropdown-item:disabled { opacity: .45; cursor: not-allowed; }
+.td-dropdown-item[aria-checked="true"] { background: var(--td-surface-selected); color: var(--td-text); }
+.td-dropdown-item[aria-checked="true"] .td-dropdown-check { visibility: visible; }
+.td-navbtn[aria-current="page"] { color: var(--td-brand-text); background: var(--td-surface); box-shadow: inset 1.5px 1.5px 4px color-mix(in srgb, var(--td-shadow-dark) 46%, transparent), inset -1px -1px 3px color-mix(in srgb, var(--td-shadow-light) 36%, transparent); }
+.td-navbtn[aria-disabled="true"] { opacity: .5; cursor: not-allowed; }
+.td-filter-chip:disabled { opacity: .5; cursor: not-allowed; }

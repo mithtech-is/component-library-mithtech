@@ -1,0 +1,131 @@
+/* TonalDepth Alert — self-contained. Requires @tonaldepth/tokens. */
+
+.td-alert {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--td-surface);
+  font-family: var(--td-font-ui);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--td-ink-2);
+  /* Light carves shallower than dark. The shade alone leaves a smudge: the
+     highlight and the `0 0 0 1px var(--td-edge)` ring give the panel its other
+     two sides. No category wash and no painted rail — the lamp says which
+     category this is, and a tinted band is the one move the system forbids. */
+  box-shadow:
+    3px 3px 8px color-mix(in srgb, var(--td-shadow-dark) 48%, transparent),
+    -3px -3px 12px color-mix(in srgb, var(--td-shadow-light) 50%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+}
+.td-alert strong { color: var(--td-ink); font-weight: 600; font-family: var(--td-font-ui); }
+.td-alert p { margin: 4px 0 0; }
+
+/* The socket: carved from the surface, never tinted, so the lamp reads as
+   seated in the panel rather than stuck on it. */
+.td-registry-alert-lamp {
+  --td-lamp-glow: var(--td-brand);
+  width: 22px;
+  height: 22px;
+  margin-top: 1px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--td-surface);
+  box-shadow:
+    inset 1.5px 1.5px 3px color-mix(in srgb, var(--td-shadow-dark) 62%, transparent),
+    inset -1.5px -1.5px 3px color-mix(in srgb, var(--td-shadow-light) 58%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+/* The lens, lit with a NAMED light — `currentColor` here is ink, which on
+   paper is near-black and paints a smear instead of a glow. */
+.td-registry-alert-lamp::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--td-lamp-glow);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--td-lamp-glow) 45%, transparent),
+    0 0 5px color-mix(in srgb, var(--td-lamp-glow) 55%, transparent);
+}
+
+.td-alert--info .td-registry-alert-lamp,
+.td-registry-alert--info .td-registry-alert-lamp { --td-lamp-glow: var(--td-accent); }
+.td-alert--success .td-registry-alert-lamp,
+.td-registry-alert--success .td-registry-alert-lamp { --td-lamp-glow: var(--td-green); }
+.td-alert--warning .td-registry-alert-lamp,
+.td-registry-alert--warning .td-registry-alert-lamp { --td-lamp-glow: var(--td-warning); }
+.td-alert--error .td-registry-alert-lamp,
+.td-registry-alert--error .td-registry-alert-lamp { --td-lamp-glow: var(--td-error); }
+
+/* The dismiss control takes the four-step ladder like anything else
+   clickable: softly raised, pressed into a shallow well on hover, deeper while
+   held. Every state carries the SAME FIVE shadow slots in the same order, and
+   the unused ones are the shadow colour at zero alpha rather than
+   `transparent` — a list of a different length snaps instead of interpolating,
+   and `transparent` is rgba(0, 0, 0, 0), so fading from it drags the whole
+   ladder through black. */
+.td-alert-close,
+.td-registry-alert-close {
+  appearance: none;
+  border: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  background: var(--td-raise-fill);
+  color: var(--td-ink-3);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  box-shadow:
+    2px 2px 5px color-mix(in srgb, var(--td-shadow-dark) 40%, transparent),
+    -2px -2px 5px color-mix(in srgb, var(--td-shadow-light) 45%, transparent),
+    inset 0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+  transition:
+    box-shadow var(--td-t-base) var(--td-ease),
+    background var(--td-t-base) var(--td-ease),
+    color var(--td-t-base) var(--td-ease);
+}
+.td-registry-alert-close:hover {
+  color: var(--td-ink);
+  background: var(--td-surface);
+  box-shadow:
+    0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    0 0 0 rgb(from var(--td-shadow-light) r g b / 0),
+    inset 1.5px 1.5px 4px color-mix(in srgb, var(--td-shadow-dark) 46%, transparent),
+    inset -1.5px -1.5px 3px color-mix(in srgb, var(--td-shadow-light) 40%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+.td-registry-alert-close:active {
+  color: var(--td-ink);
+  background: var(--td-surface);
+  box-shadow:
+    0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    0 0 0 rgb(from var(--td-shadow-light) r g b / 0),
+    inset 2.5px 2.5px 6px color-mix(in srgb, var(--td-shadow-dark) 60%, transparent),
+    inset -1.5px -1.5px 4px color-mix(in srgb, var(--td-shadow-light) 34%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+.td-registry-alert-close:focus-visible { outline: 2px solid var(--td-accent); outline-offset: 2px; }
+.td-registry-alert-close svg { width: 13px; height: 13px; display: block; fill: currentColor; }
+
+/* The variant classes exist so a consumer can target one; the lamp above is
+   what actually carries the category. */
+.td-alert--info, .td-alert--success, .td-alert--warning, .td-alert--error,
+.td-registry-alert, .td-registry-alert--info, .td-registry-alert--success,
+.td-registry-alert--warning, .td-registry-alert--error { background: var(--td-surface); }
+
+@media (max-width: 640px) {
+  .td-alert { grid-template-columns: 20px minmax(0, 1fr) auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .td-registry-alert-close { transition: none; }
+}

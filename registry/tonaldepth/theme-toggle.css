@@ -1,0 +1,171 @@
+/* TonalDepth ThemeToggle — self-contained. Requires @tonaldepth/tokens.
+
+   The round housing and the sun/moon swap are copied verbatim from the design
+   system (packages/core/src/compat.css) because a registry consumer has no
+   `tonaldepth-core` to inherit from. The deltas after them add the lamp
+   ladder and the labelled pill. */
+
+.td-iconbtn {
+  appearance: none;
+  background: var(--td-raise-fill);
+  color: var(--td-ink);
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  /* Five shadow slots, same order, every state: outer shade, outer highlight,
+     inset shade, inset highlight, edge ring. A list of a different length —
+     or one whose `inset` flags do not line up — snaps instead of
+     interpolating, and the unused slots are the shadow colour at zero alpha
+     rather than `transparent`, which is rgba(0, 0, 0, 0) and would drag the
+     transition through black. */
+  box-shadow:
+    2px 2px 5px color-mix(in srgb, var(--td-shadow-dark) 44%, transparent),
+    -2px -2px 5px color-mix(in srgb, var(--td-shadow-light) 88%, transparent),
+    inset 0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+  transition:
+    transform var(--td-t-base) var(--td-ease),
+    box-shadow var(--td-t-base) var(--td-ease),
+    background var(--td-t-base) var(--td-ease);
+}
+.td-iconbtn:hover {
+  transform: translateY(0.5px);
+  background: color-mix(in srgb, var(--td-surface) 96%, black);
+  box-shadow:
+    1px 1px 3px color-mix(in srgb, var(--td-shadow-dark) 36%, transparent),
+    -1px -1px 3px color-mix(in srgb, var(--td-shadow-light) 55%, transparent),
+    inset 1px 1px 3px color-mix(in srgb, var(--td-shadow-dark) 20%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 22%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+.td-iconbtn:active {
+  transform: translateY(1px);
+  background: var(--td-surface);
+  box-shadow:
+    0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    0 0 0 rgb(from var(--td-shadow-light) r g b / 0),
+    inset 3px 3px 7px color-mix(in srgb, var(--td-shadow-dark) 58%, transparent),
+    inset -2px -2px 5px color-mix(in srgb, var(--td-shadow-light) 34%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+.td-iconbtn:focus-visible {
+  outline: 2px solid var(--td-accent); outline-offset: 3px;
+}
+.td-iconbtn--sm {
+  width: 28px;
+  height: 28px;
+  box-shadow:
+    1px 1px 3px color-mix(in srgb, var(--td-shadow-dark) 40%, transparent),
+    -0.5px -0.5px 2px color-mix(in srgb, var(--td-shadow-light) 40%, transparent),
+    inset 0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+}
+.td-iconbtn--sm:hover {
+  box-shadow:
+    0.5px 0.5px 2px color-mix(in srgb, var(--td-shadow-dark) 32%, transparent),
+    -0.5px -0.5px 2px color-mix(in srgb, var(--td-shadow-light) 45%, transparent),
+    inset 0.5px 0.5px 2px color-mix(in srgb, var(--td-shadow-dark) 18%, transparent),
+    inset -0.5px -0.5px 1.5px color-mix(in srgb, var(--td-shadow-light) 20%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+.td-iconbtn--sm:active {
+  box-shadow:
+    0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    0 0 0 rgb(from var(--td-shadow-light) r g b / 0),
+    inset 2px 2px 4px color-mix(in srgb, var(--td-shadow-dark) 54%, transparent),
+    inset -1px -1px 3px color-mix(in srgb, var(--td-shadow-light) 30%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+.td-iconbtn .td-theme-icon {
+  transition: color 380ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.td-iconbtn .td-icon-sun {
+  display: none;
+}
+:root[data-theme="dark"] .td-iconbtn .td-icon-sun {
+  display: block;
+}
+:root[data-theme="dark"] .td-iconbtn .td-icon-moon {
+  display: none;
+}
+.td-iconbtn .td-icon-moon {
+  color: #4A4032;
+}
+.td-iconbtn:hover .td-icon-moon {
+  color: #C55B18;
+}
+.td-iconbtn:active .td-icon-moon {
+  color: var(--td-brand);
+}
+:root[data-theme="dark"] .td-iconbtn .td-icon-sun {
+  color: #6E685E;
+}
+:root[data-theme="dark"] .td-iconbtn:hover .td-icon-sun {
+  color: #E8A33C;
+}
+:root[data-theme="dark"] .td-iconbtn:active .td-icon-sun {
+  color: var(--td-brand);
+}
+
+/* The switch itself is `.td-iconbtn` and the sun/moon swap lives in the design
+   system. Only the lamp behaviour is scoped here: the icon carries the state
+   and the glow, which is the icon-as-lamp pattern every icon control follows. */
+.td-registry-theme-toggle {
+  /* The glow stays inside the housing. A `drop-shadow` is painted around the
+     glyph with no regard for the button's edge; without this it spills onto
+     the page. Overflow clips descendants, not the element's own box-shadow,
+     so the button's depth is untouched. */
+  overflow: hidden;
+}
+/* A lamp glow must never be `currentColor`: at rest the icon's colour is ink,
+   so the drop-shadow paints a dark burst behind the glyph instead of light
+   around it. The toggle is lit warm for the sun, cool for the moon. */
+.td-registry-theme-toggle { --td-lamp-glow: #FFB224; }
+:root[data-theme="dark"] .td-registry-theme-toggle { --td-lamp-glow: #8AB4FF; }
+.td-registry-theme-toggle .td-theme-icon {
+  filter: var(--td-lamp-off);
+  transition: color var(--td-t-base) var(--td-ease), filter var(--td-t-base) var(--td-ease);
+}
+/* Subtle, matching IconButton. `4px`/`7px` of full-strength `currentColor`
+   read as a flare rather than a lit filament. */
+.td-registry-theme-toggle:hover .td-theme-icon { filter: var(--td-lamp-hover); }
+.td-registry-theme-toggle:active .td-theme-icon { filter: var(--td-lamp-active); }
+
+/* ── Labelled form ────────────────────────────────────────────────────
+   The round housing becomes a pill so the switch can name itself. Same
+   button, same sun/moon swap, same lamp — only the shape and the label are
+   added, so nothing about the interaction changes. */
+.td-registry-theme-toggle--text {
+  width: auto;
+  min-width: 0;
+  border-radius: var(--td-radius-pill);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--td-sp-5);
+  padding: 0 var(--td-sp-9) 0 var(--td-sp-7);
+  min-height: var(--td-btn-h, 42px);
+}
+/* The label holds its ink through every state — only the icon ramps ([[L15]]). */
+.td-registry-theme-toggle--text .td-registry-theme-toggle-label {
+  font-family: var(--td-font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--td-ink);
+  white-space: nowrap;
+  transition: transform var(--td-t-slow) var(--td-ease);
+}
+.td-registry-theme-toggle--text:active .td-registry-theme-toggle-label { transform: translate(1px, 1px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .td-registry-theme-toggle .td-theme-icon,
+  .td-registry-theme-toggle--text .td-registry-theme-toggle-label { transition: none; }
+  .td-registry-theme-toggle--text:active .td-registry-theme-toggle-label { transform: none; }
+}

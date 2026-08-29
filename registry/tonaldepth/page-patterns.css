@@ -1,0 +1,96 @@
+/* Cross-component rules: these reach classes the pattern does not emit
+   itself, so nothing in the class-parity checks can see them go missing. */
+.td-registry-pattern-metrics > .td-kpi-grid { width: 100%; }
+.td-registry-page-state--error .td-empty-art { color: var(--td-error-text); }
+
+/* Base rules transcribed from the design system, because a registry item is
+   copied into a consumer's tree on its own and has no `tonaldepth-core` to
+   inherit from. Without these, DashboardPage and DashboardPanel installed from
+   the registry render an unstyled panel and page header. */
+
+.td-panel { background: var(--td-surface); border: 1px solid var(--td-btn-border-rest); border-radius: 14px; box-shadow: var(--td-btn-rest); padding: 18px; display: flex; flex-direction: column; gap: 12px; min-width: 0; overflow: hidden;
+}
+.td-panel-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+}
+.td-panel-title { font-family: var(--td-font-ui); font-size: 14px; font-weight: 600; color: var(--td-ink);
+}
+.td-panel-sub { font-family: var(--td-font-mono); font-size: 10px; color: var(--td-ink-2); letter-spacing: 0.04em;
+}
+.td-page-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+}
+.td-page-title { font-family: var(--td-font-display); font-size: 32px; text-transform: uppercase; line-height: 1; letter-spacing: 0.005em; color: var(--td-ink); margin: 0;
+}
+.td-page-sub { font-family: var(--td-font-sans); font-size: 13px; color: var(--td-ink-2); margin: 4px 0 0;
+}
+.td-page-actions { display: flex; gap: 8px; flex-wrap: wrap;
+}
+
+/* TonalDepth PagePatterns — self-contained. Requires @tonaldepth/tokens. */
+
+.td-registry-page-pattern { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+.td-registry-pattern-metrics { display: block; min-width: 0; }
+.td-registry-pattern-footer { padding-top: 12px; border-top: 1px solid color-mix(in srgb, var(--td-ink-2) 12%, transparent); color: var(--td-ink-2); font-size: 12.5px; }
+.td-registry-pattern-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+
+.td-bento { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; min-width: 0; }
+.td-bento-cell--span2 { grid-column: span 2; }
+.td-bento-cell--span-full { grid-column: 1 / -1; }
+@media (max-width: 900px) { .td-bento { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 640px) { .td-bento { grid-template-columns: 1fr; } .td-bento-cell--span2 { grid-column: 1; } }
+
+.td-fbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--td-raise-fill);
+  border: 0;
+  border-radius: 14px;
+  box-shadow:
+    2px 2px 6px color-mix(in srgb, var(--td-shadow-dark) 44%, transparent),
+    -2px -2px 6px color-mix(in srgb, var(--td-shadow-light) 60%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+}
+
+.td-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  padding: 24px 16px;
+}
+.td-empty-art {
+  width: 80px;
+  height: 80px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--td-brand) 14%, var(--td-surface));
+  border: 1px solid color-mix(in srgb, var(--td-brand) 22%, var(--td-btn-border-rest));
+}
+.td-empty-art svg { width: 40px; height: 40px; color: var(--td-brand); }
+.td-empty-title { font-family: var(--td-font-display); font-size: 22px; text-transform: uppercase; line-height: 1; color: var(--td-ink); }
+.td-empty-text { font-size: 13px; color: var(--td-ink-2); line-height: 1.6; max-width: 320px; }
+
+.td-loading-dots { display: inline-flex; align-items: center; gap: 3px; vertical-align: middle; }
+.td-loading-dots span { width: 4px; height: 4px; border-radius: 50%; background: currentColor; animation: td-loading-bounce 1.2s ease-in-out infinite; }
+.td-loading-dots span:nth-child(2) { animation-delay: 0.15s; }
+.td-loading-dots span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes td-loading-bounce { 0%, 80%, 100% { transform: scale(0.6); opacity: 0.5; } 40% { transform: scale(1); opacity: 1; } }
+
+.td-registry-page-state--empty { color: var(--td-ink-2); }
+.td-registry-page-state--loading { color: var(--td-ink-2); }
+.td-registry-page-state--error { color: var(--td-error-text); }
+
+/* Same raised depth as Card: all three sides, or the bento reads as one
+   flat sheet on paper. */
+.td-panel.td-registry-panel {
+  box-shadow:
+    4px 4px 12px color-mix(in srgb, var(--td-shadow-dark) 70%, transparent),
+    -4px -4px 12px color-mix(in srgb, var(--td-shadow-light) 66%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+}

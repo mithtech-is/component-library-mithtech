@@ -1,0 +1,81 @@
+/* TonalDepth Textarea — self-contained. Requires @tonaldepth/tokens. */
+
+/* A passive surface grooves inward. This was a raised slab riding
+   `--td-btn-rest`, which put one lifted plate among a form of sunken slots —
+   and on paper that recipe is a 0.105-alpha shade under a 0.18-alpha
+   highlight, so the slab barely read at all. Transcribed from `.td-input-wrap`
+   so the two agree.
+
+   The focus ring is declared unlit in every state so the ladder interpolates
+   rather than snaps, in the ring's own colour at zero alpha rather than
+   `transparent` (which is rgba(0, 0, 0, 0) and would fade through black). */
+.td-textarea-wrap {
+  display: block;
+  background: color-mix(in srgb, var(--td-surface) 88%, black);
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--td-surface) 76%, black);
+  box-shadow:
+    inset 2px 2px 4px color-mix(in srgb, var(--td-shadow-dark) 60%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 50%, transparent),
+    0 0 0 1.5px rgb(from var(--td-accent) r g b / 0);
+  padding: 10px 14px;
+  transition: box-shadow 200ms var(--td-ease), border-color 180ms var(--td-ease);
+}
+.td-textarea-wrap:hover { border-color: color-mix(in srgb, var(--td-surface) 68%, black); }
+.td-textarea-wrap:focus-within {
+  border-color: color-mix(in srgb, var(--td-accent) 70%, var(--td-btn-border-rest));
+  box-shadow:
+    inset 2px 2px 4px color-mix(in srgb, var(--td-shadow-dark) 60%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 50%, transparent),
+    0 0 0 1.5px color-mix(in srgb, var(--td-accent) 16%, transparent);
+}
+.td-textarea-wrap[data-state="error"] {
+  border-color: var(--td-brand);
+}
+.td-textarea-wrap[data-state="error"]:focus-within {
+  box-shadow:
+    inset 2px 2px 4px color-mix(in srgb, var(--td-shadow-dark) 60%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 50%, transparent),
+    0 0 0 1.5px color-mix(in srgb, var(--td-brand) 28%, transparent);
+}
+.td-textarea {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  font: inherit;
+  font-family: var(--td-font-ui);
+  color: var(--td-ink);
+  font-size: 13px;
+  line-height: 1.5;
+  width: 100%;
+  min-height: 92px;
+  resize: vertical;
+}
+.td-textarea::placeholder { color: var(--td-ink-3); }
+
+/* The system's own prose says a passive surface grooves inward, and the shipped
+   `.td-textarea-wrap` is raised — so a form reads as sunken slots with one
+   raised slab dropped among them. Transcribed from `.td-input-wrap` so the two
+   agree. Written at (0,2,0) to clear a consumer stylesheet's own copy. */
+.td-textarea-wrap.td-registry-textarea-wrap {
+  background: color-mix(in srgb, var(--td-surface) 88%, black);
+  border-color: color-mix(in srgb, var(--td-surface) 76%, black);
+  /* The focus ring is a third slot, declared unlit here so the two states
+     interpolate rather than snap ([[L18]]), in the ring's own colour at zero
+     alpha rather than `transparent` ([[L20]]). This modifier is (0,2,0) and so
+     overrides the base rule above, which already carries the slot — dropping
+     it here put the snap back. */
+  box-shadow:
+    inset 2px 2px 4px color-mix(in srgb, var(--td-shadow-dark) 60%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 50%, transparent),
+    0 0 0 1.5px rgb(from var(--td-accent) r g b / 0);
+}
+.td-textarea-wrap.td-registry-textarea-wrap:hover { border-color: color-mix(in srgb, var(--td-surface) 68%, black); }
+.td-textarea-wrap.td-registry-textarea-wrap:focus-within {
+  border-color: color-mix(in srgb, var(--td-accent) 70%, var(--td-btn-border-rest));
+  box-shadow:
+    inset 2px 2px 4px color-mix(in srgb, var(--td-shadow-dark) 60%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 50%, transparent),
+    0 0 0 1.5px color-mix(in srgb, var(--td-accent) 16%, transparent);
+}

@@ -1,0 +1,141 @@
+/* PricingTable — the plan grid.
+
+   Each plan is a raised card, because a plan is being *offered*. It therefore
+   reads on all four sides in light mode ([[L27]]): the shade, the matching
+   highlight, and the `0 0 0 1px` edge ring — with the highlight never stronger
+   or wider than the shade it answers ([[L26]]).
+
+   The design system's card fills its "most picked" mark with papaya and rings
+   the featured plan in 2px of brand. Filling with the brand colour is the one
+   move the system forbids ([[L11]]), so the mark is a carved chip carrying
+   papaya as INK, and the featured plan is reported by depth — it sits further
+   out of the page than its neighbours, and the ring it already carries
+   resolves to papaya instead of the neutral edge. */
+
+.td-react-pricing {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--td-price-min, 260px), 1fr));
+  gap: var(--td-sp-7);
+  align-items: stretch;
+  min-width: 0;
+}
+
+.td-price.td-react-price {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--td-sp-5);
+  min-width: 0;
+  padding: var(--td-sp-9);
+  border: 0;
+  border-radius: var(--td-radius-8);
+  background: var(--td-raise-fill);
+  box-shadow:
+    3px 3px 12px color-mix(in srgb, var(--td-shadow-dark) 72%, transparent),
+    -3px -3px 12px color-mix(in srgb, var(--td-shadow-light) 68%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+}
+/* The plan the page argues for: pushed further out, and the ring it already
+   carries turns papaya. No fill, no second ring, no extra shadow slot. */
+.td-price.td-react-price[data-featured="true"] {
+  box-shadow:
+    5px 5px 14px color-mix(in srgb, var(--td-shadow-dark) 60%, transparent),
+    -4px -4px 12px color-mix(in srgb, var(--td-shadow-light) 58%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px color-mix(in srgb, var(--td-brand) 62%, var(--td-edge));
+}
+
+/* A mark, not a plate: carved into the card, papaya as ink. */
+.td-price-badge.td-react-price-badge {
+  align-self: flex-start;
+  margin: 0;
+  padding: var(--td-sp-2) var(--td-sp-4);
+  border-radius: var(--td-radius-1);
+  width: fit-content;
+  font-family: var(--td-font-mono);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--td-brand-text);
+  background: transparent;
+  box-shadow:
+    inset 1px 1px 3px color-mix(in srgb, var(--td-shadow-dark) 40%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 38%, transparent);
+}
+
+.td-price-name.td-react-price-name {
+  margin: 0;
+  font-family: var(--td-font-ui);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--td-ink);
+}
+
+.td-price-tag.td-react-price-tag {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--td-sp-2);
+  margin: 0;
+  min-width: 0;
+}
+.td-price-amt.td-react-price-amt {
+  font-family: var(--td-font-display);
+  font-size: 2.1rem;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  color: var(--td-ink);
+}
+.td-price-per.td-react-price-per {
+  font-family: var(--td-font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  color: var(--td-ink-2);
+}
+
+.td-react-price-description {
+  margin: 0;
+  font-family: var(--td-font-sans);
+  font-size: 0.78rem;
+  line-height: 1.55;
+  color: var(--td-ink-2);
+}
+
+.td-price-features.td-react-price-features {
+  display: flex;
+  flex-direction: column;
+  gap: var(--td-sp-3);
+  margin: var(--td-sp-2) 0 0;
+  padding: 0;
+  list-style: none;
+  min-width: 0;
+}
+.td-price-feature.td-react-price-feature {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--td-sp-4);
+  min-width: 0;
+  font-family: var(--td-font-sans);
+  font-size: 0.79rem;
+  line-height: 1.5;
+  color: var(--td-ink-2);
+}
+/* An included feature is the same *yes* a comparison table marks, so it takes
+   the same glyph and the same colour. */
+.td-react-price-mark {
+  flex: 0 0 auto;
+  width: 0.95em;
+  height: 0.95em;
+  margin-top: 0.22em;
+  fill: currentColor;
+  color: var(--td-green-text);
+}
+.td-react-price-feature-text { min-width: 0; }
+
+/* The action sits at the foot of every card whatever the feature counts are,
+   so a row of plans lines its buttons up rather than stepping down. */
+.td-price-cta.td-react-price-cta { margin-top: auto; padding-top: var(--td-sp-5); }

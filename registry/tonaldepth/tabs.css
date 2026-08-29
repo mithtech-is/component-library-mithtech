@@ -1,0 +1,72 @@
+/* TonalDepth Tabs — self-contained. Requires @tonaldepth/tokens. */
+
+.td-tabs {
+  padding: var(--td-sp-3);
+  border-radius: var(--td-radius-10);
+  background: var(--td-surface);
+  box-shadow: var(--td-raised);
+  display: flex;
+  flex-direction: column;
+  gap: var(--td-sp-3);
+  max-width: 100%;
+}
+.td-tablist {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border-radius: var(--td-radius-8);
+  background: var(--td-surface-2);
+  box-shadow: var(--td-inset-soft);
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.td-tablist::-webkit-scrollbar { display: none; }
+.td-tab {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: var(--td-font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--td-ink-2);
+  padding: 9px 15px;
+  border-radius: var(--td-radius-6);
+  transition:
+    color var(--td-t-base) var(--td-ease),
+    box-shadow var(--td-t-base) var(--td-ease),
+    background var(--td-t-base) var(--td-ease);
+}
+.td-tab:hover { color: var(--td-ink); }
+.td-tab[aria-selected="true"] {
+  color: var(--td-ink);
+  background: var(--td-surface);
+  box-shadow:
+    0 1px 2px color-mix(in srgb, var(--td-shadow-dark) 34%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, var(--td-ink) 9%, transparent);
+}
+.td-tab:focus-visible { outline: 2px solid var(--td-brand); outline-offset: -2px; }
+.td-tabpanel {
+  border-radius: calc(var(--td-radius-10) - var(--td-sp-3));
+  background: var(--td-surface-2);
+  box-shadow: var(--td-inset-soft);
+  padding: var(--td-sp-11);
+  font-family: var(--td-font-ui);
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--td-ink-2);
+}
+
+/* A shade with no highlight opposite it reads as a smudge on paper, not a
+   lift. Light falls from the top-left; the highlight is the other half of it. */
+.td-tab.td-registry-tab[aria-selected="true"] {
+  box-shadow:
+    2px 2px 5px color-mix(in srgb, var(--td-shadow-dark) 44%, transparent),
+    -2px -2px 5px color-mix(in srgb, var(--td-shadow-light) 55%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+}

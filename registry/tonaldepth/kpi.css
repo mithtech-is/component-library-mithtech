@@ -1,0 +1,28 @@
+/* TonalDepth KPI — self-contained. Requires @tonaldepth/tokens. */
+
+.td-kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; min-width: 0; }
+.td-kpi {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px;
+  background: var(--td-surface);
+  border: 1px solid var(--td-btn-border-rest);
+  border-radius: 14px;
+  box-shadow:
+    4px 4px 10px color-mix(in srgb, var(--td-shadow-dark) 46%, transparent),
+    -4px -4px 12px color-mix(in srgb, var(--td-shadow-light) 52%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+  min-width: 0;
+  position: relative;
+}
+.td-kpi-eyebrow { font-family: var(--td-font-mono); font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--td-ink-3); }
+.td-kpi-value { font-family: var(--td-font-ui); font-size: 32px; line-height: 1; color: var(--td-ink); letter-spacing: 0.005em; }
+.td-kpi-delta { display: inline-flex; align-items: center; gap: 3px; font-family: var(--td-font-mono); font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 5px; align-self: flex-start; }
+.td-kpi-delta--up { color: var(--td-green-text); background: color-mix(in srgb, var(--td-green) 14%, transparent); }
+.td-kpi-delta--down { color: var(--td-brand-text); background: color-mix(in srgb, var(--td-brand) 14%, transparent); }
+.td-kpi-delta--neutral { color: var(--td-ink-2); background: color-mix(in srgb, var(--td-ink-2) 10%, transparent); }
+.td-kpi-spark { position: absolute; right: 12px; bottom: 12px; width: 60px; height: 28px; opacity: 0.7; }
+
+.td-registry-kpi { min-width: 0; }

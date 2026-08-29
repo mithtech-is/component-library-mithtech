@@ -1,0 +1,36 @@
+/* The box centres against the whole label, which is right for one line and
+   wrong for a label carrying a description — the box drifts to the second line
+   of a three-line block and reads as unattached. Top alignment is identical for
+   a one-line label, so it is the safe default. */
+.td-check.td-react-check { align-items: flex-start; }
+
+/* Switch, dark mode only — a very small correction, because light is right.
+
+   2026-08-29: *"The switch looks perfect in light mode but it has visibility
+   issues in dark mode."*
+
+   One number explains it. In dark, `--td-shadow-light` is
+   `rgba(255, 248, 230, 0.062)` against light mode's opaque `#ffffff`, so the
+   highlight that shapes the channel and rounds the cap is doing about a
+   sixteenth of the work — and `--td-raise-fill` sits only 2.5% above the
+   surface, so the thumb has almost no fill separating it either. The channel
+   flattens into a hole and the cap disappears into it.
+
+   Nothing about the recipe changes: the same slots, the same order, the same
+   material. The two values that carry the shape in this mode are nudged, and
+   only in this mode. */
+:root[data-theme="dark"] .td-switch.td-react-switch .td-switch-track {
+  box-shadow:
+    inset 2px 2px 5px color-mix(in srgb, var(--td-shadow-dark) 62%, transparent),
+    inset -2px -2px 4px color-mix(in srgb, #FFF8E6 11%, transparent),
+    0 0 0 1px color-mix(in srgb, #FFF8E6 9%, transparent);
+}
+:root[data-theme="dark"] .td-switch.td-react-switch .td-switch-thumb {
+  /* The cap needs to be a cap. 2.5% above the surface is not a solid. */
+  background: color-mix(in srgb, #FFF8E6 7%, var(--td-surface));
+  box-shadow:
+    2px 2px 4px color-mix(in srgb, var(--td-shadow-dark) 55%, transparent),
+    -1.5px -1.5px 3px color-mix(in srgb, #FFF8E6 9%, transparent),
+    inset 0 1px 0 color-mix(in srgb, #FFF8E6 12%, transparent),
+    0 0 0 1px color-mix(in srgb, #FFF8E6 13%, transparent);
+}

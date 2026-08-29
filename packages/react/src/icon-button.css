@@ -1,0 +1,145 @@
+/* IconButton — the lamp.
+   The housing takes the depth ladder; the ICON carries the state. Unlit ink
+   at rest, lit with a soft glow on hover, brighter on press. The label, when
+   there is one, never rides that ramp ([[L15]]).
+
+   The `.td-glowicon` family this layers over ships in packages/core. Only the
+   deltas live here. Modifiers are written at (0,3,0) to match button.css —
+   a consumer that raises the base's specificity (mith.tech ships
+   `:root[data-theme="dark"] .td-primary`) would otherwise win. */
+
+/* A lamp sizes to its content. `.td-glowicon--text` is inline-flex, which CSS
+   blockifies to `flex` as a grid or flex item and then stretches to the whole
+   track — the same bug that made badges and buttons span their column. */
+.td-react-iconbutton {
+  width: fit-content;
+  max-width: 100%;
+  flex: 0 0 auto;
+  /* The glow stays inside the housing. A `drop-shadow` is painted around the
+     glyph with no regard for the button's edge, so the upstream 12px bloom
+     spilled onto the page and read as the button leaking light rather than
+     holding a lamp. `overflow: hidden` clips it to the border-radius; the
+     housing's own box-shadow is unaffected, because overflow clips
+     descendants, not the element's own shadow. */
+  overflow: hidden;
+}
+
+/* The glow's colour, per housing. Declared once so the two state rules below
+   stay single rules instead of one pair per tone. */
+.td-react-iconbutton { --td-lamp-glow: var(--td-green); }
+.td-react-iconbutton:is(.td-glowicon--papaya, .td-glowicon--azure, .td-glowicon--invert,
+  .td-glowicon--wa, .td-glowicon--fb, .td-glowicon--ig, .td-glowicon--x,
+  .td-glowicon--li, .td-glowicon--yt) { --td-lamp-glow: #fff; }
+.td-react-iconbutton.td-glowicon--wa-inv { --td-lamp-glow: #25D366; }
+
+/* The quiet channel tones: a carved surface housing whose lamp lights the
+   platform's own colour. This is the form a social row wants — a row of solid
+   platform-coloured discs is a wall of fills, which is the one move the system
+   forbids ([[L11]]).
+
+   Only the lamp takes the colour. The housing is the same surface button every
+   other neutral IconButton is, so a row of six reads as one material. */
+.td-react-iconbutton.td-glowicon--fb-inv { --td-lamp-glow: #1877F2; }
+.td-react-iconbutton.td-glowicon--ig-inv { --td-lamp-glow: #C13584; }
+.td-react-iconbutton.td-glowicon--x-inv { --td-lamp-glow: var(--td-ink); }
+.td-react-iconbutton.td-glowicon--li-inv { --td-lamp-glow: #0A66C2; }
+.td-react-iconbutton.td-glowicon--yt-inv { --td-lamp-glow: #E62117; }
+
+/* The glow ladder: OFF at rest, a soft bloom on hover, a solid core plus a
+   wide halo on press. All three are tokens (`--td-lamp-off/-hover/-active`),
+   so the whole system's ladder is retuned from tokens/source/tokens.json.
+
+   Rest is two EXPLICIT zero shadows, never `none`: transitioning from `none`
+   lets the engine invent the start value and it flashes a dark shadow behind
+   the icon, and a state with a different shadow count snaps rather than
+   interpolating — which is why press used to look the same as hover.
+   (0,3,1) beats the base's (0,2,1), so these win without !important. */
+.td-react-iconbutton .td-react-iconbutton-lamp > svg { filter: var(--td-lamp-off); }
+.td-react-iconbutton:hover .td-react-iconbutton-lamp > svg,
+.td-react-iconbutton[data-state="hover"] .td-react-iconbutton-lamp > svg { filter: var(--td-lamp-hover); }
+.td-react-iconbutton:active .td-react-iconbutton-lamp > svg,
+.td-react-iconbutton[data-state="active"] .td-react-iconbutton-lamp > svg { filter: var(--td-lamp-active); }
+.td-react-iconbutton:disabled .td-react-iconbutton-lamp > svg { filter: var(--td-lamp-off); }
+
+/* The state is carried by the GLYPH'S COLOUR, and the halo only sweetens it.
+   A filament brightens because the metal gets hotter, not because something
+   appears behind it — so the icon steps from unlit ink to the full lamp colour
+   and the drop-shadow stays a hint. This is also what keeps the ladder legible
+   when the halo is nearly invisible, as it is on a pale surface. */
+.td-react-iconbutton .td-react-iconbutton-lamp { color: var(--td-ink-3); transition: color var(--td-t-base) var(--td-ease); }
+.td-react-iconbutton:hover .td-react-iconbutton-lamp,
+.td-react-iconbutton[data-state="hover"] .td-react-iconbutton-lamp { color: color-mix(in srgb, var(--td-lamp-glow) 70%, var(--td-ink-2)); }
+.td-react-iconbutton:active .td-react-iconbutton-lamp,
+.td-react-iconbutton[data-state="active"] .td-react-iconbutton-lamp { color: var(--td-lamp-glow); }
+.td-react-iconbutton:disabled .td-react-iconbutton-lamp { color: var(--td-ink-3); }
+/* A filled housing already supplies the contrast, so its glyph stays white and
+   only the halo moves — recolouring it to `#fff` at every step is a no-op that
+   would just fight the housing's own hover colour. */
+.td-react-iconbutton:is(.td-glowicon--papaya, .td-glowicon--azure, .td-glowicon--invert,
+  .td-glowicon--wa, .td-glowicon--fb, .td-glowicon--ig, .td-glowicon--x,
+  .td-glowicon--li, .td-glowicon--yt) .td-react-iconbutton-lamp { color: inherit; }
+
+/* The glow belongs to the LAMP, never to the housing.
+   Upstream, the `--invert` and channel variants put their pressed-state
+   `drop-shadow` on a selector list that includes the button itself, not only
+   its `svg` — so the whole housing bloomed. `overflow: hidden` cannot contain
+   that: overflow clips an element's descendants, never its own filter, so the
+   halo painted straight onto the page. Stripping the housing filter here
+   leaves the icon's glow as the only light, which is the pattern.
+   (0,3,0) beats the base's (0,2,0). */
+.td-react-iconbutton.td-glowicon:hover,
+.td-react-iconbutton.td-glowicon:active,
+.td-react-iconbutton.td-glowicon[data-state="hover"],
+.td-react-iconbutton.td-glowicon[data-state="active"] { filter: none; }
+/* The round form is a fixed 42px housing; `width: fit-content` would collapse
+   it to the glyph, so the base's own sizing is restored. */
+.td-react-iconbutton:not(.td-glowicon--text) { width: 42px; }
+
+/* The lamp wrapper exists so the glyph can be sized and glowed without the
+   component dictating the SVG's own attributes. */
+.td-react-iconbutton .td-react-iconbutton-lamp {
+  display: inline-grid;
+  place-items: center;
+  line-height: 0;
+}
+.td-react-iconbutton .td-react-iconbutton-lamp > svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+  stroke: none;
+}
+
+/* L15 correction, applied upstream rather than at the call site.
+   `.td-glowicon--wa-inv .td-glowicon-label` ships green, which makes the
+   label ride the lamp's ramp — the one thing the lamp pattern forbids. The
+   channel is already signalled by the icon; the label holds its ink. */
+.td-react-iconbutton:is(.td-glowicon--wa-inv, .td-glowicon--fb-inv, .td-glowicon--ig-inv, .td-glowicon--x-inv, .td-glowicon--li-inv, .td-glowicon--yt-inv) .td-glowicon-label { color: var(--td-ink); }
+
+@media (prefers-reduced-motion: reduce) {
+  .td-react-iconbutton,
+  .td-react-iconbutton .td-react-iconbutton-lamp > svg { transition: none; }
+  .td-react-iconbutton:active .td-react-iconbutton-lamp > svg { transform: none; }
+}
+
+/* A labelled lamp is a CTA, and it was drawn at the size of a secondary
+   control: a 42px pill with a 13px label and an 18px glyph — identical
+   proportions to `Button size="md"`, but a pill reads smaller than a rectangle
+   of the same height, and next to a 600-weight label an 18px filled glyph is
+   optically the lightest thing in the button.
+
+   It steps up to the system's large control height rather than to a new
+   number, so a row of `Button size="lg"` and labelled lamps still lines up.
+   The round, unlabelled housing is unchanged — an icon-only control in a
+   toolbar is not a CTA. (0,3,0), matching the rest of this file. */
+.td-react-iconbutton.td-glowicon.td-glowicon--text {
+  min-height: var(--td-btn-h-lg, 50px);
+  padding: 0 22px 0 17px;
+  gap: 11px;
+  font-size: 14px;
+}
+.td-react-iconbutton.td-glowicon.td-glowicon--text .td-react-iconbutton-lamp > svg {
+  /* 21px against this rule's own 14px label — stated as the ratio so it stays
+     in step with Button, SplitButton and FilamentButton, which now share it. */
+  width: 1.5em;
+  height: 1.5em;
+}

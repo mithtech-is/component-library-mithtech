@@ -1,0 +1,420 @@
+/* TonalDepth ArticleCard — self-contained. Requires @tonaldepth/tokens. */
+
+.td-mk-article-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--td-sp-10);
+  min-width: 0;
+}
+
+.td-mk-article {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border-radius: var(--td-radius-8);
+  background: var(--td-raise-fill);
+  overflow: hidden;
+  /* Five shadow slots, in this order, in every state: outer shade, outer
+     highlight, inset shade, inset highlight, edge ring. A list of a different
+     length — or one whose `inset` flags do not line up — snaps instead of
+     interpolating, and the unused slots are the shadow colour at zero alpha
+     rather than `transparent`, which is rgba(0, 0, 0, 0) and would drag the
+     transition through black. */
+  box-shadow:
+    3px 3px 12px color-mix(in srgb, var(--td-shadow-dark) 72%, transparent),
+    -3px -3px 12px color-mix(in srgb, var(--td-shadow-light) 68%, transparent),
+    inset 0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+  transition:
+    box-shadow var(--td-t-base) var(--td-ease),
+    background var(--td-t-base) var(--td-ease);
+}
+.td-mk-article--link:hover {
+  background: var(--td-raise-fill-hover);
+  box-shadow:
+    1px 1px 4px color-mix(in srgb, var(--td-shadow-dark) 44%, transparent),
+    -2px -2px 5px color-mix(in srgb, var(--td-shadow-light) 85%, transparent),
+    inset 2px 2px 4px color-mix(in srgb, var(--td-shadow-dark) 38%, transparent),
+    inset -2px -2px 6px color-mix(in srgb, var(--td-shadow-light) 32%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+.td-mk-article--link:active {
+  background: var(--td-surface);
+  box-shadow:
+    0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    0 0 0 rgb(from var(--td-shadow-light) r g b / 0),
+    inset 3px 3px 7px color-mix(in srgb, var(--td-shadow-dark) 58%, transparent),
+    inset -2px -2px 5px color-mix(in srgb, var(--td-shadow-light) 34%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+/* Scoped to the title link rather than `:focus-within`: the payload well
+   holds real controls, and focusing a chip must ring the chip, not the card. */
+.td-mk-article--link:has(.td-mk-article-titlelink:focus-visible) { outline: 2px solid var(--td-accent); outline-offset: 3px; }
+.td-mk-article-titlelink:focus-visible { outline: none; }
+
+.td-mk-article-titlelink { color: inherit; text-decoration: none; }
+.td-mk-article-titlelink::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.td-mk-article-cover {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--td-surface) 94%, black);
+  box-shadow:
+    inset 0 -1px 0 color-mix(in srgb, var(--td-shadow-dark) 42%, transparent),
+    inset 0 -2px 0 color-mix(in srgb, var(--td-shadow-light) 40%, transparent);
+}
+.td-mk-article-cover > img,
+.td-mk-article-cover > svg { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.td-mk-article-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--td-sp-5);
+  padding: var(--td-sp-10);
+  min-width: 0;
+}
+
+.td-mk-article-eyebrow {
+  margin: 0;
+  font-family: var(--td-font-ui);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--td-brand-text);
+}
+
+.td-mk-article-title {
+  margin: 0;
+  font-family: var(--td-font-ui);
+  font-size: clamp(16px, 1.2vw, 18px);
+  font-weight: 600;
+  line-height: 1.32;
+  color: var(--td-ink);
+  transition: color var(--td-t-fast) var(--td-ease);
+}
+.td-mk-article--link:hover .td-mk-article-title { color: var(--td-brand-text); }
+.td-mk-article-titlelink { transition: color var(--td-t-fast) var(--td-ease); }
+
+.td-mk-article-excerpt {
+  margin: 0;
+  max-width: 52ch;
+  font-family: var(--td-font-sans);
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--td-ink-2);
+}
+
+.td-mk-article-foot {
+  margin-top: auto;
+  padding-top: var(--td-sp-6);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--td-sp-6);
+  border-top: 1px solid color-mix(in srgb, var(--td-shadow-dark) 42%, transparent);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--td-shadow-light) 60%, transparent);
+}
+.td-mk-article-author {
+  display: flex;
+  align-items: center;
+  gap: var(--td-sp-5);
+  min-width: 0;
+}
+.td-mk-article-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  background: var(--td-surface-2);
+  box-shadow:
+    inset 1px 1px 2px color-mix(in srgb, var(--td-shadow-dark) 40%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 55%, transparent);
+  font-family: var(--td-font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--td-ink);
+  overflow: hidden;
+}
+.td-mk-article-avatar > img,
+.td-mk-article-avatar > svg { width: 100%; height: 100%; object-fit: cover; }
+.td-mk-article-name {
+  margin: 0;
+  font-family: var(--td-font-ui);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--td-ink);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.td-mk-article-meta {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--td-sp-3);
+  font-family: var(--td-font-mono);
+  font-size: 11px;
+  color: var(--td-ink-3);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  flex: 0 0 auto;
+}
+.td-mk-article-meta-sep { color: var(--td-ink-3); }
+.td-mk-article-date,
+.td-mk-article-read { color: inherit; }
+
+
+/* ── What the piece carries ──────────────────────────────────────────────
+   A long-form piece ships with things: a calculator, a spreadsheet, a
+   dataset, a live demo. This strip surfaces them on the card so the reader
+   knows before clicking. Raised chips on a recessed shelf — the system's
+   grammar for "contents of this container".
+
+   It sits above the stretched title link, or the card's own overlay would
+   swallow every chip. */
+.td-mk-article-payload {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  /* A flex item's `min-width: auto` is its content, so without this the row of
+     chips sets the well's width and spills out past the card instead of
+     scrolling inside it. */
+  min-width: 0;
+  gap: var(--td-sp-4);
+  padding: var(--td-sp-5);
+  border-radius: var(--td-radius-5);
+  background: var(--td-surface);
+  box-shadow:
+    inset 1.5px 1.5px 4px color-mix(in srgb, var(--td-shadow-dark) 42%, transparent),
+    inset -1.5px -1.5px 4px color-mix(in srgb, var(--td-shadow-light) 46%, transparent);
+}
+
+/* The card's own ladder holds at rest while the pointer is in the well.
+   Without this the card presses under a chip the chip's own press is
+   answering, and the card's affordance promises a navigation that will not
+   happen — the chip's href wins. */
+.td-mk-article--link:has(.td-mk-article-payload:hover) {
+  background: var(--td-raise-fill);
+  box-shadow:
+    3px 3px 12px color-mix(in srgb, var(--td-shadow-dark) 72%, transparent),
+    -3px -3px 12px color-mix(in srgb, var(--td-shadow-light) 68%, transparent),
+    inset 0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+}
+.td-mk-article--link:has(.td-mk-article-payload:hover) .td-mk-article-title { color: var(--td-ink); }
+
+.td-mk-article-payload-label {
+  margin: 0;
+  font-family: var(--td-font-ui);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--td-ink-3);
+}
+
+/* One row that scrolls sideways. The native scrollbar is hidden because the
+   arrows are the affordance; touch and trackpad still scroll it directly. */
+/* Three rows that scroll sideways as ONE. The scroller is the column; each
+   row is its own flex line inside it, so a chip hugs its own label rather than
+   being stretched to a column's widest — the masonry read the design system's
+   own card has. */
+.td-mk-article-assets {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: var(--td-sp-3);
+  margin: 0;
+  /* 6px, not 0. This is a scroller, so its padding is the only thing keeping
+     the chips off the well's own edge — the list reset that zeroed it left the
+     first chip flush against the side and the rows touching top and bottom.
+     Kept deliberately small: the well is a shelf inside a card, and anything
+     more reads as a second panel rather than a lining. */
+  padding: var(--td-sp-3);
+  list-style: none;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  /* No scroll-snap. Measured in Chrome 2026-08-28: with the chips narrower
+     than the scrollport, proximity snapping pulls a paged scroll straight back
+     to the first chip, so the arrows appeared inert. */
+  overscroll-behavior-inline: contain;
+  scrollbar-width: none;
+}
+.td-mk-article-assets::-webkit-scrollbar { display: none; }
+.td-mk-article-assetrow {
+  display: flex;
+  align-items: center;
+  gap: var(--td-sp-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.td-mk-article-asset-item { flex: 0 0 auto; }
+
+/* Local custom properties, not tokens: `ink` is the kind's category colour on
+   the glyph, `tint` the same category answering on the ring under the
+   pointer. Colour is category, so both hold their value through every rung of
+   the ladder — what moves with state is the depth and the label's ink. */
+.td-mk-article-asset {
+  --td-mk-asset-ink: var(--td-ink-3);
+  --td-mk-asset-tint: var(--td-ink-3);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--td-sp-3);
+  padding: 5px 10px;
+  border-radius: var(--td-radius-pill);
+  text-decoration: none;
+  background: var(--td-raise-fill);
+  /* Not the large control height a labelled lamp takes: that is the CTA
+     pattern. A chip is an index entry inside a well, and sized to the CTA it
+     would out-weigh the title it sits under. */
+  font-family: var(--td-font-ui);
+  font-size: 11.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow:
+    1.5px 1.5px 4px color-mix(in srgb, var(--td-shadow-dark) 46%, transparent),
+    -1.5px -1.5px 4px color-mix(in srgb, var(--td-shadow-light) 62%, transparent),
+    inset 0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+  transition:
+    box-shadow var(--td-t-fast) var(--td-ease),
+    background var(--td-t-fast) var(--td-ease),
+    color var(--td-t-fast) var(--td-ease);
+}
+.td-mk-article-asset[data-kind="live"] { --td-mk-asset-ink: var(--td-green-text); --td-mk-asset-tint: var(--td-green); }
+.td-mk-article-asset[data-kind="download"] { --td-mk-asset-ink: var(--td-accent-text); --td-mk-asset-tint: var(--td-accent); }
+.td-mk-article-asset[data-kind="data"] { --td-mk-asset-ink: var(--td-series-4-text); --td-mk-asset-tint: var(--td-series-4); }
+.td-mk-article-asset[data-kind="interactive"] { --td-mk-asset-ink: var(--td-brand-text); --td-mk-asset-tint: var(--td-brand); }
+
+/* Hover presses into a shallow well; the ring takes the category. */
+.td-mk-article-asset:hover {
+  background: var(--td-surface);
+  box-shadow:
+    0.5px 0.5px 2px color-mix(in srgb, var(--td-shadow-dark) 30%, transparent),
+    -0.5px -0.5px 2px color-mix(in srgb, var(--td-shadow-light) 40%, transparent),
+    inset 1.5px 1.5px 3px color-mix(in srgb, var(--td-shadow-dark) 44%, transparent),
+    inset -1.5px -1.5px 3px color-mix(in srgb, var(--td-shadow-light) 40%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--td-mk-asset-tint) 40%, var(--td-edge));
+}
+/* And the press goes deeper than the hover, or the two rungs collapse into
+   one and the link never feels taken. */
+.td-mk-article-asset:active {
+  background: var(--td-surface);
+  box-shadow:
+    0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    0 0 0 rgb(from var(--td-shadow-light) r g b / 0),
+    inset 2.5px 2.5px 5px color-mix(in srgb, var(--td-shadow-dark) 62%, transparent),
+    inset -2px -2px 4px color-mix(in srgb, var(--td-shadow-light) 38%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--td-mk-asset-tint) 55%, var(--td-edge));
+}
+.td-mk-article-asset:focus-visible { outline: 2px solid var(--td-accent); outline-offset: 2px; }
+
+.td-mk-article-asset-glyph {
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-size: 13px;
+  color: var(--td-mk-asset-ink);
+}
+/* Quiet ink at rest, full ink under the pointer — the ladder's own step. The
+   glyph never joins it: its colour is the category, not the state. */
+.td-mk-article-asset-label { color: var(--td-ink-2); transition: color var(--td-t-fast) var(--td-ease); }
+.td-mk-article-asset:hover .td-mk-article-asset-label,
+.td-mk-article-asset:active .td-mk-article-asset-label { color: var(--td-ink); }
+
+/* A format and a size are machine-reported values, so they are the one thing
+   on this card besides the date that is set in mono. */
+.td-mk-article-asset-meta {
+  font-family: var(--td-font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--td-ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.td-mk-article-payload-nav { display: flex; gap: var(--td-sp-3); }
+.td-mk-article-payload-arrow {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--td-ink-3);
+  background: var(--td-raise-fill);
+  box-shadow:
+    1.5px 1.5px 4px color-mix(in srgb, var(--td-shadow-dark) 46%, transparent),
+    -1.5px -1.5px 4px color-mix(in srgb, var(--td-shadow-light) 62%, transparent),
+    inset 0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+  transition:
+    box-shadow var(--td-t-fast) var(--td-ease),
+    background var(--td-t-fast) var(--td-ease),
+    color var(--td-t-fast) var(--td-ease);
+}
+.td-mk-article-payload-arrow:hover {
+  color: var(--td-ink);
+  background: var(--td-surface);
+  box-shadow:
+    0.5px 0.5px 2px color-mix(in srgb, var(--td-shadow-dark) 30%, transparent),
+    -0.5px -0.5px 2px color-mix(in srgb, var(--td-shadow-light) 40%, transparent),
+    inset 1.5px 1.5px 3px color-mix(in srgb, var(--td-shadow-dark) 44%, transparent),
+    inset -1.5px -1.5px 3px color-mix(in srgb, var(--td-shadow-light) 40%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+.td-mk-article-payload-arrow:active {
+  color: var(--td-ink);
+  background: var(--td-surface);
+  box-shadow:
+    0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    0 0 0 rgb(from var(--td-shadow-light) r g b / 0),
+    inset 2.5px 2.5px 5px color-mix(in srgb, var(--td-shadow-dark) 62%, transparent),
+    inset -2px -2px 4px color-mix(in srgb, var(--td-shadow-light) 38%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+.td-mk-article-payload-arrow:focus-visible { outline: 2px solid var(--td-accent); outline-offset: 2px; }
+/* Last, so it wins the equal-specificity tie with :hover — a disabled arrow is
+   still hovered, and must not answer. Flat rather than raised: there is
+   nothing left to reach for at the end of the row. */
+.td-mk-article-payload-arrow:disabled {
+  cursor: default;
+  color: color-mix(in srgb, var(--td-ink-3) 45%, transparent);
+  background: var(--td-surface);
+  box-shadow:
+    0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    0 0 0 rgb(from var(--td-shadow-light) r g b / 0),
+    inset 1px 1px 2px color-mix(in srgb, var(--td-shadow-dark) 28%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 26%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .td-mk-article { transition: none; }
+  .td-mk-article-title, .td-mk-article-titlelink { transition: none; }
+  .td-mk-article-asset, .td-mk-article-asset-label, .td-mk-article-payload-arrow { transition: none; }
+  /* The arrows call `scrollBy` with no `behavior`, which defers to this. */
+  .td-mk-article-assets { scroll-behavior: auto; }
+}

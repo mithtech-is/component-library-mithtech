@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "source": "C:\\Users\\supari_k\\ayush\\tonaldepth\\baselines\\claude-html\\TonalDepth Dashboard (offline).html",
+  "source_bytes": 2949993,
+  "source_sha256_before": "12e1611a9529690bc481aa020bc1565a3a23c69721ffab468e30287e1f2d54ef",
+  "source_sha256_after": "12e1611a9529690bc481aa020bc1565a3a23c69721ffab468e30287e1f2d54ef",
+  "source_unchanged": true,
+  "counts": {
+    "unique_td_tokens": 121,
+    "declared_td_tokens": 115,
+    "token_declarations": 181,
+    "token_conflict_candidates": 47,
+    "unique_td_classes": 1413,
+    "font_faces": 46,
+    "font_families": [
+      "Anton",
+      "Anton Offline",
+      "Hanken Grotesk",
+      "Hanken Grotesk Offline",
+      "JetBrains Mono",
+      "JetBrains Mono Offline",
+      "Source Sans 3",
+      "Source Sans 3 Offline"
+    ],
+    "data_resources": 0,
+    "bundled_resources": 49,
+    "linked_resources": 0,
+    "style_blocks": 2,
+    "script_blocks": 5
+  },
+  "bundler_markers": [
+    "__bundler/ext_resources",
+    "__bundler/manifest",
+    "__bundler/page_order",
+    "__bundler/template"
+  ],
+  "external_urls": [
+    "http://www.w3.org/2000/svg",
+    "https://\u2026"
+  ],
+  "limitations": [
+    "Class candidate grouping and page-only flags are heuristic.",
+    "Repeated token values may represent valid theme overrides, bundled duplicate templates, or conflicts.",
+    "Embedded font hashes do not establish redistribution licenses.",
+    "The owner selected the offline HTML typography mapping as canonical; Storybook must later be reconciled to it."
+  ]
+}

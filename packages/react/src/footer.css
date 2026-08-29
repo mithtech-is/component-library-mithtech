@@ -1,0 +1,16 @@
+/*
+ * The `.td-footer-*` family — the band, the grid, the columns, the contact
+ * well, the bottom rule — already ships in the design system, so this file is
+ * deliberately thin. What it carries is composition: the spacing between the
+ * footer's own bands, which only exists once a footer is assembled out of
+ * them.
+ */
+
+/*
+ * The banner is the footer's first band and the grid brings its own bottom
+ * margin, so the gap between the two has to come from here. Sized to match
+ * `.td-footer-grid`'s 32px so the footer's internal rhythm stays even.
+ */
+.td-react-footer > .td-mk-cta {
+  margin-bottom: 32px;
+}

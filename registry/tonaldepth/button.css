@@ -1,0 +1,420 @@
+/* TonalDepth Button — self-contained. Requires @tonaldepth/tokens. */
+
+/* Secondary / outline / ghost base — light raised surface. */
+.td-primary {
+  appearance: none;
+  background: var(--td-raise-fill);
+  color: var(--td-ink);
+  font: inherit;
+  font-family: var(--td-font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--td-btn-h);
+  padding: 0 16px;
+  border: 0;
+  border-radius: 13px;
+  /* Five shadow slots, same order, every state: outer shade, outer highlight,
+     inset shade, inset highlight, edge ring. A list of a different length —
+     or one whose `inset` flags do not line up — snaps instead of
+     interpolating, and the unused slots are the shadow colour at zero alpha
+     rather than `transparent`, which is rgba(0, 0, 0, 0) and would drag the
+     transition through black. */
+  box-shadow:
+    3px 3px 8px color-mix(in srgb, var(--td-shadow-dark) 48%, transparent),
+    -3px -3px 12px color-mix(in srgb, var(--td-shadow-light) 50%, transparent),
+    inset 0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+  transition:
+    box-shadow var(--td-t-base) var(--td-ease),
+    background var(--td-t-base) var(--td-ease);
+}
+/* Hover is a shallow press, not a lift: the outer pair shrinks toward the
+   pressed state while the inner pair grows, and the highlight stays weaker
+   than the shade it answers ([[L26]]). */
+.td-primary:hover {
+  background: var(--td-raise-fill-hover);
+  box-shadow:
+    1.5px 1.5px 4px color-mix(in srgb, var(--td-shadow-dark) 32%, transparent),
+    -1.5px -1.5px 4px color-mix(in srgb, var(--td-shadow-light) 30%, transparent),
+    inset 1.5px 1.5px 4px color-mix(in srgb, var(--td-shadow-dark) 34%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 26%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+.td-primary:active {
+  background: var(--td-surface);
+  box-shadow:
+    0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    0 0 0 rgb(from var(--td-shadow-light) r g b / 0),
+    inset 3px 3px 7px color-mix(in srgb, var(--td-shadow-dark) 58%, transparent),
+    inset -2px -2px 5px color-mix(in srgb, var(--td-shadow-light) 34%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+.td-primary:focus-visible { outline: 2px solid var(--td-accent); outline-offset: 3px; }
+.td-primary:disabled { cursor: not-allowed; box-shadow: none; opacity: 0.58; }
+.td-primary .td-primary-label { transition: transform var(--td-t-slow) var(--td-ease); }
+.td-primary:active .td-primary-label { transform: translate(1px, 1px); }
+
+/* Primary (coloured) / destructive base — brand fill. */
+.td-coloured {
+  appearance: none;
+  font: inherit;
+  font-family: var(--td-font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--td-btn-h);
+  padding: 0 16px;
+  border: 0;
+  border-radius: 13px;
+  background: var(--td-brand);
+  color: var(--td-ink-on-fill);
+  box-shadow:
+    3px 3px 8px color-mix(in srgb, var(--td-shadow-dark) 48%, transparent),
+    -3px -3px 12px color-mix(in srgb, var(--td-shadow-light) 50%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  transition:
+    box-shadow var(--td-t-base) var(--td-ease),
+    background var(--td-t-base) var(--td-ease),
+    color var(--td-t-base) var(--td-ease);
+}
+.td-coloured:hover {
+  background: color-mix(in srgb, var(--td-brand) 92%, white);
+  box-shadow:
+    4px 4px 10px color-mix(in srgb, var(--td-shadow-dark) 52%, transparent),
+    -3px -3px 12px color-mix(in srgb, var(--td-shadow-light) 55%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+.td-coloured:active {
+  background: color-mix(in srgb, var(--td-brand) 88%, black);
+  box-shadow:
+    inset 2px 2px 6px rgba(0, 0, 0, 0.5),
+    inset -2px -2px 5px rgba(255, 255, 255, 0.10);
+}
+.td-coloured:focus-visible { outline: 2px solid var(--td-accent); outline-offset: 3px; }
+.td-coloured:disabled {
+  cursor: not-allowed;
+  box-shadow: none;
+  background: color-mix(in srgb, var(--td-brand) 30%, var(--td-surface));
+  color: rgba(255, 255, 255, 0.75);
+}
+.td-coloured .td-coloured-label { transition: transform var(--td-t-slow) var(--td-ease); }
+.td-coloured:active .td-coloured-label { transform: translate(1px, 1px); }
+
+/* Registry-scoped size and variant modifiers.
+
+   Each modifier is paired with its base class. A consumer that serves its own
+   `.td-*` layer may raise the base's specificity — mith.tech ships
+   `:root[data-theme="dark"] .td-primary`, which is (0,3,0) — and a bare
+   modifier at (0,1,0) then loses in that theme, leaving `outline` and `ghost`
+   inert. Pairing puts every modifier at (0,3,0) so source order decides. */
+/* A button sizes to its content. `.td-primary` is inline-flex, which CSS
+   blockifies to `flex` as a grid or flex item and then stretches to the whole
+   track — the same bug that made badges span their column.
+
+   `overflow: hidden` keeps the lamp's glow inside the housing: a `drop-shadow`
+   is painted around the glyph with no regard for the button's edge, so the
+   bloom spilled onto the page. The button's own box-shadow is unaffected —
+   overflow clips descendants, not the element's own shadow — and `outline`
+   (the focus ring) is not clipped either. */
+.td-registry-button:is(.td-primary, .td-coloured) { width: fit-content; max-width: 100%; overflow: hidden; }
+
+.td-registry-button.td-registry-button--sm:is(.td-primary, .td-coloured) { min-height: 34px; padding-inline: 12px; font-size: 12px; border-radius: 10px; }
+.td-registry-button.td-registry-button--md:is(.td-primary, .td-coloured) { min-height: var(--td-btn-h, 42px); }
+.td-registry-button.td-registry-button--lg:is(.td-primary, .td-coloured) { min-height: var(--td-btn-h-lg, 50px); padding-inline: 20px; font-size: 14px; }
+/* Both rungs carry the ring and the four depth slots, so hovering an outline
+   button grows depth out of the ring instead of snapping to it ([[L18]]). A
+   single-shadow rest against a four-shadow hover is a list of a different
+   length, which does not interpolate. */
+.td-registry-button.td-registry-button--outline:is(.td-primary, .td-coloured) {
+  background: transparent;
+  box-shadow:
+    0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    0 0 0 rgb(from var(--td-shadow-light) r g b / 0),
+    inset 0 0 0 rgb(from var(--td-shadow-light) r g b / 0),
+    inset 0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    0 0 0 1px var(--td-btn-border-selected);
+}
+.td-registry-button.td-registry-button--outline:is(.td-primary, .td-coloured):hover {
+  background: color-mix(in srgb, var(--td-surface) 96%, black);
+  box-shadow:
+    1px 1px 3px color-mix(in srgb, var(--td-shadow-dark) 30%, transparent),
+    -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 48%, transparent),
+    inset 0.5px 0.5px 1px color-mix(in srgb, var(--td-shadow-light) 32%, transparent),
+    inset -0.5px -0.5px 1px color-mix(in srgb, var(--td-shadow-dark) 9%, transparent),
+    0 0 0 1px var(--td-btn-border-hover);
+}
+.td-registry-button.td-registry-button--ghost:is(.td-primary, .td-coloured) { background: transparent; box-shadow: none; }
+.td-registry-button.td-registry-button--ghost:is(.td-primary, .td-coloured):hover { box-shadow: var(--td-btn-hover); background: color-mix(in srgb, var(--td-surface) 96%, black); }
+
+/* Loading spinner. */
+.td-registry-spinner { width: 1em; height: 1em; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: td-registry-spin 700ms linear infinite; }
+@keyframes td-registry-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .td-registry-spinner { animation-duration: 1.4s; } }
+
+/* ── Semantic fills + the status lamp ────────────────────────────────
+   `.td-lamp` is copied from the design system because a registry consumer
+   has no `tonaldepth-core` to inherit it from. */
+
+/* ── Filled housings ──────────────────────────────────────────────────
+   The fill is set ONCE, per variant, as `--td-btn-fill`, and held through
+   rest, hover and press. Only the lamp moves.
+
+   `.td-coloured` upstream lightens 8% on hover and darkens 12% on press, so
+   a filled button changed colour under the pointer and the icon's ramp was
+   lost inside a shifting ground. That breaks the lamp rule: the icon carries
+   the state, the label and the housing do not. Depth still moves — the base's
+   box-shadow ladder is untouched — so the button still reads as pressed.
+   (0,3,0) beats the base's (0,2,0). */
+.td-registry-button.td-coloured { --td-btn-fill: var(--td-brand); }
+.td-registry-button.td-registry-button--destructive { --td-btn-fill: var(--td-brand); }
+/* Vivid jade, not a muted `--td-green`. The system green is a soft mint
+   (saturation 0.58) and carries white at 1.9:1; mixing it toward black kept it
+   legible but drained the colour. This is fully saturated and still clears AA
+   at 4.63:1, so the button reads as green rather than as grey-green. */
+.td-registry-button.td-registry-button--accept { --td-btn-fill: #00873C; }
+/* Vivid red — more saturated than the darkened `--td-error` it replaces AND
+   higher contrast with white (4.83:1 against 5.21:1 at far lower chroma). */
+.td-registry-button.td-registry-button--cancel { --td-btn-fill: #D92D20; }
+.td-registry-button.td-registry-button--accent { --td-btn-fill: color-mix(in srgb, var(--td-accent) 78%, black); }
+/* WhatsApp's own green, held as a literal — the channel's identity, not a
+   system colour, so it must not move when the brand does. Deepened to 62%:
+   white on the raw #25D366 is 1.98:1 and the label disappears. */
+.td-registry-button.td-registry-button--whatsapp { --td-btn-fill: color-mix(in srgb, #25D366 62%, black); }
+
+.td-registry-button.td-coloured,
+.td-registry-button.td-coloured:hover,
+.td-registry-button.td-coloured:active,
+.td-registry-button.td-coloured[data-state="hover"],
+.td-registry-button.td-coloured[data-state="active"] { background: var(--td-btn-fill); }
+
+/* ── Depth on a filled housing ────────────────────────────────────────
+   With the fill frozen, depth is the ONLY thing reporting the press, and the
+   upstream ladder moves the shadow by 1-2px — legible on the page surface,
+   invisible on saturated colour. So a filled button gets its own, wider
+   ladder: a real lift on hover, a real sink on press.
+
+   The overlays are white and black rather than the warm `--td-shadow-*`
+   tokens, because those are tuned to read against the page ground and wash
+   out on a coloured one. The inner top highlight is what sells the lift — a
+   raised object catches light on its upper edge. */
+.td-registry-button.td-coloured {
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.16),
+    0 4px 10px color-mix(in srgb, var(--td-shadow-dark) 69%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.26),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.14);
+}
+.td-registry-button.td-coloured:hover,
+.td-registry-button.td-coloured[data-state="hover"] {
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.18),
+    0 8px 20px color-mix(in srgb, var(--td-shadow-dark) 55%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.40),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.12);
+}
+/* Pressed: the outer lift goes entirely and the surface caves in. Losing the
+   drop shadow is half the cue — an object in a well casts nothing. */
+.td-registry-button.td-coloured:active,
+.td-registry-button.td-coloured[data-state="active"] {
+  box-shadow:
+    0 0 0 rgba(0, 0, 0, 0),
+    0 0 0 rgba(0, 0, 0, 0),
+    inset 0 3px 7px rgba(0, 0, 0, 0.38),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.10);
+}
+.td-registry-button.td-coloured:disabled { box-shadow: none; }
+
+/* Every filled housing keeps a white label in all three states — the fill
+   carries the colour, so the label must not also. */
+.td-registry-button.td-coloured .td-coloured-label { color: #fff; }
+
+/* ── Surface housings ─────────────────────────────────────────────────
+   `.td-primary` shifts between --td-raise-fill and --td-raise-fill-hover,
+   which differ by 1% white: that is the neomorphic material lifting and
+   sinking, not a colour change, so it stays. The LABEL is pinned, though —
+   upstream lets it step to full ink on hover, and under the lamp rule only
+   the icon may move. */
+.td-registry-button.td-primary .td-primary-label,
+.td-registry-button.td-primary:hover .td-primary-label,
+.td-registry-button.td-primary:active .td-primary-label { color: var(--td-ink); }
+
+/* The fill is held here too. `--td-raise-fill` -> `--td-raise-fill-hover` is
+   only a 1% shift, but "the housing does not change colour" is easier to hold
+   as one rule than as an exception, and the depth ladder below still carries
+   the whole state. `--td-btn-surface` stays a variable so `outline` and
+   `ghost`, which are transparent, can override it in one place. */
+.td-registry-button.td-primary { --td-btn-surface: var(--td-raise-fill); }
+.td-registry-button.td-primary,
+.td-registry-button.td-primary:hover,
+.td-registry-button.td-primary:active,
+.td-registry-button.td-primary[data-state="hover"],
+.td-registry-button.td-primary[data-state="active"] { background: var(--td-btn-surface); }
+.td-registry-button.td-registry-button--outline,
+.td-registry-button.td-registry-button--ghost,
+.td-registry-button.td-registry-button--link { --td-btn-surface: transparent; }
+
+/* On a DARK fill the unlit lamp has to be translucent white, not the
+   `rgba(0,0,0,0.38)` the papaya housing uses — black on deep green or red is
+   invisible, so accept's tick and cancel's cross vanished at rest. Same ramp,
+   inverted ground. (0,4,0): the generic `.td-coloured` lamp rule below is
+   (0,3,0) and ships later, so a matching (0,3,0) here would lose. */
+.td-registry-button.td-coloured:is(.td-registry-button--accept, .td-registry-button--cancel, .td-registry-button--whatsapp, .td-registry-button--accent) .td-registry-button-lamp { color: rgba(255, 255, 255, 0.62); }
+.td-registry-button.td-coloured:is(.td-registry-button--accept, .td-registry-button--cancel, .td-registry-button--whatsapp, .td-registry-button--accent):hover .td-registry-button-lamp,
+.td-registry-button.td-coloured:is(.td-registry-button--accept, .td-registry-button--cancel, .td-registry-button--whatsapp, .td-registry-button--accent)[data-state="hover"] .td-registry-button-lamp,
+.td-registry-button.td-coloured:is(.td-registry-button--accept, .td-registry-button--cancel, .td-registry-button--whatsapp, .td-registry-button--accent):active .td-registry-button-lamp { color: #fff; }
+.td-registry-button.td-coloured:is(.td-registry-button--accept, .td-registry-button--cancel, .td-registry-button--whatsapp, .td-registry-button--accent)[data-state="active"] .td-registry-button-lamp { color: #fff; }
+.td-registry-button.td-coloured:is(.td-registry-button--accept, .td-registry-button--cancel, .td-registry-button--whatsapp, .td-registry-button--accent) .td-lamp { background: rgba(255, 255, 255, 0.55); box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25); }
+
+/* ── Channel buttons — surface housing, coloured lamp ─────────────────
+   [[L15]] names these exactly: "channel buttons (WhatsApp, email, phone),
+   anything where the icon signals which channel". The housing stays the
+   page's own material; the channel arrives as the lamp's colour alone.
+   (0,5,0): these tie with `.td-primary`'s generic lamp ramp at (0,4,0) and
+   would otherwise lose on source order — which lit Call and Email papaya. */
+.td-registry-button.td-primary.td-registry-button--call,
+.td-registry-button.td-primary.td-registry-button--email { --td-lamp-glow: var(--td-accent); }
+.td-registry-button.td-primary.td-registry-button--whatsapp-quiet { --td-lamp-glow: #25D366; }
+
+/* ── Link ─────────────────────────────────────────────────────────────
+   No housing at all — the lowest rung, for a tertiary action that must not
+   compete with the buttons beside it. The lamp still carries the state. */
+.td-registry-button.td-registry-button--link:is(.td-primary, .td-coloured) {
+  background: transparent;
+  box-shadow: none;
+  min-height: 0;
+  padding: 0;
+  border-radius: var(--td-radius-1);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  text-decoration-color: color-mix(in srgb, var(--td-ink) 30%, transparent);
+}
+.td-registry-button.td-registry-button--link:is(.td-primary, .td-coloured):hover { background: transparent; box-shadow: none; text-decoration-color: var(--td-brand); }
+.td-registry-button.td-registry-button--link:is(.td-primary, .td-coloured):active { background: transparent; box-shadow: none; }
+
+/* ── The lamp ─────────────────────────────────────────────────────────
+   Every icon+label button is a lamp ([[L15]]): the leading icon carries the
+   state and the label's colour never moves. Only the lamp changes.
+
+   The three filter values are tokens — `--td-lamp-off/-hover/-active` — so
+   this file never spells a drop-shadow out and the whole system's ladder is
+   retuned from tokens/source/tokens.json. Each is a TWO-shadow list, and rest
+   is two EXPLICIT zero shadows rather than `none`:
+
+     - transitioning from `none` lets the engine invent the start value, which
+       flashes a dark shadow behind the icon on the first hover;
+     - a state with a different shadow count snaps instead of interpolating,
+       which is what made press look identical to hover.
+
+   Same count, same shape, every state — so the ladder actually animates.
+   `--td-lamp-glow` is the colour, set per housing below or per instance by
+   the `glow` prop. */
+.td-registry-button .td-registry-button-lamp {
+  display: inline-grid;
+  place-items: center;
+  line-height: 0;
+  transition: color var(--td-t-base) var(--td-ease);
+}
+.td-registry-button .td-registry-button-lamp > svg {
+  width: 1em;
+  height: 1em;
+  fill: currentColor;
+  stroke: none;
+  filter: var(--td-lamp-off);
+  transition: filter var(--td-t-base) var(--td-ease), transform var(--td-t-slow) var(--td-ease);
+}
+
+/* Surface housings: unlit ink at rest, lighting the lamp's own colour. */
+.td-registry-button.td-primary { --td-lamp-glow: var(--td-brand); }
+.td-registry-button.td-primary .td-registry-button-lamp { color: color-mix(in srgb, var(--td-ink-3) 75%, var(--td-surface)); }
+.td-registry-button.td-primary:hover .td-registry-button-lamp,
+.td-registry-button.td-primary[data-state="hover"] .td-registry-button-lamp,
+.td-registry-button.td-primary:active .td-registry-button-lamp,
+.td-registry-button.td-primary[data-state="active"] .td-registry-button-lamp { color: var(--td-lamp-glow); }
+
+/* Filled housings: the fill already carries the colour, so the lamp lights
+   white — a papaya glow on papaya would be invisible. */
+.td-registry-button.td-coloured { --td-lamp-glow: #fff; }
+.td-registry-button.td-coloured .td-registry-button-lamp { color: rgba(0, 0, 0, 0.38); }
+/* On a DARK fill the unlit lamp must be translucent white instead: black on
+   deep green or red is invisible, so accept's tick and cancel's cross vanished. */
+.td-registry-button.td-coloured:is(.td-registry-button--accept, .td-registry-button--cancel, .td-registry-button--whatsapp, .td-registry-button--accent) .td-registry-button-lamp { color: rgba(255, 255, 255, 0.62); }
+.td-registry-button.td-coloured:hover .td-registry-button-lamp,
+.td-registry-button.td-coloured[data-state="hover"] .td-registry-button-lamp,
+.td-registry-button.td-coloured:active .td-registry-button-lamp,
+.td-registry-button.td-coloured[data-state="active"] .td-registry-button-lamp { color: #fff; }
+.td-registry-button.td-coloured:is(.td-registry-button--accept, .td-registry-button--cancel, .td-registry-button--whatsapp, .td-registry-button--accent) .td-lamp { background: rgba(255, 255, 255, 0.55); box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25); }
+
+/* The ladder itself — one pair of rules for every variant. */
+.td-registry-button:hover .td-registry-button-lamp > svg,
+.td-registry-button[data-state="hover"] .td-registry-button-lamp > svg { filter: var(--td-lamp-hover); }
+.td-registry-button:active .td-registry-button-lamp > svg,
+.td-registry-button[data-state="active"] .td-registry-button-lamp > svg {
+  transform: translate(1px, 1px);
+  filter: var(--td-lamp-active);
+}
+.td-registry-button:disabled .td-registry-button-lamp > svg { filter: var(--td-lamp-off); }
+
+
+@media (prefers-reduced-motion: reduce) {
+  .td-registry-button .td-registry-button-lamp,
+  .td-registry-button .td-registry-button-lamp > svg { transition: none; }
+  .td-registry-button:active .td-registry-button-lamp > svg { transform: none; }
+  .td-registry-button[data-state="active"] .td-registry-button-lamp > svg { transform: none; }
+}
+
+.td-registry-spinner { width: 1em; height: 1em; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: td-registry-spin 700ms linear infinite; }
+@keyframes td-registry-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .td-registry-spinner { animation-duration: 1.4s; } }
+
+/* The surface button's own depth ladder, restated so it interpolates and so it
+   never loses a side.
+
+   The base above carries the right SHAPE at hover and press, but rests
+   shallower than the design does — an 8px shade at 48% where the system asks
+   for 12px at 72%. On paper, where `--td-raise-fill` IS the page colour and
+   nothing but the shadow separates a raised object ([[L27]]), that difference
+   is the button reading as a plate rather than as a control.
+
+   Five slots, same order, every state: outer shade, outer highlight, inset
+   shade, inset highlight, edge ring. Unused slots are the shadow colour at zero
+   alpha, never `transparent` — that is rgba(0, 0, 0, 0) and would drag the
+   transition through black ([[L20]]). (0,3,0), as the rest of this file. */
+.td-registry-button.td-primary:not(.td-registry-button--outline):not(.td-registry-button--ghost):not(.td-registry-button--link) {
+  box-shadow:
+    3px 3px 12px color-mix(in srgb, var(--td-shadow-dark) 72%, transparent),
+    -3px -3px 12px color-mix(in srgb, var(--td-shadow-light) 68%, transparent),
+    inset 0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+}
+/* Hover is a shallow press, not a lift. The outer pair SHRINKS toward the
+   pressed state while the inner pair grows, so the button moves one way across
+   the whole ladder: rest -> hover -> press, each further in than the last, and
+   the highlight stays weaker than the shade it answers ([[L26]]). */
+.td-registry-button.td-primary:not(.td-registry-button--outline):not(.td-registry-button--ghost):not(.td-registry-button--link):hover,
+.td-registry-button.td-primary:not(.td-registry-button--outline):not(.td-registry-button--ghost):not(.td-registry-button--link)[data-state="hover"] {
+  box-shadow:
+    1.5px 1.5px 4px color-mix(in srgb, var(--td-shadow-dark) 32%, transparent),
+    -1.5px -1.5px 4px color-mix(in srgb, var(--td-shadow-light) 30%, transparent),
+    inset 1.5px 1.5px 4px color-mix(in srgb, var(--td-shadow-dark) 34%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 26%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+.td-registry-button.td-primary:not(.td-registry-button--outline):not(.td-registry-button--ghost):not(.td-registry-button--link):active,
+.td-registry-button.td-primary:not(.td-registry-button--outline):not(.td-registry-button--ghost):not(.td-registry-button--link)[data-state="active"] {
+  box-shadow:
+    0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    0 0 0 rgb(from var(--td-shadow-light) r g b / 0),
+    inset 3px 3px 7px color-mix(in srgb, var(--td-shadow-dark) 58%, transparent),
+    inset -2px -2px 5px color-mix(in srgb, var(--td-shadow-light) 34%, transparent),
+    0 0 0 1px var(--td-edge);
+}

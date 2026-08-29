@@ -1,0 +1,56 @@
+/* TonalDepth Radio — self-contained. Requires @tonaldepth/tokens. */
+
+.td-fieldset { border: 0; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 16px; }
+.td-fieldset-legend {
+  font-family: var(--td-font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--td-brand-text);
+  margin-bottom: 6px;
+}
+.td-check-row { display: flex; flex-direction: column; gap: 8px; }
+.td-radio {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-family: var(--td-font-ui);
+  font-size: 13px;
+  color: var(--td-ink);
+  user-select: none;
+}
+.td-radio input { position: absolute; opacity: 0; pointer-events: none; }
+.td-radio-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--td-surface);
+  border: 2px solid var(--td-ink-2);
+  box-shadow: var(--td-btn-rest);
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  transition: box-shadow var(--td-t-base) var(--td-ease), background var(--td-t-base) var(--td-ease), border-color var(--td-t-base) var(--td-ease);
+}
+.td-radio-dot::after {
+  content: "";
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: transparent;
+  transition: background var(--td-t-base) var(--td-ease), transform var(--td-t-base) var(--td-ease);
+}
+.td-radio:hover .td-radio-dot { border-color: var(--td-ink); box-shadow: var(--td-btn-hover); }
+.td-radio input:focus-visible + .td-radio-dot { box-shadow: var(--td-btn-rest), 0 0 0 2px var(--td-brand); border-color: var(--td-brand); }
+.td-radio input:checked + .td-radio-dot {
+  background: var(--td-brand);
+  border-color: var(--td-brand);
+  box-shadow:
+    inset 2px 2px 4px color-mix(in srgb, var(--td-shadow-dark) 40%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 30%, transparent);
+}
+.td-radio input:checked + .td-radio-dot::after { background: var(--td-ink-on-fill); transform: scale(1); }
+.td-radio input:disabled + .td-radio-dot { opacity: 0.4; cursor: not-allowed; }
+.td-radio[data-disabled="true"] { opacity: 0.4; pointer-events: none; }

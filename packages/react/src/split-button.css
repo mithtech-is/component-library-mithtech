@@ -1,0 +1,160 @@
+/* SplitButton — one action, its alternatives folded behind a disclosure.
+
+   Both halves sit in one raised housing and are divided by a carved seam: a
+   shade hairline with a highlight beside it, never a painted border. Neither
+   half is ever filled with the brand colour — the chosen channel is reported
+   by its glyph, which is the only thing that takes a category colour. */
+
+.td-react-split {
+  position: relative;
+  display: inline-flex;
+  align-items: stretch;
+  min-width: 0;
+  max-width: 100%;
+  border-radius: var(--td-radius-5);
+  background: var(--td-raise-fill);
+  box-shadow:
+    3px 3px 7px color-mix(in srgb, var(--td-shadow-dark) 68%, transparent),
+    -3px -3px 7px color-mix(in srgb, var(--td-shadow-light) 64%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+}
+
+.td-react-split-primary,
+.td-react-split-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--td-sp-5);
+  min-height: var(--td-btn-h, 42px);
+  cursor: pointer;
+  border: 0;
+  padding: 0 var(--td-sp-8);
+  color: var(--td-ink);
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 600;
+  text-decoration: none;
+  background: transparent;
+  transition: background var(--td-t-base) var(--td-ease), box-shadow var(--td-t-base) var(--td-ease);
+}
+.td-react-split-primary { border-radius: var(--td-radius-5) 0 0 var(--td-radius-5); min-width: 0; flex: 1 1 auto; }
+
+/* The housing must not resize when a different action is chosen — a control
+   that jumps width on selection makes the menu feel like it is rewriting the
+   page. Every label is stacked in the same grid cell, the widest one sets the
+   column, and only the chosen one is visible. The button is therefore always
+   as wide as its longest option, whichever is selected. */
+.td-react-split-label { display: grid; min-width: 0; }
+.td-react-split-label > * { grid-area: 1 / 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.td-react-split-label > [data-shown="false"] { visibility: hidden; pointer-events: none; }
+
+/* The seam. Drawn on the toggle so it survives the primary half being either
+   a button or an anchor. */
+.td-react-split-toggle {
+  border-radius: 0 var(--td-radius-5) var(--td-radius-5) 0;
+  padding-inline: var(--td-sp-6);
+  flex: 0 0 auto;
+  border-inline-start: 1px solid color-mix(in srgb, var(--td-shadow-dark) 46%, transparent);
+  box-shadow: inset 1px 0 0 color-mix(in srgb, var(--td-shadow-light) 40%, transparent);
+}
+
+.td-react-split-primary:hover,
+.td-react-split-toggle:hover { background: var(--td-raise-fill-hover); }
+.td-react-split-primary:active,
+.td-react-split-toggle:active {
+  background: var(--td-surface);
+  box-shadow:
+    inset 2px 2px 5px color-mix(in srgb, var(--td-shadow-dark) 52%, transparent),
+    inset -1px -1px 3px color-mix(in srgb, var(--td-shadow-light) 30%, transparent);
+}
+.td-react-split-primary:focus-visible,
+.td-react-split-toggle:focus-visible { outline: 2px solid var(--td-accent); outline-offset: -2px; }
+.td-react-split-primary:disabled,
+.td-react-split-toggle:disabled { cursor: not-allowed; color: var(--td-ink-3); background: transparent; box-shadow: none; }
+
+/* Forced select: the primary half is waiting, not broken. Its label steps back
+   to secondary ink so the disclosure reads as the live control. */
+.td-react-split--unset .td-react-split-label { color: var(--td-ink-3); font-weight: 500; }
+
+.td-react-split-icon { display: inline-grid; place-items: center; flex: 0 0 auto; line-height: 0; }
+/* 1.5x the label, which is the ratio [[L28]] fixed on the labelled
+   IconButton (a 21px glyph beside a 14px label). Below it the lamp — the
+   part carrying the whole state signal — is optically the lightest thing in
+   the button, which is the defect that rule exists to prevent. In `em` so
+   it holds across the size ladder rather than being restated per size. */
+.td-react-split-icon > svg { width: 1.5em; height: 1.5em; fill: currentColor; stroke: none; }
+
+/* A chevron drawn from a rotated square — no glyph dependency for a shape
+   this small. */
+.td-react-split-chevron {
+  width: 7px; height: 7px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform var(--td-t-base) var(--td-ease);
+}
+.td-react-split-toggle[aria-expanded="true"] .td-react-split-chevron { transform: translateY(1px) rotate(225deg); }
+
+/* ── the menu ──────────────────────────────────────────────────────────── */
+.td-react-split-menu {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + var(--td-sp-4));
+  inset-inline-end: 0;
+  min-width: max(100%, 232px);
+  display: grid;
+  gap: 2px;
+  padding: var(--td-sp-4);
+  border-radius: var(--td-radius-6);
+  background: var(--td-surface);
+  box-shadow:
+    6px 8px 20px color-mix(in srgb, var(--td-shadow-dark) 60%, transparent),
+    -4px -4px 12px color-mix(in srgb, var(--td-shadow-light) 40%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+.td-react-split-item {
+  display: flex;
+  align-items: center;
+  gap: var(--td-sp-5);
+  width: 100%;
+  min-height: 40px;
+  cursor: pointer;
+  border: 0;
+  padding: var(--td-sp-4) var(--td-sp-6);
+  border-radius: var(--td-radius-4);
+  color: var(--td-ink-2);
+  font: inherit;
+  font-size: 0.86rem;
+  text-align: start;
+  background: transparent;
+  transition: background var(--td-t-fast) var(--td-ease), color var(--td-t-fast) var(--td-ease), box-shadow var(--td-t-fast) var(--td-ease);
+}
+.td-react-split-item:hover {
+  color: var(--td-ink);
+  background: color-mix(in srgb, var(--td-surface) 97%, black);
+  box-shadow:
+    inset 1.5px 1.5px 3px color-mix(in srgb, var(--td-shadow-dark) 40%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 34%, transparent);
+}
+.td-react-split-item:focus-visible { outline: 2px solid var(--td-accent); outline-offset: -2px; }
+.td-react-split-item:disabled { cursor: not-allowed; color: var(--td-ink-3); background: transparent; box-shadow: none; }
+/* The chosen item sits in the deepest well with papaya ink — never a fill. */
+.td-react-split-item--on {
+  color: var(--td-brand-text);
+  font-weight: 600;
+  background: color-mix(in srgb, var(--td-surface) 95%, black);
+  box-shadow:
+    inset 3px 3px 6px color-mix(in srgb, var(--td-shadow-dark) 58%, transparent),
+    inset -2px -2px 4px color-mix(in srgb, var(--td-shadow-light) 32%, transparent);
+}
+.td-react-split-item-text { display: grid; gap: 1px; min-width: 0; }
+.td-react-split-item-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* A phone number or a handle is a machine value, so it takes the mono face. */
+.td-react-split-item-detail { color: var(--td-ink-3); font-family: var(--td-font-mono); font-size: 0.72rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .td-react-split-primary,
+  .td-react-split-toggle,
+  .td-react-split-item,
+  .td-react-split-chevron { transition: none; }
+}

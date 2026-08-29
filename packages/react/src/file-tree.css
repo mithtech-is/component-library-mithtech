@@ -1,0 +1,136 @@
+/* FileTree — a repository or docs tree.
+
+   Every row presses ([[L34]]): hover sinks it, the press sinks it deeper, and
+   the file being read rests recessed. The design system's own tree washed a
+   hovered row in 6% ink and the active row in 12% brand. A row being pointed
+   at is not a category, so both washes are replaced by depth, and papaya
+   arrives as ink ([[L11]]).
+
+   The chevron is a direction mark. It turns and steps its ink; it carries no
+   `drop-shadow`, because a glow is how this system says state and the state is
+   already in the depth under it. */
+
+.td-tree.td-react-tree {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  font-family: var(--td-font-mono);
+  font-size: 0.76rem;
+  line-height: 1.5;
+}
+
+.td-react-tree-list,
+.td-tree-children.td-react-tree-children {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: block;
+}
+/* Nesting is one indent per level, drawn as a seam rather than a border box:
+   the line says "these belong to the folder above" and nothing else. */
+.td-tree-children.td-react-tree-children {
+  margin-left: var(--td-sp-5);
+  padding-left: var(--td-sp-4);
+  border-left: 1px solid var(--td-edge);
+}
+/* `hidden` is honoured rather than overridden, so a closed folder is out of
+   the accessibility tree AND out of in-page search. */
+.td-tree-children.td-react-tree-children[hidden] { display: none; }
+
+.td-react-tree-node { min-width: 0; }
+
+.td-tree-row.td-react-tree-row {
+  display: flex;
+  align-items: center;
+  gap: var(--td-sp-3);
+  width: 100%;
+  min-width: 0;
+  padding: var(--td-sp-2) var(--td-sp-4);
+  border: 0;
+  border-radius: var(--td-radius-2);
+  cursor: pointer;
+  text-align: start;
+  text-decoration: none;
+  user-select: none;
+  font: inherit;
+  color: var(--td-ink-2);
+  background: transparent;
+  box-shadow: var(--td-row-rest);
+  transition:
+    color var(--td-t-base) var(--td-ease),
+    background var(--td-t-base) var(--td-ease),
+    box-shadow var(--td-t-base) var(--td-ease);
+}
+.td-tree-row.td-react-tree-row:hover {
+  color: var(--td-ink);
+  background: var(--td-surface);
+  box-shadow: var(--td-row-hover);
+}
+.td-tree-row.td-react-tree-row:active {
+  color: var(--td-ink);
+  background: var(--td-surface);
+  box-shadow: var(--td-row-press);
+}
+/* The file being read: recessed at rest, papaya as ink. No wash. */
+.td-tree-row.td-react-tree-row[data-active="true"] {
+  color: var(--td-brand-text);
+  background: var(--td-surface);
+  box-shadow: var(--td-row-selected);
+}
+.td-tree-row.td-react-tree-row:focus-visible { outline: 2px solid var(--td-accent); outline-offset: -2px; }
+
+.td-tree-row.td-react-tree-row .td-tree-chevron.td-react-tree-chevron {
+  width: 0.85em;
+  height: 0.85em;
+  flex: 0 0 auto;
+  fill: currentColor;
+  color: var(--td-ink-3);
+  transition: transform var(--td-t-base) var(--td-ease), color var(--td-t-base) var(--td-ease);
+}
+.td-tree-row.td-react-tree-row:hover .td-react-tree-chevron { color: var(--td-ink-2); }
+.td-tree-row.td-react-tree-row[data-open="true"] .td-react-tree-chevron { transform: rotate(90deg); color: var(--td-ink-2); }
+
+/* A file has no chevron, so its column is held open — otherwise names step in
+   and out with the folders instead of running down one edge. */
+.td-react-tree-gutter { width: 0.85em; flex: 0 0 auto; }
+
+.td-tree-row.td-react-tree-row .td-tree-icon.td-react-tree-icon {
+  width: 1em;
+  height: 1em;
+  flex: 0 0 auto;
+  fill: currentColor;
+  color: var(--td-ink-3);
+  transition: color var(--td-t-base) var(--td-ease);
+}
+.td-tree-row.td-react-tree-row[data-kind="folder"] .td-react-tree-icon { color: var(--td-ink-2); }
+.td-tree-row.td-react-tree-row[data-active="true"] .td-react-tree-icon { color: var(--td-brand-text); }
+
+.td-tree-row.td-react-tree-row .td-tree-name.td-react-tree-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.td-tree-row.td-react-tree-row[data-kind="folder"] .td-react-tree-name { font-weight: 600; color: var(--td-ink); }
+
+/* The format tag is a machine value on a carved chip, not a coloured pill. */
+.td-tree-row.td-react-tree-row .td-tree-meta.td-react-tree-meta {
+  flex: 0 0 auto;
+  font-size: 0.82em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--td-ink-3);
+  padding: 1px var(--td-sp-3);
+  border-radius: var(--td-radius-1);
+  background: transparent;
+  box-shadow:
+    inset 1px 1px 2px color-mix(in srgb, var(--td-shadow-dark) 34%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 34%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .td-tree-row.td-react-tree-row,
+  .td-react-tree-chevron,
+  .td-react-tree-icon { transition: none; }
+}

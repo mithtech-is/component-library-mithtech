@@ -1,0 +1,102 @@
+/* SideTabs — the sideways tab.
+
+   The list is a rail of FilamentButtons and carries no styling of its own
+   beyond placement: the filament reports selection, so the list does not need
+   a track, a border or a fill to say which tab is open.
+
+   The seam between rail and panel is carved — a shade hairline over a
+   highlight hairline — never a painted line. */
+
+.td-react-sidetabs {
+  display: grid;
+  min-width: 0;
+  gap: var(--td-sp-9);
+}
+.td-react-sidetabs-list { display: flex; min-width: 0; }
+.td-react-sidetabs-panel { min-width: 0; }
+.td-react-sidetabs-panel:focus-visible { outline: 2px solid var(--td-accent); outline-offset: 4px; }
+
+/* ── sidebar and rail: the vertical forms ──────────────────────────────── */
+.td-react-sidetabs--sidebar,
+.td-react-sidetabs--rail {
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+}
+/* The column sits in a very shallow well — one step below the page, and
+   shallower than a held tab's own recess so the held state still reads as a
+   deeper level. This is `.td-vtablist` in the design system, and the port
+   dropped it: without the well there is nothing for the rows to sit in, which
+   is a seam pretending to be a container. */
+.td-react-sidetabs--sidebar .td-react-sidetabs-list,
+.td-react-sidetabs--rail .td-react-sidetabs-list {
+  flex-direction: column;
+  gap: var(--td-sp-3);
+  padding: var(--td-sp-3);
+  border-radius: var(--td-radius-6);
+  background: var(--td-surface);
+  box-shadow:
+    inset 1.5px 1.5px 4px color-mix(in srgb, var(--td-shadow-dark) 45%, transparent),
+    inset -1px -1px 2.5px color-mix(in srgb, var(--td-shadow-light) 55%, transparent);
+}
+
+/* Inside the well the rows go flat again, the way the design has them: the
+   well supplies the contrast, so a raised row on top of it would be two
+   raised things arguing. A standalone FilamentButton keeps its own lift. */
+.td-react-sidetabs-list .td-react-filament {
+  background: transparent;
+  box-shadow:
+    0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    0 0 0 rgb(from var(--td-shadow-light) r g b / 0),
+    var(--td-row-rest),
+    0 0 0 1px rgb(from var(--td-edge) r g b / 0);
+}
+.td-react-sidetabs--sidebar .td-react-sidetabs-list { min-width: 180px; }
+.td-react-sidetabs--rail .td-react-sidetabs-list { padding-inline-end: var(--td-sp-6); }
+/* A sidebar tab fills the rail so its filament lines up with its neighbours;
+   the button's own `width: fit-content` would stagger them. */
+.td-react-sidetabs--sidebar .td-react-filament { width: 100%; }
+
+/* ── bar: the horizontal form ──────────────────────────────────────────── */
+.td-react-sidetabs--bar { grid-template-columns: minmax(0, 1fr); }
+.td-react-sidetabs--bar .td-react-sidetabs-list {
+  flex-direction: row;
+  gap: var(--td-sp-3);
+  /* A tab list that outgrows the viewport scrolls itself rather than taking
+     the page's horizontal scroll with it. */
+  overflow-x: auto;
+  scrollbar-width: thin;
+  padding-block-end: var(--td-sp-6);
+  border-block-end: 1px solid color-mix(in srgb, var(--td-shadow-dark) 46%, transparent);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--td-shadow-light) 55%, transparent);
+}
+.td-react-sidetabs--bar .td-react-filament { flex: 0 0 auto; }
+
+/* Below the sidebar's usable width a vertical rail of labels costs more room
+   than the panel it is introducing, so it lays down and scrolls. */
+@media (max-width: 640px) {
+  .td-react-sidetabs--sidebar { grid-template-columns: minmax(0, 1fr); }
+  /* The well lies down with the list rather than reverting to a seam. It kept
+     the pre-well border here, so a narrow screen showed a line where every
+     other width shows a trough. */
+  .td-react-sidetabs--sidebar .td-react-sidetabs-list {
+    flex-direction: row;
+    gap: var(--td-sp-3);
+    min-width: 0;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    padding: var(--td-sp-3);
+  }
+  .td-react-sidetabs--sidebar .td-react-filament { width: auto; flex: 0 0 auto; }
+  /* The filament moves to the top edge with the list, so the strip follows
+     the axis rather than staying on the inline edge it no longer has. */
+  .td-react-sidetabs--sidebar .td-react-filament-strip {
+    inset-inline-start: auto;
+    inset-block-start: 0;
+    top: auto;
+    bottom: auto;
+    left: var(--td-sp-6);
+    right: var(--td-sp-6);
+    width: auto;
+    height: 3px;
+  }
+}

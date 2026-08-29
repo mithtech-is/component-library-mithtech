@@ -1,0 +1,14 @@
+{
+  "name": "@mithtech-bengaluru/tonaldepth-nativewind",
+  "version": "0.1.0-alpha.0",
+  "description": "Generated TonalDepth tokens and NativeWind theme bridge",
+  "license": "UNLICENSED",
+  "type": "module",
+  "files": ["dist", "README.md"],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
+  "scripts": { "build": "node scripts/clean.mjs && tsc -p tsconfig.json" },
+  "peerDependencies": { "nativewind": "^4.2.0" },
+  "publishConfig": { "registry": "https://npm.po5.in", "access": "restricted" }
+}

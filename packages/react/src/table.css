@@ -1,0 +1,44 @@
+/* Table — the row press, made to actually paint.
+
+   `.td-table` is `border-collapse: collapse`, and under the collapsing border
+   model a `<tr>` never generates a box that `box-shadow` can paint into. The
+   base layer's row ladder is written correctly and renders *nothing*: the
+   background changes and the depth is silently discarded, so an interactive
+   row reads as a flat tint rather than a surface being pressed.
+
+   The separated model fixes it and costs nothing here — the only borders in
+   this table are `border-bottom` on the cells, so with `border-spacing: 0`
+   the rendering is identical and adjacent borders have nothing to collapse.
+
+   Written at (0,2,0) to clear a consumer stylesheet's own copy of `.td-table`. */
+.td-table.td-react-table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+/* The row ladder, in the grammar `.td-mega-option` sets for every row in the
+   system: hover sinks it a little, the press sinks it deeper. Depth only —
+   a row does not take a tint, because colour is category ([[L11]]) and a row
+   being pointed at is not a category. Five slots in both states so the two
+   interpolate rather than snap ([[L18]]). */
+.td-table.td-react-table tbody tr {
+  box-shadow: var(--td-row-rest);
+  transition: background var(--td-t-fast) var(--td-ease), box-shadow var(--td-t-fast) var(--td-ease);
+}
+.td-table.td-react-table tbody tr:hover {
+  background: var(--td-surface);
+  box-shadow: var(--td-row-hover);
+}
+/* Every row presses, not only one that leads somewhere. The base layer gated
+   the press behind `:has(a)`, so a row the reader can select or expand had a
+   hover state and no press at all. */
+.td-table.td-react-table tbody tr:active {
+  background: var(--td-surface);
+  box-shadow: var(--td-row-press);
+}
+/* A selected row rests recessed — the same grammar as an open nav button. */
+.td-table.td-react-table tbody tr[aria-selected="true"],
+.td-table.td-react-table tbody tr[data-selected="true"] {
+  background: var(--td-surface);
+  box-shadow: var(--td-row-selected);
+}

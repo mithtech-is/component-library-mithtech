@@ -1,0 +1,104 @@
+/* DropdownMenu — deltas over `.td-dropdown-trigger` in packages/core, (0,2,0).
+
+   The trigger's fill is `var(--td-surface)`, which on paper IS the page
+   colour, and its `--td-btn-rest` shadow is a 0.105-alpha shade under a
+   0.18-alpha white highlight. A 1px `#DCDCDC` hairline against `#F5F5F5` is
+   all that was left holding it, so a closed select read as a label rather than
+   a control ([[L12]]). Same three sides as every other raised surface. */
+.td-dropdown-trigger.td-react-dropdown-trigger {
+  box-shadow:
+    3px 3px 12px color-mix(in srgb, var(--td-shadow-dark) 70%, transparent),
+    -3px -3px 12px color-mix(in srgb, var(--td-shadow-light) 66%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+}
+/* Open, the trigger is the thing being read from, not reached for — it presses
+   into the surface and the menu takes the light. */
+.td-dropdown[data-state="open"] .td-dropdown-trigger.td-react-dropdown-trigger {
+  box-shadow:
+    inset 2px 2px 5px color-mix(in srgb, var(--td-shadow-dark) 52%, transparent),
+    inset -1.5px -1.5px 4px color-mix(in srgb, var(--td-shadow-light) 42%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+
+/* ── The menu comes out of the button ──────────────────────────────────────
+
+   Three corrections, 2026-08-29: *"the width of the dropdown shouldn't be
+   bigger than the dropdown button"*, *"the dropdown doesn't feel neomorphic"*,
+   *"I want it to feel like it's coming out of the dropdown like it's part of
+   the dropdown."*
+
+   The base layer had `min-width: max(100%, 240px)`, so the menu was wider than
+   the control it belonged to and read as a separate object that happened to
+   land nearby; it was drawn with a 1px border and a drop shadow rather than
+   carved; and it sat `6px` clear of the trigger, which is the gap that made it
+   a different object.
+
+   So: exactly the trigger's width, attached to its lower edge, sharing its
+   corner radius so the two form one shape, and drawn from the same material —
+   a plate pushed out of the surface with the veil and the edge ring ([[L27]]),
+   not a floating card. */
+.td-dropdown-menu.td-react-dropdown-menu {
+  /* The button's width, never more. `right: 0` pins it to both edges of the
+     same box the trigger fills, so the two cannot disagree. */
+  left: 0;
+  right: 0;
+  width: auto;
+  min-width: 0;
+  max-width: var(--td-dropdown-max, 280px);
+  /* Attached. The 1px overlap hides the seam between the two boxes. */
+  top: calc(100% - 1px);
+  border: 0;
+  border-radius: 0 0 var(--td-radius-5) var(--td-radius-5);
+  padding: var(--td-sp-3);
+  background: var(--td-raise-fill);
+  box-shadow:
+    3px 4px 10px color-mix(in srgb, var(--td-shadow-dark) 52%, transparent),
+    -3px 0 8px color-mix(in srgb, var(--td-shadow-light) 46%, transparent),
+    inset 0 0 0 0 rgb(from var(--td-shadow-light) r g b / 0),
+    0 0 0 1px var(--td-edge);
+  /* Drawn out of the button rather than faded in. `clip-path` rather than a
+     scaleY, which would squash the labels on the way down. */
+  animation: td-react-dropdown-out var(--td-t-slow) var(--td-ease) both;
+}
+@keyframes td-react-dropdown-out {
+  from { clip-path: inset(0 0 100% 0); opacity: 0.55; }
+  to { clip-path: inset(0 0 0 0); opacity: 1; }
+}
+
+/* Open, the trigger squares off its lower corners so the pair reads as one
+   object with a seam across it rather than two stacked plates. */
+.td-react-dropdown[data-state="open"] .td-dropdown-trigger.td-react-dropdown-trigger {
+  border-radius: var(--td-radius-5) var(--td-radius-5) 0 0;
+}
+
+/* The chevron is a direction mark: it turns and steps its ink, and it never
+   glows. The base layer painted it papaya when open, which spends a category
+   colour on "this is open" — depth already says that ([[L11]]). */
+.td-dropdown-chevron.td-react-dropdown-chevron {
+  width: 0.9em;
+  height: 0.9em;
+  fill: currentColor;
+  color: var(--td-ink-3);
+}
+.td-react-dropdown[data-state="open"] .td-react-dropdown-chevron { transform: rotate(180deg); color: var(--td-ink-2); }
+
+@media (prefers-reduced-motion: reduce) {
+  .td-dropdown-menu.td-react-dropdown-menu { animation: none; }
+}
+
+/* The value takes the room; the mark keeps its own. */
+.td-dropdown-value.td-react-dropdown-value { min-width: 0; }
+
+/* A row in the menu presses like every other row in the system ([[L34]]) —
+   and the CHOSEN one rests recessed, so the menu says what is selected with
+   depth rather than only with a tick. */
+.td-dropdown-item.td-react-dropdown-item {
+  border-radius: var(--td-radius-3);
+  box-shadow: var(--td-row-rest);
+}
+.td-dropdown-item.td-react-dropdown-item[aria-checked="true"] {
+  color: var(--td-brand-text);
+  background: var(--td-surface);
+  box-shadow: var(--td-row-selected);
+}

@@ -1,0 +1,110 @@
+/* Frame — a raised plate with a well cut into it.
+
+   The plate is chrome and is raised; the well holds the object and is
+   recessed. That is the whole idea, and it is why a chart in a frame reads
+   correctly without a single border: the reader can tell data from chrome by
+   depth alone.
+
+   The well is carved — shade above, highlight below — never a painted outline
+   and never a fill. In light mode all four sides must read, so the ring is
+   part of the recipe rather than an afterthought.
+
+   The well's radius is the plate's MINUS the padding, which is what
+   `--td-well-radius` computes. Concentric curves read as a well cut into the
+   plate; equal radii read as a sticker stuck on it. Do not swap these three
+   for loose `--td-radius-*` steps — the subtraction is the whole effect. */
+
+.td-react-frame {
+  display: grid;
+  gap: var(--td-sp-8);
+  min-width: 0;
+  padding: var(--td-frame-pad, 18px);
+  border-radius: var(--td-frame-radius, 30px);
+  background: var(--td-raise-fill);
+  box-shadow:
+    4px 4px 12px color-mix(in srgb, var(--td-shadow-dark) 70%, transparent),
+    -4px -4px 12px color-mix(in srgb, var(--td-shadow-light) 66%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+}
+
+/* ── the head ──────────────────────────────────────────────────────────── */
+.td-react-frame-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: start;
+  justify-content: space-between;
+  gap: var(--td-sp-6);
+  min-width: 0;
+}
+.td-react-frame-identity { display: grid; gap: var(--td-sp-3); min-width: 0; }
+.td-react-frame-eyebrow {
+  margin: 0;
+  color: var(--td-ink-3);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.td-react-frame-title { margin: 0; font-size: 1rem; font-weight: 600; color: var(--td-ink); }
+.td-react-frame-description { margin: 0; max-width: 62ch; color: var(--td-ink-2); font-size: 0.86rem; line-height: 1.6; }
+.td-react-frame-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--td-sp-4); flex: 0 0 auto; }
+
+/* ── the well ──────────────────────────────────────────────────────────── */
+.td-react-frame-well {
+  min-width: 0;
+  /* The system's own `.td-well` clips. This scrolls instead, because a Frame
+     is what a wide table lives in and clipping one hides columns with no way
+     to reach them — it scrolls inside its own edge rather than taking the
+     page's horizontal scroll with it. */
+  overflow-x: auto;
+  padding: var(--td-sp-8);
+  border-radius: var(--td-well-radius, 12px);
+  background: var(--td-surface);
+  box-shadow: var(--td-inset-soft, inset 0 1px 3px rgb(0 0 0 / 0.06));
+}
+/* A chart carries its own margins; two sets of padding is one too many. */
+.td-react-frame-well--flush { padding: 0; overflow: hidden; }
+
+.td-react-frame--deep .td-react-frame-well {
+  box-shadow:
+    inset 3px 3px 12px color-mix(in srgb, var(--td-shadow-dark) 66%, transparent),
+    inset -2px -2px 6px color-mix(in srgb, var(--td-shadow-light) 42%, transparent);
+}
+/* No well at all — the frame is only supplying a caption and a boundary. */
+.td-react-frame--flush .td-react-frame-well { padding: 0; background: transparent; box-shadow: none; overflow: visible; }
+
+/* A well already IS the housing. Anything that carries its own plate — the
+   table scroll container, a bento panel — drops it on the way in, or the frame
+   reads as a raised box sitting in a trough. Chrome is raised, data is
+   recessed; nesting must not invert that. */
+.td-react-frame-well .td-table-wrap,
+.td-react-frame-well .td-panel,
+.td-react-frame-well .td-chart-card,
+.td-react-frame-well .td-react-map {
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.td-react-frame-footnote {
+  margin: 0;
+  color: var(--td-ink-3);
+  font-size: 0.74rem;
+  line-height: 1.55;
+}
+/* A source line is usually a machine value — a date, a row count, a version. */
+.td-react-frame-footnote code { font-family: var(--td-font-mono); }
+
+.td-react-frame-grid {
+  display: grid;
+  gap: var(--td-sp-9);
+  min-width: 0;
+  grid-template-columns: repeat(auto-fit, minmax(min(var(--td-frame-min, 320px), 100%), 1fr));
+}
+
+/* Light mode carves shallower than dark, so a well can read as flat paper.
+   The extra ring is what keeps all four sides visible on a pale ground. */
+:root:not([data-theme="dark"]) .td-react-frame-well {
+  box-shadow: var(--td-inset-soft), 0 0 0 1px var(--td-edge);
+}

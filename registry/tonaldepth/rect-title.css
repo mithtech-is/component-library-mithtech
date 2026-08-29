@@ -1,0 +1,58 @@
+/* TonalDepth RectTitle — self-contained.
+
+   A registry consumer has no tonaldepth-core to inherit from, so this file
+   re-declares the display ramp and the line rules the component renders
+   against. The package's stylesheet carries only the deltas over that core;
+   the difference between the two files is deliberate. */
+
+.td-h1,
+.td-h2,
+.td-h3 {
+  font-family: var(--td-font-display);
+  font-weight: 400;
+  color: var(--td-ink);
+  letter-spacing: 0.005em;
+  text-transform: uppercase;
+  margin: 0 0 16px;
+  line-height: 0.92;
+}
+.td-h1 { font-size: clamp(40px, 5.4vw, 76px); line-height: 0.88; letter-spacing: 0.01em; }
+.td-h2 { font-size: clamp(32px, 4vw, 56px); line-height: 0.92; }
+.td-h3 { font-size: clamp(24px, 2.8vw, 38px); line-height: 1; }
+
+.td-h1-line {
+  display: block;
+  white-space: nowrap;
+  overflow: visible;
+  /* Anton is stated, not inherited. The ramp gives h1-h3 Anton and h4-h6 the UI
+     face, so a rectangle title placed in an h4 would silently change face. The
+     rect system is Anton, always. */
+  font-family: var(--td-font-display);
+  /* font-size is set by the component's fitter so the shorter lines scale up to
+     match the longest line's visual width. Letter-spacing is never modified. */
+}
+.td-h1-line + .td-h1-line { margin-top: 2px; }
+.td-h1-line.accent { color: var(--td-brand); }
+
+/* A heading inside a grid or flex parent takes min-width:auto, which is the
+   min-content width of a `white-space: nowrap` line — i.e. the whole headline.
+   That is enough to blow out a column and take the page's horizontal scroll
+   with it. The fitter measures against clientWidth, so the box has to be
+   allowed to shrink first. */
+.td-registry-rect-title { min-width: 0; }
+
+/* Lines are sized individually by the fitter, so the block's own line-height
+   would otherwise be computed against the heading's base size and leave the
+   scaled-up lines overlapping. */
+.td-registry-rect-title .td-h1-line { line-height: 0.92; }
+
+/* The per-line tones the `tones` prop selects.
+
+   These are categories, not free colour — the prop takes a named tone so a
+   headline cannot introduce a hue the palette does not have. Written at
+   (0,2,0) so they beat the bare `.td-h1-line.accent` above when a tone list
+   deliberately overrides the legacy accent flag. */
+.td-registry-rect-title .td-h1-line--muted { color: var(--td-ink-2); }
+.td-registry-rect-title .td-h1-line--accent { color: var(--td-accent-text); }
+.td-registry-rect-title .td-h1-line--green { color: var(--td-green-text); }
+.td-registry-rect-title .td-h1-line--error { color: var(--td-error-text); }

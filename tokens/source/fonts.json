@@ -1,0 +1,60 @@
+{
+  "$comment": "Font loading for the TonalDepth core package. Edit this file and run `pnpm generate` to change which families load and where they come from. The family NAMES that components reference live in tokens.json under typography.family.*; this file only says how those families are fetched. Change both together.",
+  "schemaVersion": 1,
+  "cdns": [
+    "https://cdn.jsdelivr.net/npm",
+    "https://unpkg.com"
+  ],
+  "selfHostedBase": "/fonts",
+  "subsets": {
+    "latin": "U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD",
+    "latin-ext": "U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1EFF,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF"
+  },
+  "families": [
+    {
+      "family": "Anton",
+      "token": "--td-font-display",
+      "role": "Display headings (h1-h3) and rectangle titles",
+      "package": "@fontsource/anton@5",
+      "slug": "anton",
+      "variable": false,
+      "weight": "400",
+      "styles": ["normal"],
+      "subsets": ["latin", "latin-ext"],
+      "$comment": "One weight exists. Asking for 700 makes the browser smear the outlines."
+    },
+    {
+      "family": "Source Sans 3",
+      "token": "--td-font-sans",
+      "role": "Body copy",
+      "package": "@fontsource-variable/source-sans-3@5",
+      "slug": "source-sans-3",
+      "variable": true,
+      "weight": "200 900",
+      "styles": ["normal", "italic"],
+      "subsets": ["latin", "latin-ext"]
+    },
+    {
+      "family": "Hanken Grotesk",
+      "token": "--td-font-ui",
+      "role": "UI text: buttons, labels, nav, h4-h6",
+      "package": "@fontsource-variable/hanken-grotesk@5",
+      "slug": "hanken-grotesk",
+      "variable": true,
+      "weight": "100 900",
+      "styles": ["normal", "italic"],
+      "subsets": ["latin", "latin-ext"]
+    },
+    {
+      "family": "JetBrains Mono",
+      "token": "--td-font-mono",
+      "role": "Counts, timestamps, command-palette hints",
+      "package": "@fontsource-variable/jetbrains-mono@5",
+      "slug": "jetbrains-mono",
+      "variable": true,
+      "weight": "100 800",
+      "styles": ["normal", "italic"],
+      "subsets": ["latin", "latin-ext"]
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "packages": [
+    "mithtech-bengaluru-tonaldepth-core-0.1.0-alpha.0.tgz",
+    "mithtech-bengaluru-tonaldepth-react-0.1.0-alpha.19.tgz"
+  ],
+  "vite": {
+    "status": "verified",
+    "dist_files": [
+      "assets/index-BHiFazga.css",
+      "assets/index-D4jsr-OX.js",
+      "index.html"
+    ]
+  },
+  "next": {
+    "status": "verified",
+    "static_page": true
+  },
+  "workspace_aliases_used": false
+}

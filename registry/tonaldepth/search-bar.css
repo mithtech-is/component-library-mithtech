@@ -1,0 +1,162 @@
+/* SearchBar — a field, so it grooves inward.
+
+   Depth is state: a place to put something is carved into the surface, never
+   raised. The magnifier is a mark rather than a control, so it takes no glow
+   and no hover — only the clear button and the submit button are pressable,
+   and they take the ladder. */
+
+.td-registry-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--td-sp-5);
+  min-width: 0;
+  width: min(100%, var(--td-search-width, 420px));
+  justify-self: start;
+}
+/* The escape hatch, made explicit rather than accidental. */
+.td-registry-search--block { width: 100%; --td-search-width: 100%; }
+
+.td-registry-search-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--td-sp-4);
+  flex: 1 1 auto;
+  min-width: 0;
+  padding-inline: var(--td-sp-6);
+  border-radius: var(--td-radius-4);
+  background: color-mix(in srgb, var(--td-surface) 94%, black);
+  /* The focus ring is a third slot, declared here unlit so the two states
+     interpolate rather than snap, in the ring's own colour at zero alpha
+     rather than `transparent` (which is rgba(0, 0, 0, 0)). */
+  box-shadow:
+    inset 2px 2px 4px color-mix(in srgb, var(--td-shadow-dark) 55%, transparent),
+    inset -1px -1px 3px color-mix(in srgb, var(--td-shadow-light) 45%, transparent),
+    0 0 0 1.5px rgb(from var(--td-accent) r g b / 0);
+  transition: box-shadow var(--td-t-base) var(--td-ease);
+}
+/* Focus is announced by a ring on the well, not by the well becoming raised —
+   the field has not changed what it is. */
+.td-registry-search-field:focus-within {
+  box-shadow:
+    inset 2px 2px 4px color-mix(in srgb, var(--td-shadow-dark) 55%, transparent),
+    inset -1px -1px 3px color-mix(in srgb, var(--td-shadow-light) 45%, transparent),
+    0 0 0 1.5px color-mix(in srgb, var(--td-accent) 55%, transparent);
+}
+
+.td-registry-search-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--td-ink);
+  font: inherit;
+}
+.td-registry-search-input::placeholder { color: var(--td-ink-3); }
+.td-registry-search-input:focus { outline: none; }
+/* The engine's own clear affordance would sit beside ours. */
+.td-registry-search-input::-webkit-search-cancel-button { appearance: none; }
+
+.td-registry-search-mark { display: inline-grid; place-items: center; flex: 0 0 auto; line-height: 0; color: var(--td-ink-3); }
+.td-registry-search-mark > svg { width: 15px; height: 15px; fill: currentColor; }
+
+.td-registry-search-clear {
+  display: inline-grid; place-items: center; flex: 0 0 auto;
+  width: 22px; height: 22px;
+  cursor: pointer; border: 0; padding: 0;
+  border-radius: 50%;
+  color: var(--td-ink-3);
+  background: transparent;
+  transition: color var(--td-t-fast) var(--td-ease), box-shadow var(--td-t-fast) var(--td-ease);
+}
+.td-registry-search-clear > svg { width: 12px; height: 12px; fill: currentColor; }
+.td-registry-search-clear:hover {
+  color: var(--td-ink);
+  box-shadow:
+    inset 1.5px 1.5px 3px color-mix(in srgb, var(--td-shadow-dark) 40%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 34%, transparent);
+}
+.td-registry-search-clear:focus-visible { outline: 2px solid var(--td-accent); outline-offset: 2px; }
+
+/* The submit button is a control, so it is raised and takes the ladder. */
+.td-registry-search-submit {
+  flex: 0 0 auto;
+  cursor: pointer; border: 0;
+  min-height: var(--td-btn-h, 42px);
+  padding: 0 var(--td-sp-8);
+  border-radius: var(--td-radius-4);
+  color: var(--td-ink);
+  font: inherit; font-size: 0.86rem; font-weight: 600;
+  background: var(--td-raise-fill);
+  box-shadow:
+    3px 3px 7px color-mix(in srgb, var(--td-shadow-dark) 68%, transparent),
+    -3px -3px 7px color-mix(in srgb, var(--td-shadow-light) 64%, transparent),
+    inset 0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+  transition: box-shadow var(--td-t-base) var(--td-ease), background var(--td-t-base) var(--td-ease);
+}
+.td-registry-search-submit:hover { background: var(--td-raise-fill-hover); }
+.td-registry-search-submit:active {
+  background: var(--td-surface);
+  box-shadow:
+    0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    0 0 0 rgb(from var(--td-shadow-light) r g b / 0),
+    inset 2px 2px 5px color-mix(in srgb, var(--td-shadow-dark) 52%, transparent),
+    inset -1px -1px 3px color-mix(in srgb, var(--td-shadow-light) 30%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+.td-registry-search-submit:focus-visible { outline: 2px solid var(--td-accent); outline-offset: 3px; }
+.td-registry-search-submit:disabled { cursor: not-allowed; color: var(--td-ink-3); box-shadow: none; background: color-mix(in srgb, var(--td-ink-2) 8%, var(--td-surface)); }
+
+/* ── suggestions ───────────────────────────────────────────────────────── */
+.td-registry-search-list {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + var(--td-sp-4));
+  inset-inline: 0;
+  max-height: 320px;
+  overflow-y: auto;
+  margin: 0;
+  padding: var(--td-sp-4);
+  list-style: none;
+  border-radius: var(--td-radius-6);
+  background: var(--td-surface);
+  box-shadow:
+    6px 8px 20px color-mix(in srgb, var(--td-shadow-dark) 60%, transparent),
+    -4px -4px 12px color-mix(in srgb, var(--td-shadow-light) 40%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+.td-registry-search-option {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+  cursor: pointer;
+  padding: var(--td-sp-4) var(--td-sp-6);
+  border-radius: var(--td-radius-4);
+  color: var(--td-ink-2);
+  font-size: 0.86rem;
+}
+.td-registry-search-option--on {
+  color: var(--td-ink);
+  background: color-mix(in srgb, var(--td-surface) 97%, black);
+  box-shadow:
+    inset 1.5px 1.5px 3px color-mix(in srgb, var(--td-shadow-dark) 40%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 34%, transparent);
+}
+.td-registry-search-option-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.td-registry-search-option-detail { color: var(--td-ink-3); font-size: 0.74rem; }
+
+/* ── sizes ─────────────────────────────────────────────────────────────── */
+.td-registry-search--sm .td-registry-search-field { min-height: 34px; font-size: 0.82rem; }
+.td-registry-search--md .td-registry-search-field { min-height: var(--td-btn-h, 42px); }
+.td-registry-search--lg .td-registry-search-field { min-height: var(--td-btn-h-lg, 50px); padding-inline: var(--td-sp-7); font-size: 1rem; }
+.td-registry-search--lg .td-registry-search-mark > svg { width: 17px; height: 17px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .td-registry-search-field,
+  .td-registry-search-clear,
+  .td-registry-search-submit { transition: none; }
+}

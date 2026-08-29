@@ -1,0 +1,45 @@
+/* CodeBlock — code, housed.
+
+   The housing is Frame's: code is a measured object, so it is shown in a well
+   rather than offered on a plate ([[L32]]). This file carries only what the
+   listing adds — the type, the scroller and the four token colours.
+
+   Two things the design system's own panel does are deliberately not
+   reproduced. It hardcodes a `#1A1815` ground and `#F0EDE5` ink in both
+   themes: a well is the plain surface pressed in, same material and opposite
+   direction, and a fixed dark slab on a paper page is a tinted band ([[L03]],
+   [[L32]]). And its token colours are raw hexes; a component may carry no raw
+   value, so keyword / string / name / comment resolve to the semantic families
+   the system already owns ([[L21]]). */
+
+.td-react-code { margin: 0; }
+
+.td-codeblock.td-react-codeblock {
+  margin: 0;
+  min-width: 0;
+  /* Its own scroller, so a long line never takes the page sideways with it. */
+  overflow-x: auto;
+  font-family: var(--td-font-mono);
+  font-size: 0.72rem;
+  line-height: 1.65;
+  color: var(--td-ink);
+  white-space: pre;
+  tab-size: 2;
+  /* The well is already the housing, so the listing drops its own plate on the
+     way in — a raised box inside a trough says "chrome" about the data. */
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+}
+.td-codeblock.td-react-codeblock:focus-visible { outline: 2px solid var(--td-accent); outline-offset: 4px; }
+.td-react-codeblock--wrap { white-space: pre-wrap; overflow-wrap: anywhere; }
+
+.td-react-codeblock-code { font: inherit; color: inherit; background: none; }
+
+/* The four token classes a pre-highlighted listing is expected to carry. They
+   are the design system's own names; only the colours are moved onto tokens. */
+.td-codeblock.td-react-codeblock .td-cb-k { color: var(--td-brand-text); }
+.td-codeblock.td-react-codeblock .td-cb-s { color: var(--td-green-text); }
+.td-codeblock.td-react-codeblock .td-cb-n { color: var(--td-accent-text); }
+.td-codeblock.td-react-codeblock .td-cb-c { color: var(--td-ink-3); font-style: italic; }

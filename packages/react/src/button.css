@@ -1,0 +1,328 @@
+/* Size and variant modifiers layered over the core `.td-primary` /
+   `.td-coloured` bases.
+
+   Every modifier is written at (0,3,0) — the stable `.td-react-button` class,
+   the modifier, and the design-system base. A consumer that serves its own
+   `.td-*` layer can raise the base's specificity: mith.tech ships
+   `:root[data-theme="dark"] .td-primary`, which is (0,3,0), and a bare
+   modifier at (0,1,0) loses to it in that theme, leaving `outline` and `ghost`
+   inert. Matching (0,3,0) puts source order back in charge, and this package's
+   component CSS is emitted after the consumer's global stylesheet (measured on
+   Next.js 16 / Turbopack). */
+
+/* A button sizes to its label, in every parent.
+
+   The bases are inline-level, but CSS blockifies an inline-level box to
+   `flex` the moment it becomes a grid or flex item, and a stretched item
+   fills its whole track — so a button in a `display: grid` panel spanned the
+   full column. `width: fit-content` is a definite size, so the stretch cannot
+   apply. A consumer that genuinely wants a full-width button sets `width:
+   100%` on it, which is the explicit choice this makes them make. */
+.td-react-button:is(.td-primary, .td-coloured) { width: fit-content; max-width: 100%; }
+
+/* The glow stays inside the housing. A `drop-shadow` is painted around the
+   glyph with no regard for the button's edge, so the old 12px bloom spilled
+   onto the page. Clipped at the BUTTON, which has padding around the glyph —
+   clipping the lamp wrapper instead would erase the glow, since that box is
+   exactly the size of the icon. The button's own box-shadow is unaffected:
+   overflow clips descendants, not the element's own shadow, and `outline`
+   (the focus ring) is not clipped either. */
+.td-react-button:is(.td-primary, .td-coloured) { overflow: hidden; }
+
+.td-react-button.td-react-button--sm:is(.td-primary, .td-coloured) { min-height: 34px; padding-inline: 12px; font-size: 12px; border-radius: 10px; }
+.td-react-button.td-react-button--md:is(.td-primary, .td-coloured) { min-height: var(--td-btn-h, 42px); }
+.td-react-button.td-react-button--lg:is(.td-primary, .td-coloured) { min-height: var(--td-btn-h-lg, 50px); padding-inline: 20px; font-size: 14px; }
+
+/* Both rungs carry the ring and the four depth slots, so hovering an outline
+   button grows depth out of the ring instead of snapping to it ([[L18]]). */
+.td-react-button.td-react-button--outline:is(.td-primary, .td-coloured) {
+  background: transparent;
+  box-shadow:
+    0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    0 0 0 rgb(from var(--td-shadow-light) r g b / 0),
+    inset 0 0 0 rgb(from var(--td-shadow-light) r g b / 0),
+    inset 0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    0 0 0 1px var(--td-btn-border-selected);
+}
+.td-react-button.td-react-button--outline:is(.td-primary, .td-coloured):hover {
+  box-shadow:
+    1px 1px 3px color-mix(in srgb, var(--td-shadow-dark) 30%, transparent),
+    -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 48%, transparent),
+    inset 0.5px 0.5px 1px color-mix(in srgb, var(--td-shadow-light) 32%, transparent),
+    inset -0.5px -0.5px 1px color-mix(in srgb, var(--td-shadow-dark) 9%, transparent),
+    0 0 0 1px var(--td-btn-border-hover);
+}
+.td-react-button.td-react-button--ghost:is(.td-primary, .td-coloured) { background: transparent; box-shadow: none; }
+.td-react-button.td-react-button--ghost:is(.td-primary, .td-coloured):hover { box-shadow: var(--td-btn-hover); }
+/* ── Filled housings ──────────────────────────────────────────────────
+   The fill is set ONCE, per variant, as `--td-btn-fill`, and held through
+   rest, hover and press. Only the lamp moves.
+
+   `.td-coloured` upstream lightens 8% on hover and darkens 12% on press, so
+   a filled button changed colour under the pointer and the icon's ramp was
+   lost inside a shifting ground. That breaks the lamp rule: the icon carries
+   the state, the label and the housing do not. Depth still moves — the base's
+   box-shadow ladder is untouched — so the button still reads as pressed.
+   (0,3,0) beats the base's (0,2,0). */
+.td-react-button.td-coloured { --td-btn-fill: var(--td-brand); }
+.td-react-button.td-react-button--destructive { --td-btn-fill: var(--td-brand); }
+/* Vivid jade, not a muted `--td-green`. The system green is a soft mint
+   (saturation 0.58) and carries white at 1.9:1; mixing it toward black kept it
+   legible but drained the colour. This is fully saturated and still clears AA
+   at 4.63:1, so the button reads as green rather than as grey-green. */
+.td-react-button.td-react-button--accept { --td-btn-fill: #00873C; }
+/* Vivid red — more saturated than the darkened `--td-error` it replaces AND
+   higher contrast with white (4.83:1 against 5.21:1 at far lower chroma). */
+.td-react-button.td-react-button--cancel { --td-btn-fill: #D92D20; }
+.td-react-button.td-react-button--accent { --td-btn-fill: color-mix(in srgb, var(--td-accent) 78%, black); }
+/* WhatsApp's own green, held as a literal — the channel's identity, not a
+   system colour, so it must not move when the brand does. Deepened to 62%:
+   white on the raw #25D366 is 1.98:1 and the label disappears. */
+.td-react-button.td-react-button--whatsapp { --td-btn-fill: color-mix(in srgb, #25D366 62%, black); }
+
+.td-react-button.td-coloured,
+.td-react-button.td-coloured:hover,
+.td-react-button.td-coloured:active,
+.td-react-button.td-coloured[data-state="hover"],
+.td-react-button.td-coloured[data-state="active"] { background: var(--td-btn-fill); }
+
+/* ── Depth on a filled housing ────────────────────────────────────────
+   With the fill frozen, depth is the ONLY thing reporting the press, and the
+   upstream ladder moves the shadow by 1-2px — legible on the page surface,
+   invisible on saturated colour. So a filled button gets its own, wider
+   ladder: a real lift on hover, a real sink on press.
+
+   The overlays are white and black rather than the warm `--td-shadow-*`
+   tokens, because those are tuned to read against the page ground and wash
+   out on a coloured one. The inner top highlight is what sells the lift — a
+   raised object catches light on its upper edge. */
+.td-react-button.td-coloured {
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.16),
+    0 4px 10px color-mix(in srgb, var(--td-shadow-dark) 69%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.26),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.14);
+}
+/* Hover presses in, it does not lift. This rung used to DOUBLE the drop
+   shadow — `0 4px 10px` to `0 8px 20px` — which is the clearest possible
+   statement that the object is rising off the page, and the opposite of what
+   the rest of the system does when something is reached for. The drop now
+   shrinks and the inner top shade appears, so hover is the first half of the
+   press the `:active` rung completes. */
+.td-react-button.td-coloured:hover,
+.td-react-button.td-coloured[data-state="hover"] {
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.14),
+    0 2px 5px color-mix(in srgb, var(--td-shadow-dark) 34%, transparent),
+    inset 0 2px 4px rgba(0, 0, 0, 0.20),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.16);
+}
+/* Pressed: the outer lift goes entirely and the surface caves in. Losing the
+   drop shadow is half the cue — an object in a well casts nothing. */
+.td-react-button.td-coloured:active,
+.td-react-button.td-coloured[data-state="active"] {
+  box-shadow:
+    0 0 0 rgba(0, 0, 0, 0),
+    0 0 0 rgba(0, 0, 0, 0),
+    inset 0 3px 7px rgba(0, 0, 0, 0.38),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.10);
+}
+.td-react-button.td-coloured:disabled { box-shadow: none; }
+
+/* Every filled housing keeps a white label in all three states — the fill
+   carries the colour, so the label must not also. */
+.td-react-button.td-coloured .td-coloured-label { color: #fff; }
+
+/* ── Surface housings ─────────────────────────────────────────────────
+   `.td-primary` shifts between --td-raise-fill and --td-raise-fill-hover,
+   which differ by 1% white: that is the neomorphic material lifting and
+   sinking, not a colour change, so it stays. The LABEL is pinned, though —
+   upstream lets it step to full ink on hover, and under the lamp rule only
+   the icon may move. */
+.td-react-button.td-primary .td-primary-label,
+.td-react-button.td-primary:hover .td-primary-label,
+.td-react-button.td-primary:active .td-primary-label { color: var(--td-ink); }
+
+/* The fill is held here too. `--td-raise-fill` -> `--td-raise-fill-hover` is
+   only a 1% shift, but "the housing does not change colour" is easier to hold
+   as one rule than as an exception, and the depth ladder below still carries
+   the whole state. `--td-btn-surface` stays a variable so `outline` and
+   `ghost`, which are transparent, can override it in one place. */
+.td-react-button.td-primary { --td-btn-surface: var(--td-raise-fill); }
+.td-react-button.td-primary,
+.td-react-button.td-primary:hover,
+.td-react-button.td-primary:active,
+.td-react-button.td-primary[data-state="hover"],
+.td-react-button.td-primary[data-state="active"] { background: var(--td-btn-surface); }
+.td-react-button.td-react-button--outline,
+.td-react-button.td-react-button--ghost,
+.td-react-button.td-react-button--link { --td-btn-surface: transparent; }
+
+/* On a DARK fill the unlit lamp has to be translucent white, not the
+   `rgba(0,0,0,0.38)` the papaya housing uses — black on deep green or red is
+   invisible, so accept's tick and cancel's cross vanished at rest. Same ramp,
+   inverted ground. (0,4,0): the generic `.td-coloured` lamp rule below is
+   (0,3,0) and ships later, so a matching (0,3,0) here would lose. */
+.td-react-button.td-coloured:is(.td-react-button--accept, .td-react-button--cancel, .td-react-button--whatsapp, .td-react-button--accent) .td-react-button-lamp { color: rgba(255, 255, 255, 0.62); }
+.td-react-button.td-coloured:is(.td-react-button--accept, .td-react-button--cancel, .td-react-button--whatsapp, .td-react-button--accent):hover .td-react-button-lamp,
+.td-react-button.td-coloured:is(.td-react-button--accept, .td-react-button--cancel, .td-react-button--whatsapp, .td-react-button--accent)[data-state="hover"] .td-react-button-lamp,
+.td-react-button.td-coloured:is(.td-react-button--accept, .td-react-button--cancel, .td-react-button--whatsapp, .td-react-button--accent):active .td-react-button-lamp { color: #fff; }
+.td-react-button.td-coloured:is(.td-react-button--accept, .td-react-button--cancel, .td-react-button--whatsapp, .td-react-button--accent)[data-state="active"] .td-react-button-lamp { color: #fff; }
+.td-react-button.td-coloured:is(.td-react-button--accept, .td-react-button--cancel, .td-react-button--whatsapp, .td-react-button--accent) .td-lamp { background: rgba(255, 255, 255, 0.55); box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25); }
+
+/* ── Channel buttons — surface housing, coloured lamp ─────────────────
+   [[L15]] names these exactly: "channel buttons (WhatsApp, email, phone),
+   anything where the icon signals which channel". The housing stays the
+   page's own material; the channel arrives as the lamp's colour alone.
+   (0,5,0): these tie with `.td-primary`'s generic lamp ramp at (0,4,0) and
+   would otherwise lose on source order — which lit Call and Email papaya. */
+.td-react-button.td-primary.td-react-button--call,
+.td-react-button.td-primary.td-react-button--email { --td-lamp-glow: var(--td-accent); }
+.td-react-button.td-primary.td-react-button--whatsapp-quiet { --td-lamp-glow: #25D366; }
+
+/* ── Link ─────────────────────────────────────────────────────────────
+   No housing at all — the lowest rung, for a tertiary action that must not
+   compete with the buttons beside it. The lamp still carries the state. */
+.td-react-button.td-react-button--link:is(.td-primary, .td-coloured) {
+  background: transparent;
+  box-shadow: none;
+  min-height: 0;
+  padding: 0;
+  border-radius: var(--td-radius-1);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  text-decoration-color: color-mix(in srgb, var(--td-ink) 30%, transparent);
+}
+.td-react-button.td-react-button--link:is(.td-primary, .td-coloured):hover { background: transparent; box-shadow: none; text-decoration-color: var(--td-brand); }
+.td-react-button.td-react-button--link:is(.td-primary, .td-coloured):active { background: transparent; box-shadow: none; }
+
+/* ── The lamp ─────────────────────────────────────────────────────────
+   Every icon+label button is a lamp ([[L15]]): the leading icon carries the
+   state and the label's colour never moves. Only the lamp changes.
+
+   The three filter values are tokens — `--td-lamp-off/-hover/-active` — so
+   this file never spells a drop-shadow out and the whole system's ladder is
+   retuned from tokens/source/tokens.json. Each is a TWO-shadow list, and rest
+   is two EXPLICIT zero shadows rather than `none`:
+
+     - transitioning from `none` lets the engine invent the start value, which
+       flashes a dark shadow behind the icon on the first hover;
+     - a state with a different shadow count snaps instead of interpolating,
+       which is what made press look identical to hover.
+
+   Same count, same shape, every state — so the ladder actually animates.
+   `--td-lamp-glow` is the colour, set per housing below or per instance by
+   the `glow` prop. */
+.td-react-button .td-react-button-lamp {
+  display: inline-grid;
+  place-items: center;
+  line-height: 0;
+  transition: color var(--td-t-base) var(--td-ease);
+}
+.td-react-button .td-react-button-lamp > svg {
+  /* 1.5x the label, which is the ratio [[L28]] fixed on the labelled
+     IconButton (a 21px glyph beside a 14px label). Below it the lamp — the
+     part carrying the whole state signal — is optically the lightest thing in
+     the button, which is the defect that rule exists to prevent. In `em` so
+     it holds across the size ladder rather than being restated per size. */
+  width: 1.5em;
+  height: 1.5em;
+  fill: currentColor;
+  stroke: none;
+  filter: var(--td-lamp-off);
+  transition: filter var(--td-t-base) var(--td-ease), transform var(--td-t-slow) var(--td-ease);
+}
+
+/* Surface housings: unlit ink at rest, lighting the lamp's own colour. */
+.td-react-button.td-primary { --td-lamp-glow: var(--td-brand); }
+.td-react-button.td-primary .td-react-button-lamp { color: color-mix(in srgb, var(--td-ink-3) 75%, var(--td-surface)); }
+.td-react-button.td-primary:hover .td-react-button-lamp,
+.td-react-button.td-primary[data-state="hover"] .td-react-button-lamp,
+.td-react-button.td-primary:active .td-react-button-lamp,
+.td-react-button.td-primary[data-state="active"] .td-react-button-lamp { color: var(--td-lamp-glow); }
+
+/* Filled housings: the fill already carries the colour, so the lamp lights
+   white — a papaya glow on papaya would be invisible. */
+.td-react-button.td-coloured { --td-lamp-glow: #fff; }
+.td-react-button.td-coloured .td-react-button-lamp { color: rgba(0, 0, 0, 0.38); }
+/* On a DARK fill the unlit lamp must be translucent white instead: black on
+   deep green or red is invisible, so accept's tick and cancel's cross vanished. */
+.td-react-button.td-coloured:is(.td-react-button--accept, .td-react-button--cancel, .td-react-button--whatsapp, .td-react-button--accent) .td-react-button-lamp { color: rgba(255, 255, 255, 0.62); }
+.td-react-button.td-coloured:hover .td-react-button-lamp,
+.td-react-button.td-coloured[data-state="hover"] .td-react-button-lamp,
+.td-react-button.td-coloured:active .td-react-button-lamp,
+.td-react-button.td-coloured[data-state="active"] .td-react-button-lamp { color: #fff; }
+.td-react-button.td-coloured:is(.td-react-button--accept, .td-react-button--cancel, .td-react-button--whatsapp, .td-react-button--accent) .td-lamp { background: rgba(255, 255, 255, 0.55); box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25); }
+
+/* The ladder itself — one pair of rules for every variant. */
+.td-react-button:hover .td-react-button-lamp > svg,
+.td-react-button[data-state="hover"] .td-react-button-lamp > svg { filter: var(--td-lamp-hover); }
+.td-react-button:active .td-react-button-lamp > svg,
+.td-react-button[data-state="active"] .td-react-button-lamp > svg {
+  transform: translate(1px, 1px);
+  filter: var(--td-lamp-active);
+}
+.td-react-button:disabled .td-react-button-lamp > svg { filter: var(--td-lamp-off); }
+
+
+@media (prefers-reduced-motion: reduce) {
+  .td-react-button .td-react-button-lamp,
+  .td-react-button .td-react-button-lamp > svg { transition: none; }
+  .td-react-button:active .td-react-button-lamp > svg { transform: none; }
+  .td-react-button[data-state="active"] .td-react-button-lamp > svg { transform: none; }
+}
+
+.td-react-spinner { width: 1em; height: 1em; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: td-react-spin 700ms linear infinite; }
+@keyframes td-react-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .td-react-spinner { animation-duration: 1.4s; } }
+
+/* The surface button's own depth ladder, restated so it interpolates and so it
+   never loses a side.
+
+   Upstream, rest carries four shadow slots ending in `0 0 0 1px var(--td-edge)`,
+   hover carries four that end in an INSET highlight, and press carries two. A
+   shadow list only interpolates against a list of the same length whose `inset`
+   flags line up, so every rung of this ladder snapped ([[L18]]) — and on paper
+   the ring vanishing on hover took the button's boundary with it, which is the
+   whole reason a light-mode control reads as flat.
+
+   Five slots, same order, every state: outer shade, outer highlight, inset
+   shade, inset highlight, edge ring. Unused slots are the shadow colour at zero
+   alpha, never `transparent` — that is rgba(0, 0, 0, 0) and would drag the
+   transition through black ([[L20]]). (0,3,0), as the rest of this file. */
+.td-react-button.td-primary:not(.td-react-button--outline):not(.td-react-button--ghost):not(.td-react-button--link) {
+  box-shadow:
+    3px 3px 12px color-mix(in srgb, var(--td-shadow-dark) 72%, transparent),
+    -3px -3px 12px color-mix(in srgb, var(--td-shadow-light) 68%, transparent),
+    inset 0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+}
+/* Hover is a shallow press, not a lift. The outer pair SHRINKS toward the
+   pressed state while the inner pair grows, so the button moves one way across
+   the whole ladder: rest -> hover -> press, each further in than the last.
+
+   The previous rung raised the outer highlight to 85% against a 44% shade —
+   a highlight nearly twice the strength of the shade it answers, which is a
+   halo rather than a rim ([[L26]]) and reads as the button being pulled out of
+   the page. It is now weaker than its shade, as every other rung in the system
+   is. */
+.td-react-button.td-primary:not(.td-react-button--outline):not(.td-react-button--ghost):not(.td-react-button--link):hover,
+.td-react-button.td-primary:not(.td-react-button--outline):not(.td-react-button--ghost):not(.td-react-button--link)[data-state="hover"] {
+  box-shadow:
+    1.5px 1.5px 4px color-mix(in srgb, var(--td-shadow-dark) 32%, transparent),
+    -1.5px -1.5px 4px color-mix(in srgb, var(--td-shadow-light) 30%, transparent),
+    inset 1.5px 1.5px 4px color-mix(in srgb, var(--td-shadow-dark) 34%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 26%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+.td-react-button.td-primary:not(.td-react-button--outline):not(.td-react-button--ghost):not(.td-react-button--link):active,
+.td-react-button.td-primary:not(.td-react-button--outline):not(.td-react-button--ghost):not(.td-react-button--link)[data-state="active"] {
+  box-shadow:
+    0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    0 0 0 rgb(from var(--td-shadow-light) r g b / 0),
+    inset 3px 3px 7px color-mix(in srgb, var(--td-shadow-dark) 58%, transparent),
+    inset -2px -2px 5px color-mix(in srgb, var(--td-shadow-light) 34%, transparent),
+    0 0 0 1px var(--td-edge);
+}

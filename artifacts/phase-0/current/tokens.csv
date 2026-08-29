@@ -1,0 +1,122 @@
+token,declaration_count,unique_value_count,values,conflict_candidate
+--td-accent,1,1,#00AAFF [1],no
+--td-accent-2,1,1,#00AAFF [1],no
+--td-accent-text,2,2,#0675B0 [1] | var(--td-accent) [1],yes
+--td-bg,3,3,#1A1815 [1] | #ECEAE6 [1] | #F5F5F5 [1],yes
+--td-brand,3,2,#FF5E29 [2] | 5.57:1 light and dark. The #fff it replaces was\n 3.05:1 in both — a failure that had been sitting in eight rules\n across five groups because it looked obviously right.\n\n This is NOT --td-ink. --td-ink flips. */\n --td-ink-on-fill: #1F1C17 [1],yes
+--td-brand-deep,2,2,#C9440F [1] | #CC3F07 [1],yes
+--td-brand-text,3,2,the true colour. */\n --td-series-1-text: var(--td-series-1) [1] | var(--td-brand) [2],yes
+--td-btn-active,2,2,"\n inset 2px 2px 4px rgba(0, 0, 0, 0.12),\n inset -1px -1px 3px rgba(255, 255, 255, 0.16) [1] | \n inset 2px 2px 4px rgba(0, 0, 0, 0.34),\n inset -1px -1px 2px rgba(255, 255, 255, 0.014) [1]",yes
+--td-btn-border-active,2,2,"color-mix(in srgb, var(--td-surface) 78%, black) [1] | color-mix(in srgb, var(--td-surface) 88%, black) [1]",yes
+--td-btn-border-hover,2,2,"color-mix(in srgb, var(--td-surface) 79%, black) [1] | color-mix(in srgb, var(--td-surface) 87%, black) [1]",yes
+--td-btn-border-rest,2,2,"color-mix(in srgb, var(--td-surface) 82%, black) [1] | color-mix(in srgb, var(--td-surface) 90%, black) [1]",yes
+--td-btn-border-selected,2,2,"color-mix(in srgb, var(--td-surface) 74%, black) [1] | color-mix(in srgb, var(--td-surface) 84%, black) [1]",yes
+--td-btn-h,1,1,42px [1],no
+--td-btn-h-lg,1,1,50px [1],no
+--td-btn-hover,2,2,"\n 1px 1px 3px rgba(0, 0, 0, 0.075),\n -1px -1px 2px rgba(255, 255, 255, 0.12),\n inset 0.5px 0.5px 1px rgba(255, 255, 255, 0.08),\n inset -0.5px -0.5px 1px rgba(0, 0, 0, 0.022) [1] | \n 1px 1px 3px rgba(0, 0, 0, 0.22),\n -1px -1px 2px rgba(255, 255, 255, 0.012),\n inset 0.5px 0.5px 1px rgba(255, 255, 255, 0.009),\n inset -0.5px -0.5px 1px rgba(0, 0, 0, 0.09) [1]",yes
+--td-btn-rest,2,2,"\n 2px 2px 5px rgba(0, 0, 0, 0.105),\n -1px -1px 3px rgba(255, 255, 255, 0.18),\n inset 0.5px 0.5px 1px rgba(255, 255, 255, 0.10),\n inset -0.5px -0.5px 1px rgba(0, 0, 0, 0.025) [1] | \n 2px 2px 5px rgba(0, 0, 0, 0.28),\n -1px -1px 2px rgba(255, 255, 255, 0.018),\n inset 0.5px 0.5px 1px rgba(255, 255, 255, 0.012),\n inset -0.5px -0.5px 1px rgba(0, 0, 0, 0.11) [1]",yes
+--td-container-1,1,1,480px [1],no
+--td-container-2,1,1,720px [1],no
+--td-container-3,1,1,960px [1],no
+--td-container-4,1,1,1200px [1],no
+--td-container-5,1,1,1440px [1],no
+--td-density,4,3,0.75 [1] | 1 [2] | 1.35 [1],yes
+--td-dropdown-max,0,0,,no
+--td-ease,1,1,"cubic-bezier(0.2, 0.75, 0.2, 1) [1]",no
+--td-ease-in,1,1,"cubic-bezier(0.4, 0, 1, 1) [1]",no
+--td-ease-linear,1,1,linear [1],no
+--td-ease-out,1,1,"cubic-bezier(0.23, 1, 0.32, 1) [1]",no
+--td-edge,1,1,"color-mix(in srgb, var(--td-btn-border-rest) 70%, transparent) [1]",no
+--td-error,1,1,#EC360E [1],no
+--td-error-text,2,2,#D92A00 [1] | #E34D31 [1],yes
+--td-font-,0,0,,no
+--td-font-display,1,1,"\""Anton\"", \""Anton Offline\"", \""Arial Narrow\"", sans-serif [1]",no
+--td-font-mono,1,1,"\""JetBrains Mono\"", \""JetBrains Mono Offline\"", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace [1]",no
+--td-font-sans,1,1,"\""Source Sans 3\"", \""Source Sans 3 Offline\"", system-ui, sans-serif [1]",no
+--td-font-ui,1,1,"\""Hanken Grotesk\"", \""Hanken Grotesk Offline\"", system-ui, sans-serif [1]",no
+--td-frame-pad,1,1,var(--td-sp-9) [1],no
+--td-frame-radius,1,1,var(--td-radius-10) [1],no
+--td-green,1,1,#59D38C [1],no
+--td-green-text,2,2,#0C814A [1] | var(--td-green) [1],yes
+--td-highlight,1,1,var(--td-accent) [1],no
+--td-highlight-ink,1,1,var(--td-ink-on-fill) [1],no
+--td-icon-1,1,1,12px [1],no
+--td-icon-2,1,1,14px [1],no
+--td-icon-3,1,1,16px [1],no
+--td-icon-4,1,1,18px [1],no
+--td-icon-5,1,1,24px [1],no
+--td-icon-stroke,1,1,1.7 [1],no
+--td-icon-stroke-bold,1,1,2.4 [1],no
+--td-ink,4,3,"#1F1C17 [2] | #F0EDE5 [1] | near-black in light mode, near-white in\n dark mode. Label tracks --td-bg, so contrast flips with it. */\n.td-coloured--invert,\n.td-coloured--invert[data-state=\""rest\""] { background: var(--td-ink) [1]",yes
+--td-ink-2,3,2,#6E685E [2] | #9A9388 [1],yes
+--td-ink-3,3,2,#6E685E [1] | #9A9388 [2],yes
+--td-ink-on-fill,0,0,,no
+--td-inset-deep,1,1,"\n inset 4px 4px 9px color-mix(in srgb, var(--td-shadow-dark) 80%, transparent),\n inset -2px -2px 6px color-mix(in srgb, var(--td-shadow-light) 65%, transparent) [1]",no
+--td-inset-soft,1,1,"\n inset 2px 2px 5px color-mix(in srgb, var(--td-shadow-dark) 65%, transparent),\n inset -2px -2px 5px color-mix(in srgb, var(--td-shadow-light) 92%, transparent) [1]",no
+--td-measure,1,1,74ch [1],no
+--td-nav-height,0,0,,no
+--td-on-brand,2,1,#1F1C17 [2],no
+--td-pad-card,1,1,var(--td-sp-10) [1],no
+--td-pad-control,1,1,var(--td-sp-6) [1],no
+--td-pad-panel,1,1,var(--td-sp-11) [1],no
+--td-radius-1,1,1,4px [1],no
+--td-radius-10,1,1,30px [1],no
+--td-radius-2,1,1,6px [1],no
+--td-radius-3,1,1,8px [1],no
+--td-radius-4,1,1,10px [1],no
+--td-radius-5,1,1,12px [1],no
+--td-radius-6,1,1,14px [1],no
+--td-radius-7,1,1,16px [1],no
+--td-radius-8,1,1,18px [1],no
+--td-radius-9,1,1,22px [1],no
+--td-radius-pill,1,1,999px [1],no
+--td-raise-fill,2,2,"color-mix(in srgb, #FFF8E6 2.5%, var(--td-surface)) [1] | var(--td-surface) [1]",yes
+--td-raise-fill-hover,2,2,"color-mix(in srgb, #FFF8E6 4%, var(--td-surface)) [1] | color-mix(in srgb, var(--td-surface) 99%, white) [1]",yes
+--td-raised,1,1,"\n 4px 5px 12px color-mix(in srgb, var(--td-shadow-dark) 70%, transparent),\n -4px -5px 10px color-mix(in srgb, var(--td-shadow-light) 95%, transparent),\n inset 0 1px 0 var(--td-shadow-veil), 0 0 0 1px var(--td-edge) [1]",no
+--td-section-pad,1,1,"clamp(64px, 12vw, 144px) [1]",no
+--td-section-pad-lg,1,1,"clamp(80px, 14vw, 176px) [1]",no
+--td-series-1,1,1,oklch(0.66 0.23 30) [1],no
+--td-series-1-text,1,1,#C9422A [1],no
+--td-series-2,1,1,oklch(0.66 0.23 237) [1],no
+--td-series-2-text,2,2,#0077B1 [1] | var(--td-series-2) [1],yes
+--td-series-3,1,1,oklch(0.66 0.23 160) [1],no
+--td-series-3-text,2,2,#008154 [1] | var(--td-series-3) [1],yes
+--td-series-4,1,1,oklch(0.66 0.23 300) [1],no
+--td-series-4-text,2,2,#8857CC [1] | var(--td-series-4) [1],yes
+--td-series-5,1,1,oklch(0.66 0.23 120) [1],no
+--td-series-5-text,2,2,#4E7600 [1] | var(--td-series-5) [1],yes
+--td-series-6,1,1,oklch(0.66 0.23 190) [1],no
+--td-series-6-text,2,2,#007E7F [1] | var(--td-series-6) [1],yes
+--td-series-7,1,1,oklch(0.66 0.23 354) [1],no
+--td-series-7-text,2,2,#BE4085 [1] | var(--td-series-7) [1],yes
+--td-series-8,1,1,oklch(0.66 0.23 265) [1],no
+--td-series-8-text,2,2,#3F6AD8 [1] | var(--td-series-8) [1],yes
+--td-shadow-dark,3,3,"rgba(0, 0, 0, 0.22) [1] | rgba(0, 0, 0, 0.92) [1] | rgba(82, 70, 54, 0.30) [1]",yes
+--td-shadow-light,3,3,"rgba(255, 248, 230, 0.062) [1] | rgba(255, 252, 245, 0.78) [1] | rgba(255, 255, 255, 1) [1]",yes
+--td-shadow-veil,3,3,"rgba(255, 248, 230, 0.040) [1] | rgba(255, 252, 245, 0.55) [1] | rgba(255, 255, 255, 0.65) [1]",yes
+--td-sp-1,2,2,2px [1] | calc(2px * var(--td-density)) [1],yes
+--td-sp-10,2,2,22px [1] | calc(24px * var(--td-density)) [1],yes
+--td-sp-11,2,2,28px [1] | calc(32px * var(--td-density)) [1],yes
+--td-sp-12,2,2,36px [1] | calc(40px * var(--td-density)) [1],yes
+--td-sp-13,2,2,48px [1] | calc(48px * var(--td-density)) [1],yes
+--td-sp-2,2,2,4px [1] | calc(4px * var(--td-density)) [1],yes
+--td-sp-3,2,2,6px [1] | calc(6px * var(--td-density)) [1],yes
+--td-sp-4,2,2,8px [1] | calc(8px * var(--td-density)) [1],yes
+--td-sp-5,2,2,10px [1] | calc(10px * var(--td-density)) [1],yes
+--td-sp-6,2,2,12px [1] | calc(12px * var(--td-density)) [1],yes
+--td-sp-7,2,2,14px [1] | calc(14px * var(--td-density)) [1],yes
+--td-sp-8,2,2,16px [1] | calc(16px * var(--td-density)) [1],yes
+--td-sp-9,2,2,18px [1] | calc(20px * var(--td-density)) [1],yes
+--td-surface,3,3,#1A1815 [1] | #ECEAE6 [1] | #F5F5F5 [1],yes
+--td-surface-2,3,3,#221F1A [1] | #E1DED9 [1] | #E8E8E8 [1],yes
+--td-t-base,1,1,180ms [1],no
+--td-t-deliberate,1,1,320ms [1],no
+--td-t-fast,1,1,140ms [1],no
+--td-t-instant,1,1,90ms [1],no
+--td-t-slow,1,1,240ms [1],no
+--td-tabpanel-max,0,0,,no
+--td-tabpanel-min,0,0,,no
+--td-warning,1,1,#FF5E29 [1],no
+--td-warning-text,2,2,var(--td-brand) [1] | var(--td-warning) [1],yes
+--td-well-radius,1,1,calc(var(--td-frame-radius) - var(--td-frame-pad)) [1],no
+--td-widget-tone,6,6,var(--td-accent) [1] | var(--td-brand) [1] | var(--td-error) [1] | var(--td-green) [1] | var(--td-ink-3) [1] | var(--td-warning) [1],yes

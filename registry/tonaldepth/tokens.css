@@ -1,0 +1,110 @@
+/* TonalDepth base tokens. Install once. Every TonalDepth component uses these variables. */
+:root {
+  /* Surfaces & ink */
+  --td-bg: #eceae6;
+  --td-surface: #eceae6;
+  --td-surface-2: #e3e0da;
+  --td-ink: #1f1c17;
+  --td-ink-2: #6e685e;
+  --td-ink-3: #9a9388;
+  --td-ink-on-fill: #ffffff;
+
+  /* Brand & status */
+  --td-brand: #ff5e29;
+  --td-brand-text: #ff5e29;
+  --td-accent: #00aaff;
+  --td-accent-text: #0675b0;
+  --td-green: #59d38c;
+  --td-green-text: #0c814a;
+  --td-error: #d92a00;
+  --td-error-text: #d92a00;
+  --td-warning: #FF5E29;
+
+  /* Edges & shadows */
+  --td-edge: color-mix(in srgb, var(--td-btn-border-rest, color-mix(in srgb, var(--td-surface) 90%, black)) 70%, transparent);
+  --td-shadow-dark: rgba(82, 70, 54, 0.30);
+  --td-shadow-light: #ffffff;
+  --td-shadow-veil: rgba(255, 255, 255, 0.65);
+
+  /* Fonts. All four roles, and the same stacks packages/core ships — a registry
+     consumer installs files rather than a package, so this file is the only
+     place the families exist for them. A missing role does not fail loudly: it
+     falls through to the browser default and the page reads as almost right. */
+  --td-font-display: "Anton", "Arial Narrow", sans-serif;
+  --td-font-sans: "Source Sans 3", system-ui, sans-serif;
+  --td-font-ui: "Hanken Grotesk", system-ui, sans-serif;
+  --td-font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Motion */
+  --td-ease: cubic-bezier(0.2, 0.75, 0.2, 1);
+  --td-t-fast: 140ms;
+  --td-t-base: 180ms;
+  --td-t-slow: 240ms;
+
+  /* Buttons */
+  --td-btn-h: 42px;
+  --td-btn-h-lg: 50px;
+  --td-btn-border-rest: color-mix(in srgb, var(--td-surface) 90%, black);
+  --td-btn-border-hover: color-mix(in srgb, var(--td-surface) 87%, black);
+  --td-btn-border-selected: color-mix(in srgb, var(--td-surface) 84%, black);
+  --td-btn-rest: 2px 2px 5px rgba(0, 0, 0, 0.105), -1px -1px 3px rgba(255, 255, 255, 0.18), inset 0.5px 0.5px 1px rgba(255, 255, 255, 0.10), inset -0.5px -0.5px 1px rgba(0, 0, 0, 0.025);
+  --td-btn-hover: 1px 1px 3px rgba(0, 0, 0, 0.075), -1px -1px 2px rgba(255, 255, 255, 0.12), inset 0.5px 0.5px 1px rgba(255, 255, 255, 0.08), inset -0.5px -0.5px 1px rgba(0, 0, 0, 0.022);
+
+  /* Raised & inset surfaces */
+  --td-raise-fill: var(--td-surface);
+  --td-raise-fill-hover: color-mix(in srgb, var(--td-surface) 99%, white);
+  --td-inset-soft: inset 2px 2px 5px color-mix(in srgb, var(--td-shadow-dark) 65%, transparent), inset -2px -2px 5px color-mix(in srgb, var(--td-shadow-light) 92%, transparent);
+  --td-raised: 4px 5px 12px color-mix(in srgb, var(--td-shadow-dark) 70%, transparent), -4px -5px 10px color-mix(in srgb, var(--td-shadow-light) 95%, transparent), inset 0 1px 0 var(--td-shadow-veil), 0 0 0 1px var(--td-edge);
+
+  /* Radii & spacing */
+  --td-radius-6: 14px;
+  --td-radius-7: 16px;
+  --td-radius-8: 18px;
+  --td-radius-10: 30px;
+  --td-sp-2: 4px;
+  --td-sp-3: 6px;
+  --td-sp-4: 8px;
+  --td-sp-5: 10px;
+  --td-sp-8: 16px;
+  --td-sp-11: 28px;
+
+  /* The row ladder. Every component with rows — Table, FileTree, Faq, the
+     table of contents, breadcrumbs, pagination, the dropdown menu — reads its
+     press from these, so the whole system's row interaction is retuned here
+     rather than in nineteen stylesheets. */
+  --td-row-rest: inset 0 0 0 0 rgb(from var(--td-shadow-dark) r g b / 0), inset 0 0 0 0 rgb(from var(--td-shadow-light) r g b / 0);
+  --td-row-hover: inset 2px 2px 5px color-mix(in srgb, var(--td-shadow-dark) 46%, transparent), inset -1.5px -1.5px 4px color-mix(in srgb, var(--td-shadow-light) 62%, transparent);
+  --td-row-press: inset 3px 3px 7px color-mix(in srgb, var(--td-shadow-dark) 62%, transparent), inset -2px -2px 5px color-mix(in srgb, var(--td-shadow-light) 50%, transparent);
+  --td-row-selected: inset 2.5px 2.5px 6px color-mix(in srgb, var(--td-shadow-dark) 54%, transparent), inset -1.5px -1.5px 4px color-mix(in srgb, var(--td-shadow-light) 56%, transparent);
+}
+
+:root[data-theme="dark"] {
+  --td-bg: #1A1815;
+  --td-surface: #1A1815;
+  --td-surface-2: #221F1A;
+  --td-ink: #F0EDE5;
+  --td-ink-2: #9A9388;
+  --td-ink-3: #6E685E;
+  --td-shadow-dark: rgba(0, 0, 0, 0.92);
+  --td-shadow-light: rgba(255, 248, 230, 0.062);
+  --td-shadow-veil: rgba(255, 248, 230, 0.040);
+  --td-error-text: #E34D31;
+  --td-green-text: var(--td-green);
+  --td-accent-text: var(--td-accent);
+  --td-raise-fill: color-mix(in srgb, #FFF8E6 2.5%, var(--td-surface));
+  --td-raise-fill-hover: color-mix(in srgb, #FFF8E6 4%, var(--td-surface));
+
+  /* Dark states its own values rather than mixing: --td-shadow-light is 6.2%
+     here against light mode's opaque white, so a percentage of it is nothing
+     and the carved edge that shapes a pressed row disappears. */
+  --td-row-rest: inset 0 0 0 0 rgba(0, 0, 0, 0), inset 0 0 0 0 rgba(255, 248, 230, 0);
+  --td-row-hover: inset 2px 2px 5px rgba(0, 0, 0, 0.55), inset -1.5px -1.5px 4px rgba(255, 248, 230, 0.055);
+  --td-row-press: inset 3px 3px 8px rgba(0, 0, 0, 0.72), inset -2px -2px 5px rgba(255, 248, 230, 0.075);
+  --td-row-selected: inset 2.5px 2.5px 6px rgba(0, 0, 0, 0.64), inset -1.5px -1.5px 4px rgba(255, 248, 230, 0.065);
+}
+
+body {
+  background: var(--td-bg);
+  color: var(--td-ink);
+  font-family: var(--td-font-ui);
+}

@@ -1,0 +1,16 @@
+@import "@mithtech-bengaluru/tonaldepth-core";
+.td-vue-button--sm { min-height: 34px; padding-inline: 12px; font-size: 12px; border-radius: 10px; }
+.td-vue-button--md { min-height: var(--td-btn-h); }
+.td-vue-button--lg { min-height: var(--td-btn-h-lg); padding-inline: 20px; font-size: 14px; }
+.td-vue-button--outline { background: transparent; box-shadow: 0 0 0 1px var(--td-btn-border-selected); }
+.td-vue-button--ghost { background: transparent; box-shadow: none; }
+.td-vue-button--ghost:hover { box-shadow: var(--td-btn-hover); }
+.td-vue-button--destructive { background: var(--td-error); color: var(--td-ink-on-fill); }
+.td-vue-spinner { width: 1em; height: 1em; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: td-vue-spin 700ms linear infinite; }
+@keyframes td-vue-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .td-vue-spinner { animation-duration: 1.4s; } }
+.td-vue-badge--danger { color: var(--td-error-text); }
+.td-vue-card--flat { box-shadow: none; }
+.td-vue-card--inset { box-shadow: var(--td-inset-soft); }
+.td-vue-card-content { min-width: 0; }
+.td-input-wrap:has([aria-invalid="true"]), .td-textarea-wrap:has([aria-invalid="true"]) { border-color: var(--td-brand); }

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en" data-theme="light" data-density="comfortable">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>TonalDepth core packed-consumer fixture</title>
+    <link rel="stylesheet" href="../../packages/core/dist/index.css">
+  </head>
+  <body class="td-root">
+    <main class="td-container td-container--3" style="padding: var(--td-sp-10)">
+      <section class="td-panel">
+        <div class="td-panel-head">
+          <span class="td-panel-title">Canonical foundation</span>
+          <span class="td-badge">Phase 1</span>
+        </div>
+        <p class="td-body">This fixture consumes generated tokens and the preserved web 1.x compatibility layer.</p>
+        <div class="td-btn-row">
+          <button class="td-primary" type="button"><span class="td-primary-label">Default action</span></button>
+          <button class="td-cta" type="button">Primary action</button>
+          <button class="td-cta" id="theme-toggle" type="button">Toggle theme</button>
+          <button class="td-primary" id="density-toggle" type="button"><span class="td-primary-label">Toggle density</span></button>
+        </div>
+      </section>
+    </main>
+    <script>
+      document.querySelector("#theme-toggle").addEventListener("click", () => {
+        const root = document.documentElement;
+        root.dataset.theme = root.dataset.theme === "dark" ? "light" : "dark";
+      });
+      document.querySelector("#density-toggle").addEventListener("click", () => {
+        const root = document.documentElement;
+        root.dataset.density = root.dataset.density === "compact" ? "comfortable" : "compact";
+      });
+    </script>
+  </body>
+</html>

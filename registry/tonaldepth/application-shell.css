@@ -1,0 +1,104 @@
+/* TonalDepth ApplicationShell — self-contained. Requires @tonaldepth/tokens. */
+
+.td-shell {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 16px;
+  max-width: 1320px;
+  margin: 16px auto 0;
+  padding: 0 22px;
+  min-width: 0;
+}
+.td-sidebar {
+  background: var(--td-surface);
+  border-radius: 18px;
+  box-shadow: var(--td-raised);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: sticky;
+  top: 16px;
+  align-self: start;
+  min-width: 0;
+}
+.td-sb-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid color-mix(in srgb, var(--td-ink-2) 14%, transparent);
+}
+.td-sb-section { display: flex; flex-direction: column; gap: 2px; }
+.td-sb-label {
+  font-family: var(--td-font-mono);
+  font-size: 10.5px;
+  color: var(--td-ink-3);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 8px 8px 4px;
+  font-weight: 700;
+}
+.td-sb-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  color: var(--td-ink-2);
+  font-family: var(--td-font-ui);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background var(--td-t-fast) var(--td-ease), color var(--td-t-fast) var(--td-ease);
+}
+.td-sb-item:hover {
+  color: var(--td-ink);
+  background: var(--td-surface);
+  box-shadow:
+    inset 1px 1px 3px color-mix(in srgb, var(--td-shadow-dark) 30%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 35%, transparent);
+}
+.td-sb-item[aria-current="page"] {
+  color: var(--td-brand-text);
+  background: var(--td-surface);
+  box-shadow:
+    inset 1.5px 1.5px 4px color-mix(in srgb, var(--td-shadow-dark) 46%, transparent),
+    inset -1px -1px 3px color-mix(in srgb, var(--td-shadow-light) 36%, transparent);
+}
+.td-sb-item-count {
+  margin-left: auto;
+  font-family: var(--td-font-mono);
+  font-size: 10px;
+  color: var(--td-ink-3);
+  background: var(--td-surface);
+  box-shadow:
+    inset 1px 1px 2px color-mix(in srgb, var(--td-shadow-dark) 34%, transparent),
+    inset -1px -1px 1px color-mix(in srgb, var(--td-shadow-light) 40%, transparent);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+.td-sb-item[aria-current="page"] .td-sb-item-count { color: var(--td-brand-text); }
+.td-sb-foot {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid color-mix(in srgb, var(--td-ink-2) 14%, transparent);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.td-main { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.td-page-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+.td-page-title {
+  font-family: var(--td-font-display);
+  font-size: 32px;
+  text-transform: uppercase;
+  line-height: 1;
+  letter-spacing: 0.005em;
+  color: var(--td-ink);
+  margin: 0;
+}
+.td-page-sub { font-family: var(--td-font-ui); font-size: 13px; color: var(--td-ink-2); margin: 4px 0 0; }
+.td-page-actions { display: flex; gap: 8px; flex-wrap: wrap; }

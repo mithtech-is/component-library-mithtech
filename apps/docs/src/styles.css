@@ -1,0 +1,703 @@
+/* TonalDepth docs — built on TonalDepth.
+   Every value here is a token. Boundaries are carved seams (a shade hairline
+   over a highlight hairline), not painted lines. Nothing is filled with the
+   brand or accent colour: those arrive as ink only. */
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--td-bg);
+  color: var(--td-ink);
+  font-family: var(--td-font-ui);
+  -webkit-font-smoothing: antialiased;
+}
+button, input, select { font: inherit; }
+
+/* ── the seam ───────────────────────────────────────────────────────────────
+   One recipe, four directions. A boundary is pressed into the surface. */
+.seam-b, .top, .heading, .selector { border-bottom: 1px solid color-mix(in srgb, var(--td-shadow-dark) 46%, transparent); box-shadow: 0 1px 0 color-mix(in srgb, var(--td-shadow-light) 55%, transparent); }
+.seam-r, aside { border-right: 1px solid color-mix(in srgb, var(--td-shadow-dark) 46%, transparent); box-shadow: 1px 0 0 color-mix(in srgb, var(--td-shadow-light) 40%, transparent); }
+
+.shell { min-height: 100dvh; display: grid; grid-template-columns: 276px minmax(0, 1fr); grid-template-rows: 68px 1fr; }
+
+/* ── top bar ─────────────────────────────────────────────────────────────── */
+.top {
+  position: sticky; top: 0; z-index: 20; grid-column: 1/-1;
+  display: flex; align-items: center; justify-content: space-between; gap: var(--td-sp-6);
+  padding: 0 var(--td-sp-9);
+  background: color-mix(in srgb, var(--td-bg) 92%, transparent);
+  backdrop-filter: blur(12px);
+}
+
+/* The mark is carved out of the surface with papaya ink. A solid papaya tile
+   is the one move the system forbids. */
+.brand { display: flex; align-items: center; gap: var(--td-sp-5); color: var(--td-ink); text-decoration: none; font-weight: 600; letter-spacing: -0.01em; }
+.brand b {
+  display: grid; place-items: center; width: 34px; height: 34px;
+  border-radius: var(--td-radius-4);
+  /* Anton — the display face. A wordmark is a title, not a machine value. */
+  font-family: var(--td-font-display); font-size: 1.02rem; font-weight: 400; letter-spacing: 0.02em;
+  color: var(--td-brand-text);
+  background: color-mix(in srgb, var(--td-surface) 95%, black);
+  box-shadow:
+    inset 2px 2px 4px color-mix(in srgb, var(--td-shadow-dark) 55%, transparent),
+    inset -1px -1px 3px color-mix(in srgb, var(--td-shadow-light) 45%, transparent);
+}
+.brand small { margin-left: 0.3rem; color: var(--td-ink-3); font-weight: 500; }
+
+.actions { display: flex; align-items: center; gap: var(--td-sp-5); }
+
+/* A passive surface grooves inward. */
+.actions input {
+  width: min(32vw, 320px); min-height: 38px; padding: 0 var(--td-sp-7);
+  border: 0; border-radius: var(--td-radius-4);
+  background: color-mix(in srgb, var(--td-surface) 94%, black);
+  color: var(--td-ink);
+  box-shadow:
+    inset 2px 2px 4px color-mix(in srgb, var(--td-shadow-dark) 55%, transparent),
+    inset -1px -1px 3px color-mix(in srgb, var(--td-shadow-light) 45%, transparent);
+}
+.actions input::placeholder { color: var(--td-ink-3); }
+.actions input:focus-visible {
+  outline: none;
+  box-shadow:
+    inset 2px 2px 4px color-mix(in srgb, var(--td-shadow-dark) 55%, transparent),
+    inset -1px -1px 3px color-mix(in srgb, var(--td-shadow-light) 45%, transparent),
+    0 0 0 1.5px color-mix(in srgb, var(--td-accent) 55%, transparent);
+}
+
+/* A control at rest is softly raised; hover presses it into a shallow well.
+   Scoped off `.td-iconbtn`: the ThemeToggle lives in this bar and is a round
+   42px housing, but `.actions button` is (0,1,1) against its (0,1,0) and was
+   flattening it into a rounded square with side padding. Docs chrome must not
+   restyle a library component it merely contains. */
+.actions > button:not(.td-iconbtn) {
+  cursor: pointer; border: 0;
+  min-height: 38px; padding: 0 var(--td-sp-8);
+  border-radius: var(--td-radius-4);
+  font-size: 0.82rem; font-weight: 600; color: var(--td-ink);
+  background: var(--td-raise-fill);
+  box-shadow:
+    3px 3px 7px color-mix(in srgb, var(--td-shadow-dark) 44%, transparent),
+    -3px -3px 7px color-mix(in srgb, var(--td-shadow-light) 46%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil), 0 0 0 1px var(--td-edge);
+  transition: box-shadow var(--td-t-base) var(--td-ease), background var(--td-t-base) var(--td-ease);
+}
+.actions > button:not(.td-iconbtn):hover {
+  background: var(--td-raise-fill-hover);
+  box-shadow:
+    inset 2px 2px 4px color-mix(in srgb, var(--td-shadow-dark) 38%, transparent),
+    inset -2px -2px 5px color-mix(in srgb, var(--td-shadow-light) 32%, transparent);
+}
+.actions > button:not(.td-iconbtn):active {
+  background: var(--td-surface);
+  box-shadow:
+    inset 3px 3px 7px color-mix(in srgb, var(--td-shadow-dark) 58%, transparent),
+    inset -2px -2px 5px color-mix(in srgb, var(--td-shadow-light) 34%, transparent);
+}
+.actions > button:not(.td-iconbtn):focus-visible { outline: 2px solid var(--td-accent); outline-offset: 3px; }
+
+/* ── sidebar ─────────────────────────────────────────────────────────────── */
+aside {
+  position: sticky; top: 68px; height: calc(100dvh - 68px);
+  display: flex; flex-direction: column; justify-content: space-between; gap: var(--td-sp-8);
+  overflow-y: auto; scrollbar-width: thin;
+  padding: var(--td-sp-8) var(--td-sp-6) var(--td-sp-9);
+  background: var(--td-surface);
+}
+nav { display: grid; gap: 2px; }
+
+/* The four-step ladder, unabbreviated. Rest is flat with quiet ink; hover
+   presses into a shallow well and the ink lifts to full; active goes deeper;
+   the selected page sits in the deepest well with papaya ink — never a fill. */
+nav a {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--td-sp-4);
+  min-height: 36px; padding: var(--td-sp-3) var(--td-sp-6);
+  border-radius: var(--td-radius-4);
+  color: var(--td-ink-2); text-decoration: none; font-size: 0.88rem;
+  background: transparent;
+  transition: box-shadow var(--td-t-fast) var(--td-ease), color var(--td-t-fast) var(--td-ease), background var(--td-t-fast) var(--td-ease);
+}
+nav a:hover {
+  color: var(--td-ink);
+  background: color-mix(in srgb, var(--td-surface) 97%, black);
+  box-shadow:
+    inset 1.5px 1.5px 3px color-mix(in srgb, var(--td-shadow-dark) 40%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 34%, transparent);
+}
+nav a:active {
+  box-shadow:
+    inset 2.5px 2.5px 5px color-mix(in srgb, var(--td-shadow-dark) 52%, transparent),
+    inset -1.5px -1.5px 3px color-mix(in srgb, var(--td-shadow-light) 30%, transparent);
+}
+nav a.active {
+  color: var(--td-brand-text); font-weight: 600;
+  background: color-mix(in srgb, var(--td-surface) 95%, black);
+  box-shadow:
+    inset 3px 3px 6px color-mix(in srgb, var(--td-shadow-dark) 58%, transparent),
+    inset -2px -2px 4px color-mix(in srgb, var(--td-shadow-light) 32%, transparent);
+}
+nav a:focus-visible { outline: 2px solid var(--td-accent); outline-offset: -2px; }
+nav a small { font-size: 0.62rem; color: var(--td-ink-3); letter-spacing: 0.06em; text-transform: uppercase; }
+nav a.active small { color: color-mix(in srgb, var(--td-brand-text) 70%, transparent); }
+
+/* Category headings stay pinned while their group scrolls, so the taxonomy is
+   readable at any scroll position rather than only from the top. */
+.group { display: grid; gap: 2px; margin-top: var(--td-sp-8); }
+.group h2 {
+  display: flex; align-items: baseline; justify-content: space-between; gap: var(--td-sp-4);
+  position: sticky; top: 0; z-index: 1;
+  margin: 0 0 var(--td-sp-3);
+  padding: var(--td-sp-4) var(--td-sp-6) var(--td-sp-3);
+  background: var(--td-surface);
+  color: var(--td-ink-3);
+  font-family: var(--td-font-ui); font-size: 0.66rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  border-bottom: 1px solid color-mix(in srgb, var(--td-shadow-dark) 34%, transparent);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--td-shadow-light) 40%, transparent);
+}
+.group h2 span { font-family: var(--td-font-mono); letter-spacing: 0.04em; color: var(--td-ink-3); }
+
+.scope {
+  display: grid; gap: var(--td-sp-2);
+  border-radius: var(--td-radius-4);
+  padding: var(--td-sp-7);
+  box-shadow:
+    inset 2px 2px 5px color-mix(in srgb, var(--td-shadow-dark) 50%, transparent),
+    inset -2px -2px 4px color-mix(in srgb, var(--td-shadow-light) 40%, transparent);
+}
+.scope strong { font-size: 0.8rem; }
+.scope span { color: var(--td-ink-3); font-size: 0.76rem; line-height: 1.5; }
+
+/* ── page ────────────────────────────────────────────────────────────────── */
+/* `clip`, NOT `hidden`. Both stop a wide specimen pushing the page sideways,
+   but `hidden` on one axis forces the other to `auto` — which would make this
+   a scroll container and clip every overlay again, which is the exact bug the
+   well above was just fixed for. `overflow-x: clip` with `overflow-y: visible`
+   is the one combination that holds the width without becoming a scroller. */
+main { min-width: 0; overflow-x: clip; overflow-y: visible; }
+.page { width: min(100% - 48px, 960px); margin: 0 auto; padding: var(--td-sp-12) 0 var(--td-sp-13); }
+.page > section { margin-top: var(--td-sp-12); }
+.page section > h2 { margin: 0 0 var(--td-sp-5); font-size: 1.2rem; font-weight: 600; }
+.page section > p, .sub { color: var(--td-ink-2); max-width: 66ch; line-height: 1.65; }
+
+.heading { padding-bottom: var(--td-sp-10); }
+.heading h1 {
+  margin: var(--td-sp-6) 0 var(--td-sp-5);
+  font-family: var(--td-font-display); font-weight: 400;
+  font-size: clamp(2rem, 4vw, 3rem); line-height: 1.02; letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+.heading p { max-width: 68ch; margin: 0; color: var(--td-ink-2); font-family: var(--td-font-sans); font-size: 1.02rem; line-height: 1.7; }
+
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--td-sp-5); }
+.stack { display: grid; gap: var(--td-sp-7); max-width: 560px; }
+
+/* A specimen sits in a well cut into the page — it is being shown, not offered. */
+/* A specimen well must never clip.
+
+   It was `overflow: auto`, which cut every absolutely-positioned overlay at
+   the well's edge — a Tooltip disappearing behind the frame, a DropdownMenu
+   opening into nothing because the well is 168px tall. An allow-list of the
+   two components that had been noticed was carried here; the rule is simply
+   that a well showing a component must not be a scroll container, because
+   every overlay in the system escapes its trigger's box by design.
+
+   Wide specimens do not need it either: Table, ComparisonTable and Frame all
+   scroll inside their own edge already, and `main` catches anything that does
+   not (see below). */
+.preview {
+  position: relative; min-height: 168px;
+  display: grid; align-content: center; gap: var(--td-sp-6);
+  padding: var(--td-sp-11);
+  border-radius: var(--td-radius-6);
+  overflow: visible;
+  background: color-mix(in srgb, var(--td-surface) 97%, black);
+  box-shadow:
+    inset 2px 2px 6px color-mix(in srgb, var(--td-shadow-dark) 55%, transparent),
+    inset -2px -2px 5px color-mix(in srgb, var(--td-shadow-light) 45%, transparent);
+}
+/* Later siblings paint over earlier ones, so an overlay that escapes the well
+   would be covered by the next section. Raised only while the specimen is
+   being used, so the stacking order is otherwise untouched. */
+.preview:hover, .preview:focus-within { z-index: 3; }
+/* The specimen wrapper adds no box of its own — it exists to catch clicks, so
+   its children lay out as direct children of the well. */
+.specimen { display: contents; }
+.preview > span:first-child { position: absolute; top: var(--td-sp-5); right: var(--td-sp-6); color: var(--td-ink-3); font-size: 0.68rem; }
+.sample { max-width: 520px; }
+
+/* Code is machine output: mono, and pressed into the surface rather than
+   painted a different colour. Darkens from the surface, so it holds in both
+   themes without a hardcoded ground. */
+.code {
+  overflow: hidden;
+  border-radius: var(--td-radius-6);
+  background: color-mix(in srgb, var(--td-surface) 88%, black);
+  color: var(--td-ink);
+  box-shadow:
+    inset 2px 2px 6px color-mix(in srgb, var(--td-shadow-dark) 62%, transparent),
+    inset -1px -1px 3px color-mix(in srgb, var(--td-shadow-light) 30%, transparent);
+}
+.code > div {
+  display: flex; align-items: center; justify-content: space-between;
+  min-height: 46px; padding: 0 var(--td-sp-6);
+  color: var(--td-ink-3); font: 0.72rem var(--td-font-mono);
+  border-bottom: 1px solid color-mix(in srgb, var(--td-shadow-dark) 40%, transparent);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--td-shadow-light) 22%, transparent);
+}
+.code button {
+  cursor: pointer; border: 0;
+  padding: var(--td-sp-3) var(--td-sp-6); border-radius: var(--td-radius-3);
+  font-size: 0.72rem; font-weight: 600; color: var(--td-ink);
+  background: var(--td-raise-fill);
+  box-shadow: 2px 2px 5px color-mix(in srgb, var(--td-shadow-dark) 45%, transparent), -2px -2px 4px color-mix(in srgb, var(--td-shadow-light) 30%, transparent), 0 0 0 1px var(--td-edge);
+  transition: box-shadow var(--td-t-fast) var(--td-ease);
+}
+.code button:hover { box-shadow: inset 2px 2px 4px color-mix(in srgb, var(--td-shadow-dark) 45%, transparent), inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 26%, transparent); }
+.code button:focus-visible { outline: 2px solid var(--td-accent); outline-offset: 2px; }
+.code button .td-primary-label, .code button .td-coloured-label { color: inherit; }
+.code pre { margin: 0; padding: var(--td-sp-9); overflow: auto; font: 0.84rem/1.7 var(--td-font-mono); tab-size: 2; color: var(--td-ink); }
+/* Inline <code> in running text. Without this it takes the UA's generic
+   `monospace` rather than JetBrains Mono — the block rule above only reaches
+   <pre>. The :not() list keeps the chip treatment out of the specimen and
+   swatch cards, which label a token rather than quote one; excluding them
+   here is needed because this selector out-specifies their own rules. The
+   icon tiles are the same case — a role name is a label, and a stretched chip
+   inside a flex column paints a bar the width of the tile. */
+.page :not(pre):not(.typespec-meta):not(.swatch):not(.icon-tile-meta) > code {
+  font-family: var(--td-font-mono);
+  font-size: 0.86em;
+  color: var(--td-ink);
+  background: color-mix(in srgb, var(--td-surface) 94%, black);
+  padding: 0.12em 0.36em;
+  border-radius: var(--td-radius-1);
+}
+
+/* ── getting started ─────────────────────────────────────────────────────── */
+.hero { display: grid; gap: var(--td-sp-8); }
+.hero-actions { display: flex; flex-wrap: wrap; gap: var(--td-sp-5); }
+.lede { color: var(--td-ink-2); font-family: var(--td-font-sans); font-size: 1.05rem; line-height: 1.7; max-width: 62ch; }
+
+.prereq, .troubleshoot details, .value {
+  border-radius: var(--td-radius-6);
+  padding: var(--td-sp-10);
+  background: var(--td-raise-fill);
+  box-shadow:
+    3px 3px 8px color-mix(in srgb, var(--td-shadow-dark) 42%, transparent),
+    -3px -3px 8px color-mix(in srgb, var(--td-shadow-light) 44%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil), 0 0 0 1px var(--td-edge);
+}
+.steps { display: grid; gap: var(--td-sp-10); margin: 0; padding: 0; list-style: none; }
+.steps > li { min-width: 0; }
+.step-head { display: flex; align-items: center; gap: var(--td-sp-5); margin-bottom: var(--td-sp-5); }
+
+/* The step number is carved, with papaya ink. Not a filled disc. */
+.step-num {
+  display: grid; place-items: center; flex: 0 0 auto;
+  width: 28px; height: 28px; border-radius: 50%;
+  font-family: var(--td-font-mono); font-size: 0.76rem; font-weight: 700;
+  color: var(--td-brand-text);
+  background: color-mix(in srgb, var(--td-surface) 95%, black);
+  box-shadow:
+    inset 2px 2px 4px color-mix(in srgb, var(--td-shadow-dark) 55%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 42%, transparent);
+}
+.hint, .fallback { color: var(--td-ink-3); font-size: 0.8rem; line-height: 1.55; }
+.value-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: var(--td-sp-8); }
+.value { display: grid; gap: var(--td-sp-4); }
+.value strong { font-size: 0.92rem; }
+.value span { color: var(--td-ink-2); font-size: 0.86rem; line-height: 1.6; }
+.explore { display: grid; gap: var(--td-sp-4); margin: 0; padding: 0; list-style: none; color: var(--td-ink-2); font-size: 0.9rem; line-height: 1.6; }
+.explore a { color: var(--td-brand-text); font-weight: 600; text-decoration: none; }
+.explore a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.troubleshoot { display: grid; gap: var(--td-sp-6); }
+.troubleshoot summary { cursor: pointer; }
+.include-base { display: flex; align-items: center; gap: var(--td-sp-4); color: var(--td-ink-2); font-size: 0.84rem; }
+.check { display: grid; gap: var(--td-sp-8); margin: 0; padding-left: var(--td-sp-8); }
+.check > li { min-width: 0; line-height: 1.6; }
+.check > li > strong { display: block; margin-bottom: var(--td-sp-3); }
+.start-page { display: grid; gap: var(--td-sp-12); min-width: 0; }
+.start-page > * { min-width: 0; }
+
+/* Rows of reported values, divided by seams rather than boxed. */
+.status-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.status {
+  display: grid; grid-template-columns: 1fr auto; align-items: center;
+  gap: var(--td-sp-3) var(--td-sp-6); padding: var(--td-sp-7) 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--td-shadow-dark) 34%, transparent);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--td-shadow-light) 40%, transparent);
+}
+.status-grid .status:nth-child(odd) { padding-right: var(--td-sp-9); }
+.status-grid .status:nth-child(even) { padding-left: var(--td-sp-9); }
+.status > span:last-child { grid-column: 1/-1; color: var(--td-ink-3); font-size: 0.82rem; }
+
+@media (max-width: 760px) {
+  .shell { display: block; }
+  .top { min-height: 68px; padding: var(--td-sp-5); }
+  .actions input { display: none; }
+  aside {
+    position: static; height: auto; display: block;
+    overflow-x: auto; padding: var(--td-sp-4) var(--td-sp-5);
+    border-right: 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--td-shadow-dark) 46%, transparent);
+    box-shadow: 0 1px 0 color-mix(in srgb, var(--td-shadow-light) 55%, transparent);
+  }
+  nav { display: flex; min-width: max-content; gap: var(--td-sp-2); }
+  .group { display: contents; }
+  .group h2, .scope { display: none; position: static; }
+  nav a { white-space: nowrap; }
+  .page { width: min(100% - 32px, 960px); padding-top: var(--td-sp-10); }
+  .preview { padding: var(--td-sp-10) var(--td-sp-6) var(--td-sp-7); }
+  .status-grid { grid-template-columns: 1fr; }
+  .status-grid .status:nth-child(n) { padding-left: 0; padding-right: 0; }
+}
+
+/* ── Theming reference: type specimens and colour swatches ───────────
+   Each specimen renders in the family it names, so the section is its
+   own proof — if a face fails to load, the sample shows the fallback
+   rather than claiming a font that is not there. */
+/* 340px so four families land as a 2x2 rather than 3 + an orphan. */
+.typespec {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: var(--td-sp-6);
+  margin: var(--td-sp-8) 0;
+}
+.typespec-row {
+  display: flex;
+  align-items: center;
+  gap: var(--td-sp-8);
+  padding: var(--td-sp-8);
+  border-radius: var(--td-radius-7);
+  background: var(--td-raise-fill);
+  box-shadow:
+    3px 3px 8px color-mix(in srgb, var(--td-shadow-dark) 48%, transparent),
+    -3px -3px 8px color-mix(in srgb, var(--td-shadow-light) 50%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+}
+.typespec-sample {
+  font-size: 42px;
+  line-height: 1;
+  color: var(--td-ink);
+  flex: 0 0 auto;
+  min-width: 58px;
+  text-align: center;
+}
+.typespec-meta { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.typespec-meta strong { font-size: 15px; font-weight: 600; color: var(--td-ink); }
+.typespec-meta code { font-family: var(--td-font-mono); font-size: 11px; color: var(--td-brand-text); }
+.typespec-meta span { font-family: var(--td-font-sans); font-size: 12px; line-height: 1.45; color: var(--td-ink-2); }
+
+.swatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--td-sp-5);
+  margin: var(--td-sp-6) 0;
+}
+.swatches--series { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+.swatch {
+  display: grid;
+  grid-template-columns: 30px 1fr;
+  grid-template-rows: auto auto auto;
+  align-items: center;
+  column-gap: var(--td-sp-5);
+  padding: var(--td-sp-5) var(--td-sp-6);
+  border-radius: var(--td-radius-5);
+  background: var(--td-raise-fill);
+  box-shadow:
+    inset 1.5px 1.5px 4px color-mix(in srgb, var(--td-shadow-dark) 34%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 40%, transparent);
+}
+/* The chip is the live variable, not a copied hex — it follows the toggle.
+   The ring keeps a near-surface value (--td-bg) visible against the card. */
+.swatch-chip {
+  grid-row: 1 / 4;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px var(--td-edge), inset 0 1px 0 var(--td-shadow-veil);
+}
+.swatch code { font-family: var(--td-font-mono); font-size: 11px; color: var(--td-ink); }
+.swatch-val { font-family: var(--td-font-mono); font-size: 10.5px; color: var(--td-ink-3); }
+.swatch-val--dark { color: var(--td-ink-3); opacity: 0.85; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  nav a, .actions > button, .code button { transition: none; }
+}
+
+
+/* ── RectTitle playground ─────────────────────────────────────────────────
+   Controls sit in a carved tray above the specimen: they are inputs, so they
+   groove inward, and the specimen keeps the raised well it has everywhere
+   else on the page. */
+.playground { display: grid; gap: var(--td-sp-7); }
+.playground-controls { display: flex; flex-wrap: wrap; gap: var(--td-sp-6); align-items: end; }
+.playground-tones { display: flex; flex-wrap: wrap; gap: var(--td-sp-5); }
+.pg-field, .pg-tone { display: grid; gap: var(--td-sp-3); min-width: 0; }
+.pg-field:first-child { flex: 1 1 260px; }
+.pg-field > span, .pg-tone > span { color: var(--td-ink-3); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
+.pg-field > span b { color: var(--td-brand-text); font-family: var(--td-font-mono); }
+.playground input[type="text"], .playground input:not([type]), .playground select {
+  min-height: 34px; padding: 0 var(--td-sp-5);
+  border: 0; border-radius: var(--td-radius-3);
+  background: color-mix(in srgb, var(--td-surface) 94%, black);
+  color: var(--td-ink); font: inherit; font-size: 0.84rem;
+  box-shadow:
+    inset 2px 2px 4px color-mix(in srgb, var(--td-shadow-dark) 55%, transparent),
+    inset -1px -1px 3px color-mix(in srgb, var(--td-shadow-light) 45%, transparent);
+}
+.playground input:focus-visible, .playground select:focus-visible { outline: 2px solid var(--td-accent); outline-offset: 2px; }
+.playground input[type="range"] { accent-color: var(--td-brand); min-width: 120px; }
+.pg-check { display: inline-flex; align-items: center; gap: var(--td-sp-4); color: var(--td-ink-2); font-size: 0.84rem; }
+
+/* ── The icon index ──────────────────────────────────────────────────
+   One tile per role. Raised rather than inset: a swatch is a value to
+   read, an icon is a mark being shown off, and the light lift is what
+   separates the two on the page. Both the shade and the highlight are
+   present, plus the edge ring, so the tile still reads in light mode. */
+.icon-grid {
+  display: grid;
+  /* auto-fill, not auto-fit: a group with one role in it — Selection has
+     exactly one — would otherwise stretch that tile the full 950px. */
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--td-sp-5);
+  margin: var(--td-sp-6) 0;
+}
+.icon-tile {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--td-sp-5);
+  padding: var(--td-sp-6);
+  border-radius: var(--td-radius-6);
+  background: var(--td-raise-fill);
+  box-shadow:
+    3px 3px 8px color-mix(in srgb, var(--td-shadow-dark) 44%, transparent),
+    -3px -3px 8px color-mix(in srgb, var(--td-shadow-light) 48%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+}
+/* The glyph sits in a pressed well, so the tile reads as material with a
+   mark set into it rather than a mark floating on a card. */
+.icon-tile-glyph {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--td-radius-5);
+  color: var(--td-ink);
+  font-size: 22px;
+  box-shadow:
+    inset 1.5px 1.5px 4px color-mix(in srgb, var(--td-shadow-dark) 34%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 40%, transparent);
+}
+.icon-tile-meta { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.icon-tile-meta code { font-family: var(--td-font-mono); font-size: 11.5px; color: var(--td-ink); }
+.icon-tile-meta span { font-family: var(--td-font-sans); font-size: 12px; line-height: 1.45; color: var(--td-ink-2); }
+
+@media (max-width: 900px) {
+  .icon-grid { grid-template-columns: 1fr; }
+}
+
+/* ── "Open in a new tab" ──────────────────────────────────────────────
+   A raised control, so it reads as offered rather than shown — but small
+   and quiet, because it sits beside a section heading and must not compete
+   with it. Papaya ink, never a papaya fill. */
+.section-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  flex-wrap: wrap; gap: var(--td-sp-5);
+  margin: 0 0 var(--td-sp-5);
+}
+.section-head h2 { margin: 0; font-size: 1.2rem; font-weight: 600; }
+.open-tab {
+  display: inline-flex; align-items: center; gap: var(--td-sp-4);
+  min-height: 34px; padding: 0 var(--td-sp-6);
+  border-radius: var(--td-radius-4);
+  color: var(--td-brand-text); text-decoration: none;
+  font-size: 0.78rem; font-weight: 600; white-space: nowrap;
+  background: var(--td-raise-fill);
+  box-shadow:
+    2px 2px 6px color-mix(in srgb, var(--td-shadow-dark) 44%, transparent),
+    -2px -2px 5px color-mix(in srgb, var(--td-shadow-light) 46%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil), 0 0 0 1px var(--td-edge);
+  transition: box-shadow var(--td-t-fast) var(--td-ease);
+}
+.open-tab:hover {
+  box-shadow:
+    inset 2px 2px 4px color-mix(in srgb, var(--td-shadow-dark) 45%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 30%, transparent);
+}
+.open-tab:focus-visible { outline: 2px solid var(--td-accent); outline-offset: 3px; }
+/* The arrow is directional, not a lamp — it holds the label's ink. */
+.open-tab svg { font-size: 0.95em; }
+
+/* ── The standalone preview route ─────────────────────────────────────
+   No sidebar, no 960px page, and — since 2026-08-29 — no well either. The
+   component gets the viewport and sits directly on it, which is the whole
+   point of the route: a specimen judged inside a frame is judged against the
+   frame, and a Frame or an ApplicationShell read as a plate inside a plate.
+
+   What is left is a way back and a way to flip the theme. */
+.standalone { min-height: 100dvh; display: grid; grid-template-rows: auto 1fr; }
+
+.standalone-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--td-sp-6);
+  flex-wrap: wrap;
+  padding: var(--td-sp-5) var(--td-sp-9);
+  /* A seam, not a bar: the chrome here should be the quietest thing on the
+     page, because everything else on it is the specimen. */
+  border-bottom: 1px solid var(--td-edge);
+}
+.standalone-back { display: flex; align-items: center; gap: var(--td-sp-4); }
+.standalone-id { margin-inline-start: auto; display: flex; align-items: baseline; gap: var(--td-sp-4); min-width: 0; }
+.standalone-id b { font-family: var(--td-font-ui); font-size: 0.86rem; color: var(--td-ink); }
+.standalone-id small { font-family: var(--td-font-mono); font-size: 0.64rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--td-ink-3); }
+
+/* The design system styles the bare `main` element — `max-width: 1200px`,
+   `margin: 0 auto`, its own padding — and an auto margin on a grid item
+   disables the stretch, so this shrank to the component's own width instead
+   of filling the viewport. All four have to be answered, not just the
+   padding.
+
+   `display: block`, so the component is a normal block box and lays itself
+   out the way it would on a real page. As a grid item, anything carrying
+   `margin-inline: auto` — ApplicationShell, the page patterns — shrink-to-fits
+   and centres, which is the opposite of what this route is for. */
+.standalone-main {
+  min-width: 0;
+  display: block;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: var(--td-sp-9);
+}
+
+@media (max-width: 760px) {
+  .standalone-bar { padding: var(--td-sp-5); gap: var(--td-sp-4); }
+  .standalone-id { margin-inline-start: 0; width: 100%; }
+  .standalone-main { padding: var(--td-sp-5); }
+  .standalone .open-tab { padding: 0 var(--td-sp-5); font-size: 0.72rem; }
+}
+
+/* ── "How to use it" ──────────────────────────────────────────────────
+   Contracts and gotchas, one per line. Divided by seams rather than
+   bulleted: each is a standing fact about the component, not a step. */
+.notes { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
+.notes > li {
+  padding: var(--td-sp-6) 0;
+  color: var(--td-ink-2); font-size: 0.9rem; line-height: 1.65;
+  border-bottom: 1px solid color-mix(in srgb, var(--td-shadow-dark) 34%, transparent);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--td-shadow-light) 40%, transparent);
+}
+.notes > li:last-child { border-bottom: 0; box-shadow: none; }
+.notes strong { color: var(--td-ink); font-weight: 600; }
+
+/* ── The font tester ──────────────────────────────────────────────────
+   One card per family. The head is UI face — it is chrome describing the
+   specimen — and only `.fonttest-text` runs the family being tested. */
+.fonttest { gap: var(--td-sp-8); }
+.fonttest-family {
+  display: grid; gap: var(--td-sp-6);
+  padding: var(--td-sp-9);
+  border-radius: var(--td-radius-7);
+  background: var(--td-raise-fill);
+  box-shadow:
+    3px 3px 8px color-mix(in srgb, var(--td-shadow-dark) 48%, transparent),
+    -3px -3px 8px color-mix(in srgb, var(--td-shadow-light) 50%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+}
+.fonttest-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--td-sp-3) var(--td-sp-6); }
+.fonttest-head strong { font-size: 1.05rem; font-weight: 600; color: var(--td-ink); }
+.fonttest-head code { font-family: var(--td-font-mono); font-size: 11px; color: var(--td-brand-text); }
+.fonttest-head span { font-family: var(--td-font-sans); font-size: 12px; color: var(--td-ink-2); }
+/* The machine face: a package name, a weight range, a style list. */
+.fonttest-head .fonttest-axis { flex: 1 0 100%; font-family: var(--td-font-mono); font-size: 10.5px; color: var(--td-ink-3); }
+.fonttest-note { margin: 0; }
+.fonttest-lines { display: grid; gap: var(--td-sp-5); }
+/* The specimen sits in a well — it is being shown, not offered. */
+.fonttest-line {
+  display: grid; grid-template-columns: 34px minmax(0, 1fr); align-items: baseline;
+  gap: var(--td-sp-6);
+  padding: var(--td-sp-5) var(--td-sp-6);
+  border-radius: var(--td-radius-5);
+  box-shadow:
+    inset 1.5px 1.5px 4px color-mix(in srgb, var(--td-shadow-dark) 34%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 40%, transparent);
+}
+.fonttest-size { font-family: var(--td-font-mono); font-size: 10.5px; color: var(--td-ink-3); text-align: right; }
+/* Overflow-wrap, not a scrollbar: a pasted headline must break rather than
+   push the page sideways at 390px. */
+.fonttest-text { color: var(--td-ink); line-height: 1.15; min-width: 0; overflow-wrap: anywhere; }
+
+@media (max-width: 760px) {
+  .fonttest-family { padding: var(--td-sp-7) var(--td-sp-6); }
+  .fonttest-line { grid-template-columns: 28px minmax(0, 1fr); gap: var(--td-sp-5); padding: var(--td-sp-4) var(--td-sp-5); }
+}
+
+/* The Options table's third column is prose, so at phone width the row is
+   three columns of six-character lines behind a horizontal scrollbar. Below
+   the breakpoint each row becomes a stacked block instead: the prop, its
+   values, then the sentence — the same information, read top to bottom. */
+@media (max-width: 760px) {
+  .options-table table, .options-table tbody, .options-table tr, .options-table td { display: block; width: auto; }
+  .options-table thead { display: none; }
+  .options-table tr {
+    padding: var(--td-sp-6) var(--td-sp-6) var(--td-sp-7);
+    border-bottom: 1px solid color-mix(in srgb, var(--td-shadow-dark) 34%, transparent);
+    box-shadow: 0 1px 0 color-mix(in srgb, var(--td-shadow-light) 40%, transparent);
+  }
+  .options-table tr:last-child { border-bottom: 0; box-shadow: none; }
+  .options-table td { padding: 0 0 var(--td-sp-3); }
+  .options-table td:last-child { padding-bottom: 0; line-height: 1.6; }
+}
+
+/* The hero's one call to action. It had no rule at all and was rendering as a
+   UA-default anchor — blue, then purple once visited — on the first page of a
+   design system's own documentation. Same raised recipe as `.open-tab`, at the
+   large control height. */
+.hero-cta {
+  display: inline-flex; align-items: center; gap: var(--td-sp-4);
+  min-height: 46px; padding: 0 var(--td-sp-9);
+  border-radius: var(--td-radius-5);
+  color: var(--td-brand-text); text-decoration: none;
+  font-size: 0.92rem; font-weight: 600;
+  background: var(--td-raise-fill);
+  box-shadow:
+    3px 3px 8px color-mix(in srgb, var(--td-shadow-dark) 44%, transparent),
+    -3px -3px 8px color-mix(in srgb, var(--td-shadow-light) 46%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil), 0 0 0 1px var(--td-edge);
+  transition: box-shadow var(--td-t-base) var(--td-ease), background var(--td-t-base) var(--td-ease);
+}
+.hero-cta:hover {
+  background: var(--td-raise-fill-hover);
+  box-shadow:
+    inset 2px 2px 4px color-mix(in srgb, var(--td-shadow-dark) 38%, transparent),
+    inset -2px -2px 5px color-mix(in srgb, var(--td-shadow-light) 32%, transparent);
+}
+.hero-cta:focus-visible { outline: 2px solid var(--td-accent); outline-offset: 3px; }
+
+/* ── the mega-menu stage ──────────────────────────────────────────────────
+   A mega panel is one fixed size its content fills, not a size its content
+   drives ([[L10]]), and its columns scroll inside that. Previewed with no
+   height at all, the grid collapses to its tallest column and the whole point
+   — that the sheet never resizes — is invisible. The stage supplies the height
+   the sheet would have on a page. */
+.mega-stage { display: block; min-width: 0; height: 420px; }
+/* The wide panel carries a feature and two columns; 420px crops the steps. */
+.mega-stage--wide { height: 520px; }
+.mega-stage > .td-react-mega-columns { height: 100%; }
+.mega-stage > .td-mega-inner,
+.mega-stage > .td-react-mega-grid { height: 100%; }
+/* The grid form has no rails to scroll, so it scrolls itself. */
+.mega-stage > .td-react-mega-grid { overflow-y: auto; }
+
+@media (max-width: 900px) {
+  .mega-stage { height: auto; min-height: 420px; }
+}

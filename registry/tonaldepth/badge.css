@@ -1,0 +1,56 @@
+/* TonalDepth Badge — self-contained. Requires @tonaldepth/tokens. */
+
+.td-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--td-font-mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--td-ink-2);
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--td-ink) 6%, var(--td-surface));
+  box-shadow:
+    inset 1px 1px 2px color-mix(in srgb, var(--td-shadow-dark) 22%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 40%, transparent);
+}
+
+/* Per-variant tinted backgrounds so each pill reads as its colour, not just its label. */
+.td-badge--brand {
+  color: var(--td-brand-text);
+  background: color-mix(in srgb, var(--td-brand) 14%, var(--td-surface));
+}
+.td-badge--green {
+  color: var(--td-green-text);
+  background: color-mix(in srgb, var(--td-green) 18%, var(--td-surface));
+}
+.td-badge--accent {
+  color: var(--td-accent-text);
+  background: color-mix(in srgb, var(--td-accent) 14%, var(--td-surface));
+}
+.td-badge--ink {
+  color: var(--td-ink);
+  background: color-mix(in srgb, var(--td-ink) 10%, var(--td-surface));
+}
+
+/* A badge sizes to its text, in every parent.
+
+   `.td-badge` is declared `inline-flex`, but CSS blockifies an inline-level
+   box to `flex` the moment it becomes a grid or flex item — and a stretched
+   item then fills its whole track. A badge dropped into a `display: grid`
+   header therefore spanned the full content width. `width: fit-content` is a
+   definite size, so the stretch cannot apply, and it holds in grid, flex
+   column and block contexts alike. */
+.td-registry-badge {
+  width: fit-content;
+  max-width: 100%;
+}
+
+/* Registry-scoped danger variant. */
+.td-registry-badge--danger {
+  color: var(--td-error-text);
+  background: color-mix(in srgb, var(--td-error) 14%, var(--td-surface));
+}

@@ -1,0 +1,275 @@
+/* FilamentButton — the lamp, stretched.
+
+   The ladder is `.td-mega-option`'s, the sideways tab in the design system:
+   off at rest (grey glass, zero glow), papaya on hover, WHITE-HOT at the
+   click, full papaya glow while held. It is NOT `.td-lamp`'s — the 7px dot
+   runs cooler (58% of its colour on hover, no white step at all), and a
+   filament built from the dot's numbers loses the press entirely.
+
+   The bar never moves or grows: the same line lights up, and only colour and
+   glow change across the four states.
+
+   The housing takes the depth ladder. The label holds its ink in every state
+   and is never tinted by the tone ([[L15]]); only the filament and, when the
+   tab is held, the glyph carry the colour. Nothing is filled with the tone. */
+
+.td-registry-filament {
+  --td-filament-ink: var(--td-green);
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--td-sp-4);
+  min-width: 0;
+  cursor: pointer;
+  border: 0;
+  padding: var(--td-sp-4) var(--td-sp-6) var(--td-sp-4) var(--td-sp-6);
+  border-radius: var(--td-radius-5);
+  color: var(--td-ink-2);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-align: start;
+  background: var(--td-raise-fill);
+  /* Raised at rest, so a FilamentButton on its own reads as a button. In the
+     design it sits inside `.td-vtablist`, a well that supplies the contrast —
+     without that well a transparent row is invisible until it is hovered,
+     which is exactly what it was. `SideTabs` restores the well and flattens
+     these rows again, below.
+
+     Five slots in a fixed order in every rung — outer shade, outer highlight,
+     inset shade, inset highlight, edge ring — with the unused ones at zero
+     alpha ([[L27]]), so the row can invert from raised to pressed without the
+     transition snapping. */
+  box-shadow:
+    2px 2px 6px color-mix(in srgb, var(--td-shadow-dark) 64%, transparent),
+    -2px -2px 5px color-mix(in srgb, var(--td-shadow-light) 46%, transparent),
+    inset 0 0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    inset 0 0 0 0 rgb(from var(--td-shadow-light) r g b / 0),
+    0 0 0 1px var(--td-edge);
+  transition:
+    box-shadow var(--td-t-base) var(--td-ease),
+    background var(--td-t-base) var(--td-ease),
+    color var(--td-t-base) var(--td-ease);
+}
+
+.td-registry-filament--green { --td-filament-ink: var(--td-green); }
+.td-registry-filament--brand { --td-filament-ink: var(--td-brand); }
+.td-registry-filament--accent { --td-filament-ink: var(--td-accent); }
+.td-registry-filament--error { --td-filament-ink: var(--td-error); }
+
+/* ── the strip ─────────────────────────────────────────────────────────────
+   Off is grey glass, not dim colour — a dead filament has no hue at all.
+   Colour exists only while it is lit, which is what makes the ladder read. */
+.td-registry-filament-strip {
+  position: absolute;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--td-ink-3) var(--td-filament-rest-strength), var(--td-surface));
+  /* Two EXPLICIT zero shadows, never `none`, and never `transparent`.
+     A shadow list only interpolates against a list of the same length, so
+     `none` lets the engine invent a start value and going from one shadow to
+     two snaps ([[L18]]). But matching the count is only half of it:
+     `transparent` is rgba(0, 0, 0, 0), so a shadow fading from it toward the
+     filament's colour passes through a dark, half-opaque midpoint ([[L20]]).
+     The off state is the light's own colour at zero alpha. */
+  box-shadow:
+    0 0 0 rgb(from var(--td-filament-ink) r g b / 0),
+    0 0 0 rgb(from var(--td-filament-ink) r g b / 0);
+  transition:
+    background var(--td-t-base) var(--td-ease),
+    box-shadow var(--td-t-base) var(--td-ease);
+}
+/* A filament, not a rule: SHORT and legible rather than long and hairline.
+
+   2026-08-29, corrected twice. It was 2px running the row's full height and
+   the tab's full width, which reads as a border painted on the side. Thinning
+   it to 1.5px made it fainter without making it read as a filament — the fix
+   was the other axis. It is thicker now (2.5px) and considerably shorter: the
+   vertical one stops well inside the row's ends, and the horizontal one spans
+   the middle of the tab rather than its width. A short bright mark is a lamp;
+   a long faint one is a border. */
+.td-registry-filament--start .td-registry-filament-strip {
+  inset-inline-start: var(--td-sp-1);
+  top: var(--td-sp-6);
+  bottom: var(--td-sp-6);
+  width: 2.5px;
+}
+.td-registry-filament--top .td-registry-filament-strip {
+  inset-block-start: var(--td-sp-1);
+  left: 28%;
+  right: 28%;
+  height: 2.5px;
+}
+
+/* ── the four states ───────────────────────────────────────────────────────
+   Rest is above — grey glass, zero glow. Hover takes the strip to full colour
+   with a soft glow; held holds it there with a wider one; the press goes
+   WHITE-HOT. The held rule sits BEFORE the press rule so pressing a held tab
+   still steps the light up rather than dropping back. */
+.td-registry-filament:hover .td-registry-filament-strip {
+  background: var(--td-filament-ink);
+  box-shadow:
+    0 0 var(--td-filament-hover-spread) color-mix(in srgb, var(--td-filament-ink) var(--td-filament-hover-strength), transparent),
+    0 0 0 rgb(from var(--td-filament-ink) r g b / 0);
+}
+.td-registry-filament--on .td-registry-filament-strip {
+  background: var(--td-filament-ink);
+  box-shadow:
+    0 0 var(--td-filament-active-spread) color-mix(in srgb, var(--td-filament-ink) var(--td-filament-active-strength), transparent),
+    0 0 0 rgb(from var(--td-filament-ink) r g b / 0);
+}
+/* The press is the one state that is not just "more of the tone": the strip
+   goes white-hot. A wider halo in the same colour reads as a bigger held
+   state, not as a click. */
+.td-registry-filament:active .td-registry-filament-strip {
+  background: color-mix(in srgb, #fff var(--td-filament-press-white), var(--td-filament-ink));
+  box-shadow:
+    0 0 var(--td-filament-press-spread) #fff,
+    0 0 var(--td-filament-halo-spread) color-mix(in srgb, var(--td-filament-ink) var(--td-filament-halo-strength), transparent);
+}
+
+/* ── the row ───────────────────────────────────────────────────────────────
+   One of the two moving parts. Hover sinks it a little, the press sinks it
+   deeper, and the held state rests fully recessed — the same grammar as a nav
+   button with `aria-expanded="true"`. Depth only: the fill never takes the
+   tone, because colour is category ([[L11]]) and "being pointed at" is not a
+   category. Rest declares both slots unlit so the rungs interpolate ([[L18]]),
+   in the shadows' own colours rather than `transparent` ([[L20]]). */
+.td-registry-filament:hover {
+  color: var(--td-ink);
+  background: var(--td-surface);
+  box-shadow:
+    0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    0 0 0 rgb(from var(--td-shadow-light) r g b / 0),
+    inset 1px 1px 3px color-mix(in srgb, var(--td-shadow-dark) 32%, transparent),
+    inset -0.5px -0.5px 2px color-mix(in srgb, var(--td-shadow-light) 40%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+.td-registry-filament:active {
+  background: var(--td-surface);
+  box-shadow:
+    0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    0 0 0 rgb(from var(--td-shadow-light) r g b / 0),
+    inset 2px 2px 5px color-mix(in srgb, var(--td-shadow-dark) 50%, transparent),
+    inset -1px -1px 3px color-mix(in srgb, var(--td-shadow-light) 35%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+.td-registry-filament--on {
+  color: var(--td-ink);
+  background: var(--td-surface);
+  box-shadow:
+    0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    0 0 0 rgb(from var(--td-shadow-light) r g b / 0),
+    inset 1.5px 1.5px 4px color-mix(in srgb, var(--td-shadow-dark) 45%, transparent),
+    inset -1px -1px 2.5px color-mix(in srgb, var(--td-shadow-light) 38%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+
+.td-registry-filament:focus-visible { outline: 2px solid var(--td-accent); outline-offset: -2px; }
+.td-registry-filament:disabled {
+  cursor: not-allowed;
+  color: var(--td-ink-3);
+  background: transparent;
+  box-shadow: none;
+}
+.td-registry-filament:disabled .td-registry-filament-strip { background: color-mix(in srgb, var(--td-ink-3) 30%, var(--td-surface)); box-shadow: none; }
+
+
+/* ── the tile and its glyph ────────────────────────────────────────────────
+   The second moving part. It rides ABOVE the row at rest and sinks with it,
+   but keeps a shadow in every state so it always reads as its own button
+   inside the row rather than a shape printed on it.
+
+   Five slots in a fixed order in every rung — outer shade, outer highlight,
+   inset shade, inset highlight, edge ring — with the unused ones at zero alpha
+   ([[L27]]). That is what lets the tile invert from raised to pressed without
+   the transition snapping.
+
+   The glyph is the lamp and it lights by COLOUR ALONE: unlit ink, warming to
+   the tone on hover, white-hot at the press, full tone when held. No
+   `drop-shadow` anywhere near it — a halo behind a glyph this small is the
+   dark smear [[L20]] was written for, and the design system's own row does not
+   have one. */
+.td-registry-filament-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  line-height: 0;
+  width: 1.95em;
+  height: 1.95em;
+  border-radius: var(--td-radius-3);
+  background: var(--td-raise-fill);
+  color: color-mix(in srgb, var(--td-ink-3) 80%, var(--td-surface));
+  box-shadow:
+    1.5px 1.5px 4px color-mix(in srgb, var(--td-shadow-dark) 38%, transparent),
+    -2px -2px 4px color-mix(in srgb, var(--td-shadow-light) 85%, transparent),
+    inset 0 0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    inset 0 0 0 0 rgb(from var(--td-shadow-light) r g b / 0),
+    0 0 0 1px var(--td-edge);
+  transition:
+    color var(--td-t-base) var(--td-ease),
+    background var(--td-t-base) var(--td-ease),
+    box-shadow var(--td-t-base) var(--td-ease);
+}
+.td-registry-filament:hover .td-registry-filament-icon {
+  color: color-mix(in srgb, var(--td-filament-ink) 60%, var(--td-ink-2));
+  box-shadow:
+    0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    0 0 0 rgb(from var(--td-shadow-light) r g b / 0),
+    inset 1px 1px 2.5px color-mix(in srgb, var(--td-shadow-dark) 35%, transparent),
+    inset -0.5px -0.5px 2px color-mix(in srgb, var(--td-shadow-light) 30%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+.td-registry-filament:active .td-registry-filament-icon {
+  color: color-mix(in srgb, #fff 45%, var(--td-filament-ink));
+  background: color-mix(in srgb, var(--td-surface) 99%, black);
+  box-shadow:
+    0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    0 0 0 rgb(from var(--td-shadow-light) r g b / 0),
+    inset 1.5px 1.5px 4px color-mix(in srgb, var(--td-shadow-dark) 50%, transparent),
+    inset -0.5px -0.5px 2px color-mix(in srgb, var(--td-shadow-light) 30%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+.td-registry-filament--on .td-registry-filament-icon {
+  color: var(--td-filament-ink);
+  background: color-mix(in srgb, var(--td-surface) 96%, black);
+  box-shadow:
+    0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    0 0 0 rgb(from var(--td-shadow-light) r g b / 0),
+    inset 1.5px 1.5px 4px color-mix(in srgb, var(--td-shadow-dark) 48%, transparent),
+    inset -1px -1px 2.5px color-mix(in srgb, var(--td-shadow-light) 30%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+.td-registry-filament:disabled .td-registry-filament-icon {
+  color: var(--td-ink-3);
+  background: transparent;
+}
+/* The glyph is seated in the tile, not filling it.
+
+   [[L28]]'s 1.5x rule sizes a BARE glyph — one sitting directly beside a label
+   with no housing of its own, as in Button, IconButton and SplitButton — where
+   the glyph is the only optical mass on that side of the control. Here the
+   TILE is the mass: it is its own button inside the row, with its own depth
+   ladder ([[L33]]). A 1.5em glyph in a 2.15em tile left barely two pixels of
+   housing around it, so the tile stopped reading as a tile and the glyph read
+   oversized. The tile keeps the ratio against the label; the glyph is sized
+   against the tile at roughly 0.6 of it. */
+.td-registry-filament-icon > svg { width: 1.15em; height: 1.15em; fill: currentColor; stroke: none; }
+
+/* The label holds its ink in every state — only the tile and the filament
+   move ([[L15]]). */
+.td-registry-filament-label { min-width: 0; }
+
+/* ── the rail form ─────────────────────────────────────────────────────────
+   Icon only, a shorter filament, square housing. This is the collapsed
+   sidebar and the mobile rail. */
+.td-registry-filament--bare { justify-content: center; }
+.td-registry-filament--sm { padding: var(--td-sp-4) var(--td-sp-5); font-size: 0.8rem; }
+
+.td-registry-filament--sm.td-registry-filament--start .td-registry-filament-strip { top: var(--td-sp-5); bottom: var(--td-sp-5); width: 2.5px; }
+.td-registry-filament--sm.td-registry-filament--top .td-registry-filament-strip { left: 30%; right: 30%; height: 2.5px; }
+
+
+@media (prefers-reduced-motion: reduce) {
+  .td-registry-filament,
+  .td-registry-filament-strip { transition: none; }
+}

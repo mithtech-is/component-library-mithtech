@@ -1,0 +1,31 @@
+/* TonalDepth RectTitle — deltas only.
+
+   The face, the size ramp and the line rules all live in the core stylesheet
+   (`.td-h1`–`.td-h3`, `.td-h1-line`, `.td-h1-line.accent`). This file adds only
+   what a fitted heading needs on top of them.
+
+   These sit at (0,1,0), the same weight as the site's own `.td-h1` rules, and
+   land after the consumer's global stylesheet — so the tie goes here. No (0,3,0)
+   escalation is needed: nothing below re-states a property the site sets. */
+
+/* A heading inside a grid or flex parent takes min-width:auto, which is the
+   min-content width of a `white-space: nowrap` line — i.e. the whole headline.
+   That is enough to blow out a column and take the page's horizontal scroll
+   with it. The fitter measures against clientWidth, so the box has to be
+   allowed to shrink first. */
+.td-react-rect-title { min-width: 0; }
+
+/* Lines are sized individually by the fitter, so the block's own line-height
+   would otherwise be computed against the heading's base size and leave the
+   scaled-up lines overlapping. */
+.td-react-rect-title .td-h1-line { line-height: 0.92; }
+
+/* Per-line ink. `brand` is core's own `.accent`; the rest are added here.
+   These are categories, not free colour — the prop takes a named tone so a
+   headline cannot introduce a hue the palette does not have. Written at
+   (0,2,0) so they beat core's bare `.td-h1-line.accent` when a tone list
+   deliberately overrides the legacy accent flag. */
+.td-react-rect-title .td-h1-line--muted { color: var(--td-ink-2); }
+.td-react-rect-title .td-h1-line--accent { color: var(--td-accent-text); }
+.td-react-rect-title .td-h1-line--green { color: var(--td-green-text); }
+.td-react-rect-title .td-h1-line--error { color: var(--td-error-text); }

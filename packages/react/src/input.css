@@ -1,0 +1,31 @@
+/* The system's own prose says a passive surface grooves inward, and its
+   `.td-textarea-wrap` is raised — so a form reads as sunken slots with one
+   raised slab dropped among them. Transcribed from `.td-input-wrap` so the two
+   agree. Written at (0,2,0) to clear a consumer stylesheet's own copy. */
+.td-textarea-wrap.td-react-textarea-wrap {
+  background: color-mix(in srgb, var(--td-surface) 88%, black);
+  border-color: color-mix(in srgb, var(--td-surface) 76%, black);
+  /* The focus ring is a third slot, declared unlit here so the two states
+     interpolate rather than snap ([[L18]]), in the ring's own colour at zero
+     alpha rather than `transparent` ([[L20]]). */
+  box-shadow:
+    inset 2px 2px 4px color-mix(in srgb, var(--td-shadow-dark) 60%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 50%, transparent),
+    0 0 0 1.5px rgb(from var(--td-accent) r g b / 0);
+}
+.td-textarea-wrap.td-react-textarea-wrap:hover {
+  border-color: color-mix(in srgb, var(--td-surface) 68%, black);
+}
+.td-textarea-wrap.td-react-textarea-wrap:focus-within {
+  border-color: color-mix(in srgb, var(--td-accent) 70%, var(--td-btn-border-rest));
+  box-shadow:
+    inset 2px 2px 4px color-mix(in srgb, var(--td-shadow-dark) 60%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 50%, transparent),
+    0 0 0 1.5px color-mix(in srgb, var(--td-accent) 16%, transparent);
+}
+.td-textarea-wrap.td-react-textarea-wrap[data-state="error"]:focus-within {
+  box-shadow:
+    inset 2px 2px 4px color-mix(in srgb, var(--td-shadow-dark) 60%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 50%, transparent),
+    0 0 0 1.5px color-mix(in srgb, var(--td-brand) 28%, transparent);
+}

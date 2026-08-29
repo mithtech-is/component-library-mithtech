@@ -1,0 +1,104 @@
+/* TonalDepth Switch — self-contained. Requires @tonaldepth/tokens. */
+
+.td-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-family: var(--td-font-ui);
+  font-size: 13px;
+  color: var(--td-ink);
+  user-select: none;
+}
+.td-switch input { position: absolute; opacity: 0; pointer-events: none; }
+.td-switch-track {
+  width: 46px;
+  height: 26px;
+  border-radius: 999px;
+  background: var(--td-surface);
+  box-shadow:
+    inset 2px 2px 5px color-mix(in srgb, var(--td-shadow-dark) 55%, transparent),
+    inset -2px -2px 4px color-mix(in srgb, var(--td-shadow-light) 60%, transparent),
+    0 0 0 1px var(--td-edge);
+  position: relative;
+  flex: 0 0 auto;
+  transition: box-shadow 200ms var(--td-ease);
+}
+.td-switch-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--td-raise-fill);
+  box-shadow:
+    2px 2px 4px color-mix(in srgb, var(--td-shadow-dark) 45%, transparent),
+    -1.5px -1.5px 3px color-mix(in srgb, var(--td-shadow-light) 70%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+  transition: transform 220ms cubic-bezier(0.4, 0, 0.2, 1), background 200ms var(--td-ease), box-shadow 200ms var(--td-ease);
+}
+.td-switch:hover input:not(:disabled) + .td-switch-track .td-switch-thumb {
+  box-shadow:
+    2.5px 2.5px 5px color-mix(in srgb, var(--td-shadow-dark) 50%, transparent),
+    -2px -2px 4px color-mix(in srgb, var(--td-shadow-light) 85%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+}
+.td-switch input:checked + .td-switch-track {
+  background: var(--td-brand);
+  box-shadow:
+    inset 3px 3px 6px color-mix(in srgb, #7A2B0E 65%, transparent),
+    inset -2px -2px 4px color-mix(in srgb, var(--td-shadow-light) 55%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+.td-switch input:checked + .td-switch-track .td-switch-thumb {
+  transform: translate(20px, 0);
+  background: var(--td-green);
+  box-shadow:
+    2px 2px 4px color-mix(in srgb, var(--td-shadow-dark) 45%, transparent),
+    -1.5px -1.5px 3px color-mix(in srgb, var(--td-shadow-light) 70%, transparent),
+    0 0 8px color-mix(in srgb, var(--td-green) 45%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    0 0 0 1px color-mix(in srgb, var(--td-green) 55%, transparent);
+}
+.td-switch input:focus-visible + .td-switch-track {
+  box-shadow:
+    inset 2px 2px 5px color-mix(in srgb, var(--td-shadow-dark) 55%, transparent),
+    inset -2px -2px 4px color-mix(in srgb, var(--td-shadow-light) 60%, transparent),
+    0 0 0 2px color-mix(in srgb, #00AAFF 40%, transparent);
+}
+.td-switch input:disabled + .td-switch-track { opacity: 0.4; cursor: not-allowed; }
+.td-switch[data-disabled="true"] { opacity: 0.4; pointer-events: none; }
+
+/* Switch, dark mode only — a very small correction, because light is right.
+
+   2026-08-29: *"The switch looks perfect in light mode but it has visibility
+   issues in dark mode."*
+
+   One number explains it. In dark, `--td-shadow-light` is
+   `rgba(255, 248, 230, 0.062)` against light mode's opaque `#ffffff`, so the
+   highlight that shapes the channel and rounds the cap is doing about a
+   sixteenth of the work — and `--td-raise-fill` sits only 2.5% above the
+   surface, so the thumb has almost no fill separating it either. The channel
+   flattens into a hole and the cap disappears into it.
+
+   Nothing about the recipe changes: the same slots, the same order, the same
+   material. The two values that carry the shape in this mode are nudged, and
+   only in this mode. */
+:root[data-theme="dark"] .td-switch.td-registry-switch .td-switch-track {
+  box-shadow:
+    inset 2px 2px 5px color-mix(in srgb, var(--td-shadow-dark) 62%, transparent),
+    inset -2px -2px 4px color-mix(in srgb, #FFF8E6 11%, transparent),
+    0 0 0 1px color-mix(in srgb, #FFF8E6 9%, transparent);
+}
+:root[data-theme="dark"] .td-switch.td-registry-switch .td-switch-thumb {
+  /* The cap needs to be a cap. 2.5% above the surface is not a solid. */
+  background: color-mix(in srgb, #FFF8E6 7%, var(--td-surface));
+  box-shadow:
+    2px 2px 4px color-mix(in srgb, var(--td-shadow-dark) 55%, transparent),
+    -1.5px -1.5px 3px color-mix(in srgb, #FFF8E6 9%, transparent),
+    inset 0 1px 0 color-mix(in srgb, #FFF8E6 12%, transparent),
+    0 0 0 1px color-mix(in srgb, #FFF8E6 13%, transparent);
+}

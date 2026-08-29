@@ -1,0 +1,158 @@
+/* TonalDepth CaseCard — a case study reduced to its outcome.
+   Rest is softly raised; hover presses the whole card into a shallow well. */
+
+.td-mk-case-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--td-sp-10);
+  min-width: 0;
+}
+
+.td-mk-case {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--td-sp-5);
+  min-width: 0;
+  padding: var(--td-sp-10);
+  border-radius: var(--td-radius-8);
+  background: var(--td-raise-fill);
+  /* Five shadow slots, in this order, in every state: outer shade, outer
+     highlight, inset shade, inset highlight, edge ring. A list of a different
+     length — or one whose `inset` flags do not line up — snaps instead of
+     interpolating, and the unused slots are the shadow colour at zero alpha
+     rather than `transparent`, which is rgba(0, 0, 0, 0) and would drag the
+     transition through black. */
+  box-shadow:
+    3px 3px 12px color-mix(in srgb, var(--td-shadow-dark) 72%, transparent),
+    -3px -3px 12px color-mix(in srgb, var(--td-shadow-light) 68%, transparent),
+    inset 0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+  transition:
+    box-shadow var(--td-t-base) var(--td-ease),
+    background var(--td-t-base) var(--td-ease);
+}
+
+.td-mk-case--link:hover {
+  background: var(--td-raise-fill-hover);
+  box-shadow:
+    1px 1px 4px color-mix(in srgb, var(--td-shadow-dark) 44%, transparent),
+    -2px -2px 5px color-mix(in srgb, var(--td-shadow-light) 85%, transparent),
+    inset 2px 2px 4px color-mix(in srgb, var(--td-shadow-dark) 38%, transparent),
+    inset -2px -2px 6px color-mix(in srgb, var(--td-shadow-light) 32%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+.td-mk-case--link:active {
+  background: var(--td-surface);
+  box-shadow:
+    0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    0 0 0 rgb(from var(--td-shadow-light) r g b / 0),
+    inset 3px 3px 7px color-mix(in srgb, var(--td-shadow-dark) 58%, transparent),
+    inset -2px -2px 5px color-mix(in srgb, var(--td-shadow-light) 34%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+.td-mk-case--link:focus-within { outline: 2px solid var(--td-accent); outline-offset: 3px; }
+.td-mk-case-titlelink:focus-visible { outline: none; }
+
+/* The title anchor is the card's whole hit area, so its accessible name stays
+   the case title rather than every word on the card. */
+.td-mk-case-titlelink { color: inherit; text-decoration: none; }
+.td-mk-case-titlelink::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
+
+.td-mk-case-visual {
+  aspect-ratio: 16 / 9;
+  margin: calc(var(--td-sp-3) * -1) 0 var(--td-sp-2);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: var(--td-radius-5);
+  color: var(--td-ink-2);
+  background: color-mix(in srgb, var(--td-surface) 94%, black);
+  box-shadow:
+    inset 2px 2px 5px color-mix(in srgb, var(--td-shadow-dark) 55%, transparent),
+    inset -2px -2px 5px color-mix(in srgb, var(--td-shadow-light) 40%, transparent);
+}
+.td-mk-case-visual > img,
+.td-mk-case-visual > svg { width: 100%; height: 100%; object-fit: cover; }
+
+.td-mk-case-eyebrow {
+  margin: 0;
+  font-family: var(--td-font-ui);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--td-brand-text);
+}
+
+.td-mk-case-title {
+  margin: 0;
+  font-family: var(--td-font-display);
+  font-size: clamp(19px, 1.5vw, 23px);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--td-ink);
+}
+
+.td-mk-case-summary {
+  margin: 0;
+  max-width: 46ch;
+  font-family: var(--td-font-sans);
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--td-ink-2);
+}
+
+/* Carved seam — a shade hairline over a highlight hairline, not a tinted band. */
+.td-mk-case-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
+  gap: var(--td-sp-5) var(--td-sp-8);
+  margin: auto 0 0;
+  padding-top: var(--td-sp-8);
+  border-top: 1px solid color-mix(in srgb, var(--td-shadow-dark) 42%, transparent);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--td-shadow-light) 60%, transparent);
+}
+.td-mk-case-metric { display: flex; flex-direction: column-reverse; gap: 3px; min-width: 0; }
+.td-mk-case-metric-value {
+  margin: 0;
+  font-family: var(--td-font-mono);
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--td-ink);
+}
+.td-mk-case-metric-label {
+  font-family: var(--td-font-ui);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--td-ink-3);
+}
+
+.td-mk-case-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--td-sp-2);
+  margin-top: auto;
+  padding-top: var(--td-sp-3);
+  font-family: var(--td-font-ui);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--td-brand-text);
+}
+/* Whichever of the two lands last is what pushes to the card's foot, so a
+   card with no metrics and a card with no call to action both sit square. */
+.td-mk-case-metrics + .td-mk-case-cta { margin-top: 0; }
+
+.td-mk-case-arrow { transition: transform var(--td-t-base) var(--td-ease); }
+.td-mk-case--link:hover .td-mk-case-arrow { transform: translateX(3px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .td-mk-case, .td-mk-case-arrow { transition: none; }
+  .td-mk-case--link:hover .td-mk-case-arrow { transform: none; }
+}

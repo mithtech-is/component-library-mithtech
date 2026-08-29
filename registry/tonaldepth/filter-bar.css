@@ -1,0 +1,73 @@
+/* TonalDepth FilterBar — self-contained. Requires @tonaldepth/tokens. */
+
+.td-filters { display: flex; flex-wrap: wrap; gap: 6px; min-width: 0; max-width: 100%; }
+.td-filter-chip {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  color: var(--td-ink-2);
+  font-family: var(--td-font-ui);
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: none;
+  transition: box-shadow var(--td-t-base) var(--td-ease), background var(--td-t-base) var(--td-ease), color var(--td-t-fast) var(--td-ease);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.td-filter-chip:hover {
+  color: var(--td-ink);
+  background: var(--td-surface);
+  box-shadow:
+    inset 1px 1px 3px color-mix(in srgb, var(--td-shadow-dark) 30%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 35%, transparent);
+}
+.td-filter-chip[aria-pressed="true"] {
+  color: var(--td-brand-text);
+  background: var(--td-surface);
+  box-shadow:
+    inset 1.5px 1.5px 4px color-mix(in srgb, var(--td-shadow-dark) 46%, transparent),
+    inset -1px -1px 3px color-mix(in srgb, var(--td-shadow-light) 36%, transparent);
+}
+.td-filter-chip[aria-pressed="true"][data-color="accent"] { color: var(--td-accent-text); }
+.td-filter-chip:disabled { opacity: 0.45; cursor: not-allowed; }
+.td-filter-chip-count { font-family: var(--td-font-mono); font-size: 10.5px; opacity: 0.7; }
+
+.td-filters-clear {
+  appearance: none;
+  border: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 6px 5px 11px;
+  border-radius: 999px;
+  font-family: var(--td-font-ui);
+  font-size: 12px;
+  color: var(--td-ink-2);
+  background: var(--td-raise-fill);
+  box-shadow:
+    1.5px 1.5px 4px color-mix(in srgb, var(--td-shadow-dark) 38%, transparent),
+    -2px -2px 4px color-mix(in srgb, var(--td-shadow-light) 82%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+  transition: box-shadow 150ms var(--td-ease), color 150ms var(--td-ease), background 150ms var(--td-ease);
+}
+.td-filters-clear:hover { color: var(--td-ink); }
+.td-filters-clear-x {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  background: var(--td-raise-fill);
+  box-shadow:
+    1px 1px 2.5px color-mix(in srgb, var(--td-shadow-dark) 40%, transparent),
+    -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 80%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+}

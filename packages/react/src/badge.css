@@ -1,0 +1,14 @@
+/* A badge sizes to its text, in every parent.
+
+   `.td-badge` is declared `inline-flex`, but CSS blockifies an inline-level
+   box to `flex` the moment it becomes a grid or flex item — and a stretched
+   item then fills its whole track. A badge dropped into a `display: grid`
+   header therefore spanned the full content width. `width: fit-content` is a
+   definite size, so the stretch cannot apply, and it holds in grid, flex
+   column and block contexts alike. */
+.td-react-badge {
+  width: fit-content;
+  max-width: 100%;
+}
+
+.td-react-badge--danger { color: var(--td-error-text); background: color-mix(in srgb, var(--td-error) 14%, var(--td-surface)); }

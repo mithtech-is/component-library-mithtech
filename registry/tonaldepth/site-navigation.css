@@ -1,0 +1,496 @@
+/*
+ * Only what the design system does not already ship.
+ *
+ * The bar, its buttons, their four-step ladder and the panel's surface are all
+ * `.td-navbar` / `.td-navbtn` / `.td-mega-*` rules that already exist. What is
+ * added here is the behaviour those rules never carried: sticking flush,
+ * retracting, and holding every panel at one size.
+ */
+
+.td-registry-sitenav {
+  position: sticky;
+  /*
+   * Sticks flush beneath whatever is pinned above it, with no strip of page
+   * showing through in between.
+   *
+   * `--promo-bar-height` is the system's existing contract for that furniture
+   * — `.td-sticky-toolbar` already positions against it — so honouring it here
+   * keeps the bar and the in-page toolbars measuring from the same origin.
+   * Override `--td-registry-sitenav-top` to stick against something else.
+   *
+   * `--td-registry-sitenav-pad` subtracts the wrap's own top padding, so that
+   * padding parks off-screen and the pill itself lands on the edge. It
+   * defaults to 0 because the padding is what a consumer is most likely to
+   * have already flattened; set it to `22px` where `.td-nav-wrap` keeps the
+   * design system's default. Correcting the sticky origin rather than
+   * collapsing the padding is deliberate — `top` does not participate in flow,
+   * so nothing jumps at the moment it sticks.
+   */
+  top: calc(var(--td-registry-sitenav-top, var(--promo-bar-height, 0px)) - var(--td-registry-sitenav-pad, 0px));
+  /* Under the pinned promo bar at 60 so it retracts behind it, over the page's
+     floating furniture at 50. */
+  z-index: 59;
+  transition: transform var(--td-t-base) var(--td-ease);
+}
+
+.td-registry-sitenav[data-nav-hidden] {
+  transform: translateY(-100%);
+}
+
+.td-registry-sitenav-slot {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+/*
+ * A permanent fixture is not a control: the wordmark takes colour only. Every
+ * other clickable surface here takes the depth ladder, so the guard is
+ * explicit rather than left to whatever element the consumer passes in.
+ */
+.td-registry-sitenav-brand {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+.td-registry-sitenav-brand > :is(a, button):hover,
+.td-registry-sitenav-brand > :is(a, button):active,
+.td-registry-sitenav-brand > :is(a, button):focus-visible {
+  box-shadow: none;
+  transform: none;
+}
+
+/*
+ * One size for every menu. `.td-mega-panel` ships `max-height` alone, which
+ * lets a four-item list draw a short sheet and a forty-item list a tall one —
+ * so moving between menus resizes the surface under the reader's cursor.
+ *
+ * The `display` is here rather than borrowed from `.td-mega-panel.is-open`
+ * deliberately. Written at (0,2,0) it beats `.td-mega-panel`'s `display: none`
+ * on specificity rather than on source order, so the sheet does not depend on
+ * which stylesheet a bundler emits first — and the component never has to
+ * carry the `.is-open` class the design system's vanilla runtime strips from
+ * every panel on any outside click.
+ */
+.td-mega-panel.td-registry-sitenav-panel {
+  display: flex;
+  height: var(--td-registry-sitenav-panel-h, 608px);
+  /* Short viewports win over the fixed height; the content scrolls either way. */
+  max-height: min(var(--td-registry-sitenav-panel-h, 608px), calc(100vh - 90px));
+}
+
+.td-registry-sitenav-panelbody {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  /* Without this the body refuses to shrink below its content and the frame
+     grows instead of scrolling — which is the resize this component exists to
+     prevent. */
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+@media (max-width: 900px) {
+  /* The panels are desktop furniture; below this the consumer's drawer owns
+     navigation and a 608px sheet would overrun the viewport. */
+  .td-mega-panel.td-registry-sitenav-panel {
+    height: auto;
+    max-height: calc(100vh - 90px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .td-registry-sitenav {
+    transition: none;
+  }
+}
+
+/* ── Base rules, inlined from the design system ──────────────────────
+   A registry item is copied into a consumer's tree on its own, with no
+   `tonaldepth-core` to inherit from, so its stylesheet has to carry every
+   class it emits. These are the upstream `.td-*` rules this component
+   depends on, copied verbatim from packages/core/src/compat.css.
+   Regenerate rather than hand-edit: they must stay identical to upstream. */
+
+.td-nav-wrap {
+  padding: 22px 22px 0; position: relative; z-index: 60;
+}
+.td-nav-wrap[data-sticky] {
+position: sticky;
+  top: 0;
+  --nav-offset: var(--td-nav-height, 92px);
+  transition: transform var(--td-t-base) var(--td-ease);
+}
+.td-nav-wrap[data-sticky][data-retract="true"] {
+transform: translateY(-100%);
+  --nav-offset: 0px;
+}
+@media (prefers-reduced-motion: reduce) {
+.td-nav-wrap[data-sticky] {
+  transition: none;
+}
+}
+.td-navbar {
+/* The navbar fills the nav-wrap (viewport - 44px padding). No
+     hard max-width — the 1200px cap was clipping "Company" on
+     common 1440–1506px viewports. The navlinks flex-grows to
+     fill any extra room, and the search-wrap is capped so it
+     never pushes the links off the row. */
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 22px;
+  background: var(--td-surface);
+  box-shadow: var(--td-raised);
+  min-height: 64px;
+  /* Blue accent strip — a 1.5px gradient line at the bottom edge
+     of the navbar. The line is mostly --td-accent (sky blue) and
+     fades to transparent at the ends, so the navbar reads as
+     "having a subtle blue underglow" without being a neon stripe.
+     This is the "always present" blue touch in the chrome that
+     answers the design's "where's the blue?" question — the
+     wordmark also has a blue MITH half, so the brand colour is
+     visible in light mode at idle (not just on hover). */
+  position: relative;
+}
+.td-navbar::after {
+content: "";
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  bottom: 4px;
+  height: 1.5px;
+  border-radius: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--td-accent) 60%, transparent) 20%,
+    var(--td-accent) 50%,
+    color-mix(in srgb, var(--td-accent) 60%, transparent) 80%,
+    transparent 100%
+  );
+  pointer-events: none;
+  opacity: 0.65;
+  transition: opacity var(--td-t-base) var(--td-ease);
+}
+.td-navbar:hover::after {
+  opacity: 1;
+}
+.td-navlinks {
+display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+  margin: 0 4px;
+}
+.td-navbtn {
+appearance: none;
+  background: transparent;
+  color: var(--td-ink);
+  font: inherit;
+  font-family: var(--td-font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  /* flex-shrink: 0 keeps each nav button at its natural width even
+     when the search input is greedy. Without this the buttons
+     collapse and "Thinking" / "Company" clip to a few characters
+     on mid-width viewports. The search input is the only element
+     that should shrink first. */
+  flex: 0 0 auto;
+  gap: 6px;
+  min-height: 42px;
+  padding: 0 13px;
+  /* Flat at rest — the nav reads as one bar, not a row of separate
+     buttons. Depth only appears on interaction: hover presses in,
+     click deeper, open holds the well. */
+  border: 1px solid transparent;
+  border-radius: 13px;
+  box-shadow: none;
+  white-space: nowrap;
+  transition:
+    box-shadow var(--td-t-base) var(--td-ease),
+    background var(--td-t-base) var(--td-ease),
+    color var(--td-t-fast) var(--td-ease);
+}
+.td-navbtn:hover {
+background: var(--td-surface);
+  box-shadow:
+    inset 1px 1px 3px color-mix(in srgb, var(--td-shadow-dark) 32%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 35%, transparent);
+  border-color: transparent;
+}
+.td-navbtn[aria-expanded="true"] {
+/* Open = held pressed — the deepest well in the row. */
+  background: var(--td-surface);
+  border-color: transparent;
+  box-shadow:
+    inset 2px 2px 5px color-mix(in srgb, var(--td-shadow-dark) 50%, transparent),
+    inset -1px -1px 3px color-mix(in srgb, var(--td-shadow-light) 36%, transparent);
+  color: var(--td-ink);
+}
+.td-navbtn[aria-expanded="true"] .td-navbtn-chevron {
+  color: var(--td-brand);
+}
+.td-navbtn:active {
+background: var(--td-surface);
+  border-color: transparent;
+  box-shadow:
+    inset 2.5px 2.5px 6px color-mix(in srgb, var(--td-shadow-dark) 58%, transparent),
+    inset -1.5px -1.5px 3px color-mix(in srgb, var(--td-shadow-light) 40%, transparent);
+}
+.td-navbtn:focus-visible {
+  outline: 2px solid var(--td-accent); outline-offset: 3px;
+}
+.td-navbtn[disabled] {
+  opacity: 0.5; cursor: not-allowed;
+}
+.td-navbtn-chevron {
+width: 13px;
+  height: 13px;
+  color: var(--td-ink-2);
+  transition: color var(--td-t-fast) var(--td-ease), transform var(--td-t-base) var(--td-ease);
+}
+.td-navbtn:hover .td-navbtn-chevron {
+  color: var(--td-ink);
+}
+.td-nav-right {
+  display: flex; align-items: center; gap: 6px; margin-left: auto; flex: 0 0 auto;
+}
+.td-mega {
+position: relative;
+  z-index: 60;
+  height: 0;
+  overflow: visible;
+  /* Explicit, because .td-mega is a flex item in some parents (the docs
+     stage, a host's flex header) and its only in-flow child is now the
+     absolutely-positioned panel — so an auto width collapsed to the
+     44px of padding and the sheet rendered 32px wide. */
+  width: 100%;
+  max-width: 1200px;
+  margin: 10px auto 0;
+  padding: 0 22px;
+}
+.td-mega-head {
+display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 4px 4px 10px;
+  margin-bottom: 12px;
+  flex: 0 0 auto;
+  position: relative;
+}
+.td-mega-head::after {
+content: "";
+  position: absolute;
+  left: 4px; right: 4px; bottom: 0;
+  height: 1px;
+  background: color-mix(in srgb, var(--td-ink-3) 22%, transparent);
+}
+.td-mega-head-text {
+display: grid;
+  grid-template-columns: 14px minmax(0, 1fr);
+  column-gap: 10px;
+  row-gap: 3px;
+  align-items: baseline;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.td-mega-head-text strong, .td-mega-head-text p {
+  grid-column: 2; margin: 0;
+}
+.td-mega-head-text strong {
+font-family: var(--td-font-ui);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--td-ink);
+  letter-spacing: 0.005em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.td-mega-head-text::before {
+/* The lamp — a 14×2 brand bar marks the section. Row 1 beside the
+     title; centred on that line rather than on the whole block. */
+  content: "";
+  grid-column: 1;
+  grid-row: 1;
+  align-self: center;
+  flex: 0 0 auto;
+  width: 14px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--td-brand);
+}
+.td-mega-head .td-mega-cta {
+flex: 0 0 auto;
+  font-family: var(--td-font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--td-accent-text);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  padding: 7px 13px 7px 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--td-surface) 96%, black);
+  box-shadow: var(--td-btn-rest);
+  transition: color 180ms var(--td-ease);
+}
+.td-mega-head .td-mega-cta::before {
+content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--td-brand) 32%, var(--td-surface));
+  margin-right: 2px;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--td-brand) 22%, transparent);
+  transition: background var(--td-t-base) var(--td-ease), box-shadow var(--td-t-base) var(--td-ease);
+}
+.td-mega-head .td-mega-cta:hover {
+  color: var(--td-brand);
+}
+.td-mega-head .td-mega-cta:active {
+background: var(--td-surface);
+  box-shadow:
+    inset 2px 2px 5px color-mix(in srgb, var(--td-shadow-dark) 50%, transparent),
+    inset -1px -1px 3px color-mix(in srgb, var(--td-shadow-light) 38%, transparent);
+}
+.td-mega-head .td-mega-cta:hover::before {
+background: var(--td-brand);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--td-brand) 60%, transparent);
+}
+.td-mega-close {
+appearance: none;
+  flex: 0 0 auto;
+  width: 28px; height: 28px;
+  border: 1px solid color-mix(in srgb, var(--td-ink-3) 35%, transparent);
+  border-radius: 9px;
+  background: transparent;
+  color: var(--td-ink-2);
+  display: grid; place-items: center;
+  cursor: pointer;
+  transition:
+    color var(--td-t-fast) var(--td-ease),
+    border-color var(--td-t-base) var(--td-ease),
+    background var(--td-t-base) var(--td-ease),
+    transform var(--td-t-base) var(--td-ease);
+}
+.td-mega-close:hover {
+color: var(--td-ink);
+  border-color: color-mix(in srgb, var(--td-brand) 45%, transparent);
+  background: color-mix(in srgb, var(--td-brand) 6%, transparent);
+}
+.td-mega-close:active {
+color: var(--td-brand);
+  border-color: color-mix(in srgb, var(--td-brand) 70%, transparent);
+  transform: translate(0.5px, 0.5px);
+}
+.td-mega-close:focus-visible {
+outline: none;
+  border-color: var(--td-brand);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--td-brand) 22%, transparent);
+}
+.td-mega-close svg {
+  width: 12px; height: 12px;
+}
+
+/* ── the sheet's scrim ─────────────────────────────────────────────────────
+   An open mega sheet is a modal moment: the page behind it is out of reach.
+   A flat black wash says that by hiding the page; glass says it by putting the
+   page out of focus while leaving it there — which is the honest description of
+   what happened, and it keeps the reader oriented.
+
+   `backdrop-filter` is progressive: where it is unsupported the tint alone
+   still reads as inactive, so nothing is lost, and the tint is deliberately
+   light BECAUSE the blur is doing the work. */
+.td-registry-sitenav-scrim {
+  position: fixed;
+  inset: 0;
+  /* Under the bar AND the panels, over the page. The bar must stay lit:
+     a menu whose own trigger goes dark is a modal. */
+  z-index: 30;
+  background: color-mix(in srgb, var(--td-bg) 14%, transparent);
+  backdrop-filter: blur(8px) saturate(1.04);
+  -webkit-backdrop-filter: blur(8px) saturate(1.04);
+  animation: td-registry-glass-in var(--td-t-slow) var(--td-ease) both;
+}
+@keyframes td-registry-glass-in {
+  from { opacity: 0; backdrop-filter: blur(0) saturate(1); -webkit-backdrop-filter: blur(0) saturate(1); }
+  to { opacity: 1; backdrop-filter: blur(8px) saturate(1.04); -webkit-backdrop-filter: blur(8px) saturate(1.04); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .td-registry-sitenav-scrim { animation: none; }
+}
+
+/* ── the sheet drops, it does not appear ───────────────────────────────────
+   2026-08-29: *"it shouldn't feel like a modal or a popup… there should be a
+   smooth movement when the megamenu drops. The navbar shouldn't become
+   invisible."*
+
+   Three separate faults, and the first is the one that made it read as a modal.
+
+   1. **The scrim covered the bar.** At `z-index: 40` against the bar's 59 it
+      should have passed under it — but the bar is `position: sticky`, which
+      only creates a stacking context when it is stuck, so on an unstuck page
+      the scrim painted straight over it. It is 30 now AND the bar is given an
+      explicit stacking context while a sheet is open, so the navigation stays
+      lit and reachable. A menu whose own trigger goes dark is a modal.
+
+   2. **The panel appeared rather than dropped.** `display: flex` on an
+      absolutely positioned box is instantaneous; nothing moved. It now grows
+      out of the bar's lower edge — a short travel and a clip, so the content
+      is revealed rather than slid — with the easing the rest of the system
+      uses.
+
+   3. **The glass was heavy.** 38% tint over a 14px blur reads as a wall. The
+      tint is down to 14% and the blur down to 8px: the page behind should look
+      *set down*, not switched off. */
+.td-registry-sitenav[data-nav-open] { z-index: 59; }
+/* The scrim is a CHILD of the header, after the bar in the DOM, so inside the
+   header's own stacking context it paints over the bar however low its z-index
+   is — which is what kept washing the navigation out. The bar is lifted above
+   it here; the sheet (`.td-mega`, z-index 60) stays above both. */
+.td-registry-sitenav .td-navbar { position: relative; z-index: 45; }
+
+.td-mega-panel.td-registry-sitenav-panel {
+  /* The frame. A sheet is chrome, so it is RAISED — the design system's own
+     plate strength ([[L39]]), not a floating card with a drop shadow. It sits
+     a little off the page and the light falls on it from the same place as
+     everything else. */
+  background: var(--td-raise-fill);
+  border-radius: var(--td-radius-8);
+  box-shadow:
+    4px 5px 12px color-mix(in srgb, var(--td-shadow-dark) 70%, transparent),
+    -4px -5px 12px color-mix(in srgb, var(--td-shadow-light) 66%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+  transform-origin: top center;
+  animation: td-registry-sitenav-drop var(--td-t-slow) var(--td-ease) both;
+}
+@keyframes td-registry-sitenav-drop {
+  from { opacity: 0; transform: translateY(-10px); clip-path: inset(0 0 100% 0 round var(--td-radius-8)); }
+  to { opacity: 1; transform: translateY(0); clip-path: inset(0 0 0 0 round var(--td-radius-8)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .td-mega-panel.td-registry-sitenav-panel { animation: none; }
+}
+
+/* The sheet is wider than the bar's 1200px cap.
+
+   `MegaColumns` carries a feature panel and two or three columns of links; at
+   1200 the columns fall below their 240px minimum and the grid drops to one
+   per row, which is a list rather than a menu. The bar itself keeps its own
+   measure — only the sheet widens, so the navigation still reads as a bar with
+   something under it rather than as a full-bleed panel. */
+.td-registry-sitenav .td-mega { max-width: var(--td-registry-sitenav-sheet-w, 1440px); }

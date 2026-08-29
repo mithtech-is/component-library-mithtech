@@ -1,0 +1,12 @@
+{
+  "name": "tonaldepth-vue-catalog",
+  "version": "0.0.0-private",
+  "private": true,
+  "type": "module",
+  "scripts": { "dev": "vite --host 127.0.0.1", "build": "vite build" },
+  "dependencies": {
+    "@mithtech-bengaluru/tonaldepth-vue": "0.1.0-alpha.0",
+    "vue": "3.5.41"
+  },
+  "devDependencies": { "vite": "8.2.2" }
+}

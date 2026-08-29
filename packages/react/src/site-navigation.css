@@ -1,0 +1,199 @@
+/*
+ * Only what the design system does not already ship.
+ *
+ * The bar, its buttons, their four-step ladder and the panel's surface are all
+ * `.td-navbar` / `.td-navbtn` / `.td-mega-*` rules that already exist. What is
+ * added here is the behaviour those rules never carried: sticking flush,
+ * retracting, and holding every panel at one size.
+ */
+
+.td-react-sitenav {
+  position: sticky;
+  /*
+   * Sticks flush beneath whatever is pinned above it, with no strip of page
+   * showing through in between.
+   *
+   * `--promo-bar-height` is the system's existing contract for that furniture
+   * — `.td-sticky-toolbar` already positions against it — so honouring it here
+   * keeps the bar and the in-page toolbars measuring from the same origin.
+   * Override `--td-react-sitenav-top` to stick against something else.
+   *
+   * `--td-react-sitenav-pad` subtracts the wrap's own top padding, so that
+   * padding parks off-screen and the pill itself lands on the edge. It
+   * defaults to 0 because the padding is what a consumer is most likely to
+   * have already flattened; set it to `22px` where `.td-nav-wrap` keeps the
+   * design system's default. Correcting the sticky origin rather than
+   * collapsing the padding is deliberate — `top` does not participate in flow,
+   * so nothing jumps at the moment it sticks.
+   */
+  top: calc(var(--td-react-sitenav-top, var(--promo-bar-height, 0px)) - var(--td-react-sitenav-pad, 0px));
+  /* Under the pinned promo bar at 60 so it retracts behind it, over the page's
+     floating furniture at 50. */
+  z-index: 59;
+  transition: transform var(--td-t-base) var(--td-ease);
+}
+
+.td-react-sitenav[data-nav-hidden] {
+  transform: translateY(-100%);
+}
+
+.td-react-sitenav-slot {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+/*
+ * A permanent fixture is not a control: the wordmark takes colour only. Every
+ * other clickable surface here takes the depth ladder, so the guard is
+ * explicit rather than left to whatever element the consumer passes in.
+ */
+.td-react-sitenav-brand {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+.td-react-sitenav-brand > :is(a, button):hover,
+.td-react-sitenav-brand > :is(a, button):active,
+.td-react-sitenav-brand > :is(a, button):focus-visible {
+  box-shadow: none;
+  transform: none;
+}
+
+/*
+ * One size for every menu. `.td-mega-panel` ships `max-height` alone, which
+ * lets a four-item list draw a short sheet and a forty-item list a tall one —
+ * so moving between menus resizes the surface under the reader's cursor.
+ *
+ * The `display` is here rather than borrowed from `.td-mega-panel.is-open`
+ * deliberately. Written at (0,2,0) it beats `.td-mega-panel`'s `display: none`
+ * on specificity rather than on source order, so the sheet does not depend on
+ * which stylesheet a bundler emits first — and the component never has to
+ * carry the `.is-open` class the design system's vanilla runtime strips from
+ * every panel on any outside click.
+ */
+.td-mega-panel.td-react-sitenav-panel {
+  display: flex;
+  height: var(--td-react-sitenav-panel-h, 608px);
+  /* Short viewports win over the fixed height; the content scrolls either way. */
+  max-height: min(var(--td-react-sitenav-panel-h, 608px), calc(100vh - 90px));
+}
+
+.td-react-sitenav-panelbody {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  /* Without this the body refuses to shrink below its content and the frame
+     grows instead of scrolling — which is the resize this component exists to
+     prevent. */
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+@media (max-width: 900px) {
+  /* The panels are desktop furniture; below this the consumer's drawer owns
+     navigation and a 608px sheet would overrun the viewport. */
+  .td-mega-panel.td-react-sitenav-panel {
+    height: auto;
+    max-height: calc(100vh - 90px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .td-react-sitenav {
+    transition: none;
+  }
+}
+
+/* ── the sheet's scrim ─────────────────────────────────────────────────────
+   An open mega sheet is a modal moment: the page behind it is out of reach.
+   A flat black wash says that by hiding the page; glass says it by putting the
+   page out of focus while leaving it there — which is the honest description of
+   what happened, and it keeps the reader oriented.
+
+   `backdrop-filter` is progressive: where it is unsupported the tint alone
+   still reads as inactive, so nothing is lost, and the tint is deliberately
+   light BECAUSE the blur is doing the work. */
+.td-react-sitenav-scrim {
+  position: fixed;
+  inset: 0;
+  /* Under the bar AND the panels, over the page. The bar must stay lit:
+     a menu whose own trigger goes dark is a modal. */
+  z-index: 30;
+  background: color-mix(in srgb, var(--td-bg) 14%, transparent);
+  backdrop-filter: blur(8px) saturate(1.04);
+  -webkit-backdrop-filter: blur(8px) saturate(1.04);
+  animation: td-react-glass-in var(--td-t-slow) var(--td-ease) both;
+}
+@keyframes td-react-glass-in {
+  from { opacity: 0; backdrop-filter: blur(0) saturate(1); -webkit-backdrop-filter: blur(0) saturate(1); }
+  to { opacity: 1; backdrop-filter: blur(8px) saturate(1.04); -webkit-backdrop-filter: blur(8px) saturate(1.04); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .td-react-sitenav-scrim { animation: none; }
+}
+
+/* ── the sheet drops, it does not appear ───────────────────────────────────
+   2026-08-29: *"it shouldn't feel like a modal or a popup… there should be a
+   smooth movement when the megamenu drops. The navbar shouldn't become
+   invisible."*
+
+   Three separate faults, and the first is the one that made it read as a modal.
+
+   1. **The scrim covered the bar.** At `z-index: 40` against the bar's 59 it
+      should have passed under it — but the bar is `position: sticky`, which
+      only creates a stacking context when it is stuck, so on an unstuck page
+      the scrim painted straight over it. It is 30 now AND the bar is given an
+      explicit stacking context while a sheet is open, so the navigation stays
+      lit and reachable. A menu whose own trigger goes dark is a modal.
+
+   2. **The panel appeared rather than dropped.** `display: flex` on an
+      absolutely positioned box is instantaneous; nothing moved. It now grows
+      out of the bar's lower edge — a short travel and a clip, so the content
+      is revealed rather than slid — with the easing the rest of the system
+      uses.
+
+   3. **The glass was heavy.** 38% tint over a 14px blur reads as a wall. The
+      tint is down to 14% and the blur down to 8px: the page behind should look
+      *set down*, not switched off. */
+.td-react-sitenav[data-nav-open] { z-index: 59; }
+/* The scrim is a CHILD of the header, after the bar in the DOM, so inside the
+   header's own stacking context it paints over the bar however low its z-index
+   is — which is what kept washing the navigation out. The bar is lifted above
+   it here; the sheet (`.td-mega`, z-index 60) stays above both. */
+.td-react-sitenav .td-navbar { position: relative; z-index: 45; }
+
+.td-mega-panel.td-react-sitenav-panel {
+  /* The frame. A sheet is chrome, so it is RAISED — the design system's own
+     plate strength ([[L39]]), not a floating card with a drop shadow. It sits
+     a little off the page and the light falls on it from the same place as
+     everything else. */
+  background: var(--td-raise-fill);
+  border-radius: var(--td-radius-8);
+  box-shadow:
+    4px 5px 12px color-mix(in srgb, var(--td-shadow-dark) 70%, transparent),
+    -4px -5px 12px color-mix(in srgb, var(--td-shadow-light) 66%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+  transform-origin: top center;
+  animation: td-react-sitenav-drop var(--td-t-slow) var(--td-ease) both;
+}
+@keyframes td-react-sitenav-drop {
+  from { opacity: 0; transform: translateY(-10px); clip-path: inset(0 0 100% 0 round var(--td-radius-8)); }
+  to { opacity: 1; transform: translateY(0); clip-path: inset(0 0 0 0 round var(--td-radius-8)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .td-mega-panel.td-react-sitenav-panel { animation: none; }
+}
+
+/* The sheet is wider than the bar's 1200px cap.
+
+   `MegaColumns` carries a feature panel and two or three columns of links; at
+   1200 the columns fall below their 240px minimum and the grid drops to one
+   per row, which is a list rather than a menu. The bar itself keeps its own
+   measure — only the sheet widens, so the navigation still reads as a bar with
+   something under it rather than as a full-bleed panel. */
+.td-react-sitenav .td-mega { max-width: var(--td-react-sitenav-sheet-w, 1440px); }

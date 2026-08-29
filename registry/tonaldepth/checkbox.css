@@ -1,0 +1,44 @@
+/* TonalDepth Checkbox — self-contained. Requires @tonaldepth/tokens. */
+
+.td-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-family: var(--td-font-ui);
+  font-size: 13px;
+  color: var(--td-ink);
+  user-select: none;
+}
+.td-check input { position: absolute; opacity: 0; pointer-events: none; }
+.td-check-box {
+  width: 22px;
+  height: 22px;
+  border-radius: 7px;
+  background: var(--td-surface);
+  border: 2px solid var(--td-ink-2);
+  box-shadow: var(--td-btn-rest);
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  transition: box-shadow var(--td-t-base) var(--td-ease), background var(--td-t-base) var(--td-ease), border-color var(--td-t-base) var(--td-ease);
+}
+.td-check-box svg { width: 14px; height: 14px; color: transparent; transition: color var(--td-t-base) var(--td-ease); }
+.td-check:hover .td-check-box { border-color: var(--td-ink); box-shadow: var(--td-btn-hover); }
+.td-check input:focus-visible + .td-check-box { box-shadow: var(--td-btn-rest), 0 0 0 2px var(--td-brand); border-color: var(--td-brand); }
+.td-check input:checked + .td-check-box {
+  background: var(--td-brand);
+  border-color: var(--td-brand);
+  box-shadow:
+    inset 2px 2px 4px color-mix(in srgb, var(--td-shadow-dark) 40%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 30%, transparent);
+}
+.td-check input:checked + .td-check-box svg { color: var(--td-ink-on-fill); }
+.td-check input:disabled + .td-check-box { opacity: 0.4; cursor: not-allowed; }
+.td-check[data-disabled="true"] { opacity: 0.4; pointer-events: none; }
+
+/* The box centres against the whole label, which is right for one line and
+   wrong for a label carrying a description — the box drifts to the second line
+   of a three-line block and reads as unattached. Top alignment is identical for
+   a one-line label, so it is the safe default. */
+.td-check.td-registry-check { align-items: flex-start; }

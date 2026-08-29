@@ -1,0 +1,91 @@
+/* LinkCells — the "where to next" grid. Self-contained; requires @tonaldepth/tokens.
+
+   Each cell is a raised control that presses, because the whole cell is the
+   target ([[L12]]). The arrow is a direction mark rather than a lamp, so it
+   moves sideways and steps its ink but never glows — a glow would say "state"
+   about something that only says "onward". */
+
+.td-linkcells.td-registry-linkcells {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: var(--td-sp-6);
+  min-width: 0;
+}
+
+/* Five slots in a fixed order in every rung — outer shade, outer highlight,
+   inset shade, inset highlight, edge ring — with the unused ones at zero alpha
+   ([[L27]]). That is what lets the cell invert from raised to pressed without
+   the transition snapping. */
+.td-linkcell.td-registry-linkcell {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--td-sp-6);
+  min-width: 0;
+  padding: var(--td-sp-6) var(--td-sp-7);
+  border-radius: var(--td-radius-5);
+  text-decoration: none;
+  color: var(--td-ink);
+  background: var(--td-raise-fill);
+  box-shadow:
+    3px 3px 12px color-mix(in srgb, var(--td-shadow-dark) 68%, transparent),
+    -3px -3px 12px color-mix(in srgb, var(--td-shadow-light) 64%, transparent),
+    inset 0 0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+  transition: box-shadow var(--td-t-base) var(--td-ease), background var(--td-t-base) var(--td-ease);
+}
+.td-linkcell.td-registry-linkcell:hover {
+  box-shadow:
+    4px 4px 11px color-mix(in srgb, var(--td-shadow-dark) 52%, transparent),
+    -3px -3px 12px color-mix(in srgb, var(--td-shadow-light) 58%, transparent),
+    inset 0 0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+}
+.td-linkcell.td-registry-linkcell:active {
+  background: var(--td-surface);
+  box-shadow:
+    0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    0 0 0 rgb(from var(--td-shadow-light) r g b / 0),
+    inset 2px 2px 5px color-mix(in srgb, var(--td-shadow-dark) 52%, transparent),
+    inset -1px -1px 3px color-mix(in srgb, var(--td-shadow-light) 32%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+.td-linkcell.td-registry-linkcell:focus-visible { outline: 2px solid var(--td-accent); outline-offset: 3px; }
+
+.td-registry-linkcell-copy { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+
+.td-linkcell-kicker.td-registry-linkcell-kicker {
+  font-family: var(--td-font-mono);
+  font-size: 0.63rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--td-ink-3);
+}
+.td-linkcell-title.td-registry-linkcell-title {
+  font-family: var(--td-font-ui);
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--td-ink);
+}
+.td-registry-linkcell-detail { font-family: var(--td-font-sans); font-size: 0.76rem; line-height: 1.5; color: var(--td-ink-2); }
+
+.td-linkcell-arrow.td-registry-linkcell-arrow {
+  width: 0.95em;
+  height: 0.95em;
+  flex: 0 0 auto;
+  fill: currentColor;
+  color: var(--td-ink-3);
+  transition: transform var(--td-t-base) var(--td-ease), color var(--td-t-base) var(--td-ease);
+}
+.td-registry-linkcell:hover .td-registry-linkcell-arrow { color: var(--td-brand-text); transform: translateX(2px); }
+
+.td-registry-linkcell-slot { display: contents; }
+
+@media (prefers-reduced-motion: reduce) {
+  .td-linkcell.td-registry-linkcell, .td-linkcell-arrow.td-registry-linkcell-arrow { transition: none; }
+  .td-registry-linkcell:hover .td-registry-linkcell-arrow { transform: none; }
+}
