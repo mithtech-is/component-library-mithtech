@@ -4,31 +4,51 @@
   "homepage": "http://127.0.0.1:4176",
   "items": [
     {
-      "name": "tokens",
-      "type": "registry:style",
-      "title": "TonalDepth Tokens",
-      "description": "The shared TonalDepth CSS custom properties and body defaults. Install this once, then TonalDepth components stop redeclaring the same tokens.",
-      "files": [
-        {
-          "path": "registry/tonaldepth/tokens.css",
-          "type": "registry:style",
-          "target": "styles/tonaldepth.css"
-        }
-      ]
-    },
-    {
-      "name": "button",
+      "name": "alert",
       "type": "registry:ui",
-      "title": "TonalDepth Button",
-      "description": "A typed TonalDepth action button with five variants, three sizes, and loading state.",
+      "title": "TonalDepth Alert",
+      "description": "A typed TonalDepth persistent notice with info, success, warning, and error variants and an optional dismiss control.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/button.tsx",
+          "path": "registry/tonaldepth/alert.tsx",
           "type": "registry:ui",
-          "target": "components/ui/tonaldepth-button.tsx"
+          "target": "components/ui/tonaldepth-alert.tsx"
+        }
+      ]
+    },
+    {
+      "name": "application-shell",
+      "type": "registry:ui",
+      "title": "TonalDepth ApplicationShell",
+      "description": "A typed TonalDepth application shell with grouped sidebar navigation, identity slot, main header, and content area.",
+      "registryDependencies": [
+        "@tonaldepth/tokens",
+        "@tonaldepth/sub-nav"
+      ],
+      "files": [
+        {
+          "path": "registry/tonaldepth/application-shell.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-application-shell.tsx"
+        }
+      ]
+    },
+    {
+      "name": "article-card",
+      "type": "registry:ui",
+      "title": "TonalDepth ArticleCard",
+      "description": "A typed TonalDepth blog/article card: optional cover, category eyebrow, title, excerpt, an \"In this piece\" well of the tools, files and datasets the piece carries, an author and a date + read-time meta line, and an optional whole-card link that takes the depth ladder.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "registry/tonaldepth/article-card.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-article-card.tsx"
         }
       ],
       "dependencies": [
@@ -52,6 +72,41 @@
       ]
     },
     {
+      "name": "breadcrumbs",
+      "type": "registry:ui",
+      "title": "TonalDepth Breadcrumbs",
+      "description": "A typed TonalDepth breadcrumb trail in the three forms the design system draws — chevrons, slashes, and the condensed housed bar — on one separator prop.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "registry/tonaldepth/breadcrumbs.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-breadcrumbs.tsx"
+        }
+      ]
+    },
+    {
+      "name": "button",
+      "type": "registry:ui",
+      "title": "TonalDepth Button",
+      "description": "A typed TonalDepth action button with five variants, three sizes, and loading state.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "registry/tonaldepth/button.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-button.tsx"
+        }
+      ],
+      "dependencies": [
+        "@phosphor-icons/react"
+      ]
+    },
+    {
       "name": "card",
       "type": "registry:ui",
       "title": "TonalDepth Card",
@@ -68,51 +123,58 @@
       ]
     },
     {
-      "name": "input",
+      "name": "case-card",
       "type": "registry:ui",
-      "title": "TonalDepth Input",
-      "description": "A typed TonalDepth single-line text input with optional leading and trailing slots and an invalid state.",
+      "title": "TonalDepth CaseCard",
+      "description": "A typed TonalDepth case-study card: eyebrow, outcome title, summary, outcome metrics in mono, and an optional whole-card link that takes the depth ladder.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/input.tsx",
+          "path": "registry/tonaldepth/case-card.tsx",
           "type": "registry:ui",
-          "target": "components/ui/tonaldepth-input.tsx"
+          "target": "components/ui/tonaldepth-case-card.tsx"
+        }
+      ],
+      "dependencies": [
+        "@phosphor-icons/react"
+      ]
+    },
+    {
+      "name": "chart-container",
+      "type": "registry:ui",
+      "title": "TonalDepth ChartContainer",
+      "description": "A typed TonalDepth chart figure with title, meta, hidden description for assistive tech, and optional legend.",
+      "registryDependencies": [
+        "@tonaldepth/tokens",
+        "@tonaldepth/frame"
+      ],
+      "files": [
+        {
+          "path": "registry/tonaldepth/chart-container.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-chart-container.tsx"
         }
       ]
     },
     {
-      "name": "textarea",
+      "name": "chat-launcher",
       "type": "registry:ui",
-      "title": "TonalDepth Textarea",
-      "description": "A typed TonalDepth multi-line text area matched to the Input treatment.",
+      "title": "TonalDepth ChatLauncher",
+      "description": "A typed TonalDepth floating chat launcher and panel, with a presence lamp and an optional revolving AI halo. Not a dialog: the page stays usable.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/textarea.tsx",
+          "path": "registry/tonaldepth/chat-launcher.tsx",
           "type": "registry:ui",
-          "target": "components/ui/tonaldepth-textarea.tsx"
+          "target": "components/ui/tonaldepth-chat-launcher.tsx"
         }
-      ]
-    },
-    {
-      "name": "form-field",
-      "type": "registry:ui",
-      "title": "TonalDepth FormField",
-      "description": "A typed TonalDepth label, help text, error text, and control wrapper that wires ARIA relationships for any single child control.",
-      "registryDependencies": [
-        "@tonaldepth/tokens"
       ],
-      "files": [
-        {
-          "path": "registry/tonaldepth/form-field.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/tonaldepth-form-field.tsx"
-        }
+      "dependencies": [
+        "@phosphor-icons/react"
       ]
     },
     {
@@ -135,114 +197,120 @@
       ]
     },
     {
-      "name": "radio",
+      "name": "code-block",
       "type": "registry:ui",
-      "title": "TonalDepth Radio",
-      "description": "A typed TonalDepth radio and radio group that shares a name via context and honors fieldset disabled state.",
+      "title": "TonalDepth CodeBlock",
+      "description": "A typed TonalDepth code listing, housed in a Frame with a copy chip in the corner. It does no highlighting — pass pre-highlighted markup.",
       "registryDependencies": [
-        "@tonaldepth/tokens"
+        "@tonaldepth/tokens",
+        "@tonaldepth/frame",
+        "@tonaldepth/copy-chip"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/radio.tsx",
+          "path": "registry/tonaldepth/code-block.tsx",
           "type": "registry:ui",
-          "target": "components/ui/tonaldepth-radio.tsx"
+          "target": "components/ui/tonaldepth-code-block.tsx"
         }
       ]
     },
     {
-      "name": "switch",
+      "name": "comparison-table",
       "type": "registry:ui",
-      "title": "TonalDepth Switch",
-      "description": "A typed TonalDepth toggle switch backed by a role=switch checkbox with an owned label.",
+      "title": "TonalDepth ComparisonTable",
+      "description": "A typed TonalDepth comparison table: criteria down, options across, booleans as marks with a text equivalent, and the argued-for column set as the ladder's selected step.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/switch.tsx",
+          "path": "registry/tonaldepth/comparison-table.tsx",
           "type": "registry:ui",
-          "target": "components/ui/tonaldepth-switch.tsx"
+          "target": "components/ui/tonaldepth-comparison-table.tsx"
         }
       ]
     },
     {
-      "name": "alert",
+      "name": "confirm-button",
       "type": "registry:ui",
-      "title": "TonalDepth Alert",
-      "description": "A typed TonalDepth persistent notice with info, success, warning, and error variants and an optional dismiss control.",
+      "title": "TonalDepth ConfirmButton",
+      "description": "A typed TonalDepth destructive action that asks once, in place. The first press arms it; the second, inside the timeout, commits.",
       "registryDependencies": [
-        "@tonaldepth/tokens"
+        "@tonaldepth/tokens",
+        "@tonaldepth/button"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/alert.tsx",
+          "path": "registry/tonaldepth/confirm-button.tsx",
           "type": "registry:ui",
-          "target": "components/ui/tonaldepth-alert.tsx"
+          "target": "components/ui/tonaldepth-confirm-button.tsx"
         }
       ]
     },
     {
-      "name": "tabs",
+      "name": "copy-chip",
       "type": "registry:ui",
-      "title": "TonalDepth Tabs",
-      "description": "A typed TonalDepth tab list and single tab panel with arrow-key navigation and controlled or uncontrolled selection.",
+      "title": "TonalDepth CopyChip",
+      "description": "A typed TonalDepth chip that puts a machine value on the clipboard. Success is reported in ink and glyph, never as a tinted plate.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/tabs.tsx",
+          "path": "registry/tonaldepth/copy-chip.tsx",
           "type": "registry:ui",
-          "target": "components/ui/tonaldepth-tabs.tsx"
+          "target": "components/ui/tonaldepth-copy-chip.tsx"
+        }
+      ],
+      "dependencies": [
+        "@phosphor-icons/react"
+      ]
+    },
+    {
+      "name": "counter",
+      "type": "registry:ui",
+      "title": "TonalDepth Counter",
+      "description": "A typed TonalDepth statistic that counts up when it is scrolled to. The marketing form of KpiCard, with the plate taken away and the value at display size.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "registry/tonaldepth/counter.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-counter.tsx"
         }
       ]
     },
     {
-      "name": "table",
+      "name": "cta-banner",
       "type": "registry:ui",
-      "title": "TonalDepth Table",
-      "description": "A typed TonalDepth semantic table set (container, table, head, body, row, header cell, data cell) with responsive containment.",
+      "title": "TonalDepth CtaBanner",
+      "description": "A typed TonalDepth closing call to action. It carries weight through depth and scale rather than a brand fill, and takes library Buttons in its actions slot.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/table.tsx",
+          "path": "registry/tonaldepth/cta-banner.tsx",
           "type": "registry:ui",
-          "target": "components/ui/tonaldepth-table.tsx"
+          "target": "components/ui/tonaldepth-cta-banner.tsx"
         }
       ]
     },
     {
-      "name": "kpi",
+      "name": "data-list",
       "type": "registry:ui",
-      "title": "TonalDepth KPI",
-      "description": "A typed TonalDepth KPI card and responsive grid for eyebrow label, display value, trend delta, and optional sparkline.",
+      "title": "TonalDepth DataList",
+      "description": "A typed TonalDepth definition list for four to six fields about one record — where a table's header row would be overhead.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/kpi.tsx",
+          "path": "registry/tonaldepth/data-list.tsx",
           "type": "registry:ui",
-          "target": "components/ui/tonaldepth-kpi.tsx"
-        }
-      ]
-    },
-    {
-      "name": "tooltip",
-      "type": "registry:ui",
-      "title": "TonalDepth Tooltip",
-      "description": "A typed TonalDepth tooltip that wraps a single child element and reveals a positioned tip on hover, focus, or open prop.",
-      "registryDependencies": [
-        "@tonaldepth/tokens"
-      ],
-      "files": [
-        {
-          "path": "registry/tonaldepth/tooltip.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/tonaldepth-tooltip.tsx"
+          "target": "components/ui/tonaldepth-data-list.tsx"
         }
       ]
     },
@@ -282,134 +350,18 @@
       ]
     },
     {
-      "name": "toast",
+      "name": "faq",
       "type": "registry:ui",
-      "title": "TonalDepth Toast",
-      "description": "A typed TonalDepth toast provider and hook that queues info, success, and error notifications with auto-dismiss.",
+      "title": "TonalDepth Faq",
+      "description": "A typed TonalDepth question list that opens in place. Real buttons with aria-expanded, and answers hidden with `hidden` so they leave in-page search too.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/toast.tsx",
+          "path": "registry/tonaldepth/faq.tsx",
           "type": "registry:ui",
-          "target": "components/ui/tonaldepth-toast.tsx"
-        }
-      ]
-    },
-    {
-      "name": "chart-container",
-      "type": "registry:ui",
-      "title": "TonalDepth ChartContainer",
-      "description": "A typed TonalDepth chart figure with title, meta, hidden description for assistive tech, and optional legend.",
-      "registryDependencies": [
-        "@tonaldepth/tokens",
-        "@tonaldepth/frame"
-      ],
-      "files": [
-        {
-          "path": "registry/tonaldepth/chart-container.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/tonaldepth-chart-container.tsx"
-        }
-      ]
-    },
-    {
-      "name": "filter-bar",
-      "type": "registry:ui",
-      "title": "TonalDepth FilterBar",
-      "description": "A typed TonalDepth multi-select filter chip row with per-chip count, disabled state, and clear-all action.",
-      "registryDependencies": [
-        "@tonaldepth/tokens"
-      ],
-      "files": [
-        {
-          "path": "registry/tonaldepth/filter-bar.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/tonaldepth-filter-bar.tsx"
-        }
-      ]
-    },
-    {
-      "name": "application-shell",
-      "type": "registry:ui",
-      "title": "TonalDepth ApplicationShell",
-      "description": "A typed TonalDepth application shell with grouped sidebar navigation, identity slot, main header, and content area.",
-      "registryDependencies": [
-        "@tonaldepth/tokens"
-      ],
-      "files": [
-        {
-          "path": "registry/tonaldepth/application-shell.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/tonaldepth-application-shell.tsx"
-        }
-      ]
-    },
-    {
-      "name": "page-patterns",
-      "type": "registry:ui",
-      "title": "TonalDepth PagePatterns",
-      "description": "Typed TonalDepth page compositions: DashboardPage, DashboardPanel, DataManagementPage, PageState.",
-      "registryDependencies": [
-        "@tonaldepth/tokens"
-      ],
-      "files": [
-        {
-          "path": "registry/tonaldepth/page-patterns.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/tonaldepth-page-patterns.tsx"
-        }
-      ]
-    },
-    {
-      "name": "icon-button",
-      "type": "registry:ui",
-      "title": "TonalDepth IconButton",
-      "description": "The lamp: a round icon-only button, or a pill with a label, whose icon carries the interaction state \u2014 unlit at rest, lit on hover, brighter on press \u2014 while the label holds its ink. Neutral, papaya, azure, invert and per-channel tones.",
-      "registryDependencies": [
-        "@tonaldepth/tokens"
-      ],
-      "files": [
-        {
-          "path": "registry/tonaldepth/icon-button.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/tonaldepth-icon-button.tsx"
-        }
-      ]
-    },
-    {
-      "name": "article-card",
-      "type": "registry:ui",
-      "title": "TonalDepth ArticleCard",
-      "description": "A typed TonalDepth blog/article card: optional cover, category eyebrow, title, excerpt, an \"In this piece\" well of the tools, files and datasets the piece carries, an author and a date + read-time meta line, and an optional whole-card link that takes the depth ladder.",
-      "registryDependencies": [
-        "@tonaldepth/tokens"
-      ],
-      "files": [
-        {
-          "path": "registry/tonaldepth/article-card.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/tonaldepth-article-card.tsx"
-        }
-      ],
-      "dependencies": [
-        "@phosphor-icons/react"
-      ]
-    },
-    {
-      "name": "case-card",
-      "type": "registry:ui",
-      "title": "TonalDepth CaseCard",
-      "description": "A typed TonalDepth case-study card: eyebrow, outcome title, summary, outcome metrics in mono, and an optional whole-card link that takes the depth ladder.",
-      "registryDependencies": [
-        "@tonaldepth/tokens"
-      ],
-      "files": [
-        {
-          "path": "registry/tonaldepth/case-card.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/tonaldepth-case-card.tsx"
+          "target": "components/ui/tonaldepth-faq.tsx"
         }
       ],
       "dependencies": [
@@ -433,121 +385,70 @@
       ]
     },
     {
-      "name": "comparison-table",
+      "name": "filament-button",
       "type": "registry:ui",
-      "title": "TonalDepth ComparisonTable",
-      "description": "A typed TonalDepth comparison table: criteria down, options across, booleans as marks with a text equivalent, and the argued-for column set as the ladder's selected step.",
+      "title": "TonalDepth FilamentButton",
+      "description": "A typed TonalDepth tab button that reports its state with a lit filament rather than a fill. Four states — off, dim on hover, held, and brightest on press — along either the inline-start or the top edge.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/comparison-table.tsx",
+          "path": "registry/tonaldepth/filament-button.tsx",
           "type": "registry:ui",
-          "target": "components/ui/tonaldepth-comparison-table.tsx"
+          "target": "components/ui/tonaldepth-filament-button.tsx"
         }
       ]
     },
     {
-      "name": "cta-banner",
+      "name": "file-preview",
       "type": "registry:ui",
-      "title": "TonalDepth CtaBanner",
-      "description": "A typed TonalDepth closing call to action. It carries weight through depth and scale rather than a brand fill, and takes library Buttons in its actions slot.",
+      "title": "TonalDepth FilePreview",
+      "description": "A typed TonalDepth document row: the preview in a well, the name, the facts and the actions on the plate beside it. Renders no PDF.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/cta-banner.tsx",
+          "path": "registry/tonaldepth/file-preview.tsx",
           "type": "registry:ui",
-          "target": "components/ui/tonaldepth-cta-banner.tsx"
+          "target": "components/ui/tonaldepth-file-preview.tsx"
         }
       ]
     },
     {
-      "name": "timeline",
+      "name": "file-tree",
       "type": "registry:ui",
-      "title": "TonalDepth Timeline",
-      "description": "A typed TonalDepth ordered sequence for phases, process and roadmaps. State reads from the dot's depth, and the current phase is announced in text.",
+      "title": "TonalDepth FileTree",
+      "description": "A typed TonalDepth repository or docs tree. Rows press rather than tint, and the chevron is a direction mark rather than a lamp.",
       "registryDependencies": [
         "@tonaldepth/tokens"
-      ],
-      "files": [
-        {
-          "path": "registry/tonaldepth/timeline.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/tonaldepth-timeline.tsx"
-        }
-      ]
-    },
-    {
-      "name": "prose",
-      "type": "registry:ui",
-      "title": "TonalDepth Prose",
-      "description": "A typed TonalDepth long-form container that styles authored HTML \u2014 headings, lists, quotes, code, tables and rules \u2014 for articles, guides and legal pages.",
-      "registryDependencies": [
-        "@tonaldepth/tokens"
-      ],
-      "files": [
-        {
-          "path": "registry/tonaldepth/prose.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/tonaldepth-prose.tsx"
-        }
-      ]
-    },
-    {
-      "name": "rect-title",
-      "type": "registry:ui",
-      "title": "TonalDepth RectTitle",
-      "description": "A typed TonalDepth rectangle title. It splits a headline into balanced lines and scales each one so the block squares off, in the display face at h1 to h3.",
-      "registryDependencies": [
-        "@tonaldepth/tokens"
-      ],
-      "files": [
-        {
-          "path": "registry/tonaldepth/rect-title.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/tonaldepth-rect-title.tsx"
-        }
-      ]
-    },
-    {
-      "name": "theme-toggle",
-      "type": "registry:ui",
-      "title": "TonalDepth ThemeToggle",
-      "description": "The system's theme switch \u2014 a round icon button whose sun and moon are lamps. It keeps `data-theme` stamped on the document, including in the unstamped system state, and remembers the choice.",
-      "registryDependencies": [
-        "@tonaldepth/tokens"
-      ],
-      "files": [
-        {
-          "path": "registry/tonaldepth/theme-toggle.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/tonaldepth-theme-toggle.tsx"
-        }
       ],
       "dependencies": [
         "@phosphor-icons/react"
+      ],
+      "files": [
+        {
+          "path": "registry/tonaldepth/file-tree.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-file-tree.tsx"
+        }
       ]
     },
     {
-      "name": "site-navigation",
+      "name": "filter-bar",
       "type": "registry:ui",
-      "title": "TonalDepth SiteNavigation",
-      "description": "The marketing site navigation \u2014 a raised pill that sticks flush, retracts on the way down and returns on the way up, with mega panels held at one size whatever they hold. Publishes `--nav-offset` for in-page sticky toolbars.",
+      "title": "TonalDepth FilterBar",
+      "description": "A typed TonalDepth multi-select filter chip row with per-chip count, disabled state, and clear-all action.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/site-navigation.tsx",
+          "path": "registry/tonaldepth/filter-bar.tsx",
           "type": "registry:ui",
-          "target": "components/ui/tonaldepth-site-navigation.tsx"
+          "target": "components/ui/tonaldepth-filter-bar.tsx"
         }
-      ],
-      "dependencies": [
-        "@phosphor-icons/react"
       ]
     },
     {
@@ -568,77 +469,26 @@
       ]
     },
     {
-      "name": "filament-button",
+      "name": "form-field",
       "type": "registry:ui",
-      "title": "TonalDepth FilamentButton",
-      "description": "A typed TonalDepth tab button that reports its state with a lit filament rather than a fill. Four states \u2014 off, dim on hover, held, and brightest on press \u2014 along either the inline-start or the top edge.",
+      "title": "TonalDepth FormField",
+      "description": "A typed TonalDepth label, help text, error text, and control wrapper that wires ARIA relationships for any single child control.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/filament-button.tsx",
+          "path": "registry/tonaldepth/form-field.tsx",
           "type": "registry:ui",
-          "target": "components/ui/tonaldepth-filament-button.tsx"
+          "target": "components/ui/tonaldepth-form-field.tsx"
         }
-      ]
-    },
-    {
-      "name": "side-tabs",
-      "type": "registry:ui",
-      "title": "TonalDepth SideTabs",
-      "description": "A typed TonalDepth sideways tab set built on the filament. Vertical with labels, collapsed to a glyph rail, or laid horizontally for mobile, with the full WAI-ARIA tabs keyboard pattern.",
-      "registryDependencies": [
-        "@tonaldepth/tokens"
-      ],
-      "files": [
-        {
-          "path": "registry/tonaldepth/side-tabs.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/tonaldepth-side-tabs.tsx"
-        }
-      ]
-    },
-    {
-      "name": "split-button",
-      "type": "registry:ui",
-      "title": "TonalDepth SplitButton",
-      "description": "A typed TonalDepth split button: one action with its alternatives folded behind a disclosure. Defaults to an action, or withholds it until the reader chooses when the choice is load-bearing.",
-      "registryDependencies": [
-        "@tonaldepth/tokens"
-      ],
-      "files": [
-        {
-          "path": "registry/tonaldepth/split-button.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/tonaldepth-split-button.tsx"
-        }
-      ]
-    },
-    {
-      "name": "search-bar",
-      "type": "registry:ui",
-      "title": "TonalDepth SearchBar",
-      "description": "A typed TonalDepth search field, carved into the surface rather than raised, with an optional suggestion listbox following the ARIA combobox pattern.",
-      "registryDependencies": [
-        "@tonaldepth/tokens"
-      ],
-      "files": [
-        {
-          "path": "registry/tonaldepth/search-bar.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/tonaldepth-search-bar.tsx"
-        }
-      ],
-      "dependencies": [
-        "@phosphor-icons/react"
       ]
     },
     {
       "name": "frame",
       "type": "registry:ui",
       "title": "TonalDepth Frame",
-      "description": "A raised plate with a well cut into it \u2014 the housing anything measured lives inside. Chrome is raised, data is recessed, so a chart or a table reads as data without a single border.",
+      "description": "A raised plate with a well cut into it — the housing anything measured lives inside. Chrome is raised, data is recessed, so a chart or a table reads as data without a single border.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
@@ -651,105 +501,67 @@
       ]
     },
     {
-      "name": "progress",
+      "name": "icon-button",
       "type": "registry:ui",
-      "title": "TonalDepth Progress",
-      "description": "A typed TonalDepth progress meter. The track is carved into the surface and the filled length is the only thing carrying colour, because it is a measured quantity.",
+      "title": "TonalDepth IconButton",
+      "description": "The lamp: a round icon-only button, or a pill with a label, whose icon carries the interaction state — unlit at rest, lit on hover, brighter on press — while the label holds its ink. Neutral, papaya, azure, invert and per-channel tones.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/progress.tsx",
+          "path": "registry/tonaldepth/icon-button.tsx",
           "type": "registry:ui",
-          "target": "components/ui/tonaldepth-progress.tsx"
+          "target": "components/ui/tonaldepth-icon-button.tsx"
         }
       ]
     },
     {
-      "name": "copy-chip",
+      "name": "input",
       "type": "registry:ui",
-      "title": "TonalDepth CopyChip",
-      "description": "A typed TonalDepth chip that puts a machine value on the clipboard. Success is reported in ink and glyph, never as a tinted plate.",
+      "title": "TonalDepth Input",
+      "description": "A typed TonalDepth single-line text input with optional leading and trailing slots and an invalid state.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/copy-chip.tsx",
+          "path": "registry/tonaldepth/input.tsx",
           "type": "registry:ui",
-          "target": "components/ui/tonaldepth-copy-chip.tsx"
-        }
-      ],
-      "dependencies": [
-        "@phosphor-icons/react"
-      ]
-    },
-    {
-      "name": "toc",
-      "type": "registry:ui",
-      "title": "TonalDepth TableOfContents",
-      "description": "A typed TonalDepth on-this-page rail. The seam is a filament: always present, off and grey, and the current section lights its own segment.",
-      "registryDependencies": [
-        "@tonaldepth/tokens"
-      ],
-      "files": [
-        {
-          "path": "registry/tonaldepth/toc.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/tonaldepth-toc.tsx"
+          "target": "components/ui/tonaldepth-input.tsx"
         }
       ]
     },
     {
-      "name": "range",
+      "name": "iso-stack",
       "type": "registry:ui",
-      "title": "TonalDepth Range",
-      "description": "A typed TonalDepth slider on a carved track. A real input[type=range], so the keyboard and assistive technology behave natively.",
+      "title": "TonalDepth IsoStack",
+      "description": "A typed TonalDepth deck of cards seen at an angle, which fans apart on hover and on focus. For where the count is the point and the entries are secondary.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/range.tsx",
+          "path": "registry/tonaldepth/iso-stack.tsx",
           "type": "registry:ui",
-          "target": "components/ui/tonaldepth-range.tsx"
+          "target": "components/ui/tonaldepth-iso-stack.tsx"
         }
       ]
     },
     {
-      "name": "data-list",
+      "name": "kpi",
       "type": "registry:ui",
-      "title": "TonalDepth DataList",
-      "description": "A typed TonalDepth definition list for four to six fields about one record \u2014 where a table's header row would be overhead.",
+      "title": "TonalDepth KPI",
+      "description": "A typed TonalDepth KPI card and responsive grid for eyebrow label, display value, trend delta, and optional sparkline.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/data-list.tsx",
+          "path": "registry/tonaldepth/kpi.tsx",
           "type": "registry:ui",
-          "target": "components/ui/tonaldepth-data-list.tsx"
+          "target": "components/ui/tonaldepth-kpi.tsx"
         }
-      ]
-    },
-    {
-      "name": "faq",
-      "type": "registry:ui",
-      "title": "TonalDepth Faq",
-      "description": "A typed TonalDepth question list that opens in place. Real buttons with aria-expanded, and answers hidden with `hidden` so they leave in-page search too.",
-      "registryDependencies": [
-        "@tonaldepth/tokens"
-      ],
-      "files": [
-        {
-          "path": "registry/tonaldepth/faq.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/tonaldepth-faq.tsx"
-        }
-      ],
-      "dependencies": [
-        "@phosphor-icons/react"
       ]
     },
     {
@@ -775,7 +587,7 @@
       "name": "logo-strip",
       "type": "registry:ui",
       "title": "TonalDepth LogoStrip",
-      "description": "A typed TonalDepth wall of real client artwork \u2014 monochrome at rest, full colour on hover, with each mark's name carried as its alternative text.",
+      "description": "A typed TonalDepth wall of real client artwork — monochrome at rest, full colour on hover, with each mark's name carried as its alternative text.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
@@ -788,71 +600,131 @@
       ]
     },
     {
-      "name": "file-tree",
+      "name": "map",
       "type": "registry:ui",
-      "title": "TonalDepth FileTree",
-      "description": "A typed TonalDepth repository or docs tree. Rows press rather than tint, and the chevron is a direction mark rather than a lamp.",
-      "registryDependencies": [
-        "@tonaldepth/tokens"
-      ],
-      "dependencies": [
-        "@phosphor-icons/react"
-      ],
-      "files": [
-        {
-          "path": "registry/tonaldepth/file-tree.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/tonaldepth-file-tree.tsx"
-        }
-      ]
-    },
-    {
-      "name": "pricing-table",
-      "type": "registry:ui",
-      "title": "TonalDepth PricingTable",
-      "description": "A typed TonalDepth plan grid \u2014 a price, what it includes, and the way to take it. The featured plan is reported by depth and papaya ink, never by a fill.",
+      "title": "TonalDepth Map",
+      "description": "A typed TonalDepth static locator map — a carved ground, an optional graticule and pins as lamps in sockets. No tile provider and no network call.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/pricing-table.tsx",
+          "path": "registry/tonaldepth/map.tsx",
           "type": "registry:ui",
-          "target": "components/ui/tonaldepth-pricing-table.tsx"
+          "target": "components/ui/tonaldepth-map.tsx"
         }
       ]
     },
     {
-      "name": "code-block",
+      "name": "mega-cascade",
       "type": "registry:ui",
-      "title": "TonalDepth CodeBlock",
-      "description": "A typed TonalDepth code listing, housed in a Frame with a copy chip in the corner. It does no highlighting \u2014 pass pre-highlighted markup.",
+      "title": "TonalDepth MegaCascade",
+      "description": "A typed TonalDepth three-level cascading mega panel — categories, subcategories, items — each column a well, with roving-tabindex rails.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "registry/tonaldepth/mega-cascade.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-mega-cascade.tsx"
+        }
+      ]
+    },
+    {
+      "name": "mega-columns",
+      "type": "registry:ui",
+      "title": "TonalDepth MegaColumns",
+      "description": "A typed TonalDepth wide mega panel: a feature panel that makes the case beside titled columns of destinations, with a footer rail.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "registry/tonaldepth/mega-columns.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-mega-columns.tsx"
+        }
+      ]
+    },
+    {
+      "name": "mega-grid",
+      "type": "registry:ui",
+      "title": "TonalDepth MegaGrid",
+      "description": "A typed TonalDepth mega panel of cards, housed in a well rather than sitting on the sheet, plus the footer action rail.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "registry/tonaldepth/mega-grid.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-mega-grid.tsx"
+        }
+      ]
+    },
+    {
+      "name": "mega-tabs",
+      "type": "registry:ui",
+      "title": "TonalDepth MegaTabs",
+      "description": "A typed TonalDepth two-column mega panel: a rail of options on the left, one pane on the right.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "registry/tonaldepth/mega-tabs.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-mega-tabs.tsx"
+        }
+      ]
+    },
+    {
+      "name": "multi-step",
+      "type": "registry:ui",
+      "title": "TonalDepth MultiStep",
+      "description": "A typed TonalDepth form in panes, with the step indicator that belongs to it. It owns the position and nothing else — no validation, no values.",
       "registryDependencies": [
         "@tonaldepth/tokens",
-        "@tonaldepth/frame",
-        "@tonaldepth/copy-chip"
+        "@tonaldepth/button"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/code-block.tsx",
+          "path": "registry/tonaldepth/multi-step.tsx",
           "type": "registry:ui",
-          "target": "components/ui/tonaldepth-code-block.tsx"
+          "target": "components/ui/tonaldepth-multi-step.tsx"
         }
       ]
     },
     {
-      "name": "breadcrumbs",
+      "name": "page-nav",
       "type": "registry:ui",
-      "title": "TonalDepth Breadcrumbs",
-      "description": "A typed TonalDepth breadcrumb trail in the three forms the design system draws \u2014 chevrons, slashes, and the condensed housed bar \u2014 on one separator prop.",
+      "title": "TonalDepth PageNav",
+      "description": "A typed TonalDepth secondary header — the horizontal bar under the site header that navigates within a page's section, sticky and scrolling on narrow screens.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/breadcrumbs.tsx",
+          "path": "registry/tonaldepth/page-nav.tsx",
           "type": "registry:ui",
-          "target": "components/ui/tonaldepth-breadcrumbs.tsx"
+          "target": "components/ui/tonaldepth-page-nav.tsx"
+        }
+      ]
+    },
+    {
+      "name": "page-patterns",
+      "type": "registry:ui",
+      "title": "TonalDepth PagePatterns",
+      "description": "Typed TonalDepth page compositions: DashboardPage, DashboardPanel, DataManagementPage, PageState.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "registry/tonaldepth/page-patterns.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-page-patterns.tsx"
         }
       ]
     },
@@ -876,18 +748,18 @@
       ]
     },
     {
-      "name": "map",
+      "name": "pricing-table",
       "type": "registry:ui",
-      "title": "TonalDepth Map",
-      "description": "A typed TonalDepth static locator map \u2014 a carved ground, an optional graticule and pins as lamps in sockets. No tile provider and no network call.",
+      "title": "TonalDepth PricingTable",
+      "description": "A typed TonalDepth plan grid — a price, what it includes, and the way to take it. The featured plan is reported by depth and papaya ink, never by a fill.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/map.tsx",
+          "path": "registry/tonaldepth/pricing-table.tsx",
           "type": "registry:ui",
-          "target": "components/ui/tonaldepth-map.tsx"
+          "target": "components/ui/tonaldepth-pricing-table.tsx"
         }
       ]
     },
@@ -895,7 +767,7 @@
       "name": "profile-card",
       "type": "registry:ui",
       "title": "TonalDepth ProfileCard",
-      "description": "A typed TonalDepth person card \u2014 the mark beside the name, or above it with a bio. One card for both the profile card and the team wall.",
+      "description": "A typed TonalDepth person card — the mark beside the name, or above it with a bio. One card for both the profile card and the team wall.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
@@ -908,66 +780,424 @@
       ]
     },
     {
-      "name": "mega-cascade",
+      "name": "social-button",
       "type": "registry:ui",
-      "title": "TonalDepth MegaCascade",
-      "description": "A typed TonalDepth three-level cascading mega panel \u2014 categories, subcategories, items \u2014 each column a well, with roving-tabindex rails.",
+      "title": "TonalDepth SocialButton",
+      "description": "A social link as its own logo — an icon-only control whose housing carries the platform's colour. Eighteen marks built in, from Simple Icons.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/mega-cascade.tsx",
+          "path": "registry/tonaldepth/social-button.tsx",
           "type": "registry:ui",
-          "target": "components/ui/tonaldepth-mega-cascade.tsx"
+          "target": "components/ui/tonaldepth-social-button.tsx"
         }
       ]
     },
     {
-      "name": "mega-tabs",
+      "name": "whatsapp-form",
       "type": "registry:ui",
-      "title": "TonalDepth MegaTabs",
-      "description": "A typed TonalDepth two-column mega panel: a rail of options on the left, one pane on the right.",
+      "title": "TonalDepth WhatsAppForm",
+      "description": "A WhatsApp enquiry: a button that opens a short form and hands the finished message to WhatsApp, addressed to one number. Nothing is submitted anywhere.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/mega-tabs.tsx",
+          "path": "registry/tonaldepth/whatsapp-form.tsx",
           "type": "registry:ui",
-          "target": "components/ui/tonaldepth-mega-tabs.tsx"
+          "target": "components/ui/tonaldepth-whatsapp-form.tsx"
         }
       ]
     },
     {
-      "name": "mega-grid",
+      "name": "progress",
       "type": "registry:ui",
-      "title": "TonalDepth MegaGrid",
-      "description": "A typed TonalDepth mega panel of cards, housed in a well rather than sitting on the sheet, plus the footer action rail.",
+      "title": "TonalDepth Progress",
+      "description": "A typed TonalDepth progress meter. The track is carved into the surface and the filled length is the only thing carrying colour, because it is a measured quantity.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/mega-grid.tsx",
+          "path": "registry/tonaldepth/progress.tsx",
           "type": "registry:ui",
-          "target": "components/ui/tonaldepth-mega-grid.tsx"
+          "target": "components/ui/tonaldepth-progress.tsx"
         }
       ]
     },
     {
-      "name": "mega-columns",
+      "name": "prose",
       "type": "registry:ui",
-      "title": "TonalDepth MegaColumns",
-      "description": "A typed TonalDepth wide mega panel: a feature panel that makes the case beside titled columns of destinations, with a footer rail.",
+      "title": "TonalDepth Prose",
+      "description": "A typed TonalDepth long-form container that styles authored HTML — headings, lists, quotes, code, tables and rules — for articles, guides and legal pages.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/mega-columns.tsx",
+          "path": "registry/tonaldepth/prose.tsx",
           "type": "registry:ui",
-          "target": "components/ui/tonaldepth-mega-columns.tsx"
+          "target": "components/ui/tonaldepth-prose.tsx"
+        }
+      ]
+    },
+    {
+      "name": "radio",
+      "type": "registry:ui",
+      "title": "TonalDepth Radio",
+      "description": "A typed TonalDepth radio and radio group that shares a name via context and honors fieldset disabled state.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "registry/tonaldepth/radio.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-radio.tsx"
+        }
+      ]
+    },
+    {
+      "name": "range",
+      "type": "registry:ui",
+      "title": "TonalDepth Range",
+      "description": "A typed TonalDepth slider on a carved track. A real input[type=range], so the keyboard and assistive technology behave natively.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "registry/tonaldepth/range.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-range.tsx"
+        }
+      ]
+    },
+    {
+      "name": "reading-progress",
+      "type": "registry:ui",
+      "title": "TonalDepth ReadingProgress",
+      "description": "A typed TonalDepth reading indicator: the thin bar across the top of the viewport that reports how far into a piece the reader has come. Progress with the label, the percentage and the track taken away, and a scroll position it works out for itself.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "registry/tonaldepth/reading-progress.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-reading-progress.tsx"
+        }
+      ]
+    },
+    {
+      "name": "rect-title",
+      "type": "registry:ui",
+      "title": "TonalDepth RectTitle",
+      "description": "A typed TonalDepth rectangle title. It splits a headline into balanced lines and scales each one so the block squares off, in the display face at h1 to h3.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "registry/tonaldepth/rect-title.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-rect-title.tsx"
+        }
+      ]
+    },
+    {
+      "name": "search-bar",
+      "type": "registry:ui",
+      "title": "TonalDepth SearchBar",
+      "description": "A typed TonalDepth search field, carved into the surface rather than raised, with an optional suggestion listbox following the ARIA combobox pattern.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "registry/tonaldepth/search-bar.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-search-bar.tsx"
+        }
+      ],
+      "dependencies": [
+        "@phosphor-icons/react"
+      ]
+    },
+    {
+      "name": "side-tabs",
+      "type": "registry:ui",
+      "title": "TonalDepth SideTabs",
+      "description": "A typed TonalDepth sideways tab set built on the filament. Vertical with labels, collapsed to a glyph rail, or laid horizontally for mobile, with the full WAI-ARIA tabs keyboard pattern.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "registry/tonaldepth/side-tabs.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-side-tabs.tsx"
+        }
+      ]
+    },
+    {
+      "name": "site-navigation",
+      "type": "registry:ui",
+      "title": "TonalDepth SiteNavigation",
+      "description": "The marketing site navigation — a raised pill that sticks flush, retracts on the way down and returns on the way up, with mega panels held at one size whatever they hold. Publishes `--nav-offset` for in-page sticky toolbars.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "registry/tonaldepth/site-navigation.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-site-navigation.tsx"
+        }
+      ],
+      "dependencies": [
+        "@phosphor-icons/react"
+      ]
+    },
+    {
+      "name": "split-button",
+      "type": "registry:ui",
+      "title": "TonalDepth SplitButton",
+      "description": "A typed TonalDepth split button: one action with its alternatives folded behind a disclosure. Defaults to an action, or withholds it until the reader chooses when the choice is load-bearing.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "registry/tonaldepth/split-button.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-split-button.tsx"
+        }
+      ]
+    },
+    {
+      "name": "spotlight",
+      "type": "registry:ui",
+      "title": "TonalDepth Spotlight",
+      "description": "A typed TonalDepth command palette: a search field over the whole product, on a scrim. It does no matching — the caller owns ranking.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "registry/tonaldepth/spotlight.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-spotlight.tsx"
+        }
+      ]
+    },
+    {
+      "name": "sub-nav",
+      "type": "registry:ui",
+      "title": "TonalDepth SubNav",
+      "description": "A typed TonalDepth grouped link list with counts — second-level navigation inside a section of a product. ApplicationShell renders this component for its sidebar.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "registry/tonaldepth/sub-nav.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-sub-nav.tsx"
+        }
+      ]
+    },
+    {
+      "name": "switch",
+      "type": "registry:ui",
+      "title": "TonalDepth Switch",
+      "description": "A typed TonalDepth toggle switch backed by a role=switch checkbox with an owned label.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "registry/tonaldepth/switch.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-switch.tsx"
+        }
+      ]
+    },
+    {
+      "name": "table",
+      "type": "registry:ui",
+      "title": "TonalDepth Table",
+      "description": "A typed TonalDepth semantic table set (container, table, head, body, row, header cell, data cell) with responsive containment.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "registry/tonaldepth/table.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-table.tsx"
+        }
+      ]
+    },
+    {
+      "name": "tabs",
+      "type": "registry:ui",
+      "title": "TonalDepth Tabs",
+      "description": "A typed TonalDepth tab list and single tab panel with arrow-key navigation and controlled or uncontrolled selection.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "registry/tonaldepth/tabs.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-tabs.tsx"
+        }
+      ]
+    },
+    {
+      "name": "terminal",
+      "type": "registry:ui",
+      "title": "TonalDepth Terminal",
+      "description": "A typed TonalDepth transcript of something that ran, housed in a well. Not CodeBlock: a code block is source you copy and run, this is the record of a run you read.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "registry/tonaldepth/terminal.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-terminal.tsx"
+        }
+      ]
+    },
+    {
+      "name": "testimonial",
+      "type": "registry:ui",
+      "title": "TonalDepth Testimonial",
+      "description": "A typed TonalDepth quotation with its attribution. Not ProfileCard: the subject is the claim, and the person is the evidence for it.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "registry/tonaldepth/testimonial.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-testimonial.tsx"
+        }
+      ]
+    },
+    {
+      "name": "textarea",
+      "type": "registry:ui",
+      "title": "TonalDepth Textarea",
+      "description": "A typed TonalDepth multi-line text area matched to the Input treatment.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "registry/tonaldepth/textarea.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-textarea.tsx"
+        }
+      ]
+    },
+    {
+      "name": "theme-toggle",
+      "type": "registry:ui",
+      "title": "TonalDepth ThemeToggle",
+      "description": "The system's theme switch — a round icon button whose sun and moon are lamps. It keeps `data-theme` stamped on the document, including in the unstamped system state, and remembers the choice.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "registry/tonaldepth/theme-toggle.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-theme-toggle.tsx"
+        }
+      ],
+      "dependencies": [
+        "@phosphor-icons/react"
+      ]
+    },
+    {
+      "name": "timeline",
+      "type": "registry:ui",
+      "title": "TonalDepth Timeline",
+      "description": "A typed TonalDepth ordered sequence for phases, process and roadmaps. State reads from the dot's depth, and the current phase is announced in text.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "registry/tonaldepth/timeline.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-timeline.tsx"
+        }
+      ]
+    },
+    {
+      "name": "toast",
+      "type": "registry:ui",
+      "title": "TonalDepth Toast",
+      "description": "A typed TonalDepth toast provider and hook that queues info, success, and error notifications with auto-dismiss.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "registry/tonaldepth/toast.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-toast.tsx"
+        }
+      ]
+    },
+    {
+      "name": "toc",
+      "type": "registry:ui",
+      "title": "TonalDepth TableOfContents",
+      "description": "A typed TonalDepth on-this-page rail. The seam is a filament: always present, off and grey, and the current section lights its own segment.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "registry/tonaldepth/toc.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-toc.tsx"
+        }
+      ]
+    },
+    {
+      "name": "tokens",
+      "type": "registry:style",
+      "title": "TonalDepth Tokens",
+      "description": "The shared TonalDepth CSS custom properties and body defaults. Install this once, then TonalDepth components stop redeclaring the same tokens.",
+      "files": [
+        {
+          "path": "registry/tonaldepth/tokens.css",
+          "type": "registry:style",
+          "target": "styles/tonaldepth.css"
+        }
+      ]
+    },
+    {
+      "name": "tooltip",
+      "type": "registry:ui",
+      "title": "TonalDepth Tooltip",
+      "description": "A typed TonalDepth tooltip that wraps a single child element and reveals a positioned tip on hover, focus, or open prop.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "registry/tonaldepth/tooltip.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-tooltip.tsx"
         }
       ]
     }

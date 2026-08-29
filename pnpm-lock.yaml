@@ -71,6 +71,9 @@ importers:
       '@mithtech-bengaluru/tonaldepth-react':
         specifier: workspace:*
         version: link:../../packages/react
+      fuse.js:
+        specifier: ^7.5.0
+        version: 7.5.0
       react:
         specifier: 19.2.8
         version: 19.2.8
@@ -94,8 +97,8 @@ importers:
   examples/next-consumer:
     dependencies:
       '@mithtech-bengaluru/tonaldepth-react':
-        specifier: 0.1.0-alpha.0
-        version: 0.1.0-alpha.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: workspace:*
+        version: link:../../packages/react
       next:
         specifier: 16.3.3
         version: 16.3.3(@babel/core@7.29.7)(@types/node@26.3.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -122,8 +125,8 @@ importers:
   examples/react-catalog:
     dependencies:
       '@mithtech-bengaluru/tonaldepth-react':
-        specifier: 0.1.0-alpha.0
-        version: 0.1.0-alpha.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: workspace:*
+        version: link:../../packages/react
       react:
         specifier: 19.2.8
         version: 19.2.8
@@ -794,15 +797,6 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
-
-  '@mithtech-bengaluru/tonaldepth-core@0.1.0-alpha.0':
-    resolution: {integrity: sha512-geZP8J6wTeR2h6vKuNHPeNClOMrV7b6liCos9Du7rHFIHGK6SPKxAsCP0I7I24B/UACJ64DgOgFB65TsD8NGQA==}
-
-  '@mithtech-bengaluru/tonaldepth-react@0.1.0-alpha.0':
-    resolution: {integrity: sha512-N/xK3Sh9b0aCeJXMYU5nnrw76Nj000rUbmzIzM5TsjPV9PFfzCWAcRMEaVJLJTvOtE2DZpYK+5M1e1wynpCkVw==}
-    peerDependencies:
-      react: ^18.2.0 || ^19.0.0
-      react-dom: ^18.2.0 || ^19.0.0
 
   '@next/env@16.3.3':
     resolution: {integrity: sha512-U2eYQRwXj+dsqxV79zFqExDdatnNY/ZWc2nsJU1p/OgT7fd3dXwlF6OjYaFQCfMoeTA19PWq+wVmYgimVA+V+g==}
@@ -1766,6 +1760,10 @@ packages:
 
   function-bind@1.1.2:
     resolution: {integrity: sha512-7XHNxH7qX9xG5mIwxkhumTox/MIRNcOgDrxWsMt2pAr23WHp6MrRlN7FBSFpCpr+oVO0F744iUgR82nJMfG2SA==}
+
+  fuse.js@7.5.0:
+    resolution: {integrity: sha512-sQtrEfA+ez/3G0cCZecF70oqpCRttCexYUG4mUrtWL49ULUzUyxokt5kyqwtKzj1270RaKih+hcP3qLcumccow==}
+    engines: {node: '>=10'}
 
   gensync@1.0.0-beta.2:
     resolution: {integrity: sha512-3hN7NaskYvMDLQY55gnW3NQ+mesEAepTqlg+VEbj7zzqEMBVNhzcGYYeqFo/TlYz6eQiFcp1HcsCZO+nGgS8zg==}
@@ -3646,14 +3644,6 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@mithtech-bengaluru/tonaldepth-core@0.1.0-alpha.0': {}
-
-  '@mithtech-bengaluru/tonaldepth-react@0.1.0-alpha.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
-    dependencies:
-      '@mithtech-bengaluru/tonaldepth-core': 0.1.0-alpha.0
-      react: 19.2.8
-      react-dom: 19.2.8(react@19.2.8)
-
   '@next/env@16.3.3': {}
 
   '@next/swc-darwin-arm64@16.3.3':
@@ -4514,6 +4504,8 @@ snapshots:
     optional: true
 
   function-bind@1.1.2: {}
+
+  fuse.js@7.5.0: {}
 
   gensync@1.0.0-beta.2: {}
 
