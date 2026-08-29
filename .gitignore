@@ -1,8 +1,8 @@
 __pycache__/
 *.pyc
 node_modules/
-examples/*/dist/
-examples/*/.next/
+static/examples/*/dist/
+static/examples/*/.next/
 components/packages/*/dist/
 apps/*/dist/
 # Written by `pnpm registry:build` from registry/tonaldepth — regenerated on

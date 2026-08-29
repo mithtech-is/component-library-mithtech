@@ -141,11 +141,11 @@ importers:
         specifier: ^3.5.0
         version: 3.5.41(typescript@7.0.2)
 
-  examples/next-consumer:
+  static/examples/next-consumer:
     dependencies:
       '@mithtech-bengaluru/tonaldepth-react':
         specifier: workspace:*
-        version: link:../../components/packages/react
+        version: link:../../../components/packages/react
       next:
         specifier: 16.3.3
         version: 16.3.3(@babel/core@7.29.7)(@types/node@26.3.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -169,11 +169,11 @@ importers:
         specifier: 7.0.2
         version: 7.0.2
 
-  examples/react-catalog:
+  static/examples/react-catalog:
     dependencies:
       '@mithtech-bengaluru/tonaldepth-react':
         specifier: workspace:*
-        version: link:../../components/packages/react
+        version: link:../../../components/packages/react
       react:
         specifier: 19.2.8
         version: 19.2.8
@@ -188,11 +188,11 @@ importers:
         specifier: 8.2.2
         version: 8.2.2(@types/node@26.3.0)(jiti@1.21.7)(terser@5.50.0)
 
-  examples/vue-catalog:
+  static/examples/vue-catalog:
     dependencies:
       '@mithtech-bengaluru/tonaldepth-vue':
         specifier: 0.1.0-alpha.0
-        version: link:../../components/packages/vue
+        version: link:../../../components/packages/vue
       vue:
         specifier: 3.5.41
         version: 3.5.41(typescript@7.0.2)

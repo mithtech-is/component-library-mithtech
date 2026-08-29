@@ -12,10 +12,10 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "tooling" / "audit"))
 from audit_html import InventoryParser  # noqa: E402
 
-SOURCE = ROOT / "baselines" / "claude-html" / "TonalDepth Dashboard (offline).html"
+SOURCE = ROOT / "static" / "baselines" / "claude-html" / "TonalDepth Dashboard (offline).html"
 TOKENS = ROOT / "tokens" / "source" / "tokens.json"
 LEGACY = ROOT / "components" / "packages" / "core" / "src" / "compat.css"
-DASHBOARD = ROOT / "examples" / "html-dashboard" / "index.html"
+DASHBOARD = ROOT / "static" / "examples" / "html-dashboard" / "index.html"
 
 
 def block(text: str, selector_pattern: str) -> str:

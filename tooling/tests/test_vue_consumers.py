@@ -10,7 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 NPM = shutil.which("npm.cmd") or shutil.which("npm") or "npm"
 PNPM = shutil.which("pnpm.cmd") or shutil.which("pnpm") or "pnpm"
-REPORT = ROOT / "artifacts" / "phase-3" / "vue-consumer-smoke.json"
+REPORT = ROOT / "static" / "artifacts" / "phase-3" / "vue-consumer-smoke.json"
 
 def run(args: list[str], cwd: Path) -> str:
     result = subprocess.run(args, cwd=cwd, check=True, capture_output=True, text=True)

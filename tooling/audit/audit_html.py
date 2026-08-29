@@ -17,8 +17,8 @@ from pathlib import Path
 from urllib.parse import unquote_to_bytes
 
 ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_SOURCE = ROOT / "baselines" / "claude-html" / "TonalDepth Dashboard (offline).html"
-DEFAULT_OUTPUT = ROOT / "artifacts" / "phase-0" / "current"
+DEFAULT_SOURCE = ROOT / "static" / "baselines" / "claude-html" / "TonalDepth Dashboard (offline).html"
+DEFAULT_OUTPUT = ROOT / "static" / "artifacts" / "phase-0" / "current"
 
 TOKEN_RE = re.compile(r"(?P<name>--td-[a-zA-Z0-9_-]+)\s*:\s*(?P<value>[^;}]+)")
 TOKEN_NAME_RE = re.compile(r"--td-[a-zA-Z0-9_-]+")

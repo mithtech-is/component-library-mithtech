@@ -1,7 +1,7 @@
 packages:
   - "apps/*"
   - "components/packages/*"
-  - "examples/*"
+  - "static/examples/*"
 linkWorkspacePackages: true
 minimumReleaseAgeExclude:
   - '@next/env@16.3.3'

@@ -151,7 +151,7 @@ class CoreFoundationTests(unittest.TestCase):
             self.assertIn(selector, css)
 
     def test_dashboard_fixture_consumes_package_css(self):
-        fixture = (ROOT / "examples/html-dashboard/index.html").read_text(encoding="utf-8")
+        fixture = (ROOT / "static/examples/html-dashboard/index.html").read_text(encoding="utf-8")
         self.assertIn('../../packages/core/dist/index.css', fixture)
         self.assertIn('class="td-root"', fixture)
         self.assertIn('class="td-kpi-grid"', fixture)

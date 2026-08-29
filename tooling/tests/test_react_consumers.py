@@ -12,7 +12,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 NPM = shutil.which("npm.cmd") or shutil.which("npm") or "npm"
 PNPM = shutil.which("pnpm.cmd") or shutil.which("pnpm") or "pnpm"
-REPORT = ROOT / "artifacts" / "phase-2" / "consumer-smoke.json"
+REPORT = ROOT / "static" / "artifacts" / "phase-2" / "consumer-smoke.json"
 
 
 def run(args: list[str], cwd: Path) -> str:
@@ -57,7 +57,7 @@ def next_consumer(base: Path, tarballs: list[Path]) -> dict:
     app = consumer / "app"
     app.mkdir(parents=True)
     write_json(consumer / "package.json", {"name": "clean-next-consumer", "private": True, "scripts": {"build": "next build --webpack"}})
-    (consumer / "tsconfig.json").write_text((ROOT / "examples/next-consumer/tsconfig.json").read_text(encoding="utf-8"), encoding="utf-8")
+    (consumer / "tsconfig.json").write_text((ROOT / "static/examples/next-consumer/tsconfig.json").read_text(encoding="utf-8"), encoding="utf-8")
     (consumer / "next-env.d.ts").write_text('/// <reference types="next" />\n/// <reference types="next/image-types/global" />\n', encoding="utf-8")
     (app / "layout.tsx").write_text(
         'import"@mithtech-bengaluru/tonaldepth-react/styles.css";export default function Layout({children}:{children:React.ReactNode}){return <html lang="en"><body className="td-root">{children}</body></html>}\n',
