@@ -52,7 +52,7 @@ const ITEMS = {
   "toast": { module: "toast", symbols: ["ToastProvider", "useToast"] },
   "chart-container": { module: "chart-container", symbols: ["ChartContainer"], needs: [{ item: "frame", symbols: ["Frame"] }] },
   "filter-bar": { module: "filter-bar", symbols: ["FilterBar"] },
-  "application-shell": { module: "application-shell", symbols: ["ApplicationShell"] },
+  "application-shell": { module: "application-shell", symbols: ["ApplicationShell"], needs: [{ item: "sub-nav", symbols: ["SubNav"] }] },
   "page-patterns": { module: "page-patterns", symbols: ["DashboardPage", "DashboardPanel", "DataManagementPage", "PageState"] },
   "icon-button": { module: "icon-button", symbols: ["IconButton"] },
   "article-card": { module: "article-card", symbols: ["ArticleCard", "ArticleCardGrid"] },
@@ -81,6 +81,8 @@ const ITEMS = {
   "breadcrumbs": { module: "breadcrumbs", symbols: ["Breadcrumbs"] },
   "pagination": { module: "pagination", symbols: ["Pagination"] },
   "map": { module: "map", symbols: ["Map"] },
+  "whatsapp-form": { module: "whatsapp-form", symbols: ["WhatsAppForm"] },
+  "social-button": { module: "social-button", symbols: ["SocialButton"] },
   "profile-card": { module: "profile-card", symbols: ["ProfileCard"] },
   "frame": { module: "frame", symbols: ["Frame", "FrameGrid"] },
   "theme-toggle": { module: "theme-toggle", symbols: ["ThemeToggle"] },
@@ -89,6 +91,18 @@ const ITEMS = {
   "mega-grid": { module: "mega-menu", symbols: ["MegaGrid", "MegaActions"] },
   "mega-columns": { module: "mega-menu", symbols: ["MegaColumns", "MegaFeature"] },
   "site-navigation": { module: "site-navigation", symbols: ["SiteNavigation"] },
+  "reading-progress": { module: "reading-progress", symbols: ["ReadingProgress"] },
+  "counter": { module: "counter", symbols: ["Counter", "CounterRow"] },
+  "testimonial": { module: "testimonial", symbols: ["Testimonial", "TestimonialGrid"] },
+  "iso-stack": { module: "iso-stack", symbols: ["IsoStack"] },
+  "terminal": { module: "terminal", symbols: ["Terminal"] },
+  "file-preview": { module: "file-preview", symbols: ["FilePreview", "FilePreviewList"] },
+  "sub-nav": { module: "sub-nav", symbols: ["SubNav"] },
+  "page-nav": { module: "page-nav", symbols: ["PageNav"] },
+  "chat-launcher": { module: "chat-launcher", symbols: ["ChatLauncher", "AiHalo"] },
+  "confirm-button": { module: "confirm-button", symbols: ["ConfirmButton"], needs: [{ item: "button", symbols: ["Button"] }] },
+  "multi-step": { module: "multi-step", symbols: ["MultiStep"], needs: [{ item: "button", symbols: ["Button"] }] },
+  "spotlight": { module: "spotlight", symbols: ["Spotlight"] },
   "footer": { module: "footer", symbols: ["Footer", "FooterGrid", "FooterBrand", "FooterColumn", "FooterContact", "FooterSocial", "FooterBottom"] },
 };
 
@@ -208,6 +222,7 @@ function moduleBody(moduleSource) {
 
 const ICONS_SOURCE = await readFile(resolve(PACKAGE_SRC, "icons.ts"), "utf8");
 const TD_ICONS_SOURCE = await readFile(resolve(PACKAGE_SRC, "td-icons.tsx"), "utf8");
+const TD_BRANDS_SOURCE = await readFile(resolve(PACKAGE_SRC, "td-brands.tsx"), "utf8");
 
 /**
  * One `export { … } from "<module>";` block of icons.ts, as role -> local name.
@@ -263,6 +278,59 @@ const TD_ICON_BANNER = `/**
  * component's lamp ladder moves them through \`currentColor\`.
  */
 `;
+
+const TD_BRAND_CHUNKS = (() => {
+  // Same treatment as the glyph set: the module's own "how to add a mark" doc
+  // block is for the package, not for a copied item, so it is dropped here and
+  // replaced by TD_BRAND_BANNER on the way out.
+  const body = moduleBody(TD_BRANDS_SOURCE).replace(/^\s*\/\*[\s\S]*?\*\/\s*/, "");
+  const chunks = topLevelChunks(body)
+    .map(text => ({ text, names: declaredNames(text), refs: referencedNames(text) }));
+  const byName = new Map();
+  for (const chunk of chunks) for (const name of chunk.names) byName.set(name, chunk);
+  return { chunks, byName };
+})();
+
+const TD_BRAND_BANNER = `/**
+ * Brand marks, copied in from the TonalDepth package's own \`td-brands\`.
+ *
+ * Paths and colours are Simple Icons' (simpleicons.org). They travel inside
+ * the item rather than being imported because there is nothing on npm to point
+ * at — the marks are vendored in this repository, and a registry item is one
+ * self-contained file. The icons are CC0; the marks stay their owners'
+ * trademarks, so do not restyle one past the inversions its owner publishes.
+ */
+`;
+
+/**
+ * The brand marks a module pulls from `./td-brands`, as source to paste in.
+ *
+ * The same problem `iconImport` solves, with the opposite answer. A UI icon is
+ * an alias over a Phosphor export, so that import can simply be rewritten to
+ * name Phosphor — but a brand mark is path data this repository vendors, and a
+ * consumer has nothing to install. The closure is by name, so an item carries
+ * only the marks it actually names.
+ */
+function brandImport(moduleSource, body) {
+  const match = moduleSource.match(/import \{([^}]*)\} from "\.\/td-brands";/s);
+  if (!match) return null;
+  const wanted = match[1].split(",").map(part => part.trim().replace(/^type\s+/, "")).filter(Boolean)
+    .filter(name => new RegExp(`\\b${name}\\b`).test(body));
+  if (!wanted.length) return null;
+
+  const keep = new Set();
+  const queue = [...wanted];
+  while (queue.length) {
+    const name = queue.pop();
+    const chunk = TD_BRAND_CHUNKS.byName.get(name);
+    if (!chunk || keep.has(chunk)) continue;
+    keep.add(chunk);
+    for (const ref of chunk.refs) if (TD_BRAND_CHUNKS.byName.has(ref)) queue.push(ref);
+  }
+  const declarations = TD_BRAND_CHUNKS.chunks.filter(chunk => keep.has(chunk))
+    .map(chunk => chunk.text.replace(/^export /gm, "")).join("\n\n");
+  return { inline: `${TD_BRAND_BANNER}${declarations}\n\n`, reactSpecifiers: reactImportSpecifiers(TD_BRANDS_SOURCE) };
+}
 
 function tdIconSource(roles) {
   const keep = new Set();
@@ -370,12 +438,14 @@ function buildItem(itemName, spec, moduleSource) {
   // Which icons an item needs is read from the untouched body, so the pasted
   // glyphs cannot be mistaken for the component's own use of them.
   const icons = iconImport(moduleSource, body);
-  const inline = icons?.inline ?? "";
+  const brands = brandImport(moduleSource, body);
+  const inline = `${icons?.inline ?? ""}${brands?.inline ?? ""}`;
 
   const used = new Set();
   for (const match of `${inline}${body}`.matchAll(/\b[A-Za-z_$][\w$]*\b/g)) used.add(match[0]);
   const fromReact = reactImportSpecifiers(moduleSource);
-  const specifiers = [...fromReact, ...(icons?.reactSpecifiers ?? []).filter(name => !fromReact.includes(name))]
+  const extraReact = [...(icons?.reactSpecifiers ?? []), ...(brands?.reactSpecifiers ?? [])];
+  const specifiers = [...fromReact, ...extraReact.filter(name => !fromReact.includes(name))]
     .filter(specifier => used.has(specifier.replace(/^type\s+/, "")));
 
   const head = [];
@@ -408,8 +478,11 @@ const modules = (await readdir(PACKAGE_SRC))
   .filter(name => name.endsWith(".tsx") && !name.includes(".test."))
   .map(name => name.replace(/\.tsx$/, ""))
   // The TD glyph set is not a component. It reaches the registry pasted into
-  // whichever items use it, never as an item of its own.
-  .filter(name => name !== "td-icons");
+  // whichever items use it, never as an item of its own. The brand-logo set is
+  // its sibling — a generated asset module (from tooling/brands), not a
+  // component, and shipped via the `./brands` package subpath rather than a
+  // registry item.
+  .filter(name => name !== "td-icons" && name !== "td-brands");
 const orphans = modules.filter(name => !covered.has(name));
 if (orphans.length) {
   console.error(`Package modules with no registry item: ${orphans.join(", ")}`);

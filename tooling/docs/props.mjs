@@ -58,6 +58,18 @@ const TABLES = {
   "comparison-table": ["comparison-table", "ComparisonTableProps", "ComparisonTable"],
   "cta-banner": ["cta-banner", "CtaBannerProps", "CtaBanner"],
   "timeline": ["timeline", "TimelineProps", "Timeline"],
+  "reading-progress": ["reading-progress", "ReadingProgressProps", "ReadingProgress"],
+  "counter": ["counter", "CounterProps", "Counter"],
+  "testimonial": ["testimonial", "TestimonialProps", "Testimonial"],
+  "iso-stack": ["iso-stack", "IsoStackProps", "IsoStack"],
+  "terminal": ["terminal", "TerminalProps", "Terminal"],
+  "file-preview": ["file-preview", "FilePreviewProps", "FilePreview"],
+  "sub-nav": ["sub-nav", "SubNavProps", "SubNav"],
+  "page-nav": ["page-nav", "PageNavProps", "PageNav"],
+  "chat-launcher": ["chat-launcher", "ChatLauncherProps", "ChatLauncher"],
+  "confirm-button": ["confirm-button", "ConfirmButtonProps", "ConfirmButton"],
+  "multi-step": ["multi-step", "MultiStepProps", "MultiStep"],
+  "spotlight": ["spotlight", "SpotlightProps", "Spotlight"],
   "prose": ["prose", "ProseProps", "Prose"],
   "rect-title": ["rect-title", "RectTitleProps", "RectTitle"],
   "filament-button": ["filament-button", "FilamentButtonProps", "FilamentButton"],
@@ -79,6 +91,8 @@ const TABLES = {
   "breadcrumbs": ["breadcrumbs", "BreadcrumbsProps", "Breadcrumbs"],
   "pagination": ["pagination", "PaginationProps", "Pagination"],
   "map": ["map", "MapProps", "Map"],
+  "whatsapp-form": ["whatsapp-form", "WhatsAppFormProps", "WhatsAppForm"],
+  "social-button": ["social-button", "SocialButtonOwnProps", "SocialButton"],
   "profile-card": ["profile-card", "ProfileCardProps", "ProfileCard"],
   "theme-toggle": ["theme-toggle", "ThemeToggleProps", "ThemeToggle"],
 };
@@ -97,12 +111,21 @@ function interfaceMembers(source, name) {
     .replace(/\/\*[\s\S]*?\*\//g, "")
     .replace(/\/\/[^\n]*/g, "");
 
+  /* Brackets only, and NEVER the angle kind.
+     `>` was counted as a closing bracket so that `Record<K, V>` would balance —
+     but the `>` in `=>` closes nothing, so every arrow-typed prop drove the
+     depth one lower for good. A few members in, the depth was negative and the
+     splitter began cutting at semicolons INSIDE inline object types: Pagination
+     documented `renderLink` as four rows named `href`, `children` and
+     `aria-label`, and eleven other tables were shredded the same way.
+     Generics carry no semicolons, so nothing needs the angle brackets tracked;
+     the clamp is belt and braces against an unbalanced type. */
   const members = [];
   let buffer = "", depthTracker = 0;
   for (const char of body) {
-    if ("{([<".includes(char)) depthTracker += 1;
-    if ("})]>".includes(char)) depthTracker -= 1;
-    if (char === ";" && depthTracker <= 0) { members.push(buffer.trim()); buffer = ""; continue; }
+    if ("{([".includes(char)) depthTracker += 1;
+    if ("})]".includes(char)) depthTracker = Math.max(0, depthTracker - 1);
+    if (char === ";" && depthTracker === 0) { members.push(buffer.trim()); buffer = ""; continue; }
     buffer += char;
   }
   if (buffer.trim()) members.push(buffer.trim());

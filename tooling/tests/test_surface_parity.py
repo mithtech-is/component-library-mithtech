@@ -39,16 +39,19 @@ ITEM_TO_MODULE = {
 
 # Docs entries that are composition demos rather than registry items. They have
 # no `.tsx` to install and are documented on purpose.
-DOC_ONLY = {"forms", "feedback"}
+DOC_ONLY = {"forms", "feedback", "ordered-states"}
 
 # `tokens` ships a stylesheet, not a component.
 STYLE_ONLY = {"tokens"}
 
 # The icon set is two modules and neither is a component: `icons.ts` resolves a
 # role name to a glyph, and `td-icons.tsx` draws the glyphs TonalDepth owns.
-# The component rules — no raw `<svg>`, one registry item each — are about
-# components, and applying them here would ban the icon set from existing.
-ICON_MODULES = {"icons", "td-icons"}
+# `brands.ts` / `td-brands.tsx` are the sibling brand-logo family — same shape,
+# generated from tooling/brands, but colour-*preserving* and never routed
+# through icons.ts. The component rules — no raw `<svg>`, colour-neutral, one
+# registry item each — are about components, and applying them to any of these
+# asset modules would ban the marks from existing.
+ICON_MODULES = {"icons", "td-icons", "brands", "td-brands"}
 
 # Components with no props of their own — they pass native DOM attributes
 # through and nothing else. An empty props table is correct for these, and the
@@ -583,16 +586,17 @@ class IconSystemTests(unittest.TestCase):
                          f"components drawing raw <svg> instead of importing from ./icons: {offenders}")
 
     def test_the_td_set_is_the_only_place_a_glyph_is_drawn(self):
-        """The exemption above is one file wide, and this is what holds it there.
+        """The exemption is glyph-set wide, and this is what holds it there.
 
-        `td-icons.tsx` may draw `<svg>` because drawing glyphs is what it is
-        for. Nothing else in the package may — including `icons.ts`, which
-        resolves roles and does not author them.
+        `td-icons.tsx` draws the UI glyphs and `td-brands.tsx` draws the brand
+        marks — drawing is what both are for. Nothing else in the package may,
+        including `icons.ts` / `brands.ts`, which resolve names and do not author
+        the artwork.
         """
         drawing = sorted(path.name for path in PACKAGE_SRC.glob("*.ts*")
                          if ".test." not in path.name and "<svg" in code_only(path.read_text(encoding="utf-8")))
-        self.assertEqual(["td-icons.tsx"], drawing,
-                         f"only the TD icon set may draw a glyph; found: {drawing}")
+        self.assertEqual(["td-brands.tsx", "td-icons.tsx"], drawing,
+                         f"only the TD glyph sets may draw a glyph; found: {drawing}")
 
     def test_no_second_icon_library(self):
         banned = ("lucide", "heroicons", "@fortawesome", "react-icons", "feather-icons")
@@ -709,6 +713,56 @@ class IconPrecedenceTests(unittest.TestCase):
         previewed = set(re.findall(r'\["(\w+Icon)",', DOCS.read_text(encoding="utf-8")))
         self.assertEqual(set(), roles - previewed, f"roles absent from the docs icon index: {sorted(roles - previewed)}")
         self.assertEqual(set(), previewed - roles, f"docs icon index previews roles icons.ts does not export: {sorted(previewed - roles)}")
+
+
+class BrandLogoTests(unittest.TestCase):
+    """The brand-logo family — the colour-preserving sibling of the icon set.
+
+    `td-brands.tsx` is generated from `tooling/brands/` (marks + manifest), so
+    these mirror the icon-precedence checks with one deliberate difference:
+    brand marks keep their own colour. What must not drift is the mapping
+    between the manifest, the drawn marks, and the resolver.
+    """
+
+    MANIFEST = ROOT / "tooling/brands/manifest.json"
+    MODULE = PACKAGE_SRC / "td-brands.tsx"
+
+    def _manifest(self) -> list[dict]:
+        return json.loads(self.MANIFEST.read_text(encoding="utf-8"))["brands"]
+
+    def _module(self) -> str:
+        return self.MODULE.read_text(encoding="utf-8")
+
+    def _brand_logos(self) -> dict:
+        """The `BRAND_LOGOS` object, as slug -> component name."""
+        block = re.search(r"export const BRAND_LOGOS = \{([^}]*)\}", self._module())
+        self.assertIsNotNone(block, "BRAND_LOGOS is gone from td-brands.tsx")
+        return dict(re.findall(r'"([a-z0-9-]+)":\s*(\w+)', block.group(1)))
+
+    def test_the_map_covers_exactly_the_manifest(self):
+        manifest = [b["slug"] for b in self._manifest()]
+        self.assertEqual(manifest, list(self._brand_logos()),
+                         "BRAND_LOGOS disagrees with tooling/brands/manifest.json")
+
+    def test_brand_slugs_matches_the_map(self):
+        listed = re.search(r"export const BRAND_SLUGS = \[([^\]]*)\]", self._module())
+        self.assertIsNotNone(listed, "BRAND_SLUGS is gone from td-brands.tsx")
+        slugs = re.findall(r'"([a-z0-9-]+)"', listed.group(1))
+        self.assertEqual(list(self._brand_logos()), slugs,
+                         "BRAND_SLUGS disagrees with BRAND_LOGOS")
+
+    def test_every_slug_names_a_mark_the_module_draws(self):
+        drawn = set(re.findall(r"^export function (\w+)\(props: BrandLogoProps\)",
+                               self._module(), re.M))
+        missing = sorted(name for name in self._brand_logos().values() if name not in drawn)
+        self.assertEqual([], missing, f"BRAND_LOGOS names marks td-brands.tsx does not draw: {missing}")
+
+    def test_the_module_is_generated_from_the_manifest(self):
+        """`td-brands.tsx` is generated. A hand edit is lost on the next run, so a
+        stale tree means someone edited the wrong copy."""
+        result = subprocess.run(["node", str(ROOT / "tooling/brands/build.mjs"), "--check"],
+                                cwd=ROOT, capture_output=True, text=True)
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
 
 
 if __name__ == "__main__":
