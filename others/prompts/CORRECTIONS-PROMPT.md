@@ -20,21 +20,21 @@ have, show me the result, and wait.
 It has **no git remote**, which is why publishing needs `--no-git-checks`.
 
 ```
-packages/react/src/     the npm package — THE ONLY PLACE YOU EDIT A COMPONENT
-packages/core/          tokens.css + compat.css (11,793 lines of approved .td-* rules)
-registry/tonaldepth/    GENERATED .tsx (hand-authored .css) — shadcn copy-to-source
+components/packages/react/src/     the npm package — THE ONLY PLACE YOU EDIT A COMPONENT
+components/packages/core/          tokens.css + compat.css (11,793 lines of approved .td-* rules)
+components/registry/tonaldepth/    GENERATED .tsx (hand-authored .css) — shadcn copy-to-source
 apps/docs/src/          GENERATED props.generated.json; hand-authored main.tsx
 registry.json           the registry manifest — one entry per component
 ```
 
 **Edit the package. Then run `pnpm generate`.** As of 2026-08-27 the registry's
 `.tsx` files and the docs' props tables are generated from
-`packages/react/src/`, so a hand edit to either is silently reverted on the next
+`components/packages/react/src/`, so a hand edit to either is silently reverted on the next
 run. Three tests enforce it and will fail the moment the tree goes stale.
 
 Two things are still authored by hand, deliberately:
 
-- **`registry/tonaldepth/*.css`** — registry stylesheets are self-contained
+- **`components/registry/tonaldepth/*.css`** — registry stylesheets are self-contained
   (they re-declare the design system's base rules, because a registry consumer
   has no `tonaldepth-core` to inherit from) while the package's carry only the
   deltas over that core. Different content by design.
@@ -103,12 +103,12 @@ For each correction I give you:
 1. **Place it.** A correction to how a *component* looks or behaves is a library
    change. Only a correction to a page's copy, composition or content is a page
    change. When in doubt, ask.
-2. **Fix it in `packages/react/src/`, then run `pnpm generate`.** That
+2. **Fix it in `components/packages/react/src/`, then run `pnpm generate`.** That
    regenerates the registry `.tsx`, the docs props table and the registry JSON.
    If the component is new, add it to `ITEMS` in
    `tooling/registry/generate.mjs`, to `TABLES` in `tooling/docs/props.mjs`, to
    `registry.json`, and write its `Doc` entry and registry `.css` by hand.
-3. **Add or update a test** in `packages/react/src/*.test.tsx` that would have
+3. **Add or update a test** in `components/packages/react/src/*.test.tsx` that would have
    caught it.
 4. **Publish, consume, and look at it.**
 5. **Record it.** If the correction came from Manoj and states a standing rule
@@ -141,7 +141,7 @@ npm install @mithtech-bengaluru/tonaldepth-react@latest
 npm run build && npx tsc --noEmit
 ```
 
-Bump the version in `packages/react/package.json` on **every** publish —
+Bump the version in `components/packages/react/package.json` on **every** publish —
 Verdaccio rejects a duplicate.
 
 `pnpm test:core` is not optional any more. Alongside the token pipeline it holds
@@ -173,7 +173,7 @@ correctly.
 - Every raised element must read on all four sides in light mode — the shade,
   the highlight, *and* the `0 0 0 1px var(--td-edge)` ring.
 - New marketing components go in `.td-mk-*`. Do not add new names to the
-  `.td-*` classes `packages/core` already owns.
+  `.td-*` classes `components/packages/core` already owns.
 
 ## Four hazards
 
@@ -212,7 +212,7 @@ that is why.
 
 ## Reporting back after each correction
 
-- What you changed — it should be `packages/react/src/` plus, at most, a
+- What you changed — it should be `components/packages/react/src/` plus, at most, a
   registry `.css` and the editorial half of a `Doc` entry
 - The published version, if you published one
 - What you looked at, at which widths and themes

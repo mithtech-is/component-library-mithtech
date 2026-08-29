@@ -7,7 +7,7 @@ Two source files drive everything the core package ships:
 | [`source/tokens.json`](source/tokens.json) | Every `--td-*` CSS variable — colour, spacing, radius, depth, motion, and the font-family *stacks* |
 | [`source/fonts.json`](source/fonts.json) | Where those font families are *fetched from* — CDNs, subsets, weights |
 
-Edit either, run `pnpm generate`, and `packages/core/dist/` is rebuilt along
+Edit either, run `pnpm generate`, and `components/packages/core/dist/` is rebuilt along
 with the native token map, the registry and the docs props table.
 
 ---
@@ -227,7 +227,7 @@ to a variable that does not exist each fail validation immediately.
 ## Icons — Phosphor, and only Phosphor
 
 Every UI icon in the system comes from [Phosphor](https://phosphoricons.com),
-imported through one module: `packages/react/src/icons.ts`. Nothing in the
+imported through one module: `components/packages/react/src/icons.ts`. Nothing in the
 library draws its own `<svg>` path.
 
 **Do not add a second icon library** — not Lucide, Heroicons, Font Awesome,

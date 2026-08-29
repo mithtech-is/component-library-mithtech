@@ -4,7 +4,7 @@ Private-ready, multi-platform TonalDepth design-system reconstruction.
 
 ## Current status
 
-- **Confirmed:** the authoritative Claude Design offline HTML is archived byte-for-byte under `baselines/claude-html/`.
+- **Confirmed:** the authoritative Claude Design offline HTML is archived byte-for-byte under `static/baselines/claude-html/`.
 - **Prepared:** the documented monorepo boundaries and Phase 0 audit workflow exist.
 - **Verified:** `python tooling/audit/audit_html.py` produces deterministic token, selector, font, resource, markup, and script/style inventories.
 - **Confirmed:** GitHub organization `Mithtech-Bengaluru`, intended npm scope `@mithtech-bengaluru`, private repository name `tonaldepth`, and the offline HTML as the final design/typography baseline.
@@ -12,7 +12,7 @@ Private-ready, multi-platform TonalDepth design-system reconstruction.
 - **Phase 1 implemented locally:** 115 canonical tokens, deterministic CSS/JSON generation, the preserved web 1.x compatibility layer, a private-ready core prerelease, and packed-consumer verification.
 - **Phase 1 limitations:** GitHub publication, font binaries/licenses, reusable icon source, chart runtime, and formal visual approval remain open.
 
-The pre-development pack is copied into `docs/predevelopment/`; its authoritative source copy is not modified.
+The pre-development pack is copied into `others/docs/predevelopment/`; its authoritative source copy is not modified.
 
 ## Run the read-only audit
 
@@ -20,7 +20,7 @@ The pre-development pack is copied into `docs/predevelopment/`; its authoritativ
 python tooling/audit/audit_html.py
 ```
 
-The command reads the archived baseline without writing to it and replaces only `artifacts/phase-0/current/`. It verifies the source checksum before and after analysis.
+The command reads the archived baseline without writing to it and replaces only `static/artifacts/phase-0/current/`. It verifies the source checksum before and after analysis.
 
 ## Build and verify the canonical foundation
 
@@ -30,7 +30,7 @@ npm run tokens:build
 npm run test:core
 ```
 
-Phase status and evidence are recorded in `docs/PHASE-1-STATUS.md`.
+Phase status and evidence are recorded in `others/docs/PHASE-1-STATUS.md`.
 
 ## Build and verify the React P0 package
 
@@ -40,7 +40,34 @@ pnpm test:react
 pnpm test:react-consumers
 ```
 
-Phase 2 evidence is recorded in `docs/PHASE-2-STATUS.md`.
+Phase 2 evidence is recorded in `others/docs/PHASE-2-STATUS.md`.
+
+## Repository layout
+
+Three buckets, plus the two things that are neither: the docs app and the build
+system.
+
+```
+components/   what ships          packages/{core,react,vue,flutter,nativewind,react-native}
+                                  registry/tonaldepth      the shadcn copy-to-source variant
+static/       fixtures & evidence examples/                packed-consumer fixtures
+                                  baselines/claude-html    the authoritative offline HTML
+                                  artifacts/               generated audit + smoke reports
+others/       supporting          docs/ specification/ prompts/ tokens/
+apps/docs                         the documentation site — `pnpm dev:docs`
+tooling/                          generators, token build, Python test suites
+```
+
+`tooling/` stays at the root deliberately. Every script in it resolves the repo
+root by a hardcoded depth — `Path(__file__).resolve().parents[2]` in Python,
+`resolve(import.meta.dirname, "../..")` in JS — and `package.json` invokes one of
+them by dotted module path (`python -m unittest tooling.tests.test_native_tokens`).
+Moving `tooling/` breaks all three at once, and a wrong root does not raise: the
+script finds no input, writes nothing, and exits 0.
+
+`registry.json` stays at the root for the same reason — it is resolved as
+`resolve(root, "registry.json")` by the registry builder and `ROOT / "registry.json"`
+by the parity tests.
 
 ## Distribution decisions
 
@@ -48,13 +75,13 @@ Three distributions ship the same design system and they answer to different
 owners, so a token can be correct in one and wrong in another. These are the
 calls, written down so an audit stops re-finding them.
 
-### Font tokens live in `packages/core`, and only the registry copies them
+### Font tokens live in `components/packages/core`, and only the registry copies them
 
 `--td-font-display`, `--td-font-sans`, `--td-font-ui` and `--td-font-mono` are
-declared **once**, in `packages/core/dist/tokens.css`, generated from
-`tokens/source/tokens.json`.
+declared **once**, in `components/packages/core/dist/tokens.css`, generated from
+`others/tokens/source/tokens.json`.
 
-- **The npm package must not re-declare them.** `packages/react/src/styles.css`
+- **The npm package must not re-declare them.** `components/packages/react/src/styles.css`
   opens with `@import "@mithtech-bengaluru/tonaldepth-core"`, and `tonaldepth-core`
   is a hard dependency rather than a peer, so a consumer importing
   `@mithtech-bengaluru/tonaldepth-react/styles.css` already resolves all four —
@@ -65,14 +92,15 @@ declared **once**, in `packages/core/dist/tokens.css`, generated from
   `@mithtech-bengaluru/tonaldepth-core/no-fonts` instead of dropping the tokens.
 - **The registry must carry its own copy.** A registry consumer installs *files*,
   not a package, and has no `tonaldepth-core` to inherit from — so
-  `registry/tonaldepth/tokens.css` is the one place a duplicate is correct, and
+  `components/registry/tonaldepth/tokens.css` is the one place a duplicate is correct, and
   it has to carry all four roles at the same stacks. A missing role there does
   not fail loudly: it falls through to the browser default and the page reads as
   almost right, which is how `--td-font-sans` went missing unnoticed.
 
 ### Both distributions or neither
 
-Nothing lands in `packages/react/src/` without landing in `registry/tonaldepth/`.
+Nothing lands in `components/packages/react/src/` without landing in
+`components/registry/tonaldepth/`.
 Two checks hold it, and both run inside `pnpm build:docs`:
 
 ```bash
