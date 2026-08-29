@@ -9,7 +9,7 @@ class NativeTokenTests(unittest.TestCase):
         before = [path.read_bytes() for path in targets]
         subprocess.run(["python", "tooling/tokens/build_native.py"], cwd=ROOT, check=True, capture_output=True)
         self.assertEqual(before, [path.read_bytes() for path in targets])
-        source = json.loads((ROOT/"tokens/source/tokens.json").read_text(encoding="utf-8"))
+        source = json.loads((ROOT/"others/tokens/source/tokens.json").read_text(encoding="utf-8"))
         brand = next(item for item in source["tokens"] if item["path"] == "color.brand")["$value"]
         self.assertIn(brand, targets[0].read_text(encoding="utf-8"))
         self.assertIn("FFFF5E29", targets[1].read_text(encoding="utf-8"))

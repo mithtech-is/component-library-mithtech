@@ -10,8 +10,8 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-SOURCE = ROOT / "tokens" / "source" / "tokens.json"
-FONTS = ROOT / "tokens" / "source" / "fonts.json"
+SOURCE = ROOT / "others" / "tokens" / "source" / "tokens.json"
+FONTS = ROOT / "others" / "tokens" / "source" / "fonts.json"
 DIST = ROOT / "components" / "packages" / "core" / "dist"
 COMPAT = ROOT / "components" / "packages" / "core" / "src" / "compat.css"
 CSS_NAME = re.compile(r"^--td-[a-z0-9-]+$")
@@ -100,7 +100,7 @@ def font_faces(document: dict) -> list[str]:
 
 def fonts_css(document: dict) -> str:
     header = [
-        "/* Generated from tokens/source/fonts.json. Do not edit. */",
+        "/* Generated from others/tokens/source/fonts.json. Do not edit. */",
         "/*",
         " * TonalDepth type stack, by role:",
     ]
@@ -131,7 +131,7 @@ def render() -> dict[str, str]:
     comfortable = declarations(tokens, "comfortable")
     spacious = declarations(tokens, "spacious")
     css_lines = [
-        "/* Generated from tokens/source/tokens.json. Do not edit. */",
+        "/* Generated from others/tokens/source/tokens.json. Do not edit. */",
         ":root,", '[data-theme="light"] {', *root, "}", "",
         '@media (prefers-color-scheme: dark) {',
         '  :root:not([data-theme="light"]):not([data-theme="dark"]) {',

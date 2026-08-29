@@ -18,7 +18,7 @@ import build  # noqa: E402
 
 class CoreFoundationTests(unittest.TestCase):
     def setUp(self):
-        self.source = json.loads((ROOT / "tokens/source/tokens.json").read_text(encoding="utf-8"))
+        self.source = json.loads((ROOT / "others/tokens/source/tokens.json").read_text(encoding="utf-8"))
         self.tokens = build.validate(self.source)
 
     def test_canonical_schema_and_legacy_variables(self):
@@ -92,7 +92,7 @@ class CoreFoundationTests(unittest.TestCase):
 
     def test_build_check_matches_dist(self):
         # `pnpm tokens:build` is wired into `pnpm generate`, but a hand edit to
-        # tokens/source/tokens.json without running the generator would leave
+        # others/tokens/source/tokens.json without running the generator would leave
         # dist stale. --check makes that a hard failure instead of a silent
         # drift, matching the two registry generators that already do this.
         build.main()
@@ -124,7 +124,7 @@ class CoreFoundationTests(unittest.TestCase):
         asks for, fonts.json says what arrives. A family renamed in one and not
         the other falls back to a system face with no error anywhere.
         """
-        fonts = json.loads((ROOT / "tokens/source/fonts.json").read_text(encoding="utf-8"))
+        fonts = json.loads((ROOT / "others/tokens/source/fonts.json").read_text(encoding="utf-8"))
         loaded = {family["family"] for family in fonts["families"]}
         by_var = {item["$extensions"]["tonaldepth"]["cssVariable"]: item for item in self.tokens}
         for variable in ("--td-font-display", "--td-font-sans", "--td-font-ui", "--td-font-mono"):
@@ -152,7 +152,7 @@ class CoreFoundationTests(unittest.TestCase):
 
     def test_dashboard_fixture_consumes_package_css(self):
         fixture = (ROOT / "static/examples/html-dashboard/index.html").read_text(encoding="utf-8")
-        self.assertIn('../../packages/core/dist/index.css', fixture)
+        self.assertIn('../../../components/packages/core/dist/index.css', fixture)
         self.assertIn('class="td-root"', fixture)
         self.assertIn('class="td-kpi-grid"', fixture)
         self.assertNotIn("<style", fixture.lower())

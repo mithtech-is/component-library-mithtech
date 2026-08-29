@@ -13,7 +13,7 @@ sys.path.insert(0, str(ROOT / "tooling" / "audit"))
 from audit_html import InventoryParser  # noqa: E402
 
 SOURCE = ROOT / "static" / "baselines" / "claude-html" / "TonalDepth Dashboard (offline).html"
-TOKENS = ROOT / "tokens" / "source" / "tokens.json"
+TOKENS = ROOT / "others" / "tokens" / "source" / "tokens.json"
 LEGACY = ROOT / "components" / "packages" / "core" / "src" / "compat.css"
 DASHBOARD = ROOT / "static" / "examples" / "html-dashboard" / "index.html"
 
@@ -173,7 +173,7 @@ def main() -> None:
     dashboard = re.sub(r"<script(?:\s[^>]*)?>.*?</script>", "", dashboard, flags=re.I | re.S)
     dashboard = dashboard.replace(
         "</head>",
-        '  <link rel="stylesheet" href="../../packages/core/dist/index.css">\n</head>',
+        '  <link rel="stylesheet" href="../../../components/packages/core/dist/index.css">\n</head>',
         1,
     )
     dashboard = "<!-- Generated from approved offline HTML markup; styles come from the core package. -->\n" + dashboard

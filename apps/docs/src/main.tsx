@@ -11,7 +11,7 @@ import coreTokens from "@mithtech-bengaluru/tonaldepth-core/tokens.json";
 // The loader's own source. tokens.json says what a family is *called*;
 // this says what is actually fetched, and it is the only place the weight
 // axis and the available styles are written down.
-import fontsSource from "../../../tokens/source/fonts.json";
+import fontsSource from "../../../others/tokens/source/fonts.json";
 // The library's icon set — TD first, Phosphor for the rest. Every role is
 // imported because the Icons page previews all of them, not a sample.
 import { AcceptIcon, AddIcon, ArrowOutIcon, ArrowRightIcon, BellIcon, CallIcon, CancelIcon, ChatCircleIcon, CheckboxMarkIcon, ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, CloseIcon, CopyIcon, CubeIcon, DateIcon, DatasetIcon, DeleteIcon, DotIcon, DownloadIcon, EditIcon, EmailIcon, EnvelopeSimpleIcon, ErrorIcon, FacebookIcon, FileIcon, FolderIcon, GearIcon, InfoIcon, InstagramIcon, InteractiveIcon, LinkedInIcon, ListIcon, MoonIcon, PhoneIcon, ReadTimeIcon, SearchIcon, SquaresFourIcon, SuccessIcon, SunIcon, WarningIcon, WhatsAppIcon, XIcon, YouTubeIcon, LAMP_WEIGHT, TD_ICON_ROLES } from "@mithtech-bengaluru/tonaldepth-react";
