@@ -226,7 +226,10 @@ def main() -> int:
     after_hash = sha256_bytes(source.read_bytes())
     manifest = {
         "schema_version": 1,
-        "source": str(source),
+        # Repo-relative so the manifest is identical on every machine — an
+        # absolute path churns the artefact per checkout and leaks a username.
+        # The SHA-256 pair below is what actually identifies the audited bytes.
+        "source": str(source.relative_to(ROOT)) if source.is_relative_to(ROOT) else str(source),
         "source_bytes": len(before),
         "source_sha256_before": before_hash,
         "source_sha256_after": after_hash,

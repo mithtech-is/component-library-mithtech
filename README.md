@@ -84,12 +84,33 @@ declared **once**, in `components/packages/core/dist/tokens.css`, generated from
 - **The npm package must not re-declare them.** `components/packages/react/src/styles.css`
   opens with `@import "@mithtech-bengaluru/tonaldepth-core"`, and `tonaldepth-core`
   is a hard dependency rather than a peer, so a consumer importing
-  `@mithtech-bengaluru/tonaldepth-react/styles.css` already resolves all four —
-  and the `@font-face` blocks with them. Verified by grepping the docs app's own
-  bundled stylesheet, which is a real consumer of that entry point. Copying the
-  four into `styles.css` would create a fourth place for a family to drift, to
-  buy nothing. A consumer that owns its own `@font-face` imports
-  `@mithtech-bengaluru/tonaldepth-core/no-fonts` instead of dropping the tokens.
+  `@mithtech-bengaluru/tonaldepth-react/styles.css` resolves all four token
+  declarations. Copying the four into `styles.css` would create a fourth place
+  for a family to drift, to buy nothing. A consumer that owns its own
+  `@font-face` imports `@mithtech-bengaluru/tonaldepth-core/no-fonts` instead of
+  dropping the tokens.
+
+  > **The `@font-face` blocks do NOT currently reach an npm consumer.**
+  > `tonaldepth-core` has only ever been published at `0.1.0-alpha.0`, whose
+  > `dist/fonts.css` is a single line — *"Font binaries are intentionally
+  > excluded until Google Fonts licenses are mapped to audited hashes."* The
+  > working tree builds 14 `@font-face` blocks into that file, but nothing has
+  > republished core since, so an installed consumer gets the four family names
+  > with no faces behind them and every role falls through to its fallback
+  > stack. The page reads *almost* right, which is the same silent failure this
+  > section warns about for the registry.
+  >
+  > Verified 2026-08-30 by installing the published `tonaldepth-react@0.1.0-alpha.22`
+  > into a clean consumer. **Do not verify this by grepping the docs app** — the
+  > docs resolve core from the workspace, where `fonts.css` is fully built, so
+  > that check passes while a real install fails. This is how the claim survived.
+  >
+  > Closing it means publishing `tonaldepth-core` at a version whose `fonts.css`
+  > carries the faces. That is gated on the font-licensing question this README
+  > still records as open, so it is a decision rather than a chore. One fact for
+  > it: the generated `fonts.css` embeds **no binaries** — it references
+  > `cdn.jsdelivr.net` and `unpkg.com` Fontsource URLs with a self-hosted
+  > `/fonts/…` fallback, which is a lighter question than shipping audited files.
 - **The registry must carry its own copy.** A registry consumer installs *files*,
   not a package, and has no `tonaldepth-core` to inherit from — so
   `components/registry/tonaldepth/tokens.css` is the one place a duplicate is correct, and
