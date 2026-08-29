@@ -1,5 +1,5 @@
 /**
- * Generate `packages/react/src/td-brands.tsx` from `tooling/brands/manifest.json`
+ * Generate `components/packages/react/src/td-brands.tsx` from `tooling/brands/manifest.json`
  * and the vendored marks in `tooling/brands/svg/`.
  *
  * Brand logos are the sibling of the TD icon set: same "draw a mark here"
@@ -20,7 +20,7 @@ import { resolve } from "node:path";
 const ROOT = resolve(import.meta.dirname, "../..");
 const SVG_DIR = resolve(import.meta.dirname, "svg");
 const MANIFEST = resolve(import.meta.dirname, "manifest.json");
-const TARGET = resolve(ROOT, "packages/react/src/td-brands.tsx");
+const TARGET = resolve(ROOT, "components/packages/react/src/td-brands.tsx");
 const CHECK = process.argv.includes("--check");
 
 /** The `viewBox` and inner markup of a vendored `<svg>`, `<title>` dropped. */

@@ -14,7 +14,7 @@ from audit_html import InventoryParser  # noqa: E402
 
 SOURCE = ROOT / "baselines" / "claude-html" / "TonalDepth Dashboard (offline).html"
 TOKENS = ROOT / "tokens" / "source" / "tokens.json"
-LEGACY = ROOT / "packages" / "core" / "src" / "compat.css"
+LEGACY = ROOT / "components" / "packages" / "core" / "src" / "compat.css"
 DASHBOARD = ROOT / "examples" / "html-dashboard" / "index.html"
 
 

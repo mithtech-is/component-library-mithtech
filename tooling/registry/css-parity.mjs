@@ -6,7 +6,7 @@
  * self-contained and re-declares the `.td-*` base layer a package consumer
  * inherits from `@mithtech-bengaluru/tonaldepth-core`. So the registry having
  * MORE rules is correct and expected. The failure mode is the other direction —
- * a rule added to `packages/react/src/x.css` and never carried across, which is
+ * a rule added to `components/packages/react/src/x.css` and never carried across, which is
  * how six stylesheets and the Frame nesting rule ([[L32]]) drifted apart before
  * anything noticed.
  *
@@ -35,8 +35,8 @@ import { readFile, readdir } from "node:fs/promises";
 import { resolve } from "node:path";
 
 const ROOT = resolve(import.meta.dirname, "../..");
-const PACKAGE_SRC = resolve(ROOT, "packages/react/src");
-const REGISTRY_SRC = resolve(ROOT, "registry/tonaldepth");
+const PACKAGE_SRC = resolve(ROOT, "components/packages/react/src");
+const REGISTRY_SRC = resolve(ROOT, "components/registry/tonaldepth");
 
 /** Which registry stylesheets a package module's rules may have landed in. */
 async function moduleToItems() {

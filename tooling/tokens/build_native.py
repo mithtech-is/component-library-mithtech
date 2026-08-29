@@ -7,8 +7,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 SOURCE = ROOT / "tokens/source/tokens.json"
-TS_OUT = ROOT / "packages/nativewind/src/tokens.ts"
-DART_OUT = ROOT / "packages/flutter/lib/src/generated/tonaldepth_tokens.dart"
+TS_OUT = ROOT / "components/packages/nativewind/src/tokens.ts"
+DART_OUT = ROOT / "components/packages/flutter/lib/src/generated/tonaldepth_tokens.dart"
 
 PUBLIC_COLORS = ("accent", "bg", "brand", "error", "green", "ink", "ink-2", "ink-3", "ink-on-fill", "surface", "surface-2")
 

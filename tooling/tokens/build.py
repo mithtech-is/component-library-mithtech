@@ -12,8 +12,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 SOURCE = ROOT / "tokens" / "source" / "tokens.json"
 FONTS = ROOT / "tokens" / "source" / "fonts.json"
-DIST = ROOT / "packages" / "core" / "dist"
-COMPAT = ROOT / "packages" / "core" / "src" / "compat.css"
+DIST = ROOT / "components" / "packages" / "core" / "dist"
+COMPAT = ROOT / "components" / "packages" / "core" / "src" / "compat.css"
 CSS_NAME = re.compile(r"^--td-[a-z0-9-]+$")
 REF = re.compile(r"var\((--td-[a-z0-9-]+)")
 

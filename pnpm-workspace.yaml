@@ -1,6 +1,6 @@
 packages:
   - "apps/*"
-  - "packages/*"
+  - "components/packages/*"
   - "examples/*"
 linkWorkspacePackages: true
 minimumReleaseAgeExclude:

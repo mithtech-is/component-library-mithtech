@@ -67,10 +67,10 @@ importers:
     dependencies:
       '@mithtech-bengaluru/tonaldepth-core':
         specifier: workspace:*
-        version: link:../../packages/core
+        version: link:../../components/packages/core
       '@mithtech-bengaluru/tonaldepth-react':
         specifier: workspace:*
-        version: link:../../packages/react
+        version: link:../../components/packages/react
       fuse.js:
         specifier: ^7.5.0
         version: 7.5.0
@@ -94,11 +94,58 @@ importers:
         specifier: 8.2.2
         version: 8.2.2(@types/node@26.3.0)(jiti@1.21.7)(terser@5.50.0)
 
+  components/packages/core: {}
+
+  components/packages/nativewind:
+    dependencies:
+      nativewind:
+        specifier: ^4.2.0
+        version: 4.2.6(react-native-reanimated@4.6.0(react-native-worklets@0.12.1(@babel/core@7.29.7)(@react-native/metro-config@0.87.0(@babel/core@7.29.7))(react-native@0.87.0(@babel/core@7.29.7)(@react-native/metro-config@0.87.0(@babel/core@7.29.7))(@types/react@19.2.18)(react@19.2.8))(react@19.2.8))(react-native@0.87.0(@babel/core@7.29.7)(@react-native/metro-config@0.87.0(@babel/core@7.29.7))(@types/react@19.2.18)(react@19.2.8))(react@19.2.8))(react-native@0.87.0(@babel/core@7.29.7)(@react-native/metro-config@0.87.0(@babel/core@7.29.7))(@types/react@19.2.18)(react@19.2.8))(react@19.2.8)(tailwindcss@3.4.19)
+
+  components/packages/react:
+    dependencies:
+      '@mithtech-bengaluru/tonaldepth-core':
+        specifier: 0.1.0-alpha.0
+        version: link:../core
+      '@phosphor-icons/react':
+        specifier: ^2.1.10
+        version: 2.1.10(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      react:
+        specifier: ^18.2.0 || ^19.0.0
+        version: 19.2.8
+      react-dom:
+        specifier: ^18.2.0 || ^19.0.0
+        version: 19.2.8(react@19.2.8)
+
+  components/packages/react-native:
+    dependencies:
+      '@mithtech-bengaluru/tonaldepth-nativewind':
+        specifier: 0.1.0-alpha.0
+        version: link:../nativewind
+      nativewind:
+        specifier: ^4.2.0
+        version: 4.2.6(react-native-reanimated@4.6.0(react-native-worklets@0.12.1(@babel/core@7.29.7)(@react-native/metro-config@0.87.0(@babel/core@7.29.7))(react-native@0.87.0(@babel/core@7.29.7)(@react-native/metro-config@0.87.0(@babel/core@7.29.7))(@types/react@19.2.18)(react@19.2.8))(react@19.2.8))(react-native@0.87.0(@babel/core@7.29.7)(@react-native/metro-config@0.87.0(@babel/core@7.29.7))(@types/react@19.2.18)(react@19.2.8))(react@19.2.8))(react-native@0.87.0(@babel/core@7.29.7)(@react-native/metro-config@0.87.0(@babel/core@7.29.7))(@types/react@19.2.18)(react@19.2.8))(react@19.2.8)(tailwindcss@3.4.19)
+      react:
+        specifier: ^19.2.0
+        version: 19.2.8
+      react-native:
+        specifier: ^0.87.0
+        version: 0.87.0(@babel/core@7.29.7)(@react-native/metro-config@0.87.0(@babel/core@7.29.7))(@types/react@19.2.18)(react@19.2.8)
+
+  components/packages/vue:
+    dependencies:
+      '@mithtech-bengaluru/tonaldepth-core':
+        specifier: 0.1.0-alpha.0
+        version: link:../core
+      vue:
+        specifier: ^3.5.0
+        version: 3.5.41(typescript@7.0.2)
+
   examples/next-consumer:
     dependencies:
       '@mithtech-bengaluru/tonaldepth-react':
         specifier: workspace:*
-        version: link:../../packages/react
+        version: link:../../components/packages/react
       next:
         specifier: 16.3.3
         version: 16.3.3(@babel/core@7.29.7)(@types/node@26.3.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -126,7 +173,7 @@ importers:
     dependencies:
       '@mithtech-bengaluru/tonaldepth-react':
         specifier: workspace:*
-        version: link:../../packages/react
+        version: link:../../components/packages/react
       react:
         specifier: 19.2.8
         version: 19.2.8
@@ -145,7 +192,7 @@ importers:
     dependencies:
       '@mithtech-bengaluru/tonaldepth-vue':
         specifier: 0.1.0-alpha.0
-        version: link:../../packages/vue
+        version: link:../../components/packages/vue
       vue:
         specifier: 3.5.41
         version: 3.5.41(typescript@7.0.2)
@@ -153,53 +200,6 @@ importers:
       vite:
         specifier: 8.2.2
         version: 8.2.2(@types/node@26.3.0)(jiti@1.21.7)(terser@5.50.0)
-
-  packages/core: {}
-
-  packages/nativewind:
-    dependencies:
-      nativewind:
-        specifier: ^4.2.0
-        version: 4.2.6(react-native-reanimated@4.6.0(react-native-worklets@0.12.1(@babel/core@7.29.7)(@react-native/metro-config@0.87.0(@babel/core@7.29.7))(react-native@0.87.0(@babel/core@7.29.7)(@react-native/metro-config@0.87.0(@babel/core@7.29.7))(@types/react@19.2.18)(react@19.2.8))(react@19.2.8))(react-native@0.87.0(@babel/core@7.29.7)(@react-native/metro-config@0.87.0(@babel/core@7.29.7))(@types/react@19.2.18)(react@19.2.8))(react@19.2.8))(react-native@0.87.0(@babel/core@7.29.7)(@react-native/metro-config@0.87.0(@babel/core@7.29.7))(@types/react@19.2.18)(react@19.2.8))(react@19.2.8)(tailwindcss@3.4.19)
-
-  packages/react:
-    dependencies:
-      '@mithtech-bengaluru/tonaldepth-core':
-        specifier: 0.1.0-alpha.0
-        version: link:../core
-      '@phosphor-icons/react':
-        specifier: ^2.1.10
-        version: 2.1.10(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      react:
-        specifier: ^18.2.0 || ^19.0.0
-        version: 19.2.8
-      react-dom:
-        specifier: ^18.2.0 || ^19.0.0
-        version: 19.2.8(react@19.2.8)
-
-  packages/react-native:
-    dependencies:
-      '@mithtech-bengaluru/tonaldepth-nativewind':
-        specifier: 0.1.0-alpha.0
-        version: link:../nativewind
-      nativewind:
-        specifier: ^4.2.0
-        version: 4.2.6(react-native-reanimated@4.6.0(react-native-worklets@0.12.1(@babel/core@7.29.7)(@react-native/metro-config@0.87.0(@babel/core@7.29.7))(react-native@0.87.0(@babel/core@7.29.7)(@react-native/metro-config@0.87.0(@babel/core@7.29.7))(@types/react@19.2.18)(react@19.2.8))(react@19.2.8))(react-native@0.87.0(@babel/core@7.29.7)(@react-native/metro-config@0.87.0(@babel/core@7.29.7))(@types/react@19.2.18)(react@19.2.8))(react@19.2.8))(react-native@0.87.0(@babel/core@7.29.7)(@react-native/metro-config@0.87.0(@babel/core@7.29.7))(@types/react@19.2.18)(react@19.2.8))(react@19.2.8)(tailwindcss@3.4.19)
-      react:
-        specifier: ^19.2.0
-        version: 19.2.8
-      react-native:
-        specifier: ^0.87.0
-        version: 0.87.0(@babel/core@7.29.7)(@react-native/metro-config@0.87.0(@babel/core@7.29.7))(@types/react@19.2.18)(react@19.2.8)
-
-  packages/vue:
-    dependencies:
-      '@mithtech-bengaluru/tonaldepth-core':
-        specifier: 0.1.0-alpha.0
-        version: link:../core
-      vue:
-        specifier: ^3.5.0
-        version: 3.5.41(typescript@7.0.2)
 
 packages:
 

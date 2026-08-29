@@ -11,7 +11,7 @@ for (const item of manifest.items) {
   for (const file of item.files) {
     files.push({ ...file, content: await readFile(resolve(root, file.path), "utf8") });
   }
-  const stylePath = `registry/tonaldepth/${item.name}.css`;
+  const stylePath = `components/registry/tonaldepth/${item.name}.css`;
   if (!files.some(file => file.path === stylePath)) {
     try {
       files.push({ path: stylePath, type: "registry:style", target: `components/ui/tonaldepth-${item.name}.css`, content: await readFile(resolve(root, stylePath), "utf8") });

@@ -2,8 +2,8 @@
 
 A component exists in four artefacts and nothing structurally binds them:
 
-    packages/react/src/     the npm package  — the source of truth
-    registry/tonaldepth/    the shadcn copy-to-source variant
+    components/packages/react/src/     the npm package  — the source of truth
+    components/registry/tonaldepth/    the shadcn copy-to-source variant
     registry.json           the registry manifest
     apps/docs/src/main.tsx  the docs index
 
@@ -22,8 +22,8 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-PACKAGE_SRC = ROOT / "packages/react/src"
-REGISTRY_SRC = ROOT / "registry/tonaldepth"
+PACKAGE_SRC = ROOT / "components/packages/react/src"
+REGISTRY_SRC = ROOT / "components/registry/tonaldepth"
 MANIFEST = ROOT / "registry.json"
 DOCS = ROOT / "apps/docs/src/main.tsx"
 
@@ -170,7 +170,7 @@ def emitted_classes_shared(source: str) -> set[str]:
     """
     return {c for c in emitted_classes(source) if not c.startswith(("td-react-", "td-registry-"))}
 
-CORE_CSS = ROOT / "packages/core/src/compat.css"
+CORE_CSS = ROOT / "components/packages/core/src/compat.css"
 
 
 def styled_classes(*paths) -> set[str]:
@@ -285,9 +285,9 @@ class SurfaceParityTests(unittest.TestCase):
                     problems.append(entry["path"])
             if item["name"] not in STYLE_ONLY:
                 if not (REGISTRY_SRC / f"{item['name']}.tsx").exists():
-                    problems.append(f"registry/tonaldepth/{item['name']}.tsx")
+                    problems.append(f"components/registry/tonaldepth/{item['name']}.tsx")
                 if not (REGISTRY_SRC / f"{item['name']}.css").exists():
-                    problems.append(f"registry/tonaldepth/{item['name']}.css")
+                    problems.append(f"components/registry/tonaldepth/{item['name']}.css")
         self.assertEqual([], problems, f"registry files missing from disk: {problems}")
 
     def test_every_package_export_reaches_the_registry(self):
@@ -314,7 +314,7 @@ class SurfaceParityTests(unittest.TestCase):
         self.assertEqual([], strays, f"registry files using the package namespace: {strays}")
 
     def test_registry_is_generated_from_the_package(self):
-        """`registry/tonaldepth/*.tsx` is generated. A hand edit is lost on the
+        """`components/registry/tonaldepth/*.tsx` is generated. A hand edit is lost on the
         next run, so a stale tree means someone edited the wrong copy."""
         result = subprocess.run(["node", str(ROOT / "tooling/registry/generate.mjs"), "--check"],
                                 cwd=ROOT, capture_output=True, text=True)

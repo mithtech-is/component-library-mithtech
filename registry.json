@@ -13,7 +13,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/alert.tsx",
+          "path": "components/registry/tonaldepth/alert.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-alert.tsx"
         }
@@ -30,7 +30,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/application-shell.tsx",
+          "path": "components/registry/tonaldepth/application-shell.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-application-shell.tsx"
         }
@@ -46,7 +46,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/article-card.tsx",
+          "path": "components/registry/tonaldepth/article-card.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-article-card.tsx"
         }
@@ -65,7 +65,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/badge.tsx",
+          "path": "components/registry/tonaldepth/badge.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-badge.tsx"
         }
@@ -75,13 +75,13 @@
       "name": "breadcrumbs",
       "type": "registry:ui",
       "title": "TonalDepth Breadcrumbs",
-      "description": "A typed TonalDepth breadcrumb trail in the three forms the design system draws — chevrons, slashes, and the condensed housed bar — on one separator prop.",
+      "description": "A typed TonalDepth breadcrumb trail in the three forms the design system draws \u2014 chevrons, slashes, and the condensed housed bar \u2014 on one separator prop.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/breadcrumbs.tsx",
+          "path": "components/registry/tonaldepth/breadcrumbs.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-breadcrumbs.tsx"
         }
@@ -97,7 +97,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/button.tsx",
+          "path": "components/registry/tonaldepth/button.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-button.tsx"
         }
@@ -116,7 +116,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/card.tsx",
+          "path": "components/registry/tonaldepth/card.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-card.tsx"
         }
@@ -132,7 +132,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/case-card.tsx",
+          "path": "components/registry/tonaldepth/case-card.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-case-card.tsx"
         }
@@ -152,7 +152,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/chart-container.tsx",
+          "path": "components/registry/tonaldepth/chart-container.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-chart-container.tsx"
         }
@@ -168,7 +168,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/chat-launcher.tsx",
+          "path": "components/registry/tonaldepth/chat-launcher.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-chat-launcher.tsx"
         }
@@ -187,7 +187,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/checkbox.tsx",
+          "path": "components/registry/tonaldepth/checkbox.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-checkbox.tsx"
         }
@@ -200,7 +200,7 @@
       "name": "code-block",
       "type": "registry:ui",
       "title": "TonalDepth CodeBlock",
-      "description": "A typed TonalDepth code listing, housed in a Frame with a copy chip in the corner. It does no highlighting — pass pre-highlighted markup.",
+      "description": "A typed TonalDepth code listing, housed in a Frame with a copy chip in the corner. It does no highlighting \u2014 pass pre-highlighted markup.",
       "registryDependencies": [
         "@tonaldepth/tokens",
         "@tonaldepth/frame",
@@ -208,7 +208,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/code-block.tsx",
+          "path": "components/registry/tonaldepth/code-block.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-code-block.tsx"
         }
@@ -224,7 +224,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/comparison-table.tsx",
+          "path": "components/registry/tonaldepth/comparison-table.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-comparison-table.tsx"
         }
@@ -241,7 +241,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/confirm-button.tsx",
+          "path": "components/registry/tonaldepth/confirm-button.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-confirm-button.tsx"
         }
@@ -257,7 +257,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/copy-chip.tsx",
+          "path": "components/registry/tonaldepth/copy-chip.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-copy-chip.tsx"
         }
@@ -276,7 +276,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/counter.tsx",
+          "path": "components/registry/tonaldepth/counter.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-counter.tsx"
         }
@@ -292,7 +292,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/cta-banner.tsx",
+          "path": "components/registry/tonaldepth/cta-banner.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-cta-banner.tsx"
         }
@@ -302,13 +302,13 @@
       "name": "data-list",
       "type": "registry:ui",
       "title": "TonalDepth DataList",
-      "description": "A typed TonalDepth definition list for four to six fields about one record — where a table's header row would be overhead.",
+      "description": "A typed TonalDepth definition list for four to six fields about one record \u2014 where a table's header row would be overhead.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/data-list.tsx",
+          "path": "components/registry/tonaldepth/data-list.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-data-list.tsx"
         }
@@ -324,7 +324,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/dialog.tsx",
+          "path": "components/registry/tonaldepth/dialog.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-dialog.tsx"
         }
@@ -340,7 +340,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/dropdown-menu.tsx",
+          "path": "components/registry/tonaldepth/dropdown-menu.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-dropdown-menu.tsx"
         }
@@ -359,7 +359,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/faq.tsx",
+          "path": "components/registry/tonaldepth/faq.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-faq.tsx"
         }
@@ -378,7 +378,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/feature-card.tsx",
+          "path": "components/registry/tonaldepth/feature-card.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-feature-card.tsx"
         }
@@ -388,13 +388,13 @@
       "name": "filament-button",
       "type": "registry:ui",
       "title": "TonalDepth FilamentButton",
-      "description": "A typed TonalDepth tab button that reports its state with a lit filament rather than a fill. Four states — off, dim on hover, held, and brightest on press — along either the inline-start or the top edge.",
+      "description": "A typed TonalDepth tab button that reports its state with a lit filament rather than a fill. Four states \u2014 off, dim on hover, held, and brightest on press \u2014 along either the inline-start or the top edge.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/filament-button.tsx",
+          "path": "components/registry/tonaldepth/filament-button.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-filament-button.tsx"
         }
@@ -410,7 +410,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/file-preview.tsx",
+          "path": "components/registry/tonaldepth/file-preview.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-file-preview.tsx"
         }
@@ -429,7 +429,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/file-tree.tsx",
+          "path": "components/registry/tonaldepth/file-tree.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-file-tree.tsx"
         }
@@ -445,7 +445,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/filter-bar.tsx",
+          "path": "components/registry/tonaldepth/filter-bar.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-filter-bar.tsx"
         }
@@ -462,7 +462,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/footer.tsx",
+          "path": "components/registry/tonaldepth/footer.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-footer.tsx"
         }
@@ -478,7 +478,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/form-field.tsx",
+          "path": "components/registry/tonaldepth/form-field.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-form-field.tsx"
         }
@@ -488,13 +488,13 @@
       "name": "frame",
       "type": "registry:ui",
       "title": "TonalDepth Frame",
-      "description": "A raised plate with a well cut into it — the housing anything measured lives inside. Chrome is raised, data is recessed, so a chart or a table reads as data without a single border.",
+      "description": "A raised plate with a well cut into it \u2014 the housing anything measured lives inside. Chrome is raised, data is recessed, so a chart or a table reads as data without a single border.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/frame.tsx",
+          "path": "components/registry/tonaldepth/frame.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-frame.tsx"
         }
@@ -504,13 +504,13 @@
       "name": "icon-button",
       "type": "registry:ui",
       "title": "TonalDepth IconButton",
-      "description": "The lamp: a round icon-only button, or a pill with a label, whose icon carries the interaction state — unlit at rest, lit on hover, brighter on press — while the label holds its ink. Neutral, papaya, azure, invert and per-channel tones.",
+      "description": "The lamp: a round icon-only button, or a pill with a label, whose icon carries the interaction state \u2014 unlit at rest, lit on hover, brighter on press \u2014 while the label holds its ink. Neutral, papaya, azure, invert and per-channel tones.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/icon-button.tsx",
+          "path": "components/registry/tonaldepth/icon-button.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-icon-button.tsx"
         }
@@ -526,7 +526,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/input.tsx",
+          "path": "components/registry/tonaldepth/input.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-input.tsx"
         }
@@ -542,7 +542,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/iso-stack.tsx",
+          "path": "components/registry/tonaldepth/iso-stack.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-iso-stack.tsx"
         }
@@ -558,7 +558,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/kpi.tsx",
+          "path": "components/registry/tonaldepth/kpi.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-kpi.tsx"
         }
@@ -574,7 +574,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/link-cells.tsx",
+          "path": "components/registry/tonaldepth/link-cells.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-link-cells.tsx"
         }
@@ -587,13 +587,13 @@
       "name": "logo-strip",
       "type": "registry:ui",
       "title": "TonalDepth LogoStrip",
-      "description": "A typed TonalDepth wall of real client artwork — monochrome at rest, full colour on hover, with each mark's name carried as its alternative text.",
+      "description": "A typed TonalDepth wall of real client artwork \u2014 monochrome at rest, full colour on hover, with each mark's name carried as its alternative text.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/logo-strip.tsx",
+          "path": "components/registry/tonaldepth/logo-strip.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-logo-strip.tsx"
         }
@@ -603,13 +603,13 @@
       "name": "map",
       "type": "registry:ui",
       "title": "TonalDepth Map",
-      "description": "A typed TonalDepth static locator map — a carved ground, an optional graticule and pins as lamps in sockets. No tile provider and no network call.",
+      "description": "A typed TonalDepth static locator map \u2014 a carved ground, an optional graticule and pins as lamps in sockets. No tile provider and no network call.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/map.tsx",
+          "path": "components/registry/tonaldepth/map.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-map.tsx"
         }
@@ -619,13 +619,13 @@
       "name": "mega-cascade",
       "type": "registry:ui",
       "title": "TonalDepth MegaCascade",
-      "description": "A typed TonalDepth three-level cascading mega panel — categories, subcategories, items — each column a well, with roving-tabindex rails.",
+      "description": "A typed TonalDepth three-level cascading mega panel \u2014 categories, subcategories, items \u2014 each column a well, with roving-tabindex rails.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/mega-cascade.tsx",
+          "path": "components/registry/tonaldepth/mega-cascade.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-mega-cascade.tsx"
         }
@@ -641,7 +641,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/mega-columns.tsx",
+          "path": "components/registry/tonaldepth/mega-columns.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-mega-columns.tsx"
         }
@@ -657,7 +657,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/mega-grid.tsx",
+          "path": "components/registry/tonaldepth/mega-grid.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-mega-grid.tsx"
         }
@@ -673,7 +673,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/mega-tabs.tsx",
+          "path": "components/registry/tonaldepth/mega-tabs.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-mega-tabs.tsx"
         }
@@ -683,14 +683,14 @@
       "name": "multi-step",
       "type": "registry:ui",
       "title": "TonalDepth MultiStep",
-      "description": "A typed TonalDepth form in panes, with the step indicator that belongs to it. It owns the position and nothing else — no validation, no values.",
+      "description": "A typed TonalDepth form in panes, with the step indicator that belongs to it. It owns the position and nothing else \u2014 no validation, no values.",
       "registryDependencies": [
         "@tonaldepth/tokens",
         "@tonaldepth/button"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/multi-step.tsx",
+          "path": "components/registry/tonaldepth/multi-step.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-multi-step.tsx"
         }
@@ -700,13 +700,13 @@
       "name": "page-nav",
       "type": "registry:ui",
       "title": "TonalDepth PageNav",
-      "description": "A typed TonalDepth secondary header — the horizontal bar under the site header that navigates within a page's section, sticky and scrolling on narrow screens.",
+      "description": "A typed TonalDepth secondary header \u2014 the horizontal bar under the site header that navigates within a page's section, sticky and scrolling on narrow screens.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/page-nav.tsx",
+          "path": "components/registry/tonaldepth/page-nav.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-page-nav.tsx"
         }
@@ -722,7 +722,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/page-patterns.tsx",
+          "path": "components/registry/tonaldepth/page-patterns.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-page-patterns.tsx"
         }
@@ -741,7 +741,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/pagination.tsx",
+          "path": "components/registry/tonaldepth/pagination.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-pagination.tsx"
         }
@@ -751,13 +751,13 @@
       "name": "pricing-table",
       "type": "registry:ui",
       "title": "TonalDepth PricingTable",
-      "description": "A typed TonalDepth plan grid — a price, what it includes, and the way to take it. The featured plan is reported by depth and papaya ink, never by a fill.",
+      "description": "A typed TonalDepth plan grid \u2014 a price, what it includes, and the way to take it. The featured plan is reported by depth and papaya ink, never by a fill.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/pricing-table.tsx",
+          "path": "components/registry/tonaldepth/pricing-table.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-pricing-table.tsx"
         }
@@ -767,13 +767,13 @@
       "name": "profile-card",
       "type": "registry:ui",
       "title": "TonalDepth ProfileCard",
-      "description": "A typed TonalDepth person card — the mark beside the name, or above it with a bio. One card for both the profile card and the team wall.",
+      "description": "A typed TonalDepth person card \u2014 the mark beside the name, or above it with a bio. One card for both the profile card and the team wall.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/profile-card.tsx",
+          "path": "components/registry/tonaldepth/profile-card.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-profile-card.tsx"
         }
@@ -783,13 +783,13 @@
       "name": "social-button",
       "type": "registry:ui",
       "title": "TonalDepth SocialButton",
-      "description": "A social link as its own logo — an icon-only control whose housing carries the platform's colour. Eighteen marks built in, from Simple Icons.",
+      "description": "A social link as its own logo \u2014 an icon-only control whose housing carries the platform's colour. Eighteen marks built in, from Simple Icons.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/social-button.tsx",
+          "path": "components/registry/tonaldepth/social-button.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-social-button.tsx"
         }
@@ -805,7 +805,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/whatsapp-form.tsx",
+          "path": "components/registry/tonaldepth/whatsapp-form.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-whatsapp-form.tsx"
         }
@@ -821,7 +821,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/progress.tsx",
+          "path": "components/registry/tonaldepth/progress.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-progress.tsx"
         }
@@ -831,13 +831,13 @@
       "name": "prose",
       "type": "registry:ui",
       "title": "TonalDepth Prose",
-      "description": "A typed TonalDepth long-form container that styles authored HTML — headings, lists, quotes, code, tables and rules — for articles, guides and legal pages.",
+      "description": "A typed TonalDepth long-form container that styles authored HTML \u2014 headings, lists, quotes, code, tables and rules \u2014 for articles, guides and legal pages.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/prose.tsx",
+          "path": "components/registry/tonaldepth/prose.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-prose.tsx"
         }
@@ -853,7 +853,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/radio.tsx",
+          "path": "components/registry/tonaldepth/radio.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-radio.tsx"
         }
@@ -869,7 +869,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/range.tsx",
+          "path": "components/registry/tonaldepth/range.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-range.tsx"
         }
@@ -885,7 +885,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/reading-progress.tsx",
+          "path": "components/registry/tonaldepth/reading-progress.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-reading-progress.tsx"
         }
@@ -901,7 +901,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/rect-title.tsx",
+          "path": "components/registry/tonaldepth/rect-title.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-rect-title.tsx"
         }
@@ -917,7 +917,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/search-bar.tsx",
+          "path": "components/registry/tonaldepth/search-bar.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-search-bar.tsx"
         }
@@ -936,7 +936,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/side-tabs.tsx",
+          "path": "components/registry/tonaldepth/side-tabs.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-side-tabs.tsx"
         }
@@ -946,13 +946,13 @@
       "name": "site-navigation",
       "type": "registry:ui",
       "title": "TonalDepth SiteNavigation",
-      "description": "The marketing site navigation — a raised pill that sticks flush, retracts on the way down and returns on the way up, with mega panels held at one size whatever they hold. Publishes `--nav-offset` for in-page sticky toolbars.",
+      "description": "The marketing site navigation \u2014 a raised pill that sticks flush, retracts on the way down and returns on the way up, with mega panels held at one size whatever they hold. Publishes `--nav-offset` for in-page sticky toolbars.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/site-navigation.tsx",
+          "path": "components/registry/tonaldepth/site-navigation.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-site-navigation.tsx"
         }
@@ -971,7 +971,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/split-button.tsx",
+          "path": "components/registry/tonaldepth/split-button.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-split-button.tsx"
         }
@@ -981,13 +981,13 @@
       "name": "spotlight",
       "type": "registry:ui",
       "title": "TonalDepth Spotlight",
-      "description": "A typed TonalDepth command palette: a search field over the whole product, on a scrim. It does no matching — the caller owns ranking.",
+      "description": "A typed TonalDepth command palette: a search field over the whole product, on a scrim. It does no matching \u2014 the caller owns ranking.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/spotlight.tsx",
+          "path": "components/registry/tonaldepth/spotlight.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-spotlight.tsx"
         }
@@ -997,13 +997,13 @@
       "name": "sub-nav",
       "type": "registry:ui",
       "title": "TonalDepth SubNav",
-      "description": "A typed TonalDepth grouped link list with counts — second-level navigation inside a section of a product. ApplicationShell renders this component for its sidebar.",
+      "description": "A typed TonalDepth grouped link list with counts \u2014 second-level navigation inside a section of a product. ApplicationShell renders this component for its sidebar.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/sub-nav.tsx",
+          "path": "components/registry/tonaldepth/sub-nav.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-sub-nav.tsx"
         }
@@ -1019,7 +1019,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/switch.tsx",
+          "path": "components/registry/tonaldepth/switch.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-switch.tsx"
         }
@@ -1035,7 +1035,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/table.tsx",
+          "path": "components/registry/tonaldepth/table.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-table.tsx"
         }
@@ -1051,7 +1051,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/tabs.tsx",
+          "path": "components/registry/tonaldepth/tabs.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-tabs.tsx"
         }
@@ -1067,7 +1067,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/terminal.tsx",
+          "path": "components/registry/tonaldepth/terminal.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-terminal.tsx"
         }
@@ -1083,7 +1083,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/testimonial.tsx",
+          "path": "components/registry/tonaldepth/testimonial.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-testimonial.tsx"
         }
@@ -1099,7 +1099,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/textarea.tsx",
+          "path": "components/registry/tonaldepth/textarea.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-textarea.tsx"
         }
@@ -1109,13 +1109,13 @@
       "name": "theme-toggle",
       "type": "registry:ui",
       "title": "TonalDepth ThemeToggle",
-      "description": "The system's theme switch — a round icon button whose sun and moon are lamps. It keeps `data-theme` stamped on the document, including in the unstamped system state, and remembers the choice.",
+      "description": "The system's theme switch \u2014 a round icon button whose sun and moon are lamps. It keeps `data-theme` stamped on the document, including in the unstamped system state, and remembers the choice.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/theme-toggle.tsx",
+          "path": "components/registry/tonaldepth/theme-toggle.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-theme-toggle.tsx"
         }
@@ -1134,7 +1134,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/timeline.tsx",
+          "path": "components/registry/tonaldepth/timeline.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-timeline.tsx"
         }
@@ -1150,7 +1150,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/toast.tsx",
+          "path": "components/registry/tonaldepth/toast.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-toast.tsx"
         }
@@ -1166,7 +1166,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/toc.tsx",
+          "path": "components/registry/tonaldepth/toc.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-toc.tsx"
         }
@@ -1179,7 +1179,7 @@
       "description": "The shared TonalDepth CSS custom properties and body defaults. Install this once, then TonalDepth components stop redeclaring the same tokens.",
       "files": [
         {
-          "path": "registry/tonaldepth/tokens.css",
+          "path": "components/registry/tonaldepth/tokens.css",
           "type": "registry:style",
           "target": "styles/tonaldepth.css"
         }
@@ -1195,7 +1195,7 @@
       ],
       "files": [
         {
-          "path": "registry/tonaldepth/tooltip.tsx",
+          "path": "components/registry/tonaldepth/tooltip.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-tooltip.tsx"
         }

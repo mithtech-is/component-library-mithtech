@@ -35,7 +35,7 @@ type Doc=DocEntry&Guidance&{
  body?:string;
 };
 
-/* Props tables are generated from packages/react/src by tooling/docs/props.mjs.
+/* Props tables are generated from components/packages/react/src by tooling/docs/props.mjs.
    They were retyped by hand until 2026-08-27, and had drifted: Button's variant
    default was documented as "primary" when the component ships "secondary". */
 const PROPS: Record<string, string[][]> = generatedProps;

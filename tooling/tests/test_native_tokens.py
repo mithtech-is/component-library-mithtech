@@ -5,7 +5,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 class NativeTokenTests(unittest.TestCase):
     def test_native_outputs_are_deterministic_and_canonical(self):
-        targets = [ROOT/"packages/nativewind/src/tokens.ts", ROOT/"packages/flutter/lib/src/generated/tonaldepth_tokens.dart"]
+        targets = [ROOT/"components/packages/nativewind/src/tokens.ts", ROOT/"components/packages/flutter/lib/src/generated/tonaldepth_tokens.dart"]
         before = [path.read_bytes() for path in targets]
         subprocess.run(["python", "tooling/tokens/build_native.py"], cwd=ROOT, check=True, capture_output=True)
         self.assertEqual(before, [path.read_bytes() for path in targets])

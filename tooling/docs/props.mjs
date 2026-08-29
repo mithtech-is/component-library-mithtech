@@ -1,5 +1,5 @@
 /**
- * Derive the docs' props tables from `packages/react/src/*.tsx`.
+ * Derive the docs' props tables from `components/packages/react/src/*.tsx`.
  *
  * A `Doc` entry holds two kinds of content. The summary, the code sample and
  * the live preview are editorial — a person decides what a component is for and
@@ -17,7 +17,7 @@ import { readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
 const ROOT = resolve(import.meta.dirname, "../..");
-const PACKAGE_SRC = resolve(ROOT, "packages/react/src");
+const PACKAGE_SRC = resolve(ROOT, "components/packages/react/src");
 const TARGET = resolve(ROOT, "apps/docs/src/props.generated.json");
 const CHECK = process.argv.includes("--check");
 

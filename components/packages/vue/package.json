@@ -25,6 +25,6 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Mithtech-Bengaluru/tonaldepth.git",
-    "directory": "packages/vue"
+    "directory": "components/packages/vue"
   }
 }

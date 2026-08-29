@@ -1,5 +1,5 @@
 /**
- * Generate `registry/tonaldepth/*.tsx` from `packages/react/src/*.tsx`.
+ * Generate `components/registry/tonaldepth/*.tsx` from `components/packages/react/src/*.tsx`.
  *
  * The two distributions are the same components with a different surface: the
  * registry copies files into a consumer's tree, so its exports are prefixed and
@@ -22,8 +22,8 @@ import { readFile, readdir, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
 const ROOT = resolve(import.meta.dirname, "../..");
-const PACKAGE_SRC = resolve(ROOT, "packages/react/src");
-const REGISTRY_SRC = resolve(ROOT, "registry/tonaldepth");
+const PACKAGE_SRC = resolve(ROOT, "components/packages/react/src");
+const REGISTRY_SRC = resolve(ROOT, "components/registry/tonaldepth");
 const CHECK = process.argv.includes("--check");
 
 /**

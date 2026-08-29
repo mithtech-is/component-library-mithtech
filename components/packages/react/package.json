@@ -44,6 +44,6 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Mithtech-Bengaluru/tonaldepth.git",
-    "directory": "packages/react"
+    "directory": "components/packages/react"
   }
 }

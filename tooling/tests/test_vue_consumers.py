@@ -57,7 +57,7 @@ def main() -> None:
     run([PNPM, "build:vue"], ROOT)
     with tempfile.TemporaryDirectory(prefix="tonaldepth-phase3-vue-") as folder:
         temp = Path(folder)
-        tarballs = [pack(ROOT / "packages/core", temp), pack(ROOT / "packages/vue", temp)]
+        tarballs = [pack(ROOT / "components/packages/core", temp), pack(ROOT / "components/packages/vue", temp)]
         report = {"packages": [path.name for path in tarballs], "vue_version": "3.5.41", "nuxt_version": "4.5.2", "vite": vite_consumer(temp, tarballs), "nuxt": nuxt_consumer(temp, tarballs), "workspace_aliases_used": False}
     REPORT.parent.mkdir(parents=True, exist_ok=True)
     write_json(REPORT, report)

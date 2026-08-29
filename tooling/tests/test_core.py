@@ -84,7 +84,7 @@ class CoreFoundationTests(unittest.TestCase):
 
     def test_generation_is_deterministic(self):
         build.main()
-        dist = ROOT / "packages/core/dist"
+        dist = ROOT / "components/packages/core/dist"
         first = {path.name: hashlib.sha256(path.read_bytes()).hexdigest() for path in dist.iterdir() if path.is_file()}
         build.main()
         second = {path.name: hashlib.sha256(path.read_bytes()).hexdigest() for path in dist.iterdir() if path.is_file()}
@@ -106,7 +106,7 @@ class CoreFoundationTests(unittest.TestCase):
         stylesheets would not fail over: both get fetched and the later one
         shadows the earlier.
         """
-        css = (ROOT / "packages/core/dist/fonts.css").read_text(encoding="utf-8")
+        css = (ROOT / "components/packages/core/dist/fonts.css").read_text(encoding="utf-8")
         blocks = [block for block in css.split("@font-face")[1:]]
         self.assertTrue(blocks, "fonts.css declares no faces")
         for block in blocks:
@@ -137,7 +137,7 @@ class CoreFoundationTests(unittest.TestCase):
         index.css pulls the CDN layer by design; index-no-fonts.css is the
         documented opt-out and must reach neither a CDN nor an @font-face.
         """
-        dist = ROOT / "packages/core/dist"
+        dist = ROOT / "components/packages/core/dist"
         entry = (dist / "index-no-fonts.css").read_text(encoding="utf-8")
         self.assertNotIn("fonts.css", entry)
         reached = "\n".join((dist / name).read_text(encoding="utf-8") for name in ("compat.css", "tokens.css"))
@@ -146,7 +146,7 @@ class CoreFoundationTests(unittest.TestCase):
         self.assertNotIn("@font-face", reached)
 
     def test_compatibility_css_contains_existing_classes(self):
-        css = (ROOT / "packages/core/dist/compat.css").read_text(encoding="utf-8")
+        css = (ROOT / "components/packages/core/dist/compat.css").read_text(encoding="utf-8")
         for selector in (".td-root", ".td-primary", ".td-cta", ".td-panel", ".td-table"):
             self.assertIn(selector, css)
 
@@ -159,7 +159,7 @@ class CoreFoundationTests(unittest.TestCase):
         self.assertNotIn("<script", fixture.lower())
 
     def test_packed_consumer_install(self):
-        package = ROOT / "packages/core"
+        package = ROOT / "components/packages/core"
         with tempfile.TemporaryDirectory(prefix="tonaldepth-core-") as folder:
             temp = Path(folder)
             packed = subprocess.run(

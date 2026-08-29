@@ -1,7 +1,7 @@
 import { defineConfig } from "vite";
 import { resolve } from "node:path";
 
-const PACKAGE = resolve(import.meta.dirname, "../../packages/react");
+const PACKAGE = resolve(import.meta.dirname, "../../components/packages/react");
 
 /**
  * In dev the docs resolve the library to its **source**, so editing a component

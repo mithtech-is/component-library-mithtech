@@ -78,7 +78,7 @@ def main() -> None:
     run([PNPM, "build:react"], ROOT)
     with tempfile.TemporaryDirectory(prefix="tonaldepth-phase2-") as folder:
         temp = Path(folder)
-        tarballs = [pack(ROOT / "packages/core", temp), pack(ROOT / "packages/react", temp)]
+        tarballs = [pack(ROOT / "components/packages/core", temp), pack(ROOT / "components/packages/react", temp)]
         report = {
             "packages": [path.name for path in tarballs],
             "vite": vite_consumer(temp, tarballs),
