@@ -25,9 +25,10 @@
     "build:react-consumers": "pnpm --filter tonaldepth-react-catalog build && pnpm --filter tonaldepth-next-consumer build",
     "test:react-consumers": "python tooling/tests/test_react_consumers.py",
     "registry:generate": "node tooling/registry/generate.mjs",
+    "brands:build": "node tooling/brands/build.mjs",
     "docs:props": "node tooling/docs/props.mjs",
-    "generate": "pnpm tokens:build && pnpm tokens:build-native && pnpm registry:generate && pnpm docs:props && pnpm registry:build",
-    "registry:check": "node tooling/registry/generate.mjs --check && node tooling/registry/css-parity.mjs"
+    "generate": "pnpm tokens:build && pnpm tokens:build-native && pnpm brands:build && pnpm registry:generate && pnpm docs:props && pnpm registry:build",
+    "registry:check": "node tooling/registry/generate.mjs --check && node tooling/registry/css-parity.mjs && node tooling/brands/build.mjs --check"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "6.9.1",

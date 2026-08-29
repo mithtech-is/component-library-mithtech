@@ -1,0 +1,194 @@
+{
+  "$note": "Curated brand/company marks TonalDepth owns. Add a brand by dropping its SVG in tooling/brands/svg/<slug>.svg and a row here, then run `pnpm brands:build`. Unlike td-icons, brand marks may carry colour — the mark's identity IS its colour. `mode: mono` renders the mark in a single ink that follows currentColor (right for the single-path marks below); a true multi-colour mark sets `preserveFills: true` and keeps its own fills. `color` sets the resting ink for a single-colour mark; null falls through to currentColor.",
+  "brands": [
+    {
+      "slug": "medusa",
+      "title": "Medusa",
+      "component": "MedusaLogo",
+      "mode": "mono",
+      "color": null,
+      "preserveFills": false,
+      "source": "user-supplied"
+    },
+    {
+      "slug": "erpnext",
+      "title": "ERPNext",
+      "component": "ErpNextLogo",
+      "mode": "mono",
+      "color": null,
+      "preserveFills": false,
+      "source": "thesvg.org (simple-icons format)"
+    },
+    {
+      "slug": "frappe",
+      "title": "Frappe",
+      "component": "FrappeLogo",
+      "mode": "mono",
+      "color": null,
+      "preserveFills": false,
+      "source": "thesvg.org (simple-icons format)"
+    },
+    {
+      "slug": "x",
+      "title": "X",
+      "component": "XLogo",
+      "mode": "mono",
+      "color": "#000000",
+      "preserveFills": false,
+      "source": "thesvg.org (simple-icons format)"
+    },
+    {
+      "slug": "linkedin",
+      "title": "LinkedIn",
+      "component": "LinkedInLogo",
+      "mode": "mono",
+      "color": "#0A66C2",
+      "preserveFills": false,
+      "source": "thesvg.org (simple-icons format)"
+    },
+    {
+      "slug": "github",
+      "title": "GitHub",
+      "component": "GitHubLogo",
+      "mode": "mono",
+      "color": "#181717",
+      "preserveFills": false,
+      "source": "thesvg.org (simple-icons format)"
+    },
+    {
+      "slug": "gitlab",
+      "title": "GitLab",
+      "component": "GitLabLogo",
+      "mode": "mono",
+      "color": "#FC6D26",
+      "preserveFills": false,
+      "source": "thesvg.org (simple-icons format)"
+    },
+    {
+      "slug": "youtube",
+      "title": "YouTube",
+      "component": "YouTubeLogo",
+      "mode": "mono",
+      "color": "#FF0000",
+      "preserveFills": false,
+      "source": "thesvg.org (simple-icons format)"
+    },
+    {
+      "slug": "instagram",
+      "title": "Instagram",
+      "component": "InstagramLogo",
+      "mode": "mono",
+      "color": "#FF0069",
+      "preserveFills": false,
+      "source": "thesvg.org (simple-icons format)"
+    },
+    {
+      "slug": "facebook",
+      "title": "Facebook",
+      "component": "FacebookLogo",
+      "mode": "mono",
+      "color": "#0866FF",
+      "preserveFills": false,
+      "source": "thesvg.org (simple-icons format)"
+    },
+    {
+      "slug": "threads",
+      "title": "Threads",
+      "component": "ThreadsLogo",
+      "mode": "mono",
+      "color": "#000000",
+      "preserveFills": false,
+      "source": "thesvg.org (simple-icons format)"
+    },
+    {
+      "slug": "whatsapp",
+      "title": "WhatsApp",
+      "component": "WhatsAppLogo",
+      "mode": "mono",
+      "color": "#25D366",
+      "preserveFills": false,
+      "source": "thesvg.org (simple-icons format)"
+    },
+    {
+      "slug": "telegram",
+      "title": "Telegram",
+      "component": "TelegramLogo",
+      "mode": "mono",
+      "color": "#26A5E4",
+      "preserveFills": false,
+      "source": "thesvg.org (simple-icons format)"
+    },
+    {
+      "slug": "discord",
+      "title": "Discord",
+      "component": "DiscordLogo",
+      "mode": "mono",
+      "color": "#5865F2",
+      "preserveFills": false,
+      "source": "thesvg.org (simple-icons format)"
+    },
+    {
+      "slug": "slack",
+      "title": "Slack",
+      "component": "SlackLogo",
+      "mode": "mono",
+      "color": "#4A154B",
+      "preserveFills": false,
+      "source": "thesvg.org (simple-icons format)"
+    },
+    {
+      "slug": "mastodon",
+      "title": "Mastodon",
+      "component": "MastodonLogo",
+      "mode": "mono",
+      "color": "#6364FF",
+      "preserveFills": false,
+      "source": "thesvg.org (simple-icons format)"
+    },
+    {
+      "slug": "bluesky",
+      "title": "Bluesky",
+      "component": "BlueskyLogo",
+      "mode": "mono",
+      "color": "#1185FE",
+      "preserveFills": false,
+      "source": "thesvg.org (simple-icons format)"
+    },
+    {
+      "slug": "medium",
+      "title": "Medium",
+      "component": "MediumLogo",
+      "mode": "mono",
+      "color": "#000000",
+      "preserveFills": false,
+      "source": "thesvg.org (simple-icons format)"
+    },
+    {
+      "slug": "dribbble",
+      "title": "Dribbble",
+      "component": "DribbbleLogo",
+      "mode": "mono",
+      "color": "#EA4C89",
+      "preserveFills": false,
+      "source": "thesvg.org (simple-icons format)"
+    },
+    {
+      "slug": "behance",
+      "title": "Behance",
+      "component": "BehanceLogo",
+      "mode": "mono",
+      "color": "#1769FF",
+      "preserveFills": false,
+      "source": "thesvg.org (simple-icons format)"
+    },
+    {
+      "slug": "reddit",
+      "title": "Reddit",
+      "component": "RedditLogo",
+      "mode": "mono",
+      "color": "#FF4500",
+      "preserveFills": false,
+      "source": "thesvg.org (simple-icons format)"
+    }
+  ]
+}
