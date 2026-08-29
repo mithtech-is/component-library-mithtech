@@ -1,0 +1,455 @@
+/* ChatLauncher and AiHalo.
+
+   The design system's floating button is a solid papaya pill with white text
+   and a pulsing white dot. Filling with the brand colour is the one move the
+   system forbids ([[L11]]), so the launcher is the carved surface every other
+   control uses, with papaya as ink and a real lamp for presence ([[L25]]). */
+
+.td-react-chat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--td-sp-6);
+  max-width: calc(100vw - var(--td-sp-9) * 2);
+}
+/* Pinned is what a chat launcher is; the modifier carries it so the inline
+   form can opt out cleanly rather than by unsetting four properties. */
+.td-react-chat--pinned { position: fixed; bottom: var(--td-sp-9); z-index: 80; }
+.td-react-chat--pinned[data-side="end"] { inset-inline-end: var(--td-sp-9); }
+.td-react-chat--pinned[data-side="start"] { inset-inline-start: var(--td-sp-9); }
+.td-react-chat[data-side="start"] { align-items: flex-start; }
+
+/* ── the launcher ──────────────────────────────────────────────────────── */
+.td-react-chat-launcher {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--td-sp-5);
+  width: fit-content;
+  min-height: var(--td-btn-h, 42px);
+  padding: 0 var(--td-sp-8);
+  border: 0;
+  border-radius: var(--td-radius-pill, 999px);
+  cursor: pointer;
+  font-family: var(--td-font-ui);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--td-ink);
+  background: var(--td-raise-fill);
+  box-shadow:
+    4px 5px 12px color-mix(in srgb, var(--td-shadow-dark) 70%, transparent),
+    -4px -5px 12px color-mix(in srgb, var(--td-shadow-light) 66%, transparent),
+    inset 0 0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+  transition: box-shadow var(--td-t-base) var(--td-ease), color var(--td-t-base) var(--td-ease);
+}
+.td-react-chat-launcher--bare { padding: 0; width: var(--td-btn-h-lg, 50px); height: var(--td-btn-h-lg, 50px); justify-content: center; }
+.td-react-chat-launcher:hover {
+  color: var(--td-brand-text);
+  box-shadow:
+    5px 6px 15px color-mix(in srgb, var(--td-shadow-dark) 78%, transparent),
+    -4px -5px 12px color-mix(in srgb, var(--td-shadow-light) 74%, transparent),
+    inset 0 0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+}
+.td-react-chat-launcher:active {
+  color: var(--td-brand-text);
+  box-shadow:
+    0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    0 0 0 rgb(from var(--td-shadow-light) r g b / 0),
+    inset 3px 3px 7px color-mix(in srgb, var(--td-shadow-dark) 60%, transparent),
+    inset -2px -2px 5px color-mix(in srgb, var(--td-shadow-light) 40%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+.td-react-chat-launcher:focus-visible { outline: 2px solid var(--td-accent); outline-offset: 3px; }
+.td-react-chat-glyph { width: 1.15em; height: 1.15em; fill: currentColor; flex: 0 0 auto; }
+.td-react-chat-launcher-label { white-space: nowrap; }
+
+/* ── presence: a lens in a socket, never a coloured disc ([[L25]]) ─────── */
+.td-react-chat-lamp {
+  --td-lamp-glow: var(--td-green);
+  position: relative;
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--td-surface);
+  box-shadow:
+    inset 1.5px 1.5px 3px color-mix(in srgb, var(--td-shadow-dark) 62%, transparent),
+    inset -1.5px -1.5px 3px color-mix(in srgb, var(--td-shadow-light) 58%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+.td-react-chat-lamp::after {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  background: var(--td-lamp-glow);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--td-lamp-glow) 45%, transparent),
+    0 0 5px color-mix(in srgb, var(--td-lamp-glow) 55%, transparent);
+}
+.td-react-chat-lamp[data-presence="away"] { --td-lamp-glow: var(--td-warning); }
+/* Offline is grey glass: a dead filament has no hue at all. */
+.td-react-chat-lamp[data-presence="offline"] { --td-lamp-glow: color-mix(in srgb, var(--td-ink-3) 55%, var(--td-surface)); }
+
+/* ── the panel ─────────────────────────────────────────────────────────── */
+.td-react-chat-panel {
+  display: flex;
+  flex-direction: column;
+  width: min(360px, calc(100vw - var(--td-sp-9) * 2));
+  max-height: min(560px, calc(100vh - var(--td-sp-13) * 2));
+  border-radius: var(--td-radius-8);
+  background: var(--td-raise-fill);
+  box-shadow:
+    4px 5px 12px color-mix(in srgb, var(--td-shadow-dark) 70%, transparent),
+    -4px -5px 12px color-mix(in srgb, var(--td-shadow-light) 66%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+  transform-origin: bottom right;
+  animation: td-react-chat-open var(--td-t-slow) var(--td-ease) both;
+}
+/* `hidden` is honoured rather than overridden, so a closed panel is out of the
+   accessibility tree and out of in-page search. */
+.td-react-chat-panel[hidden] { display: none; }
+.td-react-chat[data-side="start"] .td-react-chat-panel { transform-origin: bottom left; }
+@keyframes td-react-chat-open {
+  from { opacity: 0; transform: translateY(8px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.td-react-chat-head {
+  display: flex;
+  align-items: center;
+  gap: var(--td-sp-5);
+  padding: var(--td-sp-6) var(--td-sp-7);
+  border-bottom: 1px solid var(--td-edge);
+  flex: 0 0 auto;
+}
+.td-react-chat-identity { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1 1 auto; }
+.td-react-chat-title { margin: 0; font-family: var(--td-font-ui); font-size: 0.86rem; font-weight: 600; color: var(--td-ink); }
+.td-react-chat-presence { margin: 0; font-family: var(--td-font-mono); font-size: 0.62rem; letter-spacing: 0.06em; color: var(--td-ink-3); }
+
+.td-react-chat-close {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  border: 0;
+  border-radius: var(--td-radius-3);
+  cursor: pointer;
+  color: var(--td-ink-3);
+  background: transparent;
+  box-shadow: var(--td-row-rest);
+  transition: color var(--td-t-base) var(--td-ease), background var(--td-t-base) var(--td-ease), box-shadow var(--td-t-base) var(--td-ease);
+}
+.td-react-chat-close:hover { color: var(--td-ink); background: var(--td-surface); box-shadow: var(--td-row-hover); }
+.td-react-chat-close:active { color: var(--td-ink); background: var(--td-surface); box-shadow: var(--td-row-press); }
+.td-react-chat-close:focus-visible { outline: 2px solid var(--td-accent); outline-offset: -2px; }
+.td-react-chat-close > svg { width: 0.85em; height: 0.85em; fill: currentColor; }
+
+/* The transcript is data, so it is recessed inside the raised panel ([[L32]]). */
+.td-react-chat-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  margin: var(--td-sp-5);
+  padding: var(--td-sp-6);
+  border-radius: var(--td-well-radius, 12px);
+  background: var(--td-surface);
+  box-shadow: var(--td-inset-soft);
+  font-family: var(--td-font-sans);
+  font-size: 0.79rem;
+  line-height: 1.6;
+  color: var(--td-ink-2);
+}
+.td-react-chat-footer { flex: 0 0 auto; padding: 0 var(--td-sp-5) var(--td-sp-5); }
+
+.td-react-visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── the AI halo ───────────────────────────────────────────────────────────
+   A light travelling round the control's edge. Light, not a fill: the control
+   underneath keeps its own carved surface and its own ladder, and the halo
+   sits BEHIND it in the same stacking context.
+
+   The colour is the two the system already owns, azure into papaya, so the
+   halo says "this one is different" without introducing a palette. It is the
+   one continuously moving thing the library ships, and it earns that by being
+   the signal itself rather than decoration on one. */
+/* THE HALO — a bead of light travelling the button's own edge.
+
+   It used to be a blurred conic gradient behind the control with
+   `transform: rotate()` on it. That does not read as a light going round a
+   button; it reads as a coloured smear turning, because the whole shape
+   rotates as one object and its bright part crosses the middle rather than
+   following the perimeter.
+
+   This is the edge itself. `padding` plus `mask-composite: exclude` carves a
+   band exactly `--td-ai-ring` thick out of a pseudo-element, so what gets
+   painted is a ring hugging the border radius — and rotating the conic
+   gradient INSIDE that ring moves a short arc around it. Nothing turns; the
+   light travels.
+
+   Three layers, and each one earns its place: the resting ring, the bead, and
+   the light the bead casts. `@property` is what makes the angle animatable at
+   all — a plain custom property is a string to the animation engine and would
+   step rather than sweep — and it INHERITS, so one animation on the wrapper
+   drives the bead and its cast together. Two animations would drift apart. */
+@property --td-ai-angle {
+  syntax: "<angle>";
+  inherits: true;
+  initial-value: 0deg;
+}
+
+.td-react-aihalo {
+  --td-ai-ring: 2.4px;
+  /* The colours the halo CASTS, as opposed to the ones it is made of: the same
+     two hues lifted toward white. A cast is never as saturated as the light
+     that threw it — matching the source's saturation reads as a second,
+     blurrier ring rather than as the ring's light falling on the page. */
+  --td-ai-cast-1: color-mix(in srgb, var(--td-brand) 62%, white);
+  --td-ai-cast-2: color-mix(in srgb, var(--td-accent) 56%, white);
+  position: relative;
+  display: inline-flex;
+  isolation: isolate;
+  /* The radius has to match the control being wrapped — CSS cannot read it off
+     the child, so the component states it. A pill radius around a 12px button
+     puts the ring off the corners entirely. */
+  border-radius: var(--td-ai-radius, 12px);
+}
+
+.td-react-aihalo::before,
+.td-react-aihalo::after,
+.td-react-aihalo-cast::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  padding: var(--td-ai-ring);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  transition: opacity var(--td-t-slow) var(--td-ease);
+}
+
+/* THE RESTING RING. Dim, still, and always there, so the control is marked as
+   an assistant before anyone touches it — a mark that only exists on hover
+   marks nothing to a reader who never hovers.
+
+   It is a HINT of the two colours, not the two colours. Painted at full
+   strength it is the same azure-into-papaya the bead is made of, and the bead
+   then has nothing to stand out against: what reads is a two-tone ring with a
+   slightly brighter patch travelling round it, which is not a light. The ring
+   is the mark; the bead is the event; only one of them may be saturated.
+
+   It does not brighten on hover either, for the same reason. */
+.td-react-aihalo::before {
+  background: linear-gradient(
+    120deg,
+    color-mix(in srgb, var(--td-accent) 30%, transparent),
+    color-mix(in srgb, var(--td-brand) 30%, transparent)
+  );
+  opacity: 0.5;
+}
+
+/* THE BEAD, AND ITS TAIL.
+
+   One bright head with a short trail behind it, in the two colours the system
+   already owns — azure fading up into papaya. The arc runs clockwise, so the
+   stops BELOW the head are the part that has already passed.
+
+   The tail is a QUARTER of a turn, not half. Spread across half the ring the
+   colour never falls to nothing, and what reads is a two-tone ring with a
+   bright spot on it rather than a light going round one. The head keeps a hot,
+   near-white core and a very short leading edge — a light with a soft front
+   and a soft back is a smudge travelling in both directions. */
+.td-react-aihalo::after {
+  background: conic-gradient(
+    from var(--td-ai-angle),
+    transparent 0turn 0.66turn,
+    color-mix(in srgb, var(--td-accent) 28%, transparent) 0.79turn,
+    var(--td-accent) 0.90turn,
+    var(--td-brand) 0.948turn,
+    color-mix(in srgb, var(--td-brand) 35%, white) 0.976turn,
+    transparent 1turn
+  );
+  opacity: 0;
+}
+
+/* THE CAST. The same ring, blurred by its PARENT so the mask lands first and
+   the glow keeps its shape, sitting behind the control so only what falls
+   outside the button is seen. This is the layer a `drop-shadow` could never
+   be: filters run before masks, so a shadow on the ring above was clipped by
+   that ring and thrown away. */
+.td-react-aihalo-cast {
+  position: absolute;
+  inset: -2px;
+  z-index: -1;
+  border-radius: inherit;
+  filter: blur(9px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--td-t-slow) var(--td-ease);
+}
+.td-react-aihalo-cast::before {
+  /* Wider than the ring it follows, and paler: a cast spreads. */
+  inset: -6px;
+  padding: 9px;
+  background: conic-gradient(
+    from var(--td-ai-angle),
+    transparent 0turn 0.70turn,
+    color-mix(in srgb, var(--td-ai-cast-2) 40%, transparent) 0.82turn,
+    var(--td-ai-cast-2) 0.91turn,
+    var(--td-ai-cast-1) 0.958turn,
+    transparent 0.995turn
+  );
+}
+
+/* It runs when the control is engaged with — hover, keyboard focus, press —
+   rather than forever. A perpetual animation in the corner of a page is a
+   thing readers learn to filter out, and the moment the mark actually has to
+   say something is the moment somebody reaches for the control.
+
+   The animation is on the WRAPPER, so the bead and its cast read the one
+   inherited angle. Driving them separately lets them drift apart, and a shadow
+   that lags its own light is worse than no shadow. */
+.td-react-aihalo[data-active="true"]:hover,
+.td-react-aihalo[data-active="true"]:focus-within {
+  animation: td-react-aihalo-travel var(--td-ai-speed, 3.2s) linear infinite;
+}
+.td-react-aihalo[data-active="true"]:hover::after,
+.td-react-aihalo[data-active="true"]:focus-within::after { opacity: 1; }
+.td-react-aihalo[data-active="true"]:hover .td-react-aihalo-cast,
+.td-react-aihalo[data-active="true"]:focus-within .td-react-aihalo-cast { opacity: 1; }
+/* Pressed, it runs at double the pace — the control is working, and the light
+   says so. Half the duration is exactly twice the pace. */
+.td-react-aihalo[data-active="true"]:active {
+  animation-duration: calc(var(--td-ai-speed, 3.2s) / 2);
+}
+
+@keyframes td-react-aihalo-travel {
+  to { --td-ai-angle: 1turn; }
+}
+
+@media (max-width: 480px) {
+  .td-react-chat { inset-inline: var(--td-sp-5); align-items: stretch; }
+  .td-react-chat-panel { width: 100%; }
+  .td-react-chat-launcher { align-self: flex-end; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* The bead stays, lit and still, at the top of the edge. A shine that merely
+     slows is the same shine. */
+  .td-react-aihalo[data-active="true"]:hover,
+  .td-react-aihalo[data-active="true"]:focus-within,
+  .td-react-aihalo[data-active="true"]:active { animation: none; }
+  .td-react-chat-panel { animation: none; }
+  .td-react-chat-launcher, .td-react-chat-close { transition: none; }
+}
+
+/* ── the launcher's four patterns ──────────────────────────────────────────
+   From what support widgets have converged on: a role label rather than a bare
+   bubble, an agent's face, a resolved unread count, and an opening line beside
+   the button. Each one is a separate prop because each answers a different
+   question — what is this, who answers, is anything waiting, and what would I
+   even say. */
+
+/* Pinned is what a chat launcher IS. Unpinned renders in normal flow, which is
+   the only way to show more than one at a time — while they all pin to the
+   same corner they sit on top of each other, and the variants are
+   indistinguishable. */
+.td-react-chat--inline {
+  display: inline-flex;
+  align-items: flex-start;
+  max-width: none;
+}
+
+/* The face. Separate from the glyph on purpose: a bubble says "this is a
+   conversation", a face says "this is a person". */
+.td-react-chat-avatar {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 1.7em;
+  height: 1.7em;
+  margin-inline-start: -0.35em;
+  overflow: hidden;
+  border-radius: 50%;
+  font-family: var(--td-font-display);
+  font-size: 0.8em;
+  color: var(--td-ink);
+  background: var(--td-surface);
+  box-shadow:
+    inset 1.5px 1.5px 3px color-mix(in srgb, var(--td-shadow-dark) 55%, transparent),
+    inset -1.5px -1.5px 3px color-mix(in srgb, var(--td-shadow-light) 50%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+.td-react-chat-avatar > img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* The count. Papaya as INK on a carved chip — a filled red disc is the one
+   move the system forbids, and a number is information rather than an alarm. */
+.td-react-chat-unread {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  min-width: 1.5em;
+  height: 1.5em;
+  padding: 0 0.4em;
+  border-radius: var(--td-radius-pill, 999px);
+  font-family: var(--td-font-mono);
+  font-size: 0.68em;
+  font-weight: 700;
+  color: var(--td-brand-text);
+  background: var(--td-surface);
+  box-shadow:
+    inset 1.5px 1.5px 3px color-mix(in srgb, var(--td-shadow-dark) 55%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 45%, transparent);
+}
+
+/* The opening line. A raised card beside the launcher, not a speech bubble with
+   a tail — the tail is decoration and the system does not draw one anywhere
+   else. */
+.td-react-chat-teaser {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--td-sp-4);
+  width: min(280px, calc(100vw - var(--td-sp-9) * 2));
+  padding: var(--td-sp-6);
+  border-radius: var(--td-radius-7);
+  background: var(--td-raise-fill);
+  box-shadow:
+    4px 5px 12px color-mix(in srgb, var(--td-shadow-dark) 70%, transparent),
+    -4px -5px 12px color-mix(in srgb, var(--td-shadow-light) 66%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+  animation: td-react-chat-teaser-in var(--td-t-slow) var(--td-ease) both;
+}
+.td-react-chat-teaser-text {
+  margin: 0;
+  min-width: 0;
+  flex: 1 1 auto;
+  font-family: var(--td-font-sans);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--td-ink-2);
+}
+@keyframes td-react-chat-teaser-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .td-react-chat-teaser { animation: none; }
+}

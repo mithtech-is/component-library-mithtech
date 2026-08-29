@@ -1,0 +1,88 @@
+/* MultiStep — a form in panes, with its own step indicator.
+
+   The bar is the same done / current / upcoming sequence Timeline draws, in a
+   segmented form. What carries the state is DEPTH: an upcoming segment is a
+   well, a done one is filled, and the current one is a well with the fill
+   growing in it. The fill is the only coloured thing, because a fraction of a
+   quantity is a measured value in the same way a chart series is. */
+
+.td-react-multistep { display: grid; gap: var(--td-sp-8); min-width: 0; }
+
+.td-react-multistep-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--td-sp-6);
+  margin: 0;
+  font-family: var(--td-font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--td-ink-2);
+}
+.td-react-multistep-meta strong { color: var(--td-ink); font-weight: 700; }
+.td-react-multistep-here { color: var(--td-brand-text); }
+
+.td-react-multistep-bar { display: flex; gap: var(--td-sp-4); min-width: 0; }
+.td-react-multistep-segment {
+  position: relative;
+  flex: 1 1 0;
+  height: 5px;
+  overflow: hidden;
+  border-radius: var(--td-radius-pill);
+  background: var(--td-surface);
+  /* Carved, not outlined. An upcoming step is a trough waiting to be filled. */
+  box-shadow:
+    inset 1.5px 1.5px 3px color-mix(in srgb, var(--td-shadow-dark) 54%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 44%, transparent);
+}
+.td-react-multistep-fill {
+  display: block;
+  height: 100%;
+  width: 100%;
+  border-radius: inherit;
+  transform: scaleX(0);
+  transform-origin: left center;
+  background: var(--td-brand);
+  transition: transform var(--td-t-slow) var(--td-ease);
+}
+.td-react-multistep-segment[data-state="current"] .td-react-multistep-fill { transform: scaleX(1); }
+/* Done is the settled colour — green reads as "this is behind you", papaya as
+   "this is where you are". */
+.td-react-multistep-segment[data-state="done"] .td-react-multistep-fill { transform: scaleX(1); background: var(--td-green); }
+
+/* The label is on the segment for a screen reader and off the screen for
+   everyone else: five words across a 5px bar is unreadable, but a progress bar
+   whose steps have no names is a row of anonymous stripes. */
+.td-react-multistep-vh {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.td-react-multistep-pane { display: grid; gap: var(--td-sp-5); min-width: 0; }
+.td-react-multistep-title {
+  margin: 0;
+  font-family: var(--td-font-ui);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--td-ink);
+}
+.td-react-multistep-description {
+  margin: 0;
+  max-width: 62ch;
+  font-family: var(--td-font-sans);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--td-ink-2);
+}
+.td-react-multistep-actions { display: flex; justify-content: flex-end; gap: var(--td-sp-5); }
+
+@media (prefers-reduced-motion: reduce) {
+  .td-react-multistep-fill { transition: none; }
+}

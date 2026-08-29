@@ -1,0 +1,21 @@
+/* ConfirmButton — Button, plus one state.
+
+   Almost nothing here: the armed form IS `Button variant="destructive"`, so the
+   fill, the ladder and the lamp all come from the button. What this file adds
+   is that the width does not jump when the label changes, because a control
+   that resizes under the pointer moves the target the reader is aiming at. */
+
+.td-react-confirm {
+  /* The rest and armed labels differ in length, so the button is sized to hold
+     the longer of the two rather than to its current text. */
+  min-width: max-content;
+  transition: min-width var(--td-t-base) var(--td-ease), background var(--td-t-base) var(--td-ease), box-shadow var(--td-t-base) var(--td-ease);
+}
+/* Armed is a real state and says so beyond the word: the label steps up in
+   weight and the tracking opens, so it reads as urgent at a glance rather than
+   only on reading. Colour is already carried by the destructive variant. */
+.td-react-confirm--armed { font-weight: 700; letter-spacing: 0.03em; }
+
+@media (prefers-reduced-motion: reduce) {
+  .td-react-confirm { transition: none; }
+}

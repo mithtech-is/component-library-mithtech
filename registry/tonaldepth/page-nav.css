@@ -1,0 +1,128 @@
+/* page-nav — self-contained. Requires @tonaldepth/tokens.
+
+   A registry consumer has no `tonaldepth-core`, so every class is declared
+   here rather than compounded against a copy that is not there.
+
+   Original note: the secondary header.
+
+   A raised bar under the main one, carrying the segmented-control grammar the
+   design system's own top bar uses: the tab group lifts off the bar as ONE
+   piece and the current tab is a well pressed into it. That pairing is what
+   makes a row of links read as one control with a position in it, rather than
+   as five buttons that happen to be adjacent. */
+
+.td-registry-pagenav {
+  display: flex;
+  align-items: center;
+  gap: var(--td-sp-7);
+  min-width: 0;
+  width: 100%;
+  padding: var(--td-sp-4) var(--td-sp-6);
+  border-radius: var(--td-radius-7);
+  background: var(--td-raise-fill);
+  box-shadow:
+    4px 5px 12px color-mix(in srgb, var(--td-shadow-dark) 70%, transparent),
+    -4px -5px 12px color-mix(in srgb, var(--td-shadow-light) 66%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+}
+
+/* Stacked under the main header. `--nav-offset` is published by
+   SiteNavigation, so neither bar has to know the other's height and a
+   retracting header does not drag this out of place. */
+.td-registry-pagenav--sticky {
+  position: sticky;
+  top: calc(var(--nav-offset, 0px) + var(--td-sp-4));
+  z-index: 48;
+}
+
+.td-registry-pagenav-identity { display: flex; flex-direction: column; gap: 1px; min-width: 0; padding-inline-start: var(--td-sp-4); }
+.td-registry-pagenav-eyebrow {
+  margin: 0;
+  font-family: var(--td-font-mono);
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--td-ink-3);
+}
+.td-registry-pagenav-title { margin: 0; font-family: var(--td-font-ui); font-size: 0.88rem; font-weight: 600; color: var(--td-ink); white-space: nowrap; }
+
+/* The scroller. `min-width: 0` because an overflow-x element inside a flex
+   container sizes to its content otherwise and spills the bar open. */
+.td-registry-pagenav-scroll {
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow-x: auto;
+  scrollbar-width: none;
+  /* Cut, not ended: the row fades at the edges so nothing reads as the last
+     tab when there are more of them out of sight. */
+  mask-image: linear-gradient(to right, transparent 0, #000 12px, #000 calc(100% - 12px), transparent 100%);
+}
+.td-registry-pagenav-scroll::-webkit-scrollbar { display: none; }
+
+/* The group is one raised piece. */
+.td-registry-pagenav-tabs {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  width: max-content;
+  border-radius: var(--td-radius-5);
+  background: var(--td-raise-fill);
+  box-shadow:
+    2px 2px 6px color-mix(in srgb, var(--td-shadow-dark) 44%, transparent),
+    -2px -2px 6px color-mix(in srgb, var(--td-shadow-light) 46%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+}
+.td-registry-pagenav-slot { display: contents; }
+
+.td-registry-pagenav-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--td-sp-4);
+  flex: 0 0 auto;
+  padding: var(--td-sp-4) var(--td-sp-6);
+  border-radius: var(--td-radius-3);
+  font-family: var(--td-font-ui);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--td-ink-2);
+  text-decoration: none;
+  white-space: nowrap;
+  background: transparent;
+  box-shadow: var(--td-row-rest);
+  transition: color var(--td-t-base) var(--td-ease), background var(--td-t-base) var(--td-ease), box-shadow var(--td-t-base) var(--td-ease);
+}
+a.td-registry-pagenav-tab:hover { color: var(--td-ink); background: var(--td-surface); box-shadow: var(--td-row-hover); }
+a.td-registry-pagenav-tab:active { color: var(--td-ink); background: var(--td-surface); box-shadow: var(--td-row-press); }
+/* The section being read: a well pressed into the group, papaya as ink. */
+.td-registry-pagenav-tab[aria-current="page"] {
+  color: var(--td-brand-text);
+  background: var(--td-surface);
+  box-shadow: var(--td-row-selected);
+}
+.td-registry-pagenav-tab[aria-disabled="true"] { opacity: 0.45; cursor: not-allowed; }
+.td-registry-pagenav-tab:focus-visible { outline: 2px solid var(--td-accent); outline-offset: -2px; }
+
+/* The label takes the room; the count keeps its own. */
+.td-registry-pagenav-tab-label { min-width: 0; }
+
+.td-registry-pagenav-actions { display: flex; align-items: center; gap: var(--td-sp-5); flex: 0 0 auto; }
+
+@media (max-width: 720px) {
+  /* The identity goes before the tabs do. On a phone the reader already knows
+     what page they are on — they arrived at it — and the tabs are the part
+     that has to stay reachable. */
+  .td-registry-pagenav { gap: var(--td-sp-5); padding: var(--td-sp-4); }
+  .td-registry-pagenav-identity { display: none; }
+  .td-registry-pagenav-tab { padding: var(--td-sp-4) var(--td-sp-5); font-size: 0.74rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .td-registry-pagenav-tab { transition: none; }
+}
+
+/* ── the base layer, re-declared ───────────────────────────────────────────
+   A registry consumer has no `tonaldepth-core`. */
+.td-chip-count { font-family: var(--td-font-mono); font-size: 0.62rem; color: var(--td-ink-3); flex: 0 0 auto; }

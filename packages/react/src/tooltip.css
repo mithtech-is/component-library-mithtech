@@ -1,0 +1,41 @@
+/* Tooltip — the hint is the design system's `.td-tooltip`. Only the peek
+   variant is scoped here.
+
+   A peek is the same mechanism as a hint with a different job: a hint explains
+   a control, a peek previews a record so the reader can decide whether the jump
+   is worth it. So it is wider, it lays out inside, and its trigger is marked as
+   a reference rather than left looking like a plain link. */
+
+/* The reference gets a dotted underline: the reader has to be able to tell
+   that pointing at this word will show them something, and an ordinary link
+   underline promises navigation instead. */
+.td-react-peek-wrap > :first-child {
+  text-decoration: underline dotted from-font;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--td-ink-3);
+  cursor: help;
+}
+.td-react-peek-wrap > :first-child:hover { text-decoration-color: var(--td-brand-text); }
+
+.td-react-peek {
+  width: max-content;
+  max-width: min(300px, 80vw);
+  padding: var(--td-sp-7);
+  border-radius: var(--td-radius-7);
+  /* Carved, like every other floating surface. Being above the page is a
+     z-order fact, not a material one ([[L26]]), so the highlight never
+     out-weighs the shade it answers. */
+  background: var(--td-raise-fill);
+  box-shadow:
+    3px 3px 12px color-mix(in srgb, var(--td-shadow-dark) 72%, transparent),
+    -3px -3px 12px color-mix(in srgb, var(--td-shadow-light) 60%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+  font-family: var(--td-font-sans);
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: left;
+  /* A hint sets its own text as one nowrap line; a card has to wrap. */
+  white-space: normal;
+  color: var(--td-ink);
+}

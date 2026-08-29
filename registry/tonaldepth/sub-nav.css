@@ -1,0 +1,77 @@
+/* TonalDepth SubNav — self-contained. Requires @tonaldepth/tokens.
+
+   The rows are `.td-sb-*`, copied verbatim from the design system
+   (packages/core/src/compat.css) because a registry consumer has no
+   `tonaldepth-core` to inherit them from. The deltas after them add the
+   standalone plate, the icon column and the row ladder. */
+
+.td-sb-section { display: flex; flex-direction: column; gap: 2px; }
+.td-sb-label { font-family: var(--td-font-mono); font-size: 10.5px; color: var(--td-ink-3); letter-spacing: 0.08em; text-transform: uppercase; padding: 8px 8px 4px; font-weight: 700; }
+.td-sb-item { display: flex; align-items: center; gap: 10px; padding: 7px 10px; border-radius: 8px; color: var(--td-ink-2); font-family: var(--td-font-ui); font-size: 12.5px; font-weight: 600; cursor: pointer; text-decoration: none; transition: background var(--td-t-fast) var(--td-ease), color var(--td-t-fast) var(--td-ease); }
+.td-sb-item:hover { color: var(--td-ink); background: var(--td-surface); }
+.td-sb-item:active { background: var(--td-surface); }
+.td-sb-item[aria-current="page"] { color: var(--td-brand-text); background: var(--td-surface); }
+.td-sb-item-count { margin-left: auto; font-family: var(--td-font-mono); font-size: 10px; color: var(--td-ink-3); }
+
+/* SubNav — the grouped link list, standalone.
+
+   The rows themselves are `.td-sb-item`, which the design system already owns
+   and which ApplicationShell has always used. Everything here is the standalone
+   framing plus the icon column the shell's own sidebar never had. */
+
+.td-registry-subnav { display: grid; gap: var(--td-sp-7); min-width: 0; }
+/* The standalone form gets the plate; inside a shell the sidebar IS the plate,
+   so nesting a second one would be chrome inside chrome ([[L32]]). */
+.td-registry-subnav--plate {
+  padding: var(--td-sp-8);
+  border-radius: var(--td-radius-9);
+  background: var(--td-raise-fill);
+  box-shadow:
+    3px 3px 12px color-mix(in srgb, var(--td-shadow-dark) 70%, transparent),
+    -3px -3px 12px color-mix(in srgb, var(--td-shadow-light) 66%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+}
+.td-registry-subnav-section { display: grid; gap: 2px; min-width: 0; }
+.td-registry-subnav-slot { display: contents; }
+
+.td-registry-subnav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--td-sp-6);
+  min-width: 0;
+}
+.td-registry-subnav-icon {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  font-size: 15px;
+  color: var(--td-ink-3);
+  transition: color var(--td-t-base) var(--td-ease);
+}
+.td-registry-subnav-label {
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* A row presses. It does not tint — being pointed at is not a category, and a
+   wash there spends the one signal the system reserves for meaning ([[L34]]).
+   The tokens carry absolute values in dark, where a colour-mix against a near
+   black surface produces nothing. */
+.td-registry-subnav-item { box-shadow: var(--td-row-rest); transition: box-shadow var(--td-t-base) var(--td-ease), color var(--td-t-base) var(--td-ease); }
+.td-registry-subnav-item:hover { box-shadow: var(--td-row-hover); }
+.td-registry-subnav-item:active { box-shadow: var(--td-row-press); }
+/* Selected rests recessed and says so in papaya INK, never an orange fill. */
+.td-registry-subnav-item[aria-current="page"] {
+  box-shadow: var(--td-row-selected);
+  color: var(--td-brand-text);
+}
+.td-registry-subnav-item[aria-current="page"] .td-registry-subnav-icon { color: var(--td-brand-text); }
+.td-registry-subnav-item:hover .td-registry-subnav-icon { color: var(--td-ink-2); }
+
+@media (prefers-reduced-motion: reduce) {
+  .td-registry-subnav-item, .td-registry-subnav-icon { transition: none; }
+}

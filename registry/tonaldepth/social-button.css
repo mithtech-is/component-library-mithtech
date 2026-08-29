@@ -1,0 +1,169 @@
+/* SocialButton — a social link as its own logo.
+
+   The housing carries the platform's colour and the mark sits on it in white,
+   so the button is recognised before it is read. That is the one fill the
+   system allows, and only because the colour is the content: the rule against
+   brand fills ([[L11]]) protects OUR papaya from being spent on decoration,
+   and none of these are ours.
+
+   Everything else is the ordinary control. Same carve, same ladder, same
+   press — a row of these belongs to the page rather than sitting on top of
+   it, which is what separates this from a strip of pasted-in logos. */
+
+.td-registry-social {
+  /* Resolved per theme below, so the ladder rules can be written once. */
+  --td-social-c: var(--td-social-color);
+  --td-social-i: var(--td-social-ink);
+
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+  /* The glow stays inside the housing. A `drop-shadow` is painted around the
+     glyph with no regard for the button's edge, so without this the bloom
+     spills onto the page and reads as the button leaking light rather than
+     holding a lamp. `overflow` clips descendants, never the element's own
+     box-shadow, so the carve is unaffected. */
+  overflow: hidden;
+  color: var(--td-social-i);
+  background: var(--td-social-c);
+  /* FIVE SLOTS, in one order, at every rung of the ladder — cast, highlight,
+     inset shade, inset highlight, edge ring. A state with a different slot
+     count snaps instead of interpolating ([[L18]]), which is what the copied
+     `.td-coloured` ladder did: three slots at rest and two on press, so the
+     press arrived all at once. Slots that are unlit at a given rung are
+     declared at zero alpha in their own colour rather than as `transparent`
+     ([[L20]]).
+
+     The ring is here rather than exempted. `.td-coloured` is excused it
+     because the warm `--td-shadow-*` tokens wash out on saturated colour — but
+     a black 1px hairline does not, and a chip this saturated wants its edge
+     held crisp against a pale page. */
+  box-shadow:
+    3px 3px 8px color-mix(in srgb, var(--td-shadow-dark) 48%, transparent),
+    -3px -3px 8px color-mix(in srgb, var(--td-shadow-light) 50%, transparent),
+    inset 0 0 0 rgb(0 0 0 / 0),
+    inset 0 1px 0 rgb(255 255 255 / 0.22),
+    0 0 0 1px rgb(0 0 0 / 0.10);
+  transition:
+    box-shadow var(--td-t-base) var(--td-ease),
+    background var(--td-t-base) var(--td-ease),
+    color var(--td-t-base) var(--td-ease);
+}
+
+/* A pure-black mark is a hole on a dark page, so those four swap to the white
+   housing their owners publish. Both themes are declared — an explicit
+   `[data-theme]` and the system default — because a toggle has to beat the
+   media query in both directions. */
+[data-theme="dark"] .td-registry-social {
+  --td-social-c: var(--td-social-color-dark);
+  --td-social-i: var(--td-social-ink-dark);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .td-registry-social {
+    --td-social-c: var(--td-social-color-dark);
+    --td-social-i: var(--td-social-ink-dark);
+  }
+}
+
+/* Square, at the exact heights `Button` uses at each size — 34 / 42 / 50 — so
+   an email button and a row of these line up on one baseline in a card's
+   action row rather than missing it by two pixels. */
+.td-registry-social--sm { width: 34px; height: 34px; border-radius: 10px; }
+.td-registry-social--md { width: var(--td-btn-h, 42px); height: var(--td-btn-h, 42px); border-radius: var(--td-radius-6); }
+.td-registry-social--lg { width: var(--td-btn-h-lg, 50px); height: var(--td-btn-h-lg, 50px); border-radius: var(--td-radius-7); }
+
+/* THE MARK IS A LAMP.
+
+   Not the state-carrying kind an `IconButton`'s glyph is — a trademark must
+   not change colour — but it lights: unlit at rest, a soft bloom on hover, a
+   solid core and a wide halo on press. Same three rungs and the same
+   `--td-lamp-*` tokens every other lamp in the system rides, so a row of these
+   presses like everything around it.
+
+   Rest is two EXPLICIT zero shadows rather than `none`: a state with a
+   different shadow count snaps instead of interpolating ([[L18]]), which is
+   what made press look identical to hover everywhere this was got wrong. */
+.td-registry-social-mark {
+  width: 45%;
+  height: 45%;
+  display: block;
+  fill: currentColor;
+  filter: var(--td-lamp-off);
+  transition: transform var(--td-t-slow) var(--td-ease), filter var(--td-t-base) var(--td-ease);
+}
+/* White on a saturated housing; the platform's own colour on the carved one,
+   where white would be a hole. */
+.td-registry-social { --td-lamp-glow: #fff; }
+.td-registry-social--surface { --td-lamp-glow: var(--td-social-c); }
+.td-registry-social:hover .td-registry-social-mark { filter: var(--td-lamp-hover); }
+.td-registry-social:active .td-registry-social-mark { filter: var(--td-lamp-active); }
+.td-registry-social:disabled .td-registry-social-mark { filter: var(--td-lamp-off); }
+
+.td-registry-social:hover {
+  background: color-mix(in srgb, var(--td-social-c) 90%, white);
+  box-shadow:
+    4px 4px 10px color-mix(in srgb, var(--td-shadow-dark) 52%, transparent),
+    -3px -3px 8px color-mix(in srgb, var(--td-shadow-light) 55%, transparent),
+    inset 0 0 0 rgb(0 0 0 / 0),
+    inset 0 1px 0 rgb(255 255 255 / 0.28),
+    0 0 0 1px rgb(0 0 0 / 0.10);
+}
+/* Pressed, the housing is pushed into the page and the mark travels with it —
+   the same 1px the filled button's label moves, so the whole family presses
+   alike. */
+.td-registry-social:active {
+  background: color-mix(in srgb, var(--td-social-c) 88%, black);
+  box-shadow:
+    0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    0 0 0 rgb(from var(--td-shadow-light) r g b / 0),
+    inset 2px 2px 6px rgb(0 0 0 / 0.5),
+    inset -2px -2px 5px rgb(255 255 255 / 0.10),
+    0 0 0 1px rgb(0 0 0 / 0.14);
+}
+.td-registry-social:active .td-registry-social-mark { transform: translate(1px, 1px); }
+.td-registry-social:focus-visible { outline: 2px solid var(--td-accent); outline-offset: 3px; }
+.td-registry-social:disabled { cursor: not-allowed; opacity: 0.55; }
+
+/* The quiet half. The carved surface every other control uses, with the mark
+   in the platform's colour rather than the housing — for a footer row long
+   enough that a dozen saturated chips would out-shout the page. The colour
+   still arrives on hover, so recognition is one glance away rather than gone. */
+.td-registry-social--surface {
+  color: var(--td-ink-3);
+  background: var(--td-raise-fill);
+  box-shadow:
+    3px 3px 8px color-mix(in srgb, var(--td-shadow-dark) 62%, transparent),
+    -3px -3px 8px color-mix(in srgb, var(--td-shadow-light) 70%, transparent),
+    inset 0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+}
+.td-registry-social--surface:hover {
+  color: var(--td-social-c);
+  background: var(--td-raise-fill-hover);
+  box-shadow:
+    4px 4px 10px color-mix(in srgb, var(--td-shadow-dark) 66%, transparent),
+    -3px -3px 8px color-mix(in srgb, var(--td-shadow-light) 76%, transparent),
+    inset 0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+}
+.td-registry-social--surface:active {
+  color: var(--td-social-c);
+  background: var(--td-raise-fill);
+  box-shadow:
+    0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    0 0 0 rgb(from var(--td-shadow-light) r g b / 0),
+    inset 2px 2px 5px color-mix(in srgb, var(--td-shadow-dark) 65%, transparent),
+    inset -2px -2px 5px color-mix(in srgb, var(--td-shadow-light) 92%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .td-registry-social, .td-registry-social-mark { transition: none; }
+}

@@ -1,0 +1,35 @@
+/* ReadingProgress — the one bar in the system that is not carved.
+
+   Every other meter is a well with a fill in it. This one is a 2px line lying
+   on top of the viewport with no track behind it, and that is deliberate: a
+   carved trough drawn across the top of every page is a permanent horizontal
+   rule the reader has to look past. The bar exists only where it has something
+   to report, and the unfilled part of it is simply the page. */
+
+.td-react-readingprogress {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: var(--td-readingprogress-h, 2px);
+  z-index: 80;
+  /* It reports; it is not operated. Without this it would eat clicks on
+     anything the site puts in the top 2px — a skip link, a promo bar. */
+  pointer-events: none;
+  background: transparent;
+}
+.td-react-readingprogress-bar {
+  height: 100%;
+  width: var(--td-readingprogress-pct, 0%);
+  background: var(--td-readingprogress-ink, var(--td-brand));
+  transition: width var(--td-t-fast) var(--td-ease-linear, linear);
+}
+.td-react-readingprogress--brand { --td-readingprogress-ink: var(--td-brand); }
+.td-react-readingprogress--accent { --td-readingprogress-ink: var(--td-accent); }
+.td-react-readingprogress--green { --td-readingprogress-ink: var(--td-green); }
+.td-react-readingprogress--error { --td-readingprogress-ink: var(--td-error); }
+
+/* The width is already driven by the scroll position, so the transition is only
+   smoothing between two rAF samples. Someone who has asked for less motion
+   still wants the bar — they just want it to track exactly. */
+@media (prefers-reduced-motion: reduce) {
+  .td-react-readingprogress-bar { transition: none; }
+}

@@ -1,0 +1,115 @@
+/* WhatsAppForm — the enquiry that leaves in the reader's own hands.
+
+   The form itself is ordinary: library fields, library dialog, nothing drawn
+   here that already exists. What this file owns is the two-up row, the seam
+   between the required half and the optional half, and the note about the
+   captured page. */
+
+.td-react-wa { display: contents; }
+
+.td-react-wa-form {
+  display: grid;
+  gap: var(--td-sp-7);
+  min-width: 0;
+}
+
+/* Two to a line where the pair is genuinely one thought — who you are and how
+   to reach you. Collapses on a narrow panel rather than squeezing, because a
+   phone field at half a phone's width is a field nobody can read back. */
+.td-react-wa-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--td-sp-7);
+  min-width: 0;
+}
+@media (max-width: 520px) {
+  .td-react-wa-row { grid-template-columns: 1fr; }
+}
+
+/* The seam between what is required and what is not — carved, like every other
+   boundary in the system ([[L03]]), and inset so it reads as a groove in the
+   panel rather than a rule cutting it in two. */
+.td-react-wa-aside {
+  position: relative;
+  margin: var(--td-sp-2) 0 0;
+  padding-top: var(--td-sp-7);
+  font-family: var(--td-font-ui);
+  font-size: 0.72rem;
+  color: var(--td-ink-3);
+}
+.td-react-wa-aside::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 1px;
+  background: color-mix(in srgb, var(--td-shadow-dark) 55%, transparent);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--td-shadow-light) 55%, transparent);
+}
+
+.td-react-wa-page {
+  margin: 0;
+  font-family: var(--td-font-ui);
+  font-size: 0.68rem;
+  color: var(--td-ink-3);
+}
+
+/* The native select, carved to match `Input` rather than borrowing the design
+   system's `.td-select-wrap`. A registry item is one self-contained file plus
+   its stylesheet — a class it emits but does not define is a control that
+   arrives unstyled in somebody else's project.
+
+   The chevron is drawn with borders rather than an SVG: a background image
+   would need a data URI per theme, and a glyph would make this the one
+   component that draws its own. */
+.td-react-wa-select {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+  border-radius: var(--td-radius-5);
+  background: color-mix(in srgb, var(--td-surface) 88%, black);
+  border: 1px solid color-mix(in srgb, var(--td-surface) 76%, black);
+  /* The focus ring is a third slot, declared unlit so the two states
+     interpolate rather than snap ([[L18]]), in the ring's own colour at zero
+     alpha rather than `transparent` ([[L20]]). Same three slots `Input` uses,
+     because this sits in a row with them. */
+  box-shadow:
+    inset 2px 2px 4px color-mix(in srgb, var(--td-shadow-dark) 60%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 50%, transparent),
+    0 0 0 1.5px rgb(from var(--td-accent) r g b / 0);
+  transition: box-shadow var(--td-t-base) var(--td-ease), border-color var(--td-t-base) var(--td-ease);
+}
+.td-react-wa-select:hover { border-color: color-mix(in srgb, var(--td-surface) 68%, black); }
+.td-react-wa-select:focus-within {
+  border-color: color-mix(in srgb, var(--td-accent) 70%, var(--td-btn-border-rest));
+  box-shadow:
+    inset 2px 2px 4px color-mix(in srgb, var(--td-shadow-dark) 60%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 50%, transparent),
+    0 0 0 1.5px color-mix(in srgb, var(--td-accent) 16%, transparent);
+}
+.td-react-wa-select::after {
+  content: "";
+  position: absolute;
+  inset-inline-end: var(--td-sp-6);
+  width: 7px;
+  height: 7px;
+  border-right: 1.6px solid var(--td-ink-3);
+  border-bottom: 1.6px solid var(--td-ink-3);
+  transform: translateY(-2px) rotate(45deg);
+  pointer-events: none;
+}
+.td-react-wa-native {
+  appearance: none;
+  width: 100%;
+  min-width: 0;
+  padding: var(--td-sp-5) calc(var(--td-sp-6) + 18px) var(--td-sp-5) var(--td-sp-6);
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font-family: var(--td-font-ui);
+  font-size: 0.8rem;
+  color: var(--td-ink);
+  cursor: pointer;
+}

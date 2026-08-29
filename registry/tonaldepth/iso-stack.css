@@ -1,0 +1,118 @@
+/* IsoStack — a deck seen at an angle.
+
+   The rotation lives on the SLOT and the depth on the card inside it, because
+   a rotated element's box-shadow rotates with it and the light stops coming
+   from one place. Two elements keeps the shade and the highlight vertical
+   while the card itself is tilted. */
+
+.td-registry-isostack {
+  position: relative;
+  display: grid;
+  /* Every card in the same cell: the deck is one object, not a row. */
+  grid-template-areas: "deck";
+  place-items: center;
+  min-height: 190px;
+  /* The fan reaches 156px either side of centre, so the inline padding is what
+     keeps the outermost card inside whatever holds the deck. */
+  padding: var(--td-sp-8) var(--td-sp-13);
+  perspective: 900px;
+}
+.td-registry-isostack-slot {
+  grid-area: deck;
+  transition: transform var(--td-t-slow) var(--td-ease);
+}
+.td-registry-isostack-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--td-sp-3);
+  width: 210px;
+  min-height: 128px;
+  padding: var(--td-sp-8);
+  border-radius: var(--td-radius-8);
+  text-decoration: none;
+  color: inherit;
+  background: var(--td-raise-fill);
+  box-shadow:
+    3px 3px 12px color-mix(in srgb, var(--td-shadow-dark) 70%, transparent),
+    -3px -3px 12px color-mix(in srgb, var(--td-shadow-light) 66%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+}
+/* Front to back: the first card in source order is the one on top, so a reader
+   scanning the DOM reads the deck in the order they see it. */
+.td-registry-isostack-slot:nth-child(1) { transform: translate(-14px, 8px) rotate(-6deg); z-index: 3; }
+.td-registry-isostack-slot:nth-child(2) { transform: translate(0, 0) rotate(0deg); z-index: 2; }
+.td-registry-isostack-slot:nth-child(3) { transform: translate(14px, -8px) rotate(6deg); z-index: 1; }
+.td-registry-isostack-slot:nth-child(n+4) { transform: translate(28px, -16px) rotate(11deg); z-index: 0; }
+
+/* THE FAN. Wide enough that each card has a strip of itself nobody else is
+   standing on — at 124px the cards still covered each other's titles, so the
+   deck opened and the middle card was as unreachable as before. A card is
+   210px, so the centres are 156px apart: they overlap, which keeps it a deck
+   rather than a row, but every one of them has a face to point at. */
+.td-registry-isostack:hover .td-registry-isostack-slot:nth-child(1),
+.td-registry-isostack:focus-within .td-registry-isostack-slot:nth-child(1) { transform: translate(-156px, 14px) rotate(-9deg); }
+.td-registry-isostack:hover .td-registry-isostack-slot:nth-child(3),
+.td-registry-isostack:focus-within .td-registry-isostack-slot:nth-child(3) { transform: translate(156px, -14px) rotate(9deg); }
+.td-registry-isostack:hover .td-registry-isostack-slot:nth-child(n+4),
+.td-registry-isostack:focus-within .td-registry-isostack-slot:nth-child(n+4) { transform: translate(300px, -26px) rotate(13deg); }
+
+/* THE PICKED CARD COMES TO THE FRONT.
+
+   Without this the stacking order is source order for good — so pointing at
+   the middle card left it underneath the two beside it, and the reader was
+   hovering something they still could not read. A deck you can open but not
+   pick from is a picture of a deck.
+
+   The z-index is on the SLOT, because that is the grid item; the lift and the
+   deeper shadow are on the CARD, so they ride the slot's rotation instead of
+   fighting it. */
+.td-registry-isostack-slot:hover,
+.td-registry-isostack-slot:focus-within { z-index: 5; }
+.td-registry-isostack-card {
+  transition: transform var(--td-t-base) var(--td-ease), box-shadow var(--td-t-base) var(--td-ease);
+}
+.td-registry-isostack-card:hover,
+.td-registry-isostack-card:focus-visible {
+  transform: translateY(-6px);
+  box-shadow:
+    5px 7px 18px color-mix(in srgb, var(--td-shadow-dark) 78%, transparent),
+    -4px -4px 14px color-mix(in srgb, var(--td-shadow-light) 72%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+}
+
+/* `:focus-within` on the deck is what makes the fan reachable from the
+   keyboard: tabbing to a buried card opens the deck instead of moving focus to
+   something the reader cannot see. */
+.td-registry-isostack-card:focus-visible { outline: 2px solid var(--td-accent); outline-offset: 3px; }
+
+.td-registry-isostack-eyebrow {
+  font-family: var(--td-font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--td-ink-3);
+}
+.td-registry-isostack-title {
+  font-family: var(--td-font-ui);
+  font-size: 18px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  color: var(--td-ink);
+}
+.td-registry-isostack-description {
+  font-family: var(--td-font-sans);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--td-ink-2);
+}
+
+/* The fan is the affordance, and someone who has asked for less motion still
+   needs to reach the buried cards — so the deck opens, it just does not
+   animate on the way. */
+@media (prefers-reduced-motion: reduce) {
+  .td-registry-isostack-slot, .td-registry-isostack-card { transition: none; }
+}

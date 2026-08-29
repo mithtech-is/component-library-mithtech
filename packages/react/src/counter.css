@@ -1,0 +1,54 @@
+/* Counter — a statistic at display size, with no plate under it.
+
+   KpiCard is the same pair on a raised card, because in a dashboard a metric is
+   one object among many and the plate is what separates them. On a marketing
+   page there is nothing to separate it from: the number IS the section, so a
+   card around it only adds an edge to read past. */
+
+.td-react-counter {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--td-sp-3);
+  font-family: var(--td-font-ui);
+  line-height: 1;
+}
+.td-react-counter-value {
+  display: inline-flex;
+  align-items: baseline;
+  font-size: 48px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--td-ink);
+  /* Every digit the same width, or the label under a counting number shifts on
+     every frame — the one thing that makes a count-up read as broken. */
+  font-variant-numeric: tabular-nums;
+}
+/* The unit is the only coloured thing here, and it is ink rather than a fill:
+   colour is category, and "this number is a percentage" is a category. */
+.td-react-counter-suffix {
+  margin-left: var(--td-sp-2);
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--td-brand-text);
+}
+.td-react-counter-label {
+  font-family: var(--td-font-mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--td-ink-2);
+}
+
+.td-react-counter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--td-sp-9) var(--td-sp-11);
+  align-items: flex-start;
+}
+
+@media (max-width: 640px) {
+  .td-react-counter-value { font-size: 36px; }
+  .td-react-counter-suffix { font-size: 19px; }
+}

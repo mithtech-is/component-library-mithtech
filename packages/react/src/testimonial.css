@@ -1,0 +1,106 @@
+/* Testimonial — a raised plate carrying a quote and the person behind it.
+
+   The quote mark is a drawn glyph rather than a typed character: at 54px it is
+   furniture, and furniture that sits in the text would be read aloud by a
+   screen reader as a stray punctuation mark. */
+
+.td-react-testimonial {
+  display: flex;
+  flex-direction: column;
+  gap: var(--td-sp-7);
+  margin: 0;
+  position: relative;
+  min-width: 0;
+  padding: var(--td-sp-9);
+  border-radius: var(--td-radius-9);
+  background: var(--td-raise-fill);
+  /* Five slots, the plate recipe: shade, highlight, the veil, the ring. All
+     four sides have to read on paper, where the fill is the page colour and
+     only the shadow separates the card from it ([[L27]]). */
+  box-shadow:
+    3px 3px 12px color-mix(in srgb, var(--td-shadow-dark) 70%, transparent),
+    -3px -3px 12px color-mix(in srgb, var(--td-shadow-light) 66%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+}
+.td-react-testimonial::before {
+  content: "\201C";
+  position: absolute;
+  top: 2px;
+  left: var(--td-sp-7);
+  font-family: var(--td-font-display);
+  font-size: 54px;
+  line-height: 1;
+  /* Ink at low alpha, not a tint of the brand: this is a watermark, and a
+     papaya quote mark would claim the card's one colour signal for decoration. */
+  color: color-mix(in srgb, var(--td-ink) 12%, transparent);
+  pointer-events: none;
+}
+.td-react-testimonial-quote {
+  margin: 0;
+  padding-top: var(--td-sp-5);
+  font-family: var(--td-font-sans);
+  font-size: 14px;
+  font-style: italic;
+  line-height: 1.55;
+  color: var(--td-ink);
+}
+/* Pushes the attribution to the bottom, so a row of cards lines its names up
+   however long the quotes are. */
+.td-react-testimonial-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--td-sp-6);
+  margin-top: auto;
+}
+.td-react-testimonial-avatar {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  font-family: var(--td-font-ui);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--td-ink-2);
+  background: var(--td-surface);
+  /* Seated in the plate rather than sitting on it — the same well the system
+     cuts everywhere it houses something. */
+  box-shadow:
+    inset 2px 2px 5px color-mix(in srgb, var(--td-shadow-dark) 52%, transparent),
+    inset -1.5px -1.5px 4px color-mix(in srgb, var(--td-shadow-light) 46%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+.td-react-testimonial-avatar img,
+.td-react-testimonial-meta > img {
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.td-react-testimonial-who { display: grid; gap: 2px; min-width: 0; }
+.td-react-testimonial-name {
+  font-family: var(--td-font-ui);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--td-ink);
+}
+.td-react-testimonial-role {
+  font-family: var(--td-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--td-ink-2);
+}
+
+.td-react-testimonial-grid {
+  display: grid;
+  gap: var(--td-sp-9);
+  min-width: 0;
+  grid-template-columns: repeat(auto-fit, minmax(min(var(--td-testimonial-min, 320px), 100%), 1fr));
+  /* Stretch, so the attributions align across the row. */
+  align-items: stretch;
+}
