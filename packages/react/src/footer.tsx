@@ -107,8 +107,10 @@ export const FooterColumn = forwardRef<HTMLDivElement, FooterColumnProps>(functi
     <div {...props} ref={ref} className={cx("td-footer-col", className)}>
       <h5>{title}</h5>
       <ul>
-        {links.map((link) => (
-          <li key={`${link.href}`}>
+        {/* Keyed by href AND position: an href is not unique, and two links to
+            the same place under different words reconcile into one. */}
+        {links.map((link, index) => (
+          <li key={`${link.href}-${index}`}>
             {renderLink ? renderLink({ href: link.href, children: link.label }) : <a href={link.href}>{link.label}</a>}
           </li>
         ))}
@@ -187,10 +189,10 @@ export const FooterBottom = forwardRef<HTMLDivElement, FooterBottomProps>(functi
       {social}
       {links?.length ? (
         <div className="td-footer-bottom-links">
-          {links.map((link) =>
+          {links.map((link, index) =>
             renderLink
-              ? <Fragment key={link.href}>{renderLink({ href: link.href, children: link.label })}</Fragment>
-              : <a key={link.href} href={link.href}>{link.label}</a>,
+              ? <Fragment key={`${link.href}-${index}`}>{renderLink({ href: link.href, children: link.label })}</Fragment>
+              : <a key={`${link.href}-${index}`} href={link.href}>{link.label}</a>,
           )}
         </div>
       ) : null}

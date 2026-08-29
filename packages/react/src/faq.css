@@ -1,39 +1,79 @@
 /* Faq — questions that open in place.
 
-   One carved plate with seams between the questions, not a stack of cards: a
-   card each would put eight raised objects on the page for what is one list.
-   The question row takes the row press ([[L34]]); the chevron turns and is
-   decoration rather than a lamp, so it does not glow. */
+   One carved plate holding the list, not a stack of cards: a card each would
+   put eight raised objects on the page for what is one list of eight
+   decisions.
+
+   The state is told with depth alone ([[L11]]). A closed question is flush
+   with the plate. Opening one presses the WHOLE item — question and answer
+   together — into a single recess, so the two are plainly one object rather
+   than a row with a box under it.
+
+   The answer had its own recessed box briefly. That is the field grammar
+   exactly — a darkened fill, a border and a tight inset is what an `Input` is
+   — so the answer read as something to type into, and as a separate object
+   from the question that had opened it. One recess around both fixes both
+   faults at once. */
 
 .td-faq.td-react-faq {
   display: flex;
   flex-direction: column;
   min-width: 0;
-  border-radius: var(--td-radius-6);
+  padding: var(--td-sp-5);
+  border-radius: var(--td-radius-9);
   background: var(--td-raise-fill);
-  box-shadow:
-    3px 3px 12px color-mix(in srgb, var(--td-shadow-dark) 72%, transparent),
-    -3px -3px 12px color-mix(in srgb, var(--td-shadow-light) 68%, transparent),
-    inset 0 1px 0 var(--td-shadow-veil),
-    0 0 0 1px var(--td-edge);
-  overflow: hidden;
+  /* The canonical raise rather than a hand-rolled one, so the plate reads on
+     all four sides in light mode like every other raised surface ([[L27]]). */
+  box-shadow: var(--td-raised);
 }
 
-.td-faq-item.td-react-faq-item { border-bottom: 1px solid color-mix(in srgb, var(--td-ink-2) 12%, transparent); }
-.td-faq-item.td-react-faq-item:last-child { border-bottom: 0; }
-
-/* The standalone disclosure: the plate comes off and the seams stay. A single
-   question in this form IS the design system's disclosure, which is why it is
-   a variant here rather than a component of its own. The outer seams are put
-   back, because with no housing they are the only thing bounding the list. */
-.td-faq.td-react-faq--seam {
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-  overflow: visible;
+.td-faq-item.td-react-faq-item {
+  position: relative;
+  border-radius: var(--td-radius-7);
+  transition:
+    margin var(--td-t-base) var(--td-ease),
+    box-shadow var(--td-t-base) var(--td-ease);
+  /* Declared unlit so rest and open interpolate rather than snap ([[L18]]) —
+     same two slots, same order, zero alpha in the shadows' own colours. */
+  box-shadow: var(--td-row-rest);
 }
-.td-faq.td-react-faq--seam .td-faq-item.td-react-faq-item:first-child { border-top: 1px solid color-mix(in srgb, var(--td-ink-2) 12%, transparent); }
-.td-faq.td-react-faq--seam .td-faq-item.td-react-faq-item:last-child { border-bottom: 1px solid color-mix(in srgb, var(--td-ink-2) 12%, transparent); }
+/* The open item is the live one. `--td-row-selected` rather than the deeper
+   inset a well uses: this is a row that has been chosen, not a field. */
+.td-react-faq-item[data-state="open"] {
+  margin-block: var(--td-sp-4);
+  box-shadow: var(--td-row-selected);
+}
+.td-react-faq-item[data-state="open"]:first-child { margin-block-start: 0; }
+.td-react-faq-item[data-state="open"]:last-child { margin-block-end: 0; }
+
+/* A CARVED SEAM, not a drawn line.
+
+   These were `border-bottom: 1px solid` — a hairline painted across the plate,
+   which is the one thing the design law says a boundary must never be: "a
+   boundary is a carved seam, never a tinted band" ([[L03]]). A line drawn on a
+   surface sits ON it; a seam is the surface parting.
+
+   Two hairlines make it: the shade cut into the plate and the light catching
+   the lip below it. Inset from both ends so the seam reads as a groove in the
+   plate rather than a rule spanning it — a full-bleed line divides a plate
+   into two plates. */
+.td-react-faq-item + .td-react-faq-item::before {
+  content: "";
+  position: absolute;
+  inset-inline: var(--td-sp-7);
+  top: 0;
+  height: 1px;
+  background: color-mix(in srgb, var(--td-shadow-dark) 55%, transparent);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--td-shadow-light) 55%, transparent);
+  pointer-events: none;
+  transition: opacity var(--td-t-base) var(--td-ease);
+}
+/* The seams touching an open question retract. A well fenced by hairlines
+   reads as a cell in a table; on its own it reads as the plate opening. */
+.td-react-faq-item[data-state="open"]::before,
+.td-react-faq-item[data-state="open"] + .td-react-faq-item::before {
+  opacity: 0;
+}
 
 .td-react-faq-heading { margin: 0; font: inherit; }
 
@@ -45,36 +85,38 @@
   width: 100%;
   padding: var(--td-sp-6) var(--td-sp-7);
   border: 0;
+  border-radius: var(--td-radius-6);
   cursor: pointer;
   text-align: start;
   font-family: var(--td-font-ui);
   font-size: 0.84rem;
   font-weight: 600;
-  color: var(--td-ink);
+  line-height: 1.45;
+  color: var(--td-ink-2);
   background: transparent;
   box-shadow: var(--td-row-rest);
-  transition: background var(--td-t-base) var(--td-ease), box-shadow var(--td-t-base) var(--td-ease);
+  transition: color var(--td-t-base) var(--td-ease), box-shadow var(--td-t-base) var(--td-ease);
 }
-.td-faq-q.td-react-faq-q:hover {
-  background: var(--td-surface);
-  box-shadow: var(--td-row-hover);
-}
-.td-faq-q.td-react-faq-q:active {
-  background: var(--td-surface);
-  box-shadow: var(--td-row-press);
-}
-/* An open question rests recessed — the same grammar as a selected row. */
+.td-faq-q.td-react-faq-q:hover { color: var(--td-ink); box-shadow: var(--td-row-hover); }
+.td-faq-q.td-react-faq-q:active { box-shadow: var(--td-row-press); }
+/* Open: the row is the lid of its own recess, so it takes no depth of its
+   own — the item carries it — and steps to full ink. Its bottom padding
+   tightens so the answer sits close under the question it belongs to.
+   Proximity is what says the two are one thing; a rule between them would
+   only say the opposite. */
 .td-react-faq-item[data-state="open"] .td-react-faq-q {
-  background: var(--td-surface);
-  box-shadow: var(--td-row-selected);
+  color: var(--td-ink);
+  padding-block-end: var(--td-sp-3);
+  box-shadow: var(--td-row-rest);
 }
+.td-react-faq-item[data-state="open"] .td-react-faq-q:hover { box-shadow: var(--td-row-rest); }
 .td-faq-q.td-react-faq-q:focus-visible { outline: 2px solid var(--td-accent); outline-offset: -2px; }
 
 .td-react-faq-text { min-width: 0; }
 
 .td-faq-chev.td-react-faq-chev {
-  width: 0.95em;
-  height: 0.95em;
+  width: 0.9em;
+  height: 0.9em;
   flex: 0 0 auto;
   fill: currentColor;
   color: var(--td-ink-3);
@@ -83,17 +125,31 @@
 .td-react-faq-q:hover .td-react-faq-chev { color: var(--td-ink-2); }
 .td-react-faq-item[data-state="open"] .td-react-faq-chev { transform: rotate(180deg); color: var(--td-brand-text); }
 
+/* The answer has no box of its own — it is lying in the item's recess with
+   the question. Its inline padding matches the question's, so the first word
+   of the answer starts on the same line the question does. */
 .td-faq-a.td-react-faq-a {
-  padding: 0 var(--td-sp-7) var(--td-sp-6);
+  padding: 0 var(--td-sp-7) var(--td-sp-7);
   font-family: var(--td-font-sans);
   font-size: 0.8rem;
-  line-height: 1.6;
+  line-height: 1.65;
   color: var(--td-ink-2);
+  /* An animation rather than a transition: the panel arrives from `hidden`,
+     and a transition has nothing to run from when an element appears. */
+  animation: td-faq-reveal var(--td-t-slow, 260ms) var(--td-ease) both;
 }
 /* `hidden` is honoured rather than being overridden by a display rule — the
    panel must be out of the accessibility tree AND out of in-page search. */
 .td-faq-a.td-react-faq-a[hidden] { display: none; }
 
+@keyframes td-faq-reveal {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: none; }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .td-faq-q.td-react-faq-q, .td-faq-chev.td-react-faq-chev { transition: none; }
+  .td-faq-q.td-react-faq-q,
+  .td-faq-chev.td-react-faq-chev,
+  .td-react-faq-item + .td-react-faq-item::before { transition: none; }
+  .td-faq-a.td-react-faq-a { animation: none; }
 }

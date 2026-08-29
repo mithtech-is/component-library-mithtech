@@ -43,3 +43,26 @@
 .td-codeblock.td-react-codeblock .td-cb-s { color: var(--td-green-text); }
 .td-codeblock.td-react-codeblock .td-cb-n { color: var(--td-accent-text); }
 .td-codeblock.td-react-codeblock .td-cb-c { color: var(--td-ink-3); font-style: italic; }
+
+/* ── Diff mode ────────────────────────────────────────────────────────
+   A change is a category, so it arrives as ink and a marker rather than as a
+   band of green and red across the well. The tinted-row treatment every diff
+   viewer ships is two coloured fills inside a recess, which is the one move the
+   system forbids ([[L11]]) — and on a paper ground a 12% green wash is
+   indistinguishable from a 12% grey one anyway.
+
+   The line keeps its own leading `+` / `-`, so what is on screen is what gets
+   copied. The rail beside it is what makes the two scannable at a glance. */
+.td-react-code--diff .td-react-codeblock-code { display: block; }
+.td-react-diff-line {
+  display: block;
+  padding-left: var(--td-sp-5);
+  /* The rail. Transparent on a context line rather than absent, so every line
+     has the same indent and the code stays in one column. */
+  box-shadow: inset 2px 0 0 transparent;
+  color: var(--td-ink-2);
+}
+.td-react-diff-line[data-kind="add"] { color: var(--td-green-text); box-shadow: inset 2px 0 0 var(--td-green); }
+.td-react-diff-line[data-kind="del"] { color: var(--td-error-text); box-shadow: inset 2px 0 0 var(--td-error); }
+/* A hunk header is not part of the change; it says where the change is. */
+.td-react-diff-line[data-kind="meta"] { color: var(--td-ink-3); font-weight: 600; }

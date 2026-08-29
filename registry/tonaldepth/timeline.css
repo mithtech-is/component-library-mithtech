@@ -139,3 +139,102 @@
   white-space: nowrap;
   border: 0;
 }
+
+/* ── The ordinal marker ───────────────────────────────────────────────
+   The dot grows into a numbered disc. It is the same lamp — same socket, same
+   three states — with a glyph seated in it, so a plan whose steps get referred
+   to by number ("we are on 3") can be. */
+.td-mk-timeline--ordinal .td-mk-timeline-dot {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  margin: 1px 0 0 2px;
+  font-family: var(--td-font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--td-ink-3);
+}
+.td-mk-timeline--ordinal .td-mk-timeline-item[data-state="done"] .td-mk-timeline-dot { color: var(--td-ink-on-fill); }
+.td-mk-timeline--ordinal .td-mk-timeline-item[data-state="current"] .td-mk-timeline-dot { color: var(--td-ink-on-fill); }
+/* The rail starts below a 20px disc rather than a 12px dot. */
+.td-mk-timeline--ordinal .td-mk-timeline-item:not(:last-child)::before { left: 11px; top: 24px; }
+
+/* ── The flow axis ────────────────────────────────────────────────────
+   The same sequence turned on its side. It answers "where did it stop", which
+   is one position on a line — so it is read across, and the steps are separated
+   by a direction mark rather than a rail.
+
+   It scrolls rather than wrapping: a pipeline that wraps to a second row puts
+   step 5 underneath step 1 and the order stops being readable. */
+.td-mk-timeline--flow {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--td-sp-4);
+  overflow-x: auto;
+  padding-bottom: var(--td-sp-5);
+}
+.td-mk-timeline--flow .td-mk-timeline-item {
+  display: flex;
+  align-items: center;
+  gap: var(--td-sp-5);
+  flex: 0 0 auto;
+  padding: var(--td-sp-4) var(--td-sp-7) var(--td-sp-4) var(--td-sp-5);
+  border-radius: var(--td-radius-pill);
+  /* Rests recessed: the whole row is a track, and each step is a seat in it. */
+  box-shadow: var(--td-row-rest);
+}
+.td-mk-timeline--flow .td-mk-timeline-item[data-state="current"] { box-shadow: var(--td-row-selected); }
+/* The direction mark between steps, drawn rather than typed — a "→" in the
+   markup would be read aloud between every pair of step names. */
+.td-mk-timeline--flow .td-mk-timeline-item:not(:last-child)::after {
+  content: "";
+  flex: 0 0 auto;
+  width: 12px;
+  height: 6px;
+  margin-left: var(--td-sp-4);
+  background: currentColor;
+  color: var(--td-ink-3);
+  clip-path: polygon(0 40%, 62% 40%, 62% 0, 100% 50%, 62% 100%, 62% 60%, 0 60%);
+}
+/* The vertical rail has no meaning on a horizontal axis. */
+.td-mk-timeline--flow .td-mk-timeline-item:not(:last-child)::before { display: none; }
+.td-mk-timeline--flow .td-mk-timeline-dot { margin: 0; flex: 0 0 auto; }
+.td-mk-timeline--flow .td-mk-timeline-body { flex-direction: row; align-items: baseline; gap: var(--td-sp-5); }
+.td-mk-timeline--flow .td-mk-timeline-title { font-size: 12px; white-space: nowrap; }
+.td-mk-timeline--flow .td-mk-timeline-time { padding-top: 0; }
+.td-mk-timeline--flow .td-mk-timeline-description { display: none; }
+
+/* ── The feed axis ────────────────────────────────────────────────────
+   An activity stream: the mark is the person, not a state. The rail goes,
+   because a feed has no destination to draw a line toward — it is a list of
+   things that happened, not a sequence going somewhere. */
+.td-mk-timeline--feed .td-mk-timeline-item { grid-template-columns: 34px minmax(0, 1fr) auto; gap: var(--td-sp-6); align-items: center; }
+.td-mk-timeline--feed .td-mk-timeline-item:not(:last-child)::before { display: none; }
+.td-mk-timeline--feed .td-mk-timeline-dot {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  margin: 0;
+  overflow: hidden;
+  background: var(--td-surface);
+  box-shadow:
+    inset 2px 2px 5px color-mix(in srgb, var(--td-shadow-dark) 52%, transparent),
+    inset -1.5px -1.5px 4px color-mix(in srgb, var(--td-shadow-light) 46%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+.td-mk-timeline--feed .td-mk-timeline-dot img { width: 100%; height: 100%; object-fit: cover; }
+.td-mk-timeline-initials {
+  font-family: var(--td-font-ui);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--td-ink-2);
+}
+/* Nothing in a feed is upcoming, so the dimming the other axes apply to a
+   future step would grey out half the stream for no reason. */
+.td-mk-timeline--feed .td-mk-timeline-item[data-state="upcoming"] .td-mk-timeline-title { color: var(--td-ink); }
+.td-mk-timeline--feed .td-mk-timeline-title { font-weight: 400; font-family: var(--td-font-sans); }
+.td-mk-timeline--feed .td-mk-timeline-title strong { font-weight: 600; }

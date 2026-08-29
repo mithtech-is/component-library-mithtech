@@ -3,18 +3,30 @@
 /* Component-scoped rules now ship beside their component and are imported by it,
    so they reach consumers that serve the `.td-*` base layer themselves. */
 @import "./button.css";
+@import "./confirm-button.css";
+@import "./counter.css";
+@import "./file-preview.css";
 @import "./icon-button.css";
 @import "./badge.css";
 @import "./alert.css";
 @import "./card.css";
 @import "./input.css";
+@import "./iso-stack.css";
+@import "./multi-step.css";
+@import "./reading-progress.css";
 @import "./selection.css";
+@import "./spotlight.css";
+@import "./sub-nav.css";
+@import "./terminal.css";
+@import "./testimonial.css";
 @import "./toast.css";
 @import "./kpi-card.css";
 @import "./dropdown-menu.css";
 @import "./tabs.css";
 @import "./dialog.css";
 @import "./chart-container.css";
+@import "./page-nav.css";
+@import "./chat-launcher.css";
 @import "./page-patterns.css";
 @import "./article-card.css";
 @import "./case-card.css";
@@ -39,6 +51,8 @@
 @import "./mega-menu.css";
 @import "./pagination.css";
 @import "./pricing-table.css";
+@import "./whatsapp-form.css";
+@import "./social-button.css";
 @import "./profile-card.css";
 @import "./progress.css";
 @import "./range.css";
@@ -49,6 +63,7 @@
 @import "./split-button.css";
 @import "./table.css";
 @import "./toc.css";
+@import "./tooltip.css";
 
 /* Rules below re-declare names the design system already owns. They stay in the
    aggregate stylesheet only: a consumer serving its own `.td-*` layer would get

@@ -25,6 +25,16 @@ export interface TonalDepthProgressProps extends Omit<HTMLAttributes<HTMLDivElem
   detail?: ReactNode;
   /** Show the percentage at the end of the meter line. Default true. */
   showValue?: boolean;
+  /**
+   * A verdict on the number, at the end of the meter line — a `Badge` reading
+   * "On track", "12d", "Overdue".
+   *
+   * This is what turns a meter into an obligation. 78% of a compliance window
+   * elapsed is not good or bad on its own; the badge is where the caller says
+   * which, because only the caller knows the deadline. It replaces the
+   * percentage when both would otherwise sit in the same place.
+   */
+  status?: ReactNode;
   /** Which category the filled length carries. */
   tone?: TonalDepthProgressTone;
   /**
@@ -46,7 +56,7 @@ export interface TonalDepthProgressProps extends Omit<HTMLAttributes<HTMLDivElem
  * screen reader as an unnamed number.
  */
 export const TonalDepthProgress = forwardRef<HTMLDivElement, TonalDepthProgressProps>(function TonalDepthProgress(
-  { value, label, detail, showValue = true, tone = "brand", indeterminate = false, className, ...props },
+  { value, label, detail, showValue = true, status, tone = "brand", indeterminate = false, className, ...props },
   ref,
 ) {
   if (value === undefined && !indeterminate) {
@@ -56,7 +66,7 @@ export const TonalDepthProgress = forwardRef<HTMLDivElement, TonalDepthProgressP
     console.warn("TonalDepthProgress: pass `value`, or set `indeterminate` when the total is genuinely unknown.");
   }
   const pct = Math.max(0, Math.min(100, Math.round(value ?? 0)));
-  const hasHead = label !== undefined || detail !== undefined || showValue;
+  const hasHead = label !== undefined || detail !== undefined || status !== undefined || showValue;
   return (
     <div {...props} ref={ref} className={cx("td-registry-progress-wrap", className)}>
       {hasHead ? (
@@ -66,7 +76,9 @@ export const TonalDepthProgress = forwardRef<HTMLDivElement, TonalDepthProgressP
             {label !== undefined && detail !== undefined ? <span className="td-registry-progress-sep"> · </span> : null}
             {detail !== undefined ? <span className="td-registry-progress-detail">{detail}</span> : null}
           </span>
-          {showValue && !indeterminate ? <span className="td-registry-progress-value">{pct}%</span> : null}
+          {status !== undefined
+            ? <span className="td-registry-progress-status">{status}</span>
+            : showValue && !indeterminate ? <span className="td-registry-progress-value">{pct}%</span> : null}
         </p>
       ) : null}
       <div

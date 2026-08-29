@@ -1,9 +1,16 @@
-/* LogoStrip — a wall of real client artwork. Self-contained; requires @tonaldepth/tokens.
+/* LogoStrip — a wall of real client artwork.
 
-   Monochrome at rest, full colour on hover. Eleven marks in eleven palettes is
-   a colour riot, and this wall is scanned rather than read — but the artwork
-   itself is never altered, only filtered, so a mark that is already monochrome
-   looks the same either way.
+   A SILHOUETTE at rest, the real mark on hover. Eleven marks in eleven
+   palettes is a colour riot, and this wall is scanned rather than read.
+
+   Rest was `grayscale(1)` at 62%, which keeps each mark's own values — and
+   that is the bug: a mark drawn in near-black ink stays near-black, so it
+   disappears on a dark page, and a mark drawn in white disappears on a light
+   one. Whether a logo can be seen at all should not depend on what colour its
+   owner chose. `brightness(0)` flattens every mark to one silhouette, tinted
+   to the page's own ink, so the whole wall is legible in both themes and reads
+   as one material besides. The artwork is still only filtered, never altered,
+   and the real thing is one hover away.
 
    The name is always in the DOM as the alternative text and is visually
    hidden, because a logo is an image of a word: without it the wall is a row
@@ -33,36 +40,75 @@
 .td-logos-item.td-registry-logos-item {
   display: inline-flex;
   align-items: center;
-  height: 30px;
+  padding: var(--td-sp-4) var(--td-sp-6);
+  border-radius: var(--td-radius-5);
   color: var(--td-ink);
   text-decoration: none;
-  /* Grey and quiet at rest. `grayscale` leaves an already-monochrome mark
-     alone, which a hand-picked palette would not. */
-  filter: grayscale(1);
-  opacity: 0.62;
-  transition: filter var(--td-t-base) var(--td-ease), opacity var(--td-t-base) var(--td-ease), transform var(--td-t-base) var(--td-ease);
+  background: transparent;
+  /* Declared unlit so the plate arrives by interpolation rather than snapping
+     in ([[L18]]) — same five slots, same order, as the hover rung. */
+  box-shadow:
+    0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    0 0 0 rgb(from var(--td-shadow-light) r g b / 0),
+    inset 0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    inset 0 0 0 rgb(from var(--td-shadow-light) r g b / 0),
+    0 0 0 1px rgb(from var(--td-edge) r g b / 0);
+  transition:
+    background var(--td-t-base) var(--td-ease),
+    box-shadow var(--td-t-base) var(--td-ease),
+    transform var(--td-t-base) var(--td-ease);
 }
-/* On hover the mark comes forward and comes back to life: full colour, full
-   opacity, and a real step up in size. 1.06 was a nudge nobody noticed — the
-   point of the treatment is that the wall is quiet until you look at one of
-   them, and that only reads if the one you are looking at is plainly bigger.
+/* Whatever the mark actually is — an inline svg, a PNG, an object URL from a
+   file the reader just picked — it is sized and filtered identically, so
+   nothing about a logo's format changes how it behaves.
+
+   The filter is on the ARTWORK rather than on the item, because the item now
+   carries a plate of its own and `filter` on it would flatten that too. */
+.td-registry-logos-art {
+  display: inline-flex;
+  align-items: center;
+  height: 30px;
+  filter: brightness(0) opacity(0.62);
+  transition: filter var(--td-t-base) var(--td-ease);
+}
+[data-theme="dark"] .td-registry-logos-art { filter: brightness(0) invert(1) opacity(0.62); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .td-registry-logos-art { filter: brightness(0) invert(1) opacity(0.62); }
+}
+/* THE PLATE.
+
+   The mark comes back to full colour and steps forward — and lands on a near
+   white chip while it does. Without one, a dark-ink logo returning to its real
+   colours on a dark page returns to being invisible, which made the hover
+   state useless for exactly the marks that needed it most. Logos are drawn for
+   light grounds; this gives every one of them the ground it was drawn for.
+
+   Near white in both themes rather than the page's own surface, for the same
+   reason. It is loud on a dark page — but it is one mark at a time, under the
+   pointer, and being able to see the artwork is the whole point of the state.
+
+   1.14 rather than a nudge: the wall is quiet until you look at one of them,
+   and that only reads if the one you are looking at is plainly bigger.
    `transform-origin` keeps it growing from its own centre so the row does not
    appear to shift. */
-a.td-logos-item.td-registry-logos-item:hover,
 .td-logos-item.td-registry-logos-item:hover,
 a.td-logos-item.td-registry-logos-item:focus-visible {
-  filter: none;
-  opacity: 1;
   transform: scale(1.14);
   transform-origin: center;
+  background: color-mix(in srgb, #fff 94%, var(--td-surface));
+  box-shadow:
+    3px 4px 10px color-mix(in srgb, var(--td-shadow-dark) 62%, transparent),
+    -3px -3px 8px color-mix(in srgb, var(--td-shadow-light) 60%, transparent),
+    inset 0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    inset 0 1px 0 rgb(255 255 255 / 0.5),
+    0 0 0 1px rgb(0 0 0 / 0.07);
+}
+.td-logos-item.td-registry-logos-item:hover .td-registry-logos-art,
+a.td-logos-item.td-registry-logos-item:focus-visible .td-registry-logos-art {
+  filter: none;
 }
 a.td-logos-item.td-registry-logos-item:focus-visible { outline: 2px solid var(--td-accent); outline-offset: 4px; border-radius: var(--td-radius-2); }
 
-.td-registry-logos-art { display: inline-flex; align-items: center; height: 100%; }
-/* Whatever the mark actually is — an inline svg, a PNG, an object URL from a
-   file the reader just picked — it is sized and filtered identically. The
-   treatment is on the ITEM, not on the artwork, so nothing about a logo's
-   format changes how it behaves. */
 .td-registry-logos-art :is(img, svg) { height: 100%; max-height: 100%; width: auto; display: block; }
 
 /* The mark is a picture of a word; the word itself has to be readable. */
@@ -79,7 +125,7 @@ a.td-logos-item.td-registry-logos-item:focus-visible { outline: 2px solid var(--
 .td-registry-logos-slot { display: contents; }
 
 @media (prefers-reduced-motion: reduce) {
-  .td-logos-item.td-registry-logos-item { transition: none; }
+  .td-logos-item.td-registry-logos-item, .td-registry-logos-art { transition: none; }
   .td-logos-item.td-registry-logos-item:hover { transform: none; }
 }
 

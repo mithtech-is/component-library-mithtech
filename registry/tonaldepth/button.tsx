@@ -161,11 +161,18 @@ const TonalDepthFILLED: TonalDepthButtonVariant[] = ["filled", "destructive", "a
 /**
  * The variants that carry the status lamp unless told otherwise.
  *
- * Only `primary`. The design system draws its primary button with the lamp in
- * every example it ships, so requiring `dot` to get one made the library's
- * primary button a different object from the system's.
+ * `primary` and `filled` — the two buttons that carry the weight of a screen.
+ * The design system draws its primary button with the lamp in every example it
+ * ships, so requiring `dot` to get one made the library's primary button a
+ * different object from the system's; and the papaya fill is the loudest thing
+ * the system says, so it gets the same lamp rather than being the one emphatic
+ * control with nothing reporting its state.
+ *
+ * On the fill the lamp lights white, because papaya on papaya is invisible —
+ * that pairing is in `button.css` and is why the fill needs no lamp colour of
+ * its own.
  */
-const TonalDepthLAMP_BY_DEFAULT: TonalDepthButtonVariant[] = ["primary"];
+const TonalDepthLAMP_BY_DEFAULT: TonalDepthButtonVariant[] = ["primary", "filled"];
 
 export const TonalDepthButton = forwardRef<HTMLButtonElement, TonalDepthButtonProps>(function TonalDepthButton(
   {

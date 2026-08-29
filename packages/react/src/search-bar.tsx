@@ -1,6 +1,6 @@
 "use client";
 
-import { forwardRef, useCallback, useId, useRef, useState, type FormEvent, type InputHTMLAttributes, type KeyboardEvent, type ReactNode } from "react";
+import { forwardRef, useCallback, useEffect, useId, useRef, useState, type ButtonHTMLAttributes, type FormEvent, type InputHTMLAttributes, type KeyboardEvent, type ReactNode } from "react";
 import { cx } from "./utils";
 import { CloseIcon, LAMP_WEIGHT, SearchIcon } from "./icons";
 import "./search-bar.css";
@@ -37,6 +37,55 @@ export interface SearchBarProps extends Omit<InputHTMLAttributes<HTMLInputElemen
   submitLabel?: string;
   /** The clear button's accessible name. */
   clearLabel?: string;
+  /**
+   * Renders the field as a BUTTON that opens a search somewhere else, rather
+   * than as a place to type.
+   *
+   * A product with a command palette wants both halves of this: the palette is
+   * where searching happens, and the header needs something that looks like
+   * the way in. Two chrome fields — one that types and one that opens a
+   * console — is the failure mode; a reader has to learn which is which and
+   * the narrower-looking one seems to search less. So this is the same carved
+   * field with the same mark, drawn at the same heights, that does not accept
+   * typing and says out loud what opens the real thing.
+   *
+   * `placeholder` becomes the visible label. `onClick` is yours.
+   */
+  trigger?: boolean;
+  /**
+   * The field grows when it is focused, and settles back when it is left.
+   *
+   * For a field that lives in chrome, where it has to be small until somebody
+   * means to use it — a header, a toolbar, a table's filter row. The panel
+   * drops from the grown field, so the two read as one movement rather than as
+   * a box appearing beside a box that just changed size.
+   *
+   * `--td-search-expanded` is the width it grows to; the default is
+   * `min(100%, 620px)`, which is wide enough for a result and its reason.
+   */
+  expand?: boolean;
+  /**
+   * The shortcut hint on a `trigger`.
+   *
+   * Defaults to the platform's own — `⌘K` on a Mac, `Ctrl K` everywhere else —
+   * resolved after mount, because the server has no idea what the reader is
+   * typing on. `false` drops it. It is a hint, not a binding: the shortcut
+   * itself is the consumer's to wire, because only they know what it opens.
+   */
+  shortcut?: ReactNode | false;
+}
+
+/** `⌘K` on a Mac, `Ctrl K` everywhere else. */
+function useShortcutHint(): string {
+  // Mac is assumed for the first paint and corrected in an effect: reading
+  // `navigator` during render is a hydration mismatch waiting to happen, and
+  // the correction lands before anyone has read the chip.
+  const [hint, setHint] = useState("\u2318K");
+  useEffect(() => {
+    const platform = navigator.userAgent;
+    if (!/Mac|iPhone|iPad/i.test(platform)) setHint("Ctrl K");
+  }, []);
+  return hint;
 }
 
 /**
@@ -54,7 +103,7 @@ export const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(function S
   {
     value, defaultValue = "", onValueChange, onSubmit, suggestions, onSuggestionSelect,
     size = "md", block = false, showSubmit = false, submitLabel = "Search", clearLabel = "Clear search",
-    placeholder = "Search", className, disabled, ...props
+    placeholder = "Search", trigger = false, expand = false, shortcut, className, disabled, ...props
   },
   ref,
 ) {
@@ -90,6 +139,15 @@ export const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(function S
   };
 
   const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    // The caller's handler runs FIRST and may take the key.
+    //
+    // `{...props}` is spread onto the input and this handler is bound after it,
+    // so without calling through, a caller's `onKeyDown` is silently discarded
+    // — the field looks wired and the arrows do nothing. That matters most for
+    // the case this component is built for: the caller owns the matching, so
+    // the caller often owns the result list and needs the arrows too.
+    props.onKeyDown?.(event);
+    if (event.defaultPrevented) return;
     if (event.key === "Escape") {
       // Closes the list, keeps the query. Clearing on Escape loses work the
       // reader did not ask to throw away.
@@ -114,10 +172,43 @@ export const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(function S
   };
 
   const showList = open && hasList && !disabled;
+  // Called unconditionally, above the early return: a hook behind a branch is
+  // a hook that runs a different number of times between renders.
+  const platformHint = useShortcutHint();
+  const hint = shortcut === undefined ? platformHint : shortcut;
+
+  /* The trigger form. Same housing, same mark, same heights — nothing here is
+     a second look at a search field, only the same one with a button inside it
+     instead of an input. It is a real `button`, so it is reached by Tab and
+     fired by Enter and Space without any of that being reimplemented. */
+  if (trigger) {
+    const button = props as unknown as ButtonHTMLAttributes<HTMLButtonElement>;
+    return (
+      <div className={cx("td-react-search", `td-react-search--${size}`, "td-react-search--trigger", block && "td-react-search--block", className)}>
+        <button
+          {...button}
+          type="button"
+          disabled={disabled}
+          className="td-react-search-field td-react-search-trigger"
+        >
+          <span className="td-react-search-mark" aria-hidden="true">
+            <SearchIcon weight={LAMP_WEIGHT} aria-hidden="true" />
+          </span>
+          <span className="td-react-search-triggerlabel">{placeholder}</span>
+          {hint === false ? null : <kbd className="td-react-search-kbd">{hint}</kbd>}
+        </button>
+      </div>
+    );
+  }
+
   return (
     <form
       role="search"
-      className={cx("td-react-search", `td-react-search--${size}`, block && "td-react-search--block", className)}
+      className={cx("td-react-search", `td-react-search--${size}`, block && "td-react-search--block", expand && "td-react-search--expand", className)}
+      /* The field squares its bottom corners while the list is down, so the
+         two read as one plate parting rather than a card floating under a
+         pill. The stylesheet needs to know, and only the component does. */
+      data-open={showList || undefined}
       onSubmit={submit}
       // A blur that lands inside the component (onto a suggestion) is not a
       // dismissal; only focus leaving the whole thing closes the list.

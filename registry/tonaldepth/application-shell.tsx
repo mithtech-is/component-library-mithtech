@@ -1,13 +1,12 @@
 import { forwardRef, type HTMLAttributes, type ReactNode } from "react";
 import "./tonaldepth-application-shell.css";
+import { TonalDepthSubNav } from "./tonaldepth-sub-nav";
 
 function cx(...values: Array<string | false | null | undefined>): string {
   return values.filter(Boolean).join(" ");
 }
 
-export interface TonalDepthApplicationShellItem { label: ReactNode; href: string; current?: boolean; count?: ReactNode }
-
-export interface TonalDepthApplicationShellSection { label?: ReactNode; items: TonalDepthApplicationShellItem[] }
+export type TonalDepthApplicationShellSection = SubNavSection;
 
 export interface TonalDepthApplicationShellProps extends Omit<HTMLAttributes<HTMLDivElement>, "title"> {
   sidebarLabel?: string;
@@ -27,12 +26,9 @@ export const TonalDepthApplicationShell = forwardRef<HTMLDivElement, TonalDepthA
     <div {...props} ref={ref} className={cx("td-shell", className)}>
       <aside className="td-sidebar">
         <div className="td-sb-head">{identity}</div>
-        <nav aria-label={sidebarLabel}>
-          {sections.map((section, index) => <div className="td-sb-section" key={index}>
-            {section.label ? <div className="td-sb-label">{section.label}</div> : null}
-            {section.items.map(item => <a key={item.href} href={item.href} className="td-sb-item" aria-current={item.current ? "page" : undefined}>{item.label}{item.count !== undefined ? <span className="td-sb-item-count">{item.count}</span> : null}</a>)}
-          </div>)}
-        </nav>
+        {/* `plate={false}`: the sidebar is already the raised surface, and a
+            second plate inside it nests chrome in chrome ([[L32]]). */}
+        <TonalDepthSubNav sections={sections} label={sidebarLabel} plate={false} />
         {sidebarFooter ? <div className="td-sb-foot">{sidebarFooter}</div> : null}
       </aside>
       <main className="td-main">

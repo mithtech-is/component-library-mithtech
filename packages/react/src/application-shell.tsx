@@ -1,8 +1,14 @@
 import { forwardRef, type HTMLAttributes, type ReactNode } from "react";
+import { SubNav, type SubNavItem, type SubNavSection } from "./sub-nav";
 import { cx } from "./utils";
 
-export interface ApplicationShellItem { label: ReactNode; href: string; current?: boolean; count?: ReactNode }
-export interface ApplicationShellSection { label?: ReactNode; items: ApplicationShellItem[] }
+/**
+ * The shell's sidebar links ARE `SubNav`'s — one implementation, two entry
+ * points. The aliases are kept so a consumer that already imports
+ * `ApplicationShellItem` does not have to be rewritten.
+ */
+export type ApplicationShellItem = SubNavItem;
+export type ApplicationShellSection = SubNavSection;
 export interface ApplicationShellProps extends Omit<HTMLAttributes<HTMLDivElement>, "title"> {
   sidebarLabel?: string;
   identity: ReactNode;
@@ -20,12 +26,9 @@ export const ApplicationShell = forwardRef<HTMLDivElement, ApplicationShellProps
     <div {...props} ref={ref} className={cx("td-shell", className)}>
       <aside className="td-sidebar">
         <div className="td-sb-head">{identity}</div>
-        <nav aria-label={sidebarLabel}>
-          {sections.map((section, index) => <div className="td-sb-section" key={index}>
-            {section.label ? <div className="td-sb-label">{section.label}</div> : null}
-            {section.items.map(item => <a key={item.href} href={item.href} className="td-sb-item" aria-current={item.current ? "page" : undefined}>{item.label}{item.count !== undefined ? <span className="td-sb-item-count">{item.count}</span> : null}</a>)}
-          </div>)}
-        </nav>
+        {/* `plate={false}`: the sidebar is already the raised surface, and a
+            second plate inside it nests chrome in chrome ([[L32]]). */}
+        <SubNav sections={sections} label={sidebarLabel} plate={false} />
         {sidebarFooter ? <div className="td-sb-foot">{sidebarFooter}</div> : null}
       </aside>
       <main className="td-main">

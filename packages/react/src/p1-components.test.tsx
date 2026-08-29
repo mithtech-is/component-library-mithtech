@@ -1,3 +1,6 @@
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { useState } from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -7,7 +10,7 @@ import {
   TableContainer, TableHead, TableHeader, TableRow, Tabs, ToastProvider, Tooltip, useToast,
 } from "./index";
 import { Badge, IconButton, ThemeToggle } from "./index";
-import { FilamentButton, SearchBar, SideTabs, SplitButton } from "./index";
+import { FilamentButton, FooterBottom, FooterColumn, SearchBar, SideTabs, SiteNavigation, SplitButton } from "./index";
 import { AcceptIcon, CancelIcon, CloseIcon, SuccessIcon, WhatsAppIcon, LAMP_WEIGHT, TD_ICON_ROLES } from "./index";
 
 describe("selection controls", () => {
@@ -353,5 +356,93 @@ describe("filament, tabs, split and search", () => {
     expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
     // Escape dismisses the list, never the work.
     expect(field).toHaveValue("erp");
+  });
+});
+
+describe("SearchBar, as a trigger", () => {
+  it("is a button rather than a field, so nothing can be typed into it", async () => {
+    const onClick = vi.fn();
+    render(<SearchBar trigger placeholder="Search components" onClick={onClick} />);
+    const button = screen.getByRole("button", { name: /Search components/ });
+    expect(button).toHaveAttribute("type", "button");
+    // A field here would be a second place to type, and the narrower-looking
+    // one always reads as searching less.
+    expect(screen.queryByRole("searchbox")).toBeNull();
+    await userEvent.click(button);
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
+
+  it("shows the shortcut as a hint, and drops it when asked", () => {
+    const { unmount } = render(<SearchBar trigger placeholder="Search" />);
+    // jsdom's UA is not a Mac, so the effect resolves to the other form. Either
+    // way it is a hint — binding the key is the consumer's, because only they
+    // know what it opens.
+    expect(screen.getByRole("button").textContent).toMatch(/⌘K|Ctrl K/);
+    unmount();
+
+    render(<SearchBar trigger placeholder="Search" shortcut={false} />);
+    expect(screen.getByRole("button").textContent).not.toMatch(/⌘K|Ctrl K/);
+  });
+
+  it("keeps the field's housing and mark, so it is not a second kind of search field", () => {
+    const { container } = render(<SearchBar trigger size="sm" placeholder="Search" />);
+    expect(container.querySelector(".td-react-search-field")).not.toBeNull();
+    expect(container.querySelector(".td-react-search-mark svg")).not.toBeNull();
+    expect(container.querySelector(".td-react-search--sm")).not.toBeNull();
+  });
+});
+
+describe("SearchBar's suggestion panel", () => {
+  it("is the field continuing rather than a card floating near it", async () => {
+    const css = readFileSync(join(dirname(fileURLToPath(import.meta.url)), "search-bar.css"), "utf8");
+    // Flush against the field, square where they meet, rounded only where the
+    // pair ends. It sat at `calc(100% + sp-4)` with every corner rounded, which
+    // reads as two objects.
+    expect(css).toMatch(/\.td-react-search-list \{[^}]*top: 100%/);
+    expect(css).toMatch(/\.td-react-search-list \{[^}]*border-start-start-radius: 0/);
+    expect(css).toMatch(/\.td-react-search\[data-open\] \.td-react-search-field \{[^}]*border-end-start-radius: 0/);
+    // It unfolds rather than appearing, and stops appearing under reduced motion.
+    expect(css).toMatch(/@keyframes td-react-search-unfold/);
+    expect(css).toMatch(/prefers-reduced-motion[\s\S]*?\.td-react-search-list \{ animation: none/);
+  });
+
+  it("marks the field open only while the list is actually down", async () => {
+    const { container } = render(<SearchBar suggestions={[{ id: "a", label: "Alpha" }]} />);
+    const form = container.querySelector(".td-react-search")!;
+    expect(form).not.toHaveAttribute("data-open");
+    await userEvent.type(screen.getByRole("combobox"), "a");
+    expect(form).toHaveAttribute("data-open");
+  });
+});
+
+describe("links are keyed by more than their href", () => {
+  /* An href is not unique. Two links to the same place under different words is
+     ordinary in a nav — "Docs" beside "Read the docs", a footer that repeats a
+     legal page — and React reconciles a duplicate key into one element, so the
+     second link silently stops updating. It surfaced as a console error on the
+     docs' own SiteNavigation and Footer previews. */
+  it("renders every link when two of them point at the same place", () => {
+    const twice = [
+      { kind: "link" as const, label: "Docs", href: "/docs" },
+      { kind: "link" as const, label: "Read the docs", href: "/docs" },
+    ];
+    render(<SiteNavigation brand="TD" items={twice} />);
+    expect(screen.getByRole("link", { name: "Docs" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Read the docs" })).toBeInTheDocument();
+  });
+
+  it("does the same in a footer column and in the bottom bar", () => {
+    const twice = [
+      { label: "Privacy", href: "/legal" },
+      { label: "Legal", href: "/legal" },
+    ];
+    const { unmount } = render(<FooterColumn title="Company" links={twice} />);
+    expect(screen.getByRole("link", { name: "Privacy" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Legal" })).toBeInTheDocument();
+    unmount();
+
+    render(<FooterBottom links={twice} />);
+    expect(screen.getByRole("link", { name: "Privacy" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Legal" })).toBeInTheDocument();
   });
 });

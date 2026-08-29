@@ -382,3 +382,66 @@
 .td-registry-mega-grid .td-mk-feature-points { font-size: 0.7rem; gap: 2px; }
 .td-registry-mega-grid .td-mk-feature-icon { width: 28px; height: 28px; border-radius: var(--td-radius-3); }
 .td-registry-mega-grid .td-mk-feature-icon > svg { width: 0.95em; height: 0.95em; }
+
+/* ── the wide panel, tightened ─────────────────────────────────────────────
+   2026-08-29: *"The creative mega menu needs work. It has to be more creative
+   and more neat."*
+
+   Neat first, because most of what read as untidy was spacing rather than
+   invention: the columns sat at the same weight as the feature beside them, the
+   link rows were loose, and the section labels floated with nothing anchoring
+   them to their column.
+
+   Then creative — but structural rather than decorative. Three things carry it,
+   and each is a thing the system already owns used somewhere it had not been:
+   a numbered rail in the feature, a hairline seam under each section label so
+   the column reads as a sheet of its own, and a corner mark on the feature that
+   picks up the papaya without filling anything. */
+
+/* The feature is the argument, so it gets the deeper well and the wider gutter.
+   A column and a case for the column should not read at the same volume. */
+.td-registry-mega-feature {
+  gap: var(--td-sp-6);
+  padding: var(--td-sp-10);
+  box-shadow: var(--td-inset-deep, var(--td-inset-soft));
+  position: relative;
+  overflow: hidden;
+}
+/* A corner mark, not a fill. It picks the papaya up at the panel's shoulder and
+   fades out before it reaches the text, so the feature reads as the lit one
+   without a single filled pixel ([[L11]]). */
+.td-registry-mega-feature::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: 0;
+  width: 40%;
+  height: 3px;
+  background: linear-gradient(to left, var(--td-brand), transparent);
+  opacity: 0.7;
+}
+
+/* The label sits ON its column rather than floating above it. */
+.td-registry-mega-col-label {
+  padding-bottom: var(--td-sp-4);
+  border-bottom: 1px solid var(--td-edge);
+  margin-bottom: var(--td-sp-3);
+}
+
+/* Tighter rows, and the glyph tile only takes the space it needs. */
+.td-registry-mega-link { gap: var(--td-sp-4); padding: var(--td-sp-3) var(--td-sp-4); }
+.td-registry-mega-link .td-registry-mega-op-icon { width: 1.7em; height: 1.7em; }
+.td-registry-mega-link .td-registry-mega-op-icon > svg { width: 1em; height: 1em; }
+.td-registry-mega-link-copy strong { font-size: 0.79rem; }
+.td-registry-mega-link-copy span { font-size: 0.69rem; }
+
+/* The step rail: the numbers line up on their own column and the copy hangs off
+   it, so four steps read as a sequence rather than four rows that happen to be
+   numbered. */
+.td-registry-mega-steps { gap: var(--td-sp-4); }
+.td-registry-mega-step-n { width: 22px; height: 22px; font-size: 0.62rem; }
+.td-registry-mega-steps::before { left: 10px; }
+.td-registry-mega-step-copy { font-size: 0.76rem; padding-top: 2px; }
+
+/* The footer stops being a row of loose links. */
+.td-registry-mega-footer { padding-top: var(--td-sp-7); margin-top: var(--td-sp-2); }

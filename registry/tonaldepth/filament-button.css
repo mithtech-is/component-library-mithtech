@@ -83,10 +83,15 @@
    2026-08-29, corrected twice. It was 2px running the row's full height and
    the tab's full width, which reads as a border painted on the side. Thinning
    it to 1.5px made it fainter without making it read as a filament — the fix
-   was the other axis. It is thicker now (2.5px) and considerably shorter: the
-   vertical one stops well inside the row's ends, and the horizontal one spans
-   the middle of the tab rather than its width. A short bright mark is a lamp;
-   a long faint one is a border. */
+   was the other axis. It is thicker now and considerably shorter: the vertical
+   one stops well inside the row's ends, and the horizontal one spans the
+   middle fifth of the tab rather than its width. A short bright mark is a
+   lamp; a long faint one is a border.
+
+   The two axes are NOT the same size, and that is deliberate. The horizontal
+   strip runs across a tab that is far wider than a row is tall, so the same
+   height reads much heavier there — it is 2px over 20% of the width against
+   the vertical one's 2.5px. Matching the numbers would not match the weight. */
 .td-registry-filament--start .td-registry-filament-strip {
   inset-inline-start: var(--td-sp-1);
   top: var(--td-sp-6);
@@ -95,9 +100,9 @@
 }
 .td-registry-filament--top .td-registry-filament-strip {
   inset-block-start: var(--td-sp-1);
-  left: 28%;
-  right: 28%;
-  height: 2.5px;
+  left: 40%;
+  right: 40%;
+  height: 2px;
 }
 
 /* ── the four states ───────────────────────────────────────────────────────
@@ -266,7 +271,7 @@
 .td-registry-filament--sm { padding: var(--td-sp-4) var(--td-sp-5); font-size: 0.8rem; }
 
 .td-registry-filament--sm.td-registry-filament--start .td-registry-filament-strip { top: var(--td-sp-5); bottom: var(--td-sp-5); width: 2.5px; }
-.td-registry-filament--sm.td-registry-filament--top .td-registry-filament-strip { left: 30%; right: 30%; height: 2.5px; }
+.td-registry-filament--sm.td-registry-filament--top .td-registry-filament-strip { left: 41%; right: 41%; height: 2px; }
 
 
 @media (prefers-reduced-motion: reduce) {

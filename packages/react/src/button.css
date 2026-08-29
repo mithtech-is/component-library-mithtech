@@ -158,17 +158,81 @@
 .td-react-button.td-react-button--ghost,
 .td-react-button.td-react-button--link { --td-btn-surface: transparent; }
 
-/* On a DARK fill the unlit lamp has to be translucent white, not the
-   `rgba(0,0,0,0.38)` the papaya housing uses — black on deep green or red is
-   invisible, so accept's tick and cancel's cross vanished at rest. Same ramp,
-   inverted ground. (0,4,0): the generic `.td-coloured` lamp rule below is
-   (0,3,0) and ships later, so a matching (0,3,0) here would lose. */
-.td-react-button.td-coloured:is(.td-react-button--accept, .td-react-button--cancel, .td-react-button--whatsapp, .td-react-button--accent) .td-react-button-lamp { color: rgba(255, 255, 255, 0.62); }
-.td-react-button.td-coloured:is(.td-react-button--accept, .td-react-button--cancel, .td-react-button--whatsapp, .td-react-button--accent):hover .td-react-button-lamp,
-.td-react-button.td-coloured:is(.td-react-button--accept, .td-react-button--cancel, .td-react-button--whatsapp, .td-react-button--accent)[data-state="hover"] .td-react-button-lamp,
-.td-react-button.td-coloured:is(.td-react-button--accept, .td-react-button--cancel, .td-react-button--whatsapp, .td-react-button--accent):active .td-react-button-lamp { color: #fff; }
-.td-react-button.td-coloured:is(.td-react-button--accept, .td-react-button--cancel, .td-react-button--whatsapp, .td-react-button--accent)[data-state="active"] .td-react-button-lamp { color: #fff; }
-.td-react-button.td-coloured:is(.td-react-button--accept, .td-react-button--cancel, .td-react-button--whatsapp, .td-react-button--accent) .td-lamp { background: rgba(255, 255, 255, 0.55); box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25); }
+/* ── The dot, and its brightness ladder ──────────────────────────────
+   The 7px disc `dot` puts before a label is a lamp like any other, and it was
+   the one lamp in the library whose ladder did not work.
+
+   TWO FAULTS, both of them the same fault in different housings.
+
+   **The press snapped.** Rest and hover each carried ONE shadow slot and press
+   carried two — the core ramp adds a wide halo only at the bottom rung — and a
+   shadow list only interpolates against a list of the same length ([[L18]]).
+   So the disc jumped to its pressed state instead of brightening into it, on
+   every primary and every filled button in the library. Every rung here
+   carries exactly two, with the unlit one written at zero alpha in the lamp's
+   own colour rather than as `transparent` ([[L20]]).
+
+   **And on the papaya fill the unlit disc was BLACK.** `.td-coloured`'s rest
+   is `rgba(0, 0, 0, 0.28)`, which reads as a hole punched in the button rather
+   than as glass waiting to be lit — the four dark-fill variants had already
+   been given a translucent white here, one at a time, and `filled` and
+   `destructive` had been missed. It belongs on the housing, not on a list of
+   variants that will always be one behind.
+
+   (0,3,0) throughout, which beats `packages/core`'s (0,2,0) without
+   `!important`. */
+.td-react-button.td-primary .td-lamp {
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--td-ink-3) 30%, transparent),
+    0 0 0 rgb(from var(--td-green) r g b / 0);
+}
+.td-react-button.td-primary:hover .td-lamp,
+.td-react-button.td-primary[data-state="hover"] .td-lamp {
+  box-shadow:
+    0 0 4px color-mix(in srgb, var(--td-green) 28%, transparent),
+    0 0 0 rgb(from var(--td-green) r g b / 0);
+}
+.td-react-button.td-primary[aria-pressed="true"] .td-lamp,
+.td-react-button.td-primary[aria-expanded="true"] .td-lamp,
+.td-react-button.td-primary[data-active="true"] .td-lamp {
+  box-shadow:
+    0 0 6px color-mix(in srgb, var(--td-green) 70%, transparent),
+    0 0 0 rgb(from var(--td-green) r g b / 0);
+}
+.td-react-button.td-primary:active .td-lamp,
+.td-react-button.td-primary[data-state="active"] .td-lamp {
+  box-shadow:
+    0 0 4px var(--td-green),
+    0 0 14px color-mix(in srgb, var(--td-green) 85%, transparent);
+}
+
+/* Glass, not a hole: the unlit disc on ANY fill is translucent white. */
+.td-react-button.td-coloured .td-lamp {
+  background: rgba(255, 255, 255, 0.42);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.28),
+    0 0 0 rgb(255 255 255 / 0);
+}
+.td-react-button.td-coloured:hover .td-lamp,
+.td-react-button.td-coloured[data-state="hover"] .td-lamp {
+  background: #fff;
+  box-shadow:
+    0 0 5px rgba(255, 255, 255, 0.6),
+    0 0 0 rgb(255 255 255 / 0);
+}
+.td-react-button.td-coloured:active .td-lamp,
+.td-react-button.td-coloured[data-state="active"] .td-lamp {
+  background: #fff;
+  box-shadow:
+    0 0 4px #fff,
+    0 0 12px rgba(255, 255, 255, 0.55);
+}
+.td-react-button.td-coloured:disabled .td-lamp {
+  background: rgba(255, 255, 255, 0.3);
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 0),
+    0 0 0 rgb(255 255 255 / 0);
+}
 
 /* ── Channel buttons — surface housing, coloured lamp ─────────────────
    [[L15]] names these exactly: "channel buttons (WhatsApp, email, phone),
@@ -245,15 +309,19 @@
 /* Filled housings: the fill already carries the colour, so the lamp lights
    white — a papaya glow on papaya would be invisible. */
 .td-react-button.td-coloured { --td-lamp-glow: #fff; }
-.td-react-button.td-coloured .td-react-button-lamp { color: rgba(0, 0, 0, 0.38); }
-/* On a DARK fill the unlit lamp must be translucent white instead: black on
-   deep green or red is invisible, so accept's tick and cancel's cross vanished. */
-.td-react-button.td-coloured:is(.td-react-button--accept, .td-react-button--cancel, .td-react-button--whatsapp, .td-react-button--accent) .td-react-button-lamp { color: rgba(255, 255, 255, 0.62); }
+/* The unlit lamp on a fill is TRANSLUCENT WHITE, on every fill.
+
+   It was `rgba(0, 0, 0, 0.38)` — black — with four variants listed by name as
+   exceptions, because black on deep green or red is invisible and accept's
+   tick and cancel's cross vanished at rest. But black on papaya is not much
+   better: it reads as a hole punched in the button rather than as an unlit
+   filament, and the list of exceptions was always going to be one variant
+   behind the variants. A fill is a fill; white dims to glass on all of them. */
+.td-react-button.td-coloured .td-react-button-lamp { color: rgba(255, 255, 255, 0.62); }
 .td-react-button.td-coloured:hover .td-react-button-lamp,
 .td-react-button.td-coloured[data-state="hover"] .td-react-button-lamp,
 .td-react-button.td-coloured:active .td-react-button-lamp,
 .td-react-button.td-coloured[data-state="active"] .td-react-button-lamp { color: #fff; }
-.td-react-button.td-coloured:is(.td-react-button--accept, .td-react-button--cancel, .td-react-button--whatsapp, .td-react-button--accent) .td-lamp { background: rgba(255, 255, 255, 0.55); box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25); }
 
 /* The ladder itself — one pair of rules for every variant. */
 .td-react-button:hover .td-react-button-lamp > svg,

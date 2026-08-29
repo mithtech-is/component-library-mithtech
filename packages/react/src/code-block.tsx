@@ -31,6 +31,23 @@ export interface CodeBlockProps extends Omit<HTMLAttributes<HTMLElement>, "title
   copiedLabel?: string;
   /** Wrap long lines instead of scrolling them. */
   wrap?: boolean;
+  /**
+   * Read `code` as a unified diff and mark each line by its first character —
+   * `+` added, `-` removed, `@` or `+++`/`---` a hunk header, anything else
+   * context.
+   *
+   * This is a reading mode, not a second component: it is the same monospace
+   * listing in the same well, and the only thing that changes is that each line
+   * carries a verdict. It is deliberately dumb — it does not parse hunk
+   * ranges, does not pair added lines with removed ones, and does not compute a
+   * diff. Give it the output of `git diff`.
+   *
+   * The marker column is drawn from the line's own first character rather than
+   * being re-emitted, so copying still yields the diff exactly as it came in.
+   * `children` is ignored in this mode: a highlighter's markup and a per-line
+   * split cannot both own the same text.
+   */
+  diff?: boolean;
 }
 
 /**
@@ -57,9 +74,12 @@ export interface CodeBlockProps extends Omit<HTMLAttributes<HTMLElement>, "title
  * band ([[L03]]). The recess carries it, and the token colours follow the theme.
  */
 export const CodeBlock = forwardRef<HTMLElement, CodeBlockProps>(function CodeBlock(
-  { code, children, language, title, footnote, copy = true, copyLabel = "Copy", copyAriaLabel = "Copy code", copiedLabel = "Copied", wrap = false, className, ...props },
+  { code, children, language, title, footnote, copy = true, copyLabel = "Copy", copyAriaLabel = "Copy code", copiedLabel = "Copied", wrap = false, diff = false, className, ...props },
   ref,
 ) {
+  // Trailing newline first: `"a\n".split("\n")` is `["a", ""]`, and that empty
+  // string renders as a blank marked line at the bottom of every diff.
+  const lines = diff ? code.replace(/\n$/, "").split("\n") : [];
   return (
     <Frame
       {...props}
@@ -69,7 +89,7 @@ export const CodeBlock = forwardRef<HTMLElement, CodeBlockProps>(function CodeBl
       title={title}
       footnote={footnote}
       actions={copy ? <CopyChip value={code} label={copyLabel} copiedLabel={copiedLabel} aria-label={copyAriaLabel} /> : undefined}
-      className={cx("td-react-code", className)}
+      className={cx("td-react-code", diff && "td-react-code--diff", className)}
     >
       {/* Focusable because it is its own scroller: a listing wider than the
           page is unreachable by keyboard otherwise. */}
@@ -77,8 +97,28 @@ export const CodeBlock = forwardRef<HTMLElement, CodeBlockProps>(function CodeBl
         className={cx("td-codeblock", "td-react-codeblock", wrap && "td-react-codeblock--wrap")}
         tabIndex={0}
       >
-        <code className="td-react-codeblock-code">{children ?? code}</code>
+        <code className="td-react-codeblock-code">
+          {diff
+            ? lines.map((line, index) => (
+                <span className="td-react-diff-line" data-kind={diffKind(line)} key={index}>
+                  {line}
+                  {"\n"}
+                </span>
+              ))
+            : children ?? code}
+        </code>
       </pre>
     </Frame>
   );
 });
+
+/** The verdict a unified-diff line's first character carries. */
+function diffKind(line: string): "add" | "del" | "meta" | "context" {
+  // `+++` and `---` are file headers, not an added and a removed line — they
+  // have to be tested before the single-character cases or every diff opens
+  // with one green line and one red one.
+  if (line.startsWith("+++") || line.startsWith("---") || line.startsWith("@@")) return "meta";
+  if (line.startsWith("+")) return "add";
+  if (line.startsWith("-")) return "del";
+  return "context";
+}

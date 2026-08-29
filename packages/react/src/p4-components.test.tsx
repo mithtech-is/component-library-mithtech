@@ -255,21 +255,24 @@ describe("LogoStrip", () => {
     expect(screen.getByRole("link", { name: "Coastal Freight" })).toHaveAttribute("href", "/c");
   });
 
-  it("greys the artwork with a filter rather than altering it", () => {
+  it("flattens the artwork to a silhouette rather than altering it, and is legible in both themes", () => {
     const css = read("logo-strip.css");
-    const rest = /\.td-logos-item\.td-react-logos-item\s*\{([^}]*)\}/.exec(css)!;
-    expect(rest[1]).toMatch(/filter:\s*grayscale\(1\)/);
-    // The hover state is a selector list, so `:hover` is not the token adjacent
-    // to the brace — match the rule whose selectors mention it, not the brace.
-    const hover = /([^{}]*:hover[^{}]*)\{([^}]*)\}/.exec(css)!;
-    expect(hover[2]).toMatch(/filter:\s*none/);
-    // The wall is quiet until you look at one of them, and that only reads if
-    // the one you are looking at is plainly bigger. 1.06 was a nudge nobody
-    // noticed.
-    expect(parseFloat(/transform:\s*scale\(([\d.]+)\)/.exec(hover[2])![1])).toBeGreaterThan(1.1);
-    // The keyboard gets it too: a wall you can only read with a mouse is half
-    // a wall.
-    expect(hover[1]).toMatch(/:focus-visible/);
+    // `grayscale(1)` kept each mark's own values, so a near-black logo stayed
+    // near-black and vanished on a dark page. `brightness(0)` is what makes
+    // legibility independent of the colour its owner picked.
+    expect(css).toMatch(/\.td-react-logos-art \{[^}]*filter: brightness\(0\) opacity\(0\.62\)/);
+    expect(css).toMatch(/\[data-theme="dark"\] \.td-react-logos-art \{ filter: brightness\(0\) invert\(1\)/);
+    expect(css).toMatch(/prefers-color-scheme: dark[\s\S]*?logos-art \{ filter: brightness\(0\) invert\(1\)/);
+    // Filtered, never rewritten: no rule touches the artwork's own colours.
+    expect(css).not.toMatch(/\.td-react-logos-art[^{]*\{[^}]*\bfill:/);
+  });
+
+  it("gives the hovered mark a light plate, so a dark-ink logo is visible on a dark page", () => {
+    const css = read("logo-strip.css");
+    const hover = css.match(/\.td-logos-item\.td-react-logos-item:hover,[\s\S]*?\n\}/)![0];
+    expect(hover).toMatch(/background: color-mix\(in srgb, #fff 94%/);
+    expect(hover).toMatch(/transform: scale\(1\.14\)/);
+    expect(css).toMatch(/:hover \.td-react-logos-art,[\s\S]*?filter: none/);
   });
 
   it("treats a picked file exactly like an inline mark", () => {
@@ -636,13 +639,13 @@ describe("Map", () => {
   });
 });
 
-describe("Faq as the standalone disclosure", () => {
+describe("Faq, the one version", () => {
   // `09-interaction/disclose` is this component with the plate off, so it is a
   // variant rather than a second component.
   const ONE = [{ id: "how", question: "How does it work?", answer: <p>Like this.</p> }];
 
   it("keeps the whole disclosure contract when the plate comes off", async () => {
-    render(<Faq variant="seam" items={ONE} />);
+    render(<Faq items={ONE} />);
     const question = screen.getByRole("button", { name: "How does it work?" });
     expect(question).toHaveAttribute("aria-expanded", "false");
     await userEvent.click(question);
@@ -650,30 +653,23 @@ describe("Faq as the standalone disclosure", () => {
     expect(screen.getByRole("region", { name: "How does it work?" })).toBeInTheDocument();
   });
 
-  it("drops the housing and puts the outer seams back", () => {
-    const { container } = render(<Faq variant="seam" items={ONE} />);
-    expect(container.querySelector(".td-react-faq--seam")).not.toBeNull();
+  it("carves the seams between questions rather than drawing them", () => {
+    // A 1px border is a line painted ON the surface. A seam is the surface
+    // parting — the shade cut in, and the light on the lip below it ([[L03]]).
     const css = read("faq.css");
-    const seam = /\.td-faq\.td-react-faq--seam\s*\{([^}]*)\}/.exec(css)!;
-    expect(seam[1]).toMatch(/box-shadow:\s*none/);
-    expect(seam[1]).toMatch(/background:\s*transparent/);
-    // With no housing the outer seams are the only thing bounding the list, so
-    // they beat the plate's `border-bottom: 0` on the last item.
-    expect(css).toMatch(/\.td-faq\.td-react-faq--seam \.td-faq-item\.td-react-faq-item:last-child\s*\{\s*border-bottom: 1px/);
+    expect(css).not.toMatch(/border-bottom: 1px solid/);
+    const seam = /\.td-react-faq-item \+ \.td-react-faq-item::before \{([^}]*)\}/.exec(css)!;
+    expect(seam[1]).toMatch(/background: color-mix\(in srgb, var\(--td-shadow-dark\)/);
+    expect(seam[1]).toMatch(/box-shadow: 0 1px 0 color-mix\(in srgb, var\(--td-shadow-light\)/);
+    // Inset from both ends: a full-bleed rule divides a card into two cards.
+    expect(seam[1]).toMatch(/inset-inline: var\(--td-sp-/);
   });
 
-  it("does not move the chevron or fill its tile — that would be a second anatomy", () => {
-    // The design system's standalone disclosure puts the chevron on the left in
-    // a tile it fills with brand when open. Neither is reproduced.
-    const { container } = render(<Faq variant="seam" items={ONE} />);
-    const button = container.querySelector(".td-react-faq-q")!;
-    expect(button.lastElementChild).toHaveClass("td-react-faq-chev");
-    expect(read("faq.css")).not.toMatch(/background:\s*var\(--td-brand\)/);
-  });
-
-  it("still defaults to the plate", () => {
+  it("has exactly one version of itself", () => {
+    // Two looks for one list is two things to keep beautiful.
     const { container } = render(<Faq items={ONE} />);
     expect(container.querySelector(".td-react-faq--seam")).toBeNull();
+    expect(readFileSync(join(SRC, "faq.tsx"), "utf8")).not.toMatch(/FaqVariant|variant\?:/);
   });
 });
 

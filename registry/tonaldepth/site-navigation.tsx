@@ -313,11 +313,17 @@ export const TonalDepthSiteNavigation = forwardRef<HTMLElement, TonalDepthSiteNa
         <div className="td-registry-sitenav-brand">{brand}</div>
 
         <div className="td-navlinks">
-          {items.map((item) => {
+          {items.map((item, index) => {
             if (item.kind === "link") {
               const linkClass = cx("td-navbtn", "td-registry-sitenav-link");
               return (
-                <span className="td-registry-sitenav-slot" key={item.href}>
+                /* Keyed by href AND position. An href is not unique — two links
+                   to the same place under different words is ordinary in a nav
+                   ("Docs" beside "Read the docs"), and React silently
+                   reconciles the pair into one, so the second stops updating.
+                   The position disambiguates without inventing an id the
+                   consumer would have to supply. */
+                <span className="td-registry-sitenav-slot" key={`${item.href}-${index}`}>
                   {item.renderLink
                     ? item.renderLink({ className: linkClass, href: item.href, children: item.label })
                     : (

@@ -1,5 +1,7 @@
 // The system icon set — Phosphor only. See icons.tsx for the rule.
 export * from "./icons";
+// Brand & company logos — the colour-preserving sibling of the icon set.
+export * from "./brands";
 export { Badge, type BadgeProps, type BadgeVariant } from "./badge";
 export { Button, type ButtonProps, type ButtonSize, type ButtonVariant } from "./button";
 export { IconButton, type IconButtonProps, type IconButtonTone } from "./icon-button";
@@ -24,7 +26,6 @@ export { CaseCard, CaseCardGrid, type CaseCardGridProps, type CaseCardMetric, ty
 export { FeatureCard, FeatureGrid, type FeatureCardProps, type FeatureCardTone, type FeatureGridProps } from "./feature-card";
 export { ComparisonTable, type ComparisonColumn, type ComparisonRow, type ComparisonTableProps } from "./comparison-table";
 export { CtaBanner, type CtaBannerProps } from "./cta-banner";
-export { Timeline, type TimelineItem, type TimelineProps, type TimelineState } from "./timeline";
 export { Prose, type ProseProps, type ProseSize } from "./prose";
 export { RectTitle, splitRectTitle, type RectTitleLevel, type RectTitleProps, type RectTitleTone } from "./rect-title";
 export { FilamentButton, SideTabs, type FilamentButtonProps, type FilamentEdge, type FilamentSize, type FilamentTone, type SideTabItem, type SideTabsLayout, type SideTabsProps } from "./filament-button";
@@ -48,5 +49,20 @@ export * from "./code-block";
 export * from "./breadcrumbs";
 export * from "./pagination";
 export * from "./map";
+export * from "./whatsapp-form";
+export * from "./social-button";
 export * from "./profile-card";
 export * from "./mega-menu";
+export { Timeline, type TimelineAxis, type TimelineItem, type TimelineMarker, type TimelineProps, type TimelineState } from "./timeline";
+export * from "./reading-progress";
+export * from "./counter";
+export * from "./testimonial";
+export * from "./iso-stack";
+export * from "./terminal";
+export * from "./file-preview";
+export * from "./sub-nav";
+export * from "./confirm-button";
+export * from "./multi-step";
+export * from "./spotlight";
+export * from "./page-nav";
+export * from "./chat-launcher";

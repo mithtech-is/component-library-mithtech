@@ -21,6 +21,14 @@
 /* The escape hatch, made explicit rather than accidental. */
 .td-react-search--block { width: 100%; --td-search-width: 100%; }
 
+/* THE GROWTH. Small until somebody means to use it, then wide enough for a
+   result and its reason — and the panel drops from the grown field, so the two
+   read as one movement rather than as a box appearing beside a box that just
+   changed size. `width` rather than `transform: scaleX`, which would stretch
+   the mark and the type with it. */
+.td-react-search--expand { transition: width var(--td-t-slow) var(--td-ease); }
+.td-react-search--expand:focus-within { width: var(--td-search-expanded, min(100%, 620px)); }
+
 .td-react-search-field {
   position: relative;
   display: flex;
@@ -119,22 +127,56 @@
 .td-react-search-submit:disabled { cursor: not-allowed; color: var(--td-ink-3); box-shadow: none; background: color-mix(in srgb, var(--td-ink-2) 8%, var(--td-surface)); }
 
 /* ── suggestions ───────────────────────────────────────────────────────── */
+/* THE PANEL.
+
+   It was a card floating a gap below the field, which reads as two objects —
+   a field, and something that appeared near it. The list belongs to the field,
+   so it is drawn as the same plate continuing: flush against it, square where
+   they meet, rounded only where the pair ends, with a carved seam on the join.
+
+   It unfolds rather than appearing. `max-height` rather than a height
+   animation because the list has no height of its own to animate — and the
+   number is not a guess here, it is the cap the list already had, so the
+   easing lands exactly where the panel stops. */
+.td-react-search[data-open] .td-react-search-field {
+  border-end-start-radius: 0;
+  border-end-end-radius: 0;
+}
 .td-react-search-list {
   position: absolute;
   z-index: 40;
-  top: calc(100% + var(--td-sp-4));
+  top: 100%;
   inset-inline: 0;
   max-height: 320px;
   overflow-y: auto;
   margin: 0;
   padding: var(--td-sp-4);
   list-style: none;
-  border-radius: var(--td-radius-6);
+  border-start-start-radius: 0;
+  border-start-end-radius: 0;
+  border-end-start-radius: var(--td-radius-6);
+  border-end-end-radius: var(--td-radius-6);
   background: var(--td-surface);
   box-shadow:
     6px 8px 20px color-mix(in srgb, var(--td-shadow-dark) 60%, transparent),
     -4px -4px 12px color-mix(in srgb, var(--td-shadow-light) 40%, transparent),
     0 0 0 1px var(--td-edge);
+  animation: td-react-search-unfold var(--td-t-slow) var(--td-ease);
+}
+/* The join. A carved seam, never a drawn rule ([[L03]]). */
+.td-react-search-list::before {
+  content: "";
+  position: sticky;
+  display: block;
+  top: 0;
+  height: 1px;
+  margin: calc(var(--td-sp-4) * -1) calc(var(--td-sp-4) * -1) var(--td-sp-3);
+  background: color-mix(in srgb, var(--td-shadow-dark) 50%, transparent);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--td-shadow-light) 50%, transparent);
+}
+@keyframes td-react-search-unfold {
+  from { max-height: 0; opacity: 0; padding-block: 0; }
+  to { max-height: 320px; opacity: 1; }
 }
 .td-react-search-option {
   display: grid;
@@ -163,7 +205,78 @@
 .td-react-search--lg .td-react-search-mark > svg { width: 17px; height: 17px; }
 
 @media (prefers-reduced-motion: reduce) {
+  .td-react-search-list { animation: none; }
+  .td-react-search--expand { transition: none; }
   .td-react-search-field,
   .td-react-search-clear,
   .td-react-search-submit { transition: none; }
+}
+
+/* ── The trigger ───────────────────────────────────────────────────────────
+   The field, drawn as the way into a search that happens somewhere else.
+
+   Everything visual is inherited: same carved housing, same mark, same
+   heights, so it does not read as a second kind of search field. What changes
+   is that it presses — it is a control now, not a place to put something — and
+   that it carries the shortcut, because a control that opens a console should
+   say how else to open it.
+
+   Tighter than the typing field on purpose. A field is sized to hold what you
+   type; this holds one word and a chip, and at the field's own padding it
+   reads as an empty search box somebody forgot to fill in. */
+/* Sized to its label and its chip, not to the 420px a typing field takes —
+   the whole point is that nothing is going to be typed into it. `--td-search-width`
+   still overrides, and `block` still fills. */
+.td-react-search--trigger { display: inline-flex; width: fit-content; }
+.td-react-search--trigger.td-react-search--block { width: 100%; }
+.td-react-search-trigger {
+  appearance: none;
+  border: 0;
+  width: 100%;
+  gap: var(--td-sp-3);
+  padding-inline: var(--td-sp-4);
+  cursor: pointer;
+  font: inherit;
+  font-family: var(--td-font-ui);
+  color: var(--td-ink-3);
+  text-align: start;
+}
+.td-react-search--sm .td-react-search-trigger { min-height: 32px; }
+.td-react-search-trigger:hover { color: var(--td-ink-2); }
+/* Pressed, it takes the deeper carve every control in the system takes — the
+   same three slots, so it interpolates rather than snapping ([[L18]]). */
+.td-react-search-trigger:active {
+  box-shadow:
+    inset 3px 3px 6px color-mix(in srgb, var(--td-shadow-dark) 68%, transparent),
+    inset -1px -1px 3px color-mix(in srgb, var(--td-shadow-light) 40%, transparent),
+    0 0 0 1.5px rgb(from var(--td-accent) r g b / 0);
+}
+.td-react-search-trigger:focus-visible {
+  outline: none;
+  box-shadow:
+    inset 2px 2px 4px color-mix(in srgb, var(--td-shadow-dark) 55%, transparent),
+    inset -1px -1px 3px color-mix(in srgb, var(--td-shadow-light) 45%, transparent),
+    0 0 0 1.5px color-mix(in srgb, var(--td-accent) 55%, transparent);
+}
+.td-react-search-triggerlabel {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* The chip is a legend, not a key to press — carved in rather than raised, so
+   nothing about it invites a click. */
+.td-react-search-kbd {
+  flex: 0 0 auto;
+  padding: 2px 5px;
+  border-radius: var(--td-radius-2);
+  font-family: var(--td-font-mono);
+  font-size: 0.62rem;
+  line-height: 1.4;
+  letter-spacing: 0.04em;
+  color: var(--td-ink-3);
+  box-shadow:
+    inset 1px 1px 2px color-mix(in srgb, var(--td-shadow-dark) 55%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 55%, transparent);
 }

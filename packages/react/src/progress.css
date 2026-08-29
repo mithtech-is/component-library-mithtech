@@ -60,3 +60,9 @@
   .td-react-progress-bar { transition: none; }
   .td-react-progress--indeterminate .td-react-progress-bar { animation: none; width: 100%; opacity: 0.5; }
 }
+
+/* The verdict slot. A meter reports a number; this is where the caller says
+   what the number means, and it takes the place of the percentage rather than
+   sitting beside it — two readings of the same bar in the same corner is one
+   too many. */
+.td-react-progress-status { display: inline-flex; align-items: center; flex: 0 0 auto; }

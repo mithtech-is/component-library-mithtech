@@ -17,17 +17,6 @@ export interface TonalDepthFaqItem {
   answer: ReactNode;
 }
 
-/**
- * How the list is housed.
- *
- * `plate` is the FAQ block: one carved plate with seams between the questions.
- * `seam` drops the housing and leaves the seams — which is the design system's
- * standalone **disclosure**. A single question in `seam` form is one
- * disclosure; that is the whole difference, and it is why there is no separate
- * component for it.
- */
-export type TonalDepthFaqVariant = "plate" | "seam";
-
 export interface TonalDepthFaqProps extends Omit<HTMLAttributes<HTMLElement>, "onChange"> {
   items: TonalDepthFaqItem[];
   /** Ids open on first render. Ignored once `value` is passed. */
@@ -37,8 +26,6 @@ export interface TonalDepthFaqProps extends Omit<HTMLAttributes<HTMLElement>, "o
   onValueChange?: (open: string[]) => void;
   /** One at a time. Opening a question closes the one before it. */
   single?: boolean;
-  /** `seam` drops the plate and leaves the seams — the standalone disclosure. */
-  variant?: TonalDepthFaqVariant;
   /** Names the list for a screen reader. */
   label?: string;
 }
@@ -55,21 +42,14 @@ export interface TonalDepthFaqProps extends Omit<HTMLAttributes<HTMLElement>, "o
  * in-page search in some browsers, which is how a reader ends up scrolled to
  * text they cannot see.
  *
- * **The design system's standalone disclosure is this component with the plate
- * off.** `variant="seam"` drops the housing and leaves the seams; one item in
- * that form *is* a disclosure. It is a prop rather than a second component
- * because everything else — the button, `aria-expanded`, the controlled region,
- * the row press, the chevron — is identical, and two components would mean two
- * places to correct every time one of those changed.
- *
- * Two things the standalone disclosure does are deliberately not reproduced. It
- * puts the chevron on the *left*, in its own raised tile; a variant that moves
- * the mark to the other side is a second anatomy inside one component. And it
- * fills that tile with the brand colour when open, which is the one move the
- * system forbids ([[L11]]).
+ * **There is one version of it, deliberately.** A `seam` variant that dropped
+ * the plate existed briefly to cover the design system's standalone
+ * disclosure; it was removed because two looks for one list is two things to
+ * keep beautiful, and the list was the one that mattered. A disclosure is this
+ * component with a single item — which it always was.
  */
 export const TonalDepthFaq = forwardRef<HTMLElement, TonalDepthFaqProps>(function TonalDepthFaq(
-  { items, defaultValue = [], value, onValueChange, single = false, variant = "plate", label, className, ...props },
+  { items, defaultValue = [], value, onValueChange, single = false, label, className, ...props },
   ref,
 ) {
   const base = useId();
@@ -84,7 +64,7 @@ export const TonalDepthFaq = forwardRef<HTMLElement, TonalDepthFaqProps>(functio
   };
 
   return (
-    <section {...props} ref={ref} aria-label={label} className={cx("td-faq", "td-registry-faq", variant === "seam" && "td-registry-faq--seam", className)}>
+    <section {...props} ref={ref} aria-label={label} className={cx("td-faq", "td-registry-faq", className)}>
       {items.map(item => {
         const isOpen = open.includes(item.id);
         return (
