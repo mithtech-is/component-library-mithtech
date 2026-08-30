@@ -18,6 +18,41 @@ const anchor = (render: MegaLinkRenderer | undefined, href: string, children: Re
  * "Comparisons" does not. Only ever a real, resolved number — never an estimate
  * and never a placeholder, because a wrong count is worse than none.
  */
+/**
+ * What is new behind a rail row.
+ *
+ * The counts already said how MUCH is behind a row; this says whether any of
+ * it is worth a second look, which is the question a returning reader actually
+ * has. A row that reports nothing new does not draw one — a mark on every row
+ * is a mark that means nothing.
+ *
+ * It is a LAMP, not a pill: a lens seated in a socket carved from the row's own
+ * surface, lit by a named light. Category arrives as light in this system,
+ * never as a coloured chip, and a mega rail is the last place to start.
+ */
+export type MegaFreshness = "new" | "updated";
+
+const FRESHNESS_LABEL: Record<MegaFreshness, string> = {
+  new: "New",
+  updated: "Updated recently",
+};
+
+/**
+ * The lamp, plus the word for a screen reader.
+ *
+ * The visible mark carries no text, so the state has to reach a reader who
+ * cannot see it some other way — colour alone is never the signal here.
+ */
+function Freshness({ state }: { state: MegaFreshness | undefined }) {
+  if (!state) return null;
+  return (
+    <span className="td-react-mega-fresh" data-fresh={state}>
+      <span className="td-react-mega-fresh-lamp" aria-hidden="true" />
+      <span className="td-react-mega-fresh-label">{FRESHNESS_LABEL[state]}</span>
+    </span>
+  );
+}
+
 function Count({ n }: { n: number | null | undefined }) {
   if (typeof n !== "number") return null;
   return <span aria-hidden="true" className="td-chip-count">{n}</span>;
@@ -43,6 +78,8 @@ export interface MegaCascadeBranch {
   href?: string;
   /** Overrides the rail number. Omit to use `items.length`; pass null to show none. */
   count?: number | null;
+  /** Draws the freshness lamp on this row. Omit where nothing has changed. */
+  fresh?: MegaFreshness;
   items: MegaCascadeItem[];
 }
 
@@ -53,6 +90,8 @@ export interface MegaCascadeGroup {
   icon?: ReactNode;
   /** Overrides the rail number. Omit to sum the branches; pass null to show none. */
   count?: number | null;
+  /** Draws the freshness lamp on this row. Omit where nothing has changed. */
+  fresh?: MegaFreshness;
   branches: MegaCascadeBranch[];
 }
 
@@ -135,7 +174,12 @@ export const MegaCascade = forwardRef<HTMLDivElement, MegaCascadeProps>(function
     g.count === null ? null : g.count ?? g.branches.reduce((n, b) => n + b.items.length, 0);
 
   return (
-    <div {...props} ref={ref} className={cx("td-mega-inner", "td-react-mega-inner", className)}>
+    /* `data-mega-stateful`: this panel repaints when a rail changes, so the
+       sheet around it must not be sized to its content — it would resize under
+       the reader's cursor as they move down the rail. The attribute lets
+       SiteNavigation's stylesheet refuse `height="fit"` outright rather than
+       leaving the rule to a doc sentence nobody reads. */
+    <div {...props} ref={ref} data-mega-stateful="" className={cx("td-mega-inner", "td-react-mega-inner", className)}>
       <div role="tablist" aria-label={categoriesLabel} aria-orientation="vertical" className="td-mega-list td-react-mega-list">
         {groups.map((g, i) => (
           <button
@@ -153,6 +197,7 @@ export const MegaCascade = forwardRef<HTMLDivElement, MegaCascadeProps>(function
           >
             {g.icon ? <span className="td-mega-op-icon td-react-mega-op-icon">{g.icon}</span> : null}
             <span className="td-mega-op-copy"><strong>{g.label}</strong></span>
+            <Freshness state={g.fresh} />
             <Count n={groupCount(g)} />
           </button>
         ))}
@@ -184,6 +229,7 @@ export const MegaCascade = forwardRef<HTMLDivElement, MegaCascadeProps>(function
               <strong>{b.title}</strong>
               {b.hint ? <span>{b.hint}</span> : null}
             </span>
+            <Freshness state={b.fresh} />
             <Count n={b.count === null ? null : b.count ?? b.items.length} />
           </button>
         ))}
@@ -278,7 +324,9 @@ export const MegaTabs = forwardRef<HTMLDivElement, MegaTabsProps>(function MegaT
   };
 
   return (
-    <div {...props} ref={ref} className={cx("td-mega-inner", "td-react-mega-inner", "td-react-mega-inner--two", className)}>
+    /* Stateful for the same reason MegaCascade is: picking a tab repaints the
+       pane, which is most of the sheet. See the note there. */
+    <div {...props} ref={ref} data-mega-stateful="" className={cx("td-mega-inner", "td-react-mega-inner", "td-react-mega-inner--two", className)}>
       <div role="tablist" aria-label={label} aria-orientation="vertical" className="td-mega-list td-react-mega-list" onKeyDown={onKeyDown}>
         {items.map((item, i) => (
           <button

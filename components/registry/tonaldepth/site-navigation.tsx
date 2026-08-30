@@ -1,6 +1,6 @@
 "use client";
 
-import { forwardRef, useCallback, useEffect, useRef, useState, type HTMLAttributes, type ReactNode, type SVGProps } from "react";
+import { forwardRef, useCallback, useEffect, useLayoutEffect, useRef, useState, type HTMLAttributes, type ReactNode, type SVGProps } from "react";
 import { createPortal } from "react-dom";
 import { CaretDownIcon as ChevronDownIcon } from "@phosphor-icons/react";
 import "./tonaldepth-site-navigation.css";
@@ -94,6 +94,36 @@ export interface TonalDepthSiteNavigationLink {
   renderLink?: TonalDepthSiteNavigationLinkRenderer;
 }
 
+/**
+ * How wide this menu's sheet is drawn.
+ *
+ * A NAMED size rather than a number, so a nav cannot accumulate twelve
+ * near-identical widths that nobody can tell apart.
+ *
+ * - `full` — the sheet's own measure, wider than the bar. The default, and
+ *   what a three-column cascade needs.
+ * - `wide` — the bar's measure. A two-column panel under a bar-width sheet.
+ * - `content` — as wide as the content wants, capped at `full`. For a grid of
+ *   a known number of cards, where `full` leaves void either side.
+ */
+export type TonalDepthSiteNavigationMenuWidth = "full" | "wide" | "content";
+
+/**
+ * How tall this menu's sheet is drawn.
+ *
+ * - `tall` — the fixed 608px sheet. The default.
+ * - `short` — a fixed 420px sheet, for a panel with one or two rows in it.
+ * - `fit` — the height the content actually needs.
+ *
+ * **`fit` is only for a panel with no internal state**, and that is the whole
+ * of the rule. A panel that changes what it shows — a cascade whose first rail
+ * repaints the other two — must never be `fit`, because then the sheet resizes
+ * under the reader's cursor as they move down a rail, which is the thing
+ * `TonalDepthSiteNavigation` exists to prevent. A grid of cards has no states, so it can
+ * hug its content and stay one size for as long as it is open.
+ */
+export type TonalDepthSiteNavigationMenuHeight = "tall" | "short" | "fit";
+
 export interface TonalDepthSiteNavigationMenu {
   kind: "menu";
   id: string;
@@ -104,10 +134,37 @@ export interface TonalDepthSiteNavigationMenu {
   description?: ReactNode;
   /** The head's one link. Supply the element so a router owns it. */
   cta?: ReactNode;
+  /**
+   * A control in the panel head, between the title and the CTA — in practice a
+   * `SearchBar` scoped to this panel's own corpus.
+   *
+   * The panel is the right scope for a field: it fronts one section, and a
+   * reader who already knows the word they want should not have to walk a
+   * three-level rail to reach it. The matching is yours, as it is everywhere
+   * `SearchBar` is used; this is the slot and the placement.
+   *
+   * **Pass `shortcut={false}`.** A field inside a menu that binds a global key
+   * collides with the product's own command palette, and the menu's copy wins
+   * because it mounted last — so ⌘K opens a palette full of one section's
+   * links. A component that binds at `document` has this the moment there are
+   * two of it on a page.
+   */
+  search?: ReactNode;
   /** Pinned strip along the bottom of the sheet, outside the scroll area. */
   footer?: ReactNode;
   content: ReactNode;
   ariaLabel?: string;
+  /**
+   * The sheet's width for this menu alone. Defaults to `full`, so a menu that
+   * says nothing is drawn exactly as it was.
+   */
+  width?: TonalDepthSiteNavigationMenuWidth;
+  /**
+   * The sheet's height for this menu alone. Defaults to `tall`, so a menu that
+   * says nothing is drawn exactly as it was. Read `TonalDepthSiteNavigationMenuHeight`
+   * before reaching for `fit`.
+   */
+  height?: TonalDepthSiteNavigationMenuHeight;
 }
 
 export type TonalDepthSiteNavigationItem = TonalDepthSiteNavigationLink | TonalDepthSiteNavigationMenu;
@@ -133,6 +190,63 @@ const TonalDepthCHEVRON = (
 const TonalDepthCLOSE = (
   <CloseIcon weight={LAMP_WEIGHT} aria-hidden="true" />
 );
+
+/**
+ * Where the scrim has to be rendered so it lands UNDER the bar and the sheet
+ * and OVER the page.
+ *
+ * `document.body` is the obvious answer and it is wrong on its own, because it
+ * only holds while nothing between the header and the body creates a stacking
+ * context. The moment something does — `position: relative; z-index: 3` is
+ * enough, and that is an ordinary thing for a page to have — the whole
+ * component is sealed inside it at that context's z-index, and a body-level
+ * scrim at 30 paints over the bar AND the open sheet however high the header's
+ * own z-index is. The sheet is then blurred and unclickable, which reads as
+ * "the mega menu is broken" and is invisible to any amount of reading of this
+ * component. It cost an hour on the docs site, whose specimen well raises
+ * itself to `z-index: 3` on `:focus-within` — that is, whenever a trigger is
+ * pressed.
+ *
+ * So the scrim joins the header's own stacking context instead: walk up to the
+ * nearest ancestor that creates one and portal into that. There the ordering
+ * is decided by z-index between siblings, which is what the numbers in
+ * `site-navigation.css` were written to do, and no ancestor can overrule it.
+ *
+ * Two ancestors are refused on the way up, and both for the same reason the
+ * scrim is portalled out of the header at all: `transform`, `filter`,
+ * `perspective`, `backdrop-filter`, `contain` and `will-change` make an element
+ * the containing block for `position: fixed` descendants — so `inset: 0` would
+ * resolve against that box rather than the viewport — and they open a backdrop
+ * root, which leaves `backdrop-filter` with nothing painted behind it to sample
+ * and computes it to `none`. Neither failure reports. Hitting one of those, the
+ * scrim goes to `document.body` to escape it, which is the best available
+ * answer: a transformed ancestor breaks viewport-fixed positioning for anything
+ * inside it, this component included.
+ */
+function TonalDepthscrimHostFor(header: HTMLElement | null): HTMLElement | null {
+  if (typeof document === "undefined") return null;
+  /* Engines that do not implement a property return "" for it rather than its
+     initial value — jsdom returns nothing for `filter` and `backdrop-filter` —
+     so an empty string has to read as UNSET. Comparing against "none" alone
+     would make every ancestor look transformed and stop the walk at the first
+     one. */
+  const set = (value: string | null | undefined) =>
+    Boolean(value) && value !== "none" && value !== "normal" && value !== "auto";
+
+  for (let node = header?.parentElement ?? null; node && node !== document.body; node = node.parentElement) {
+    const style = getComputedStyle(node);
+    // Containing block for fixed descendants, and a new backdrop root. Escape it.
+    if (set(style.transform) || set(style.translate) || set(style.rotate) || set(style.scale)) return document.body;
+    if (set(style.perspective) || set(style.filter) || set(style.backdropFilter)) return document.body;
+    if (set(style.containerType) || set(style.willChange)) return document.body;
+    if (/\b(paint|layout|strict|content)\b/.test(style.contain ?? "")) return document.body;
+    // A stacking context the header is sealed inside. Join it.
+    if (style.position !== "static" && set(style.zIndex)) return node;
+    if (style.isolation === "isolate" || set(style.mixBlendMode)) return node;
+    if (style.opacity !== "" && Number(style.opacity) < 1) return node;
+  }
+  return document.body;
+}
 
 /**
  * The marketing site's primary navigation: a raised pill, sticky, with mega
@@ -178,6 +292,7 @@ export const TonalDepthSiteNavigation = forwardRef<HTMLElement, TonalDepthSiteNa
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [hidden, setHidden] = useState(false);
   const [stuck, setStuck] = useState(false);
+  const [scrimHost, setScrimHost] = useState<HTMLElement | null>(null);
 
   const headerRef = useRef<HTMLElement | null>(null);
   const barRef = useRef<HTMLElement | null>(null);
@@ -188,6 +303,15 @@ export const TonalDepthSiteNavigation = forwardRef<HTMLElement, TonalDepthSiteNa
 
   useEffect(() => {
     openRef.current = openMenu;
+  }, [openMenu]);
+
+  /* Resolved per open rather than once on mount: a page can gain a stacking
+     context between two openings, and the docs' own specimen well does exactly
+     that — it raises itself on `:focus-within`, which is the press that opens
+     the sheet. Layout effect so the host is known before the browser paints
+     the sheet, or the scrim's fade-in starts a frame late. */
+  useLayoutEffect(() => {
+    setScrimHost(openMenu ? TonalDepthscrimHostFor(headerRef.current) : null);
   }, [openMenu]);
 
   const close = useCallback(() => setOpenMenu(null), []);
@@ -376,7 +500,7 @@ export const TonalDepthSiteNavigation = forwardRef<HTMLElement, TonalDepthSiteNa
           the page legible underneath while making it plainly inactive. It
           closes the sheet on click, like an outside press.
 
-          **It is portalled to `document.body`, and that is load-bearing.** The
+          **It is portalled out of the header, and that is load-bearing.** The
           header takes a `transform` for the retract, and a transformed element
           becomes the containing block for its `position: fixed` descendants —
           so rendered in place the scrim's `inset: 0` resolved against the 86px
@@ -384,11 +508,12 @@ export const TonalDepthSiteNavigation = forwardRef<HTMLElement, TonalDepthSiteNa
           transform opens a new backdrop root, which left `backdrop-filter`
           with nothing painted behind it to sample, so it computed to `none`
           and there was no glass at all. Both symptoms, one cause; see the
-          overlay rule in the docs. Portalling puts the scrim beyond the reach
-          of every ancestor, which also settles its stacking for good: it is a
-          child of `body`, and the header is its own context above it. */}
-      {openMenu && typeof document !== "undefined"
-        ? createPortal(<div className="td-registry-sitenav-scrim" aria-hidden="true" onClick={close} />, document.body)
+          overlay rule in the docs. Where it lands is `TonalDepthscrimHostFor`'s answer:
+          the header's own stacking context where the page has given it one, so
+          the z-index ordering in the stylesheet cannot be overruled from
+          outside, and `document.body` otherwise. */}
+      {openMenu && scrimHost
+        ? createPortal(<div className="td-registry-sitenav-scrim" aria-hidden="true" onClick={close} />, scrimHost)
         : null}
 
       <div className="td-mega">
@@ -412,6 +537,12 @@ export const TonalDepthSiteNavigation = forwardRef<HTMLElement, TonalDepthSiteNa
                */
               className="td-mega-panel td-registry-sitenav-panel"
               data-mega-panel=""
+              /* Per-menu sizing. Written as data attributes rather than inline
+                 custom properties so the sizes are a closed set the stylesheet
+                 owns: a consumer picks one of three, and cannot invent a
+                 fourth by passing a number. */
+              data-mega-width={menu.width ?? "full"}
+              data-mega-height={menu.height ?? "tall"}
               data-lenis-prevent
               onClick={closeOnNavigate}
             >
@@ -420,6 +551,7 @@ export const TonalDepthSiteNavigation = forwardRef<HTMLElement, TonalDepthSiteNa
                   <strong>{menu.title}</strong>
                   {menu.description ? <p>{menu.description}</p> : null}
                 </div>
+                {menu.search ? <div className="td-registry-sitenav-search">{menu.search}</div> : null}
                 {menu.cta}
                 <button type="button" onClick={close} aria-label={closeLabel} className="td-mega-close">
                   {TonalDepthCLOSE}

@@ -20,6 +20,41 @@ const TonalDepthanchor = (render: TonalDepthMegaLinkRenderer | undefined, href: 
  * "Comparisons" does not. Only ever a real, resolved number — never an estimate
  * and never a placeholder, because a wrong count is worse than none.
  */
+/**
+ * What is new behind a rail row.
+ *
+ * The counts already said how MUCH is behind a row; this says whether any of
+ * it is worth a second look, which is the question a returning reader actually
+ * has. A row that reports nothing new does not draw one — a mark on every row
+ * is a mark that means nothing.
+ *
+ * It is a LAMP, not a pill: a lens seated in a socket carved from the row's own
+ * surface, lit by a named light. Category arrives as light in this system,
+ * never as a coloured chip, and a mega rail is the last place to start.
+ */
+export type TonalDepthMegaFreshness = "new" | "updated";
+
+const TonalDepthFRESHNESS_LABEL: Record<TonalDepthMegaFreshness, string> = {
+  new: "New",
+  updated: "Updated recently",
+};
+
+/**
+ * The lamp, plus the word for a screen reader.
+ *
+ * The visible mark carries no text, so the state has to reach a reader who
+ * cannot see it some other way — colour alone is never the signal here.
+ */
+function TonalDepthFreshness({ state }: { state: TonalDepthMegaFreshness | undefined }) {
+  if (!state) return null;
+  return (
+    <span className="td-registry-mega-fresh" data-fresh={state}>
+      <span className="td-registry-mega-fresh-lamp" aria-hidden="true" />
+      <span className="td-registry-mega-fresh-label">{TonalDepthFRESHNESS_LABEL[state]}</span>
+    </span>
+  );
+}
+
 function TonalDepthCount({ n }: { n: number | null | undefined }) {
   if (typeof n !== "number") return null;
   return <span aria-hidden="true" className="td-chip-count">{n}</span>;
@@ -45,6 +80,8 @@ export interface TonalDepthMegaCascadeBranch {
   href?: string;
   /** Overrides the rail number. Omit to use `items.length`; pass null to show none. */
   count?: number | null;
+  /** Draws the freshness lamp on this row. Omit where nothing has changed. */
+  fresh?: TonalDepthMegaFreshness;
   items: TonalDepthMegaCascadeItem[];
 }
 
@@ -55,6 +92,8 @@ export interface TonalDepthMegaCascadeGroup {
   icon?: ReactNode;
   /** Overrides the rail number. Omit to sum the branches; pass null to show none. */
   count?: number | null;
+  /** Draws the freshness lamp on this row. Omit where nothing has changed. */
+  fresh?: TonalDepthMegaFreshness;
   branches: TonalDepthMegaCascadeBranch[];
 }
 
@@ -137,7 +176,12 @@ export const TonalDepthMegaCascade = forwardRef<HTMLDivElement, TonalDepthMegaCa
     g.count === null ? null : g.count ?? g.branches.reduce((n, b) => n + b.items.length, 0);
 
   return (
-    <div {...props} ref={ref} className={cx("td-mega-inner", "td-registry-mega-inner", className)}>
+    /* `data-mega-stateful`: this panel repaints when a rail changes, so the
+       sheet around it must not be sized to its content — it would resize under
+       the reader's cursor as they move down the rail. The attribute lets
+       SiteNavigation's stylesheet refuse `height="fit"` outright rather than
+       leaving the rule to a doc sentence nobody reads. */
+    <div {...props} ref={ref} data-mega-stateful="" className={cx("td-mega-inner", "td-registry-mega-inner", className)}>
       <div role="tablist" aria-label={categoriesLabel} aria-orientation="vertical" className="td-mega-list td-registry-mega-list">
         {groups.map((g, i) => (
           <button
@@ -155,6 +199,7 @@ export const TonalDepthMegaCascade = forwardRef<HTMLDivElement, TonalDepthMegaCa
           >
             {g.icon ? <span className="td-mega-op-icon td-registry-mega-op-icon">{g.icon}</span> : null}
             <span className="td-mega-op-copy"><strong>{g.label}</strong></span>
+            <TonalDepthFreshness state={g.fresh} />
             <TonalDepthCount n={groupCount(g)} />
           </button>
         ))}
@@ -186,6 +231,7 @@ export const TonalDepthMegaCascade = forwardRef<HTMLDivElement, TonalDepthMegaCa
               <strong>{b.title}</strong>
               {b.hint ? <span>{b.hint}</span> : null}
             </span>
+            <TonalDepthFreshness state={b.fresh} />
             <TonalDepthCount n={b.count === null ? null : b.count ?? b.items.length} />
           </button>
         ))}
@@ -280,7 +326,9 @@ export const TonalDepthMegaTabs = forwardRef<HTMLDivElement, TonalDepthMegaTabsP
   };
 
   return (
-    <div {...props} ref={ref} className={cx("td-mega-inner", "td-registry-mega-inner", "td-registry-mega-inner--two", className)}>
+    /* Stateful for the same reason TonalDepthMegaCascade is: picking a tab repaints the
+       pane, which is most of the sheet. See the note there. */
+    <div {...props} ref={ref} data-mega-stateful="" className={cx("td-mega-inner", "td-registry-mega-inner", "td-registry-mega-inner--two", className)}>
       <div role="tablist" aria-label={label} aria-orientation="vertical" className="td-mega-list td-registry-mega-list" onKeyDown={onKeyDown}>
         {items.map((item, i) => (
           <button

@@ -97,12 +97,22 @@ aside {
   padding: var(--td-sp-8) var(--td-sp-6) var(--td-sp-9);
   background: var(--td-surface);
 }
-nav { display: grid; gap: 2px; }
+/* Scoped to the sidebar, and it has to be.
+
+   These were bare `nav` and `nav a` element selectors, which is fine on a page
+   with one navigation and wrong on a page whose whole job is to render other
+   people's. `SiteNavigation` draws its mega sheet as a `<nav>` and `MegaColumns`
+   fills it with `<a>`, so `justify-content: space-between` below reached every
+   link in the sheet and flung its copy to the right-hand edge — a component the
+   library ships, misrepresented on its own specimen by the docs' sidebar
+   styling. `LinkCells`, `Breadcrumbs`, `PageNav` and `Footer` all draw `<nav>`
+   elements too. */
+aside nav { display: grid; gap: 2px; }
 
 /* The four-step ladder, unabbreviated. Rest is flat with quiet ink; hover
    presses into a shallow well and the ink lifts to full; active goes deeper;
    the selected page sits in the deepest well with papaya ink — never a fill. */
-nav a {
+aside nav a {
   display: flex; align-items: center; justify-content: space-between; gap: var(--td-sp-4);
   min-height: 36px; padding: var(--td-sp-3) var(--td-sp-6);
   border-radius: var(--td-radius-4);
@@ -110,28 +120,28 @@ nav a {
   background: transparent;
   transition: box-shadow var(--td-t-fast) var(--td-ease), color var(--td-t-fast) var(--td-ease), background var(--td-t-fast) var(--td-ease);
 }
-nav a:hover {
+aside nav a:hover {
   color: var(--td-ink);
   background: color-mix(in srgb, var(--td-surface) 97%, black);
   box-shadow:
     inset 1.5px 1.5px 3px color-mix(in srgb, var(--td-shadow-dark) 40%, transparent),
     inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 34%, transparent);
 }
-nav a:active {
+aside nav a:active {
   box-shadow:
     inset 2.5px 2.5px 5px color-mix(in srgb, var(--td-shadow-dark) 52%, transparent),
     inset -1.5px -1.5px 3px color-mix(in srgb, var(--td-shadow-light) 30%, transparent);
 }
-nav a.active {
+aside nav a.active {
   color: var(--td-brand-text); font-weight: 600;
   background: color-mix(in srgb, var(--td-surface) 95%, black);
   box-shadow:
     inset 3px 3px 6px color-mix(in srgb, var(--td-shadow-dark) 58%, transparent),
     inset -2px -2px 4px color-mix(in srgb, var(--td-shadow-light) 32%, transparent);
 }
-nav a:focus-visible { outline: 2px solid var(--td-accent); outline-offset: -2px; }
-nav a small { font-size: 0.62rem; color: var(--td-ink-3); letter-spacing: 0.06em; text-transform: uppercase; }
-nav a.active small { color: color-mix(in srgb, var(--td-brand-text) 70%, transparent); }
+aside nav a:focus-visible { outline: 2px solid var(--td-accent); outline-offset: -2px; }
+aside nav a small { font-size: 0.62rem; color: var(--td-ink-3); letter-spacing: 0.06em; text-transform: uppercase; }
+aside nav a.active small { color: color-mix(in srgb, var(--td-brand-text) 70%, transparent); }
 
 /* Category headings stay pinned while their group scrolls, so the taxonomy is
    readable at any scroll position rather than only from the top. */

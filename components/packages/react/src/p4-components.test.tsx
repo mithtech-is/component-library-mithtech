@@ -10,7 +10,7 @@ import { fileURLToPath } from "node:url";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
-import { Breadcrumbs, CodeBlock, CopyChip, LogoStrip as LogoWall, Map, MegaCascade, MegaGrid, MegaTabs, Pagination, paginationRange, ProfileCard, Timeline, DataList, Faq, FileTree, LinkCells, LogoStrip, PricingTable, Progress, Range, TableOfContents, splitRectTitle } from "./index";
+import { Breadcrumbs, CodeBlock, CopyChip, LogoStrip as LogoWall, Map, MegaCascade, MegaColumns, MegaGrid, MegaTabs, Pagination, paginationRange, ProfileCard, Timeline, DataList, Faq, FileTree, LinkCells, LogoStrip, PricingTable, Progress, Range, TableOfContents, splitRectTitle } from "./index";
 
 const SRC = dirname(fileURLToPath(import.meta.url));
 const read = (name: string) => readFileSync(join(SRC, name), "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
@@ -885,6 +885,51 @@ describe("LogoStrip as a carousel", () => {
   });
 });
 
+describe("MegaCascade freshness", () => {
+  it("marks only the rows that have something new, and says so in words", () => {
+    // The counts already say how MUCH is behind a row. This says whether any of
+    // it is worth a second look — which is the question a returning reader
+    // actually has — and a mark on every row would mean nothing.
+    const { container } = render(<MegaCascade groups={[
+      { id: "guides", label: "Guides", fresh: "updated", branches: [
+        { id: "erp", title: "ERP", fresh: "new", items: [{ href: "/a", title: "A" }] },
+        { id: "commerce", title: "Commerce", items: [{ href: "/b", title: "B" }] },
+      ] },
+      { id: "work", label: "Work", branches: [{ id: "retail", title: "Retail", items: [{ href: "/c", title: "C" }] }] },
+    ]} />);
+
+    const marks = [...container.querySelectorAll(".td-react-mega-fresh")];
+    // One group and one branch, not one per row.
+    expect(marks).toHaveLength(2);
+    expect(marks.map(m => m.getAttribute("data-fresh"))).toEqual(["updated", "new"]);
+
+    // Colour is never the whole signal: the state reaches a reader who cannot
+    // see it.
+    expect(screen.getByText("Updated recently")).toBeInTheDocument();
+    expect(screen.getByText("New")).toBeInTheDocument();
+
+    // A lens in a socket, not a painted pill — the lamp is its own element and
+    // the row's own class carries no fill.
+    for (const mark of marks) expect(mark.querySelector(".td-react-mega-fresh-lamp")).not.toBeNull();
+  });
+
+  it("draws the mark as light rather than as a fill, in both distributions", () => {
+    for (const [file, P] of [
+      ["mega-menu.css", "react"],
+      ["../../../registry/tonaldepth/mega-cascade.css", "registry"],
+    ]) {
+      const css = readFileSync(join(SRC, file), "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
+      const socket = new RegExp(`\\.td-${P}-mega-fresh \\{([^}]*)\\}`).exec(css)![1];
+      // The socket is the page's own material; colour exists only in the lens.
+      expect(socket, file).toMatch(/background: var\(--td-surface\)/);
+      expect(socket, file).toMatch(/inset [\s\S]*?var\(--td-shadow-dark\)/);
+      // Named light with a fallback: a bare var() that fails to resolve
+      // inherits the root's green, on a row that has nothing to do with success.
+      expect(css, file).toMatch(new RegExp(`\\.td-${P}-mega-fresh\\[data-fresh="new"\\] \\{ --td-lamp-glow: var\\(--td-mega-fresh-new, var\\(--td-brand\\)\\); \\}`));
+    }
+  });
+});
+
 describe("MegaCascade", () => {
   const GROUPS = [
     { id: "run", label: "What we run", branches: [
@@ -943,6 +988,61 @@ describe("MegaCascade", () => {
     // The rows take the shared ladder, which is what makes them read in dark.
     expect(css).toMatch(/\.td-mega-option\.td-react-mega-option:hover \{[^}]*box-shadow: var\(--td-row-hover\)/);
     expect(css).toMatch(/\[aria-selected="true"\] \{[^}]*box-shadow: var\(--td-row-selected\)/);
+  });
+});
+
+describe("MegaColumns", () => {
+  const SECTIONS = [
+    { id: "guides", label: "Guides", links: [
+      { href: "/g1", title: "ERPNext in 90 days", detail: "The phase-by-phase plan", icon: <span data-testid="glyph" /> },
+      { href: "/g2", title: "Choosing your modules" },
+    ] },
+  ];
+
+  it("keeps a link's icon and its copy together, whatever the page says about `nav a`", () => {
+    /*
+     * The panel is a `<nav>` when it is inside `SiteNavigation`, and its rows
+     * are `<a>`. A consumer with a bare `nav a { justify-content: space-between }`
+     * — the docs site shipped exactly that for its own sidebar — then owns the
+     * alignment of every row in the sheet, because an element selector beats a
+     * declaration the component never wrote. The symptom is the icon stranded
+     * on the left edge with the title and detail flung to the right, which is
+     * what MegaColumns looked like on the SiteNavigation page.
+     *
+     * jsdom applies no stylesheet, so the fix is checked where it lives: the
+     * row states its own alignment, in both distributions.
+     */
+    for (const [file, selector] of [
+      ["mega-menu.css", ".td-react-mega-link"],
+      ["../../../registry/tonaldepth/mega-columns.css", ".td-registry-mega-link"],
+    ]) {
+      const css = read(file);
+      const at = css.indexOf(`${selector} {`);
+      expect(at, file).toBeGreaterThan(-1);
+      const body = css.slice(at, at + css.slice(at).indexOf("}"));
+      expect(body, file).toMatch(/justify-content:\s*flex-start/);
+    }
+  });
+
+  it("draws the icon and the copy as siblings inside the one row", () => {
+    const { container } = render(<MegaColumns sections={SECTIONS} />);
+    const row = container.querySelector(".td-react-mega-link") as HTMLElement;
+    expect(row.querySelector("[data-testid='glyph']")).not.toBeNull();
+    expect(row.querySelector(".td-react-mega-link-copy")).not.toBeNull();
+    expect(row.children).toHaveLength(2);
+  });
+
+  it("hands every link to the router when asked, and the feature keeps its slot", () => {
+    const { container } = render(
+      <MegaColumns
+        sections={SECTIONS}
+        feature={<p data-testid="feature">The case</p>}
+        renderLink={({ className, href, children }) => <a className={className} href={href} data-router="yes">{children}</a>}
+      />,
+    );
+    expect(screen.getByRole("link", { name: /ERPNext in 90 days/ })).toHaveAttribute("data-router", "yes");
+    expect(container.querySelector(".td-react-mega-feature-slot [data-testid='feature']")).not.toBeNull();
+    expect(container.querySelector(".td-react-mega-columns--featured")).not.toBeNull();
   });
 });
 

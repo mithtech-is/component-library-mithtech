@@ -207,6 +207,13 @@
 .td-react-mega-link {
   display: flex;
   align-items: center;
+  /* Declared, not inherited from the flex default. A row here is an
+     `<a>` inside a `<nav>` whenever the panel is in `SiteNavigation`,
+     and a consumer with a bare `nav a { justify-content: space-between }`
+     — the docs site had exactly that — pushes the copy to the far edge
+     and leaves the icon stranded on its own. An element selector beats
+     nothing, so the row has to state its own alignment. */
+  justify-content: flex-start;
   gap: var(--td-sp-5);
   min-width: 0;
   padding: var(--td-sp-4) var(--td-sp-5);
@@ -389,3 +396,52 @@
 
 /* The footer stops being a row of loose links. */
 .td-react-mega-footer { padding-top: var(--td-sp-7); margin-top: var(--td-sp-2); }
+
+/* ── the freshness lamp on a rail row ──────────────────────────────────
+   The counts say how much is behind a row; this says whether any of it is
+   worth a second look. It is a lens seated in a socket carved from the row's
+   own surface — the one way this system draws a small state mark — and never a
+   coloured pill, because category arrives as light rather than as a fill.
+
+   The light is NAMED with a fallback: a bare `var()` that fails to resolve
+   inherits the root's green, which would put a success colour on a row that
+   has nothing to do with success. */
+.td-react-mega-fresh {
+  display: inline-grid;
+  place-items: center;
+  width: 12px;
+  height: 12px;
+  flex: 0 0 auto;
+  margin-inline-start: auto;
+  border-radius: 50%;
+  background: var(--td-surface);
+  box-shadow:
+    inset 1px 1px 2px color-mix(in srgb, var(--td-shadow-dark) 62%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 58%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+.td-react-mega-fresh[data-fresh="new"] { --td-lamp-glow: var(--td-mega-fresh-new, var(--td-brand)); }
+.td-react-mega-fresh[data-fresh="updated"] { --td-lamp-glow: var(--td-mega-fresh-updated, var(--td-accent)); }
+.td-react-mega-fresh-lamp {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--td-lamp-glow);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--td-lamp-glow) 45%, transparent),
+    0 0 4px color-mix(in srgb, var(--td-lamp-glow) 55%, transparent);
+}
+/* The word behind the mark. A lamp that only says its state in colour says
+   nothing to a reader who cannot see it. */
+.td-react-mega-fresh-label {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+/* The count keeps the end of the row; the lamp sits just before it. */
+.td-react-mega-fresh + .td-mega-op-count,
+.td-react-mega-fresh + .td-react-mega-count { margin-inline-start: 8px; }

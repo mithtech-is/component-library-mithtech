@@ -224,6 +224,60 @@ describe("SiteNavigation", () => {
     expect(fixedContainingBlock(scrim)).toBeNull();
   });
 
+  /*
+   * The scrim, and the reason it is not simply portalled to `document.body`.
+   *
+   * `document.body` is right only while nothing between the header and the body
+   * creates a stacking context. The moment something does, the whole component
+   * is sealed inside it at that context's z-index and a body-level scrim paints
+   * over the bar AND the open sheet, however high the header's own z-index is —
+   * so the sheet is blurred and unclickable. Measured on the docs site, whose
+   * specimen well raises itself to `z-index: 3` on `:focus-within`: that is,
+   * on the very press that opens the menu.
+   *
+   * The scrim has to join that context. Ordering is then decided between
+   * siblings by the z-indexes in the stylesheet, which is what they were
+   * written to do.
+   */
+  it("portals the scrim into the stacking context the page seals the header inside", async () => {
+    const user = userEvent.setup();
+    const { container } = render(
+      <div style={{ position: "relative", zIndex: 3 }} data-testid="well">
+        <Nav />
+      </div>,
+    );
+    await user.click(screen.getByRole("button", { name: /Services/ }));
+
+    const well = container.querySelector("[data-testid='well']") as HTMLElement;
+    const scrim = document.querySelector(".td-react-sitenav-scrim") as HTMLElement;
+    expect(scrim).not.toBeNull();
+    // In the well, so the bar (59) and the sheet outrank it (30) inside the
+    // one context. At `document.body` it would be a sibling of the well and
+    // would cover everything in it.
+    expect(scrim.parentElement).toBe(well);
+    // Still out of the header, which is the other half of the contract.
+    expect((document.querySelector(".td-react-sitenav") as HTMLElement).contains(scrim)).toBe(false);
+    expect(fixedContainingBlock(scrim)).toBeNull();
+  });
+
+  it("escapes to the body when the enclosing context would break a fixed box", async () => {
+    const user = userEvent.setup();
+    render(
+      <div style={{ transform: "translateZ(0)", position: "relative", zIndex: 3 }} data-testid="well">
+        <Nav />
+      </div>,
+    );
+    await user.click(screen.getByRole("button", { name: /Services/ }));
+
+    // A transformed ancestor is the containing block for its fixed descendants
+    // and opens a backdrop root, so joining it would resolve `inset: 0` against
+    // the well and compute `backdrop-filter` to `none` — the original defect.
+    // Escaping to the body is the better of two bad answers, and the only one
+    // that leaves the glass working.
+    const scrim = document.querySelector(".td-react-sitenav-scrim") as HTMLElement;
+    expect(scrim.parentElement).toBe(document.body);
+  });
+
   it("declares the scrim as a full-viewport fixed box in both distributions", () => {
     for (const [file, selector] of [
       ["site-navigation.css", ".td-react-sitenav-scrim"],
@@ -233,6 +287,25 @@ describe("SiteNavigation", () => {
       const body = css.slice(css.indexOf(`${selector} {`)).slice(0, css.slice(css.indexOf(`${selector} {`)).indexOf("}"));
       expect(body, file).toMatch(/position:\s*fixed/);
       expect(body, file).toMatch(/inset:\s*0/);
+    }
+  });
+
+  it("states its own anchor treatment, for a page that does not reset anchors", () => {
+    /*
+     * `.td-navbtn` and the brand slot were written for a page with a global
+     * anchor reset, and a `kind: "link"` item is an `<a>`. Without this the bar
+     * draws underlined links and hands the wordmark back in visited purple —
+     * invisible on mith.tech, which has such a reset, and invisible on the docs
+     * site, whose sidebar `nav a` rule was accidentally supplying one to every
+     * `<nav>` on the page.
+     */
+    for (const [file, prefix] of [
+      ["site-navigation.css", "td-react-sitenav"],
+      ["../../../registry/tonaldepth/site-navigation.css", "td-registry-sitenav"],
+    ]) {
+      const css = readFileSync(join(SRC, file), "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
+      expect(css, file).toMatch(new RegExp(`a\\.${prefix}-link \\{[^}]*text-decoration:\\s*none`));
+      expect(css, file).toMatch(new RegExp(`\\.${prefix}-brand a \\{[^}]*text-decoration:\\s*none`));
     }
   });
 
@@ -246,6 +319,70 @@ describe("SiteNavigation", () => {
     // surface that swallows its own dismissal.
     await user.click(document.querySelector(".td-react-sitenav-scrim") as HTMLElement);
     expect(document.getElementById("services-mega-panel")).toBeNull();
+  });
+
+  /*
+   * Per-menu sizing. Measured on the live homepage at 1440: three cascade
+   * panels filled 79% of a 1396x608 plate and the six-card grid filled 42% —
+   * six cards in the top third and void under them, which reads as though
+   * something failed to load.
+   */
+  it("sizes each menu on its own, and defaults to what shipped", async () => {
+    const user = userEvent.setup();
+    render(
+      <Nav
+        items={[
+          { kind: "menu", id: "cards", label: "Cards", title: "Cards", height: "fit", width: "content", content: <a href="/a">A</a> },
+          { kind: "menu", id: "deep", label: "Deep", title: "Deep", content: <a href="/b">B</a> },
+        ]}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: /Cards/ }));
+    const sized = document.getElementById("cards-mega-panel") as HTMLElement;
+    expect(sized).toHaveAttribute("data-mega-width", "content");
+    expect(sized).toHaveAttribute("data-mega-height", "fit");
+
+    await user.click(screen.getByRole("button", { name: /Deep/ }));
+    const plain = document.getElementById("deep-mega-panel") as HTMLElement;
+    // A menu that says nothing is drawn exactly as it always was.
+    expect(plain).toHaveAttribute("data-mega-width", "full");
+    expect(plain).toHaveAttribute("data-mega-height", "tall");
+  });
+
+  it("refuses `fit` on a panel that repaints itself, in the stylesheet", () => {
+    // A doc sentence was not enough: the docs' own preview put `fit` on a
+    // cascade within a minute of the prop existing. MegaCascade and MegaTabs
+    // mark themselves `data-mega-stateful`, and a panel holding one gets the
+    // fixed sheet back however it was sized — because a sheet that changes
+    // height as the reader moves down a rail is the failure the fixed size
+    // exists to prevent, and THAT is what "one size its content fills" means.
+    for (const [file, P] of [
+      ["site-navigation.css", "react"],
+      ["../../../registry/tonaldepth/site-navigation.css", "registry"],
+    ]) {
+      const css = readFileSync(join(SRC, file), "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
+      expect(css, file).toMatch(
+        new RegExp(`\\[data-mega-height="fit"\\]:has\\(\\[data-mega-stateful\\]\\)[^{]*\\{[^}]*height: var\\(--td-${P}-sitenav-panel-h`),
+      );
+    }
+  });
+
+  it("puts a search slot in the panel head when a menu asks for one", async () => {
+    const user = userEvent.setup();
+    render(
+      <Nav
+        items={[
+          { kind: "menu", id: "kb", label: "Knowledge", title: "Knowledge", search: <input aria-label="Search knowledge" />, content: <a href="/a">A</a> },
+        ]}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: /Knowledge/ }));
+    const panel = document.getElementById("kb-mega-panel") as HTMLElement;
+    const field = within(panel).getByRole("textbox", { name: "Search knowledge" });
+    // In the HEAD, beside the title — not floating in the content well.
+    expect(field.closest(".td-mega-head")).not.toBeNull();
+    expect(field.closest(".td-react-sitenav-search")).not.toBeNull();
   });
 
   it("publishes --nav-offset for the toolbars that position against it", () => {
