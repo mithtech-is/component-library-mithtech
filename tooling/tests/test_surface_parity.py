@@ -501,6 +501,34 @@ class CompletenessTests(unittest.TestCase):
                 wrong[item["name"]] = {"imports": sorted(imported), "declares": sorted(declared)}
         self.assertEqual({}, wrong, f"registry items whose dependencies disagree with their imports: {wrong}")
 
+    def test_every_component_taking_an_href_can_be_handed_a_router(self):
+        """`href` without `renderLink` is a document load a consumer cannot fix.
+
+        This is one test rather than one per component on purpose. `CaseCard`,
+        `ArticleCard` and `FeatureCard` all shipped an `href` and no way to
+        route it, so on a Next.js site every case card, every article card and
+        every capability door was a full page load — while `LinkCells`,
+        `DataList`, `IsoStack`, `LogoStrip` and `SocialButton` beside them took
+        `renderLink` and were fine. Nothing said the set had a rule.
+
+        The rule: a component that renders an anchor from a prop offers the
+        caller a way to render it themselves. Add an `href` anywhere and this
+        fails until you add the seam with it.
+        """
+        missing = []
+        for path in sorted(PACKAGE_SRC.glob("*.tsx")):
+            if ".test." in path.name:
+                continue
+            source = code_only(path.read_text(encoding="utf-8"))
+            # The prop, not the attribute: `href={...}` on an element it
+            # already renders, or a `[href]` selector, is not an API.
+            if not re.search(r"^\s*href\??:\s*string", source, re.MULTILINE):
+                continue
+            if "renderLink" not in source:
+                missing.append(path.name)
+        self.assertEqual([], missing,
+                         f"components exposing `href` with no `renderLink`: {missing}")
+
     def test_every_documented_component_has_a_props_table(self):
         tables = json.loads((ROOT / "apps/docs/src/props.generated.json").read_text(encoding="utf-8"))
         empty = sorted(doc_id for doc_id in doc_ids()

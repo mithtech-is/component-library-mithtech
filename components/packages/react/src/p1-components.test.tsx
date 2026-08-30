@@ -166,6 +166,23 @@ describe("the lamp", () => {
     expect(link).toHaveClass("td-glowicon--li");
   });
 
+  it("hands an internal IconButton link to the router, glow and all", () => {
+    render(
+      <IconButton
+        icon={LAMP}
+        label="Book a call"
+        href="/audit"
+        glow="#FF5E29"
+        renderLink={({ className, href, style, children }) => <a className={className} href={href} style={style} data-router="next">{children}</a>}
+      />,
+    );
+    const link = screen.getByRole("link", { name: "Book a call" });
+    expect(link).toHaveAttribute("data-router", "next");
+    expect(link).toHaveClass("td-glowicon--text");
+    // The glow rides `style`, so a routed link still lights the caller's colour.
+    expect(link.style.getPropertyValue("--td-lamp-glow")).toBe("#FF5E29");
+  });
+
   it("wraps a Button's leading icon as a lamp and leaves the label alone", () => {
     render(<Button leading={LAMP}>Book a call</Button>);
     const button = screen.getByRole("button", { name: "Book a call" });
@@ -378,6 +395,24 @@ describe("filament, tabs, split and search", () => {
     // the reader cannot use.
     await user.click(screen.getByRole("button", { name: "Call" }));
     expect(onAction).toHaveBeenCalledWith(expect.objectContaining({ id: "call" }));
+  });
+
+  it("routes the primary half through renderLink when the chosen action is a link", async () => {
+    const user = userEvent.setup();
+    render(<SplitButton defaultAction="any" actions={[
+      { id: "docs", label: "Read the docs", href: "/docs" },
+      { id: "call", label: "Call" },
+    ]} renderLink={({ className, href, children }) => <a className={className} href={href} data-router="next">{children}</a>} />);
+    const link = screen.getByRole("link", { name: "Read the docs" });
+    expect(link).toHaveAttribute("data-router", "next");
+    expect(link).toHaveClass("td-react-split-primary");
+
+    // A chosen action with no href is still a button, and renderLink has
+    // nothing to do with it.
+    await user.click(screen.getByRole("button", { name: "More options" }));
+    await user.click(screen.getByRole("menuitem", { name: "Call" }));
+    expect(screen.getByRole("button", { name: "Call" })).toBeInTheDocument();
+    expect(screen.queryByRole("link")).toBeNull();
   });
 
   it("keeps the typed query when Escape closes the suggestion list", async () => {

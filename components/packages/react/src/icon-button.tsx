@@ -1,4 +1,4 @@
-import { forwardRef, type AnchorHTMLAttributes, type ButtonHTMLAttributes, type ReactNode } from "react";
+import { forwardRef, type AnchorHTMLAttributes, type ButtonHTMLAttributes, type CSSProperties, type ReactNode } from "react";
 import { cx } from "./utils";
 import "./icon-button.css";
 
@@ -45,6 +45,17 @@ interface IconButtonOwnProps {
   /** Renders an anchor instead of a button. */
   href?: string;
   /**
+   * Hand your router the anchor. Given the class and the href, return the
+   * element. Without it every internal link is a document load.
+   *
+   * Only `className`, `href`, `style` and `children` reach it — the same four
+   * `Button` and `SocialButton` pass. `target`, `rel` and the `aria-*` you
+   * gave the IconButton do not; put those on your own element. `style` carries
+   * the `glow` colour, so spread it or the lamp lights the tone's colour
+   * instead of yours. Ignored without `href`.
+   */
+  renderLink?: (props: { className: string; href: string; style?: CSSProperties; children: ReactNode }) => ReactNode;
+  /**
    * The colour this lamp lights, overriding the tone's own. Any CSS colour —
    * the glow is mixed from it at the strengths in `--td-glow-*`, so a custom
    * colour still rides the same ladder.
@@ -57,7 +68,7 @@ export type IconButtonProps = IconButtonOwnProps &
   Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "children" | "href">;
 
 export const IconButton = forwardRef<HTMLButtonElement & HTMLAnchorElement, IconButtonProps>(
-  function IconButton({ icon, label, tone = "neutral", href, glow, className, type, ...props }, ref) {
+  function IconButton({ icon, label, tone = "neutral", href, renderLink, glow, className, type, ...props }, ref) {
     // `0` is a legitimate label, so presence is checked rather than truthiness.
     const hasLabel = label !== undefined && label !== null;
     if (!hasLabel && !props["aria-label"] && !props["aria-labelledby"]) {
@@ -76,6 +87,7 @@ export const IconButton = forwardRef<HTMLButtonElement & HTMLAnchorElement, Icon
       </>
     );
     if (href !== undefined) {
+      if (renderLink) return <>{renderLink({ className: classes, href, style, children: content })}</>;
       return <a {...props} ref={ref} href={href} className={classes} style={style}>{content}</a>;
     }
     return (

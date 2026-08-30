@@ -16,10 +16,15 @@ export interface CaseCardProps extends Omit<HTMLAttributes<HTMLElement>, "title"
   visual?: ReactNode;
   href?: string;
   cta?: ReactNode;
+  /**
+   * Hand your router the anchor. Given the class and the href, return the
+   * element. Without it every card is a document load.
+   */
+  renderLink?: (props: { className: string; href: string; children: ReactNode }) => ReactNode;
 }
 
 export const CaseCard = forwardRef<HTMLElement, CaseCardProps>(function CaseCard(
-  { eyebrow, title, summary, metrics, visual, href, cta = "Read the case study", className, ...props },
+  { eyebrow, title, summary, metrics, visual, href, renderLink, cta = "Read the case study", className, ...props },
   ref,
 ) {
   return (
@@ -27,7 +32,11 @@ export const CaseCard = forwardRef<HTMLElement, CaseCardProps>(function CaseCard
       {visual ? <div className="td-mk-case-visual">{visual}</div> : null}
       {eyebrow ? <p className="td-mk-case-eyebrow">{eyebrow}</p> : null}
       <h3 className="td-mk-case-title">
-        {href ? <a className="td-mk-case-titlelink" href={href}>{title}</a> : title}
+        {!href
+          ? title
+          : renderLink
+            ? renderLink({ className: "td-mk-case-titlelink", href, children: title })
+            : <a className="td-mk-case-titlelink" href={href}>{title}</a>}
       </h3>
       {summary ? <p className="td-mk-case-summary">{summary}</p> : null}
       {metrics?.length ? (

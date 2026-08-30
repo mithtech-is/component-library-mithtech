@@ -618,6 +618,11 @@
       "—"
     ],
     [
+      "renderLink",
+      "(props: { className: string; href: string; style?: CSSProperties; children: ReactNode }) => ReactNode",
+      "—"
+    ],
+    [
       "glow",
       "string",
       "—"
@@ -673,6 +678,11 @@
       "assetsLabel",
       "ReactNode",
       "\"In this piece\""
+    ],
+    [
+      "renderLink",
+      "(props: { className: string; href: string; children: ReactNode }) => ReactNode",
+      "—"
     ]
   ],
   "case-card": [
@@ -710,6 +720,11 @@
       "cta",
       "ReactNode",
       "\"Read the case study\""
+    ],
+    [
+      "renderLink",
+      "(props: { className: string; href: string; children: ReactNode }) => ReactNode",
+      "—"
     ]
   ],
   "feature-card": [
@@ -752,6 +767,11 @@
       "tone",
       "FeatureCardTone",
       "\"neutral\""
+    ],
+    [
+      "renderLink",
+      "(props: { className: string; href: string; children: ReactNode }) => ReactNode",
+      "—"
     ]
   ],
   "comparison-table": [
@@ -1431,6 +1451,11 @@
     [
       "defaultAction",
       "string | \"any\"",
+      "—"
+    ],
+    [
+      "renderLink",
+      "(props: { className: string; href: string; children: ReactNode }) => ReactNode",
       "—"
     ],
     [

@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
+import type { ReactNode } from "react";
 import axe from "axe-core";
 import { ArticleCard, ArticleCardGrid, Button, Card, CaseCard, ThemeToggle, CaseCardGrid, ComparisonTable, CtaBanner, FeatureCard, FeatureGrid, Prose, RectTitle, splitRectTitle, Timeline, type ArticleCardAsset } from "./index";
 
@@ -174,6 +175,58 @@ describe("marketing components", () => {
     expect(screen.getByLabelText("Capabilities")).toHaveClass("td-mk-feature-grid--4");
     expect(screen.getByRole("article")).toHaveClass("td-mk-feature--accent");
     expect(within(screen.getByRole("list")).getAllByRole("listitem")).toHaveLength(2);
+  });
+
+  it("routes every card's link through renderLink when one is supplied", () => {
+    // On a Next.js site each of these was a full document load: the three
+    // cards took an `href` and rendered a plain `<a>`, while LinkCells,
+    // DataList, IsoStack, LogoStrip and SocialButton beside them all took
+    // `renderLink`. The recent-work grid, the six doors, the two platforms and
+    // the four engineering notes were the whole homepage.
+    const seen: { className: string; href: string }[] = [];
+    const renderLink = ({ className, href, children }: { className: string; href: string; children: ReactNode }) => {
+      seen.push({ className, href });
+      return <a className={className} href={href} data-router="next">{children}</a>;
+    };
+    render(
+      <>
+        <CaseCard title="Rollout" href="/work/rollout" renderLink={renderLink} />
+        <ArticleCard title="Field note" href="/notes/field" renderLink={renderLink} />
+        <FeatureCard title="Automation" href="/services/automation" renderLink={renderLink}>Copy.</FeatureCard>
+      </>,
+    );
+    expect(seen.map(call => call.href)).toEqual(["/work/rollout", "/notes/field", "/services/automation"]);
+    // The card keeps ownership of the class; the caller only owns the element.
+    expect(seen.map(call => call.className)).toEqual([
+      "td-mk-case-titlelink", "td-mk-article-titlelink", "td-mk-feature-titlelink",
+    ]);
+    for (const link of screen.getAllByRole("link")) expect(link).toHaveAttribute("data-router", "next");
+  });
+
+  it("leaves the plain anchor in place when no renderLink is given", () => {
+    render(<CaseCard title="Rollout" href="/work/rollout" />);
+    const link = screen.getByRole("link", { name: "Rollout" });
+    expect(link.tagName).toBe("A");
+    expect(link).toHaveClass("td-mk-case-titlelink");
+  });
+
+  it("leaves an article's asset chips alone — a download is not a route", () => {
+    // `renderLink` covers the card's own link and says so. A chip's colour
+    // rides `data-kind`, which the shared signature has nowhere to put, and
+    // most chips are downloads: routing one asks for a page that does not
+    // exist instead of saving a file.
+    const { container } = render(
+      <ArticleCard
+        title="Field note"
+        href="/notes/field"
+        assets={PAYLOAD}
+        renderLink={({ className, href, children }) => <a className={className} href={href} data-router="next">{children}</a>}
+      />,
+    );
+    for (const chip of container.querySelectorAll(".td-mk-article-asset")) {
+      expect(chip).not.toHaveAttribute("data-router");
+      expect(chip).toHaveAttribute("data-kind");
+    }
   });
 
   it("renders boolean comparison cells as marks with a text equivalent", () => {

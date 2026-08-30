@@ -31,6 +31,17 @@ export interface TonalDepthSplitButtonProps extends Omit<ButtonHTMLAttributes<HT
    * button acts immediately, with the menu as a way to override.
    */
   defaultAction?: string | "any";
+  /**
+   * Hand your router the anchor, for the primary half when the chosen action
+   * carries an `href`. Given the class and the href, return the element.
+   * Without it that half is a document load.
+   *
+   * The onClick the primary half would have fired is NOT passed through it: an
+   * action that both navigates and fires a handler is two acts on one press.
+   * Ignored when the chosen action has no `href`, and when the button is
+   * disabled or still waiting to be chosen.
+   */
+  renderLink?: (props: { className: string; href: string; children: ReactNode }) => ReactNode;
   /** Controlled choice. Omit for uncontrolled. */
   value?: string;
   onValueChange?: (id: string) => void;
@@ -59,7 +70,7 @@ export interface TonalDepthSplitButtonProps extends Omit<ButtonHTMLAttributes<HT
  * reported by its glyph.
  */
 export const TonalDepthSplitButton = forwardRef<HTMLButtonElement, TonalDepthSplitButtonProps>(function TonalDepthSplitButton(
-  { actions, defaultAction, value, onValueChange, onAction, placeholder = "Choose an option", menuLabel = "More options", className, disabled, ...props },
+  { actions, defaultAction, value, onValueChange, onAction, renderLink, placeholder = "Choose an option", menuLabel = "More options", className, disabled, ...props },
   ref,
 ) {
   const base = useId();
@@ -134,10 +145,23 @@ export const TonalDepthSplitButton = forwardRef<HTMLButtonElement, TonalDepthSpl
   return (
     <div ref={root} className={cx("td-registry-split", mustChoose && "td-registry-split--unset", className)}>
       {chosen?.href && !primaryDisabled ? (
-        <a {...sharedPrimary} href={chosen.href}>
-          {actions.some(a => a.icon) ? <span className="td-registry-split-icon" aria-hidden="true">{chosen.icon}</span> : null}
-          <span className="td-registry-split-label">{primaryLabel}</span>
-        </a>
+        renderLink
+          ? renderLink({
+            className: sharedPrimary.className,
+            href: chosen.href,
+            children: (
+              <>
+                {actions.some(a => a.icon) ? <span className="td-registry-split-icon" aria-hidden="true">{chosen.icon}</span> : null}
+                <span className="td-registry-split-label">{primaryLabel}</span>
+              </>
+            ),
+          })
+          : (
+            <a {...sharedPrimary} href={chosen.href}>
+              {actions.some(a => a.icon) ? <span className="td-registry-split-icon" aria-hidden="true">{chosen.icon}</span> : null}
+              <span className="td-registry-split-label">{primaryLabel}</span>
+            </a>
+          )
       ) : (
         <button {...props} ref={ref} type="button" disabled={primaryDisabled} {...sharedPrimary}>
           {actions.some(a => a.icon) ? <span className="td-registry-split-icon" aria-hidden="true">{chosen?.icon}</span> : null}

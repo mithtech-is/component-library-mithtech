@@ -16,10 +16,15 @@ export interface TonalDepthFeatureCardProps extends Omit<HTMLAttributes<HTMLElem
   footer?: ReactNode;
   href?: string;
   tone?: TonalDepthFeatureCardTone;
+  /**
+   * Hand your router the anchor. Given the class and the href, return the
+   * element. Without it every card is a document load.
+   */
+  renderLink?: (props: { className: string; href: string; children: ReactNode }) => ReactNode;
 }
 
 export const TonalDepthFeatureCard = forwardRef<HTMLElement, TonalDepthFeatureCardProps>(function TonalDepthFeatureCard(
-  { icon, eyebrow, title, children, points, footer, href, tone = "neutral", className, ...props },
+  { icon, eyebrow, title, children, points, footer, href, renderLink, tone = "neutral", className, ...props },
   ref,
 ) {
   return (
@@ -27,7 +32,11 @@ export const TonalDepthFeatureCard = forwardRef<HTMLElement, TonalDepthFeatureCa
       {icon ? <span className="td-mk-feature-icon" aria-hidden="true">{icon}</span> : null}
       {eyebrow ? <p className="td-mk-feature-eyebrow">{eyebrow}</p> : null}
       <h3 className="td-mk-feature-title">
-        {href ? <a className="td-mk-feature-titlelink" href={href}>{title}</a> : title}
+        {!href
+          ? title
+          : renderLink
+            ? renderLink({ className: "td-mk-feature-titlelink", href, children: title })
+            : <a className="td-mk-feature-titlelink" href={href}>{title}</a>}
       </h3>
       {children ? <p className="td-mk-feature-body">{children}</p> : null}
       {points?.length ? (

@@ -61,6 +61,16 @@ export interface ArticleCardProps extends Omit<HTMLAttributes<HTMLElement>, "tit
   assets?: ArticleCardAsset[];
   /** The well's heading. Say what the strip holds if "In this piece" is wrong for it. */
   assetsLabel?: ReactNode;
+  /**
+   * Hand your router the anchor. Given the class and the href, return the
+   * element. Without it every card is a document load.
+   *
+   * **It covers the card's own link and nothing else.** An asset chip in the
+   * "In this piece" well stays a plain anchor: most of them are downloads or
+   * somebody else's host, and the chip's colour rides a `data-kind` attribute
+   * this signature has nowhere to put. Route those yourself if you need to.
+   */
+  renderLink?: (props: { className: string; href: string; children: ReactNode }) => ReactNode;
 }
 
 /* What this port does NOT carry, named rather than left to be discovered
@@ -197,7 +207,7 @@ function ArticleCardPayload({ assets, label }: { assets: ArticleCardAsset[]; lab
 }
 
 export const ArticleCard = forwardRef<HTMLElement, ArticleCardProps>(function ArticleCard(
-  { eyebrow, title, excerpt, cover, href, date, readTime, author, assets, assetsLabel = "In this piece", className, ...props },
+  { eyebrow, title, excerpt, cover, href, renderLink, date, readTime, author, assets, assetsLabel = "In this piece", className, ...props },
   ref,
 ) {
   const hasMeta = Boolean(date || readTime);
@@ -207,7 +217,11 @@ export const ArticleCard = forwardRef<HTMLElement, ArticleCardProps>(function Ar
       <div className="td-mk-article-body">
         {eyebrow ? <p className="td-mk-article-eyebrow">{eyebrow}</p> : null}
         <h3 className="td-mk-article-title">
-          {href ? <a className="td-mk-article-titlelink" href={href}>{title}</a> : title}
+          {!href
+            ? title
+            : renderLink
+              ? renderLink({ className: "td-mk-article-titlelink", href, children: title })
+              : <a className="td-mk-article-titlelink" href={href}>{title}</a>}
         </h3>
         {excerpt ? <p className="td-mk-article-excerpt">{excerpt}</p> : null}
         {assets?.length ? <ArticleCardPayload assets={assets} label={assetsLabel} /> : null}
