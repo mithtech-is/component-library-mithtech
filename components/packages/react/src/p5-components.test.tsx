@@ -54,6 +54,70 @@ describe("Timeline — the ordered-state family", () => {
     expect(seen.size).toBe(4);
   });
 
+  /**
+   * The contract the docs state, checked axis by axis.
+   *
+   * `flow` accepted `description`, rendered it into the DOM and then hid it
+   * with `display: none` — so five engagements with a paragraph each came out
+   * as titles-only in a sideways scroller. The prop was accepted, the
+   * component rendered, the data vanished, and nothing warned. This is the
+   * test that stops any axis quietly dropping a field again: it passes an item
+   * carrying EVERY optional field and asks each axis for everything it claims.
+   */
+  it("renders every field it claims to support, on every axis", () => {
+    const FULL = {
+      title: "Discovery",
+      time: "Q1 2026",
+      meta: "4 weeks · 2 people",
+      description: "Two weeks on site, the process mapped, and a costed plan you own at the end of it.",
+      state: "current" as const,
+      initials: "SK",
+    };
+    for (const axis of ["elapsed", "period", "flow", "feed"] as const) {
+      const { container, unmount } = render(<Timeline axis={axis} items={[FULL]} label={axis} />);
+      expect(container.querySelector(".td-mk-timeline-title"), axis).toHaveTextContent("Discovery");
+      expect(container.querySelector(".td-mk-timeline-meta"), axis).toHaveTextContent("4 weeks · 2 people");
+      expect(container.querySelector(".td-mk-timeline-description"), axis).toHaveTextContent(/Two weeks on site/);
+      // `time` is rendered by every axis; only where it sits differs.
+      const slot = axis === "period" ? ".td-mk-timeline-period" : ".td-mk-timeline-time";
+      expect(container.querySelector(slot), axis).toHaveTextContent("Q1 2026");
+      // The mark is the one field that is genuinely axis-specific, and it is
+      // documented as feed-only rather than silently ignored.
+      expect(Boolean(container.querySelector(".td-mk-timeline-initials")), axis).toBe(axis === "feed");
+      unmount();
+    }
+  });
+
+  it("does not hide a field it has already rendered", () => {
+    // The failure was a stylesheet discarding a prop the component accepted,
+    // which no render test can see: the node is in the DOM either way. So the
+    // rule is checked where it was broken — no axis may `display: none` a part
+    // the component renders from an item's data.
+    for (const css of [read("timeline.css"), readFileSync(join(SRC, "../../../registry/tonaldepth/timeline.css"), "utf8").replace(/\/\*[\s\S]*?\*\//g, "")]) {
+      for (const [, selector, body] of css.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+        if (!/-timeline-(title|time|period|meta|description|initials)\b/.test(selector)) continue;
+        expect(`${selector.trim()} -> ${body.trim()}`).not.toMatch(/display:\s*none/);
+      }
+    }
+  });
+
+  it("gives a flow step a column and a measure once it carries a paragraph", () => {
+    // A pill cannot hold a paragraph, so a step that has one stops being a
+    // pill. A step without one is untouched — the compact pipeline is exactly
+    // what it was.
+    const { container } = render(<Timeline axis="flow" items={[
+      { title: "Draft", state: "done" as const },
+      { title: "Review", description: "Two named reviewers, then it merges." },
+    ]} />);
+    const [plain, detailed] = [...container.querySelectorAll(".td-mk-timeline-item")];
+    expect(plain).not.toHaveAttribute("data-detail");
+    expect(detailed).toHaveAttribute("data-detail");
+
+    const css = read("timeline.css");
+    expect(css).toMatch(/\.td-mk-timeline--flow \.td-mk-timeline-item\[data-detail\] \{[^}]*max-width/);
+    expect(css).toMatch(/\.td-mk-timeline--flow \.td-mk-timeline-item\[data-detail\] \.td-mk-timeline-title \{ white-space: normal/);
+  });
+
   it("puts the period ABOVE the row and every other axis's time AFTER it", () => {
     const { container: roadmap } = render(<Timeline axis="period" items={[{ title: "Discovery", time: "Q1 2026" }]} />);
     expect(roadmap.querySelector(".td-mk-timeline-period")).toHaveTextContent("Q1 2026");

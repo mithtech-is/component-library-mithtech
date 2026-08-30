@@ -24,12 +24,24 @@ export type TonalDepthTimelineState = "done" | "current" | "upcoming";
  * one position along a line, and a vertical list makes you read six rows to
  * find it.
  *
+ * A `flow` step with a `description` lays out as a column with a capped
+ * measure instead of a nowrap pill, so the paragraph is read under its step.
+ * It used to be discarded — `display: none` on the description, on an axis
+ * whose steps could not wrap — so five engagements with a paragraph each came
+ * out as titles-only and nothing warned. **Every axis renders every field it
+ * is given**; only the mark and the direction differ.
+ *
  * `feed` is the **activity stream**: newest first, the mark is the person
  * rather than a state, and there is no "upcoming" — a feed reports what has
  * happened. Pass `initials` or `avatar` on the item; `time` trails the row.
  *
  * Same anatomy, same rail, same three states throughout. Only the axis differs,
  * which is why these are a prop here rather than four lookalike components.
+ *
+ * Each axis emits its own class, named for it — `td-mk-timeline--elapsed`,
+ * `--period`, `--flow`, `--feed` — so reading the DOM answers which axis is
+ * active. `--period` and `--elapsed` carry no rules of their own; that is the
+ * roadmap and the timeline sharing a layout, not a missing class.
  */
 export type TonalDepthTimelineAxis = "elapsed" | "period" | "flow" | "feed";
 
@@ -90,7 +102,11 @@ export const TonalDepthTimeline = forwardRef<HTMLOListElement, TonalDepthTimelin
             ? (state === "done" ? "\u2713" : index + 1)
             : null;
         return (
-          <li key={index} className="td-mk-timeline-item" data-state={state}>
+          /* `data-detail` rather than `:has()`: the flow axis lays a step out
+             as a column when it carries a paragraph and as a nowrap pill when
+             it does not, and an attribute the component sets is a fact the
+             stylesheet cannot get wrong. */
+          <li key={index} className="td-mk-timeline-item" data-state={state} data-detail={item.description !== undefined && item.description !== null ? "" : undefined}>
             <span className="td-mk-timeline-dot" aria-hidden="true">{mark}</span>
             <div className="td-mk-timeline-body">
               {item.time !== undefined && axis === "period" ? <p className="td-mk-timeline-period">{item.time}</p> : null}

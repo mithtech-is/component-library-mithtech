@@ -204,7 +204,35 @@
 .td-mk-timeline--flow .td-mk-timeline-body { flex-direction: row; align-items: baseline; gap: var(--td-sp-5); }
 .td-mk-timeline--flow .td-mk-timeline-title { font-size: 12px; white-space: nowrap; }
 .td-mk-timeline--flow .td-mk-timeline-time { padding-top: 0; }
-.td-mk-timeline--flow .td-mk-timeline-description { display: none; }
+
+/* A step that carries a paragraph.
+
+   The description used to be `display: none` here, so an item's copy was
+   accepted, rendered into the DOM and then hidden — five engagements with a
+   paragraph each came out as titles-only in a sideways scroller and nothing
+   warned. A prop the component takes and the stylesheet discards is the
+   quietest failure there is.
+
+   A pill cannot hold a paragraph, so a step that has one stops being a pill:
+   the body turns to a column, the title is allowed to wrap, and the step takes
+   a measure narrow enough to read down. A step with no description is
+   untouched, so the compact pipeline is exactly what it was. */
+.td-mk-timeline--flow .td-mk-timeline-item[data-detail] {
+  align-items: flex-start;
+  max-width: 34ch;
+  padding: var(--td-sp-6) var(--td-sp-7);
+  border-radius: var(--td-radius-5);
+}
+.td-mk-timeline--flow .td-mk-timeline-item[data-detail] .td-mk-timeline-body {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--td-sp-3);
+}
+.td-mk-timeline--flow .td-mk-timeline-item[data-detail] .td-mk-timeline-title { white-space: normal; }
+/* The direction mark sits against the step's top edge rather than its middle,
+   so a row of tall steps still reads as a line rather than as arrows floating
+   in the gaps. */
+.td-mk-timeline--flow .td-mk-timeline-item[data-detail]:not(:last-child)::after { align-self: flex-start; margin-top: var(--td-sp-5); }
 
 /* ── The feed axis ────────────────────────────────────────────────────
    An activity stream: the mark is the person, not a state. The rail goes,
