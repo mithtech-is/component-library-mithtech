@@ -60,7 +60,15 @@ export const Range = forwardRef<HTMLInputElement, RangeProps>(function Range(
       ) : null}
       <input
         {...props}
-        ref={ref}
+        // The fill is a gradient stop, so the track needs the percentage. It is
+        // set imperatively rather than through `style`: a style object crossing
+        // a server boundary is what took fifty-five pages to a 500 while the
+        // types stayed green.
+        ref={node => {
+          node?.style.setProperty("--pct", `${pct}%`);
+          if (typeof ref === "function") ref(node);
+          else if (ref) ref.current = node;
+        }}
         id={inputId}
         type="range"
         className={cx("td-range", "td-react-range")}
@@ -69,8 +77,6 @@ export const Range = forwardRef<HTMLInputElement, RangeProps>(function Range(
         step={step}
         value={value ?? uncontrolled}
         onChange={handle}
-        // The fill is a gradient stop, so the track needs the percentage.
-        style={{ ...props.style, ["--pct" as string]: `${pct}%` }}
       />
       {showBounds ? (
         <div className="td-react-range-bounds" aria-hidden="true">
@@ -78,6 +84,89 @@ export const Range = forwardRef<HTMLInputElement, RangeProps>(function Range(
           <span>{format ? format(max) : max}</span>
         </div>
       ) : null}
+    </div>
+  );
+});
+
+
+/* ── Two thumbs ───────────────────────────────────────────────────────── */
+
+export interface RangeDualProps {
+  /** `[low, high]`. The pair is always ordered, whichever thumb moved. */
+  value?: [number, number];
+  defaultValue?: [number, number];
+  onValueChange?: (value: [number, number]) => void;
+  min?: number;
+  max?: number;
+  step?: number;
+  label?: string;
+  format?: (value: number) => ReactNode;
+  disabled?: boolean;
+  className?: string;
+}
+
+/**
+ * `Range`'s two-thumb form — a span rather than a point.
+ *
+ * Two real `input[type=range]` elements stacked, so each thumb keeps its
+ * native keyboard and its own accessible name; the track and the fill between
+ * them are drawn underneath. The pair is sorted on every change, so dragging
+ * the low thumb past the high one swaps them instead of inverting the fill.
+ */
+export const RangeDual = forwardRef<HTMLInputElement, RangeDualProps>(function RangeDual(
+  { value, defaultValue, onValueChange, min = 0, max = 100, step = 1, label = "Range", format, disabled, className },
+  ref,
+) {
+  const [uncontrolled, setUncontrolled] = useState<[number, number]>(defaultValue ?? [min, max]);
+  const current = value ?? uncontrolled;
+  const [low, high] = current;
+
+  const set = (next: [number, number]) => {
+    const ordered: [number, number] = next[0] <= next[1] ? next : [next[1], next[0]];
+    if (value === undefined) setUncontrolled(ordered);
+    onValueChange?.(ordered);
+  };
+
+  const span = max === min ? 1 : max - min;
+  const leftPct = ((low - min) / span) * 100;
+  const widthPct = ((high - low) / span) * 100;
+
+  return (
+    <div className={cx("td-react-range-wrap", className)} data-disabled={disabled || undefined}>
+      <div className="td-react-range-head">
+        <span className="td-react-range-label">{label}</span>
+        <span className="td-react-range-value">
+          {format ? format(low) : low} – {format ? format(high) : high}
+        </span>
+      </div>
+      <div className="td-dualrange">
+        <div className="td-dualrange-track" aria-hidden="true" />
+        <div
+          className="td-dualrange-fill"
+          aria-hidden="true"
+          ref={node => {
+            node?.style.setProperty("left", `${leftPct}%`);
+            node?.style.setProperty("width", `${widthPct}%`);
+          }}
+        />
+        <input
+          ref={ref}
+          type="range"
+          aria-label={`${label} minimum`}
+          min={min} max={max} step={step} value={low} disabled={disabled}
+          onChange={event => set([Number(event.target.value), high])}
+        />
+        <input
+          type="range"
+          aria-label={`${label} maximum`}
+          min={min} max={max} step={step} value={high} disabled={disabled}
+          onChange={event => set([low, Number(event.target.value)])}
+        />
+      </div>
+      <div className="td-dualrange-vals" aria-hidden="true">
+        <span>{format ? format(min) : min}</span>
+        <span>{format ? format(max) : max}</span>
+      </div>
     </div>
   );
 });

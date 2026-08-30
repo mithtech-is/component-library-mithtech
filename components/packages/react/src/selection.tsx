@@ -43,6 +43,29 @@ export const RadioGroup = forwardRef<HTMLFieldSetElement, RadioGroupProps>(funct
   );
 });
 
+export interface CheckboxGroupProps extends FieldsetHTMLAttributes<HTMLFieldSetElement> {
+  legend?: ReactNode;
+}
+
+/**
+ * Several checkboxes read as one question.
+ *
+ * The same fieldset and legend `RadioGroup` uses, and for the same reason: a
+ * row of boxes with no group name is a row of unrelated questions to anyone
+ * who cannot see that they are lined up. It carries no `name` context, because
+ * unlike radios, checkboxes in a group do not share one.
+ */
+export const CheckboxGroup = forwardRef<HTMLFieldSetElement, CheckboxGroupProps>(function CheckboxGroup(
+  { legend, disabled, className, children, ...props }, ref,
+) {
+  return (
+    <fieldset {...props} ref={ref} disabled={disabled} className={cx("td-fieldset", className)}>
+      {legend ? <legend className="td-fieldset-legend">{legend}</legend> : null}
+      <div className="td-check-row">{children}</div>
+    </fieldset>
+  );
+});
+
 export interface RadioProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "type"> {
   label: ReactNode;
   value: string;

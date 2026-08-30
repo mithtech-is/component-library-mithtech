@@ -63,6 +63,16 @@
 @import "./search-bar.css";
 @import "./side-tabs.css";
 @import "./site-navigation.css";
+@import "./select.css";
+@import "./tag-input.css";
+@import "./date-picker.css";
+@import "./upload.css";
+@import "./otp-input.css";
+@import "./rating.css";
+@import "./color-picker.css";
+@import "./number-field.css";
+@import "./phone-field.css";
+@import "./address-field.css";
 @import "./split-button.css";
 @import "./table.css";
 @import "./toc.css";
