@@ -81,6 +81,10 @@ export {
   // uses.
   TdClose as CloseIcon,
   TdWhatsApp as WhatsAppIcon,
+  // Phosphor's star is an outline at `fill` and pinches at the 14px a rating
+  // uses. Ratings are the only place the system draws one, and it has to be a
+  // solid mark for the half-star clip to read.
+  TdStar as StarIcon,
 } from "./td-icons";
 
 /**
@@ -92,7 +96,7 @@ export {
  * is exactly the set of roles the `./td-icons` export block claims, so the
  * duplication cannot drift.
  */
-export const TD_ICON_ROLES = ["AcceptIcon", "CancelIcon", "CloseIcon", "WhatsAppIcon"] as const;
+export const TD_ICON_ROLES = ["AcceptIcon", "CancelIcon", "CloseIcon", "StarIcon", "WhatsAppIcon"] as const;
 
 // ── Phosphor — the fallback ──────────────────────────────────────────────
 export {

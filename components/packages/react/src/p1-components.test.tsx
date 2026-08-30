@@ -11,7 +11,7 @@ import {
 } from "./index";
 import { Badge, IconButton, ThemeToggle } from "./index";
 import { FilamentButton, FooterBottom, FooterColumn, SearchBar, SideTabs, SiteNavigation, SplitButton } from "./index";
-import { AcceptIcon, CancelIcon, CloseIcon, SuccessIcon, WhatsAppIcon, LAMP_WEIGHT, TD_ICON_ROLES } from "./index";
+import { AcceptIcon, CancelIcon, CloseIcon, StarIcon, SuccessIcon, WhatsAppIcon, LAMP_WEIGHT, TD_ICON_ROLES } from "./index";
 
 describe("selection controls", () => {
   it("uses native checkbox, radio, and switch behavior", async () => {
@@ -204,7 +204,7 @@ describe("the icon set", () => {
     [...(svg?.querySelectorAll("path") ?? [])].map(path => path.getAttribute("d")).join("|");
 
   it("draws the TD glyphs with no colour of their own", () => {
-    render(<span data-testid="td"><AcceptIcon weight={LAMP_WEIGHT} /><CancelIcon weight={LAMP_WEIGHT} /><CloseIcon weight={LAMP_WEIGHT} /><WhatsAppIcon weight={LAMP_WEIGHT} /></span>);
+    render(<span data-testid="td"><AcceptIcon weight={LAMP_WEIGHT} /><CancelIcon weight={LAMP_WEIGHT} /><CloseIcon weight={LAMP_WEIGHT} /><StarIcon weight={LAMP_WEIGHT} /><WhatsAppIcon weight={LAMP_WEIGHT} /></span>);
     const glyphs = [...screen.getByTestId("td").querySelectorAll("svg")];
     expect(glyphs).toHaveLength(TD_ICON_ROLES.length);
     for (const glyph of glyphs) {
