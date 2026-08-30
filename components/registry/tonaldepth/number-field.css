@@ -24,11 +24,13 @@
      input inside can flex correctly within narrow flex parents. */
   min-width: 0;
   border-radius: 12px;
-  background: color-mix(in srgb, var(--td-surface) 88%, black);
-  border: 1px solid color-mix(in srgb, var(--td-surface) 76%, black);
-  box-shadow:
-    inset 2px 2px 4px rgba(0, 0, 0, 0.18),
-    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 50%, transparent);
+  /* The field grammar, from the tokens rather than from literals: a hard
+     `rgba(0, 0, 0, 0.18)` inset does not move when the depth tokens are
+     retuned, and 0.18 of black is the wrong order of magnitude against a dark
+     surface. */
+  background: var(--td-surface);
+  border: 0;
+  box-shadow: var(--td-inset-soft);
   padding: 0 10px 0 11px;
   gap: 7px;
   transition:

@@ -19,6 +19,10 @@
 
 .td-taginput-x:hover { opacity: 1; background: color-mix(in srgb, var(--td-brand) 22%, transparent); }
 
+/* A dropzone is, literally, A PLACE TO PUT SOMETHING - the one thing the
+   recessed grammar means here. So it is a well cut from the surface, not a
+   dashed rectangle drawn on top of one, and its ladder is the well deepening
+   as the file comes toward it. Nothing changes colour except the lamp. */
 .td-dropzone {
   display: flex;
   flex-direction: column;
@@ -26,23 +30,40 @@
   gap: 8px;
   padding: 22px 16px;
   border-radius: 14px;
-  border: 2px dashed color-mix(in srgb, var(--td-ink-2) 28%, transparent);
-  background: color-mix(in srgb, var(--td-ink-2) 4%, var(--td-surface));
+  border: 0;
+  background: var(--td-surface);
+  box-shadow: var(--td-inset-soft);
   text-align: center;
   cursor: pointer;
-  transition: border-color var(--td-t-base) var(--td-ease), background var(--td-t-base) var(--td-ease);
+  transition: box-shadow var(--td-t-base) var(--td-ease);
   min-width: 0;
   max-width: 100%;
+  --td-lamp-glow: var(--td-dropzone-ink, var(--td-brand));
 }
 
-.td-dropzone:hover, .td-dropzone[data-state="over"] {
-  border-color: var(--td-brand);
-  background: color-mix(in srgb, var(--td-brand) 8%, var(--td-surface));
+.td-dropzone:hover { box-shadow: var(--td-row-hover); }
+.td-dropzone[data-state="over"] { box-shadow: var(--td-row-press); }
+.td-dropzone:focus-within { outline: 2px solid var(--td-accent); outline-offset: 3px; }
+
+/* The glyph is the lamp, on the four-rung colour ladder. */
+.td-dropzone-icon {
+  width: 28px;
+  height: 28px;
+  color: var(--td-lamp-unlit);
+  transition: color var(--td-t-base) var(--td-ease);
 }
+.td-dropzone:hover .td-dropzone-icon {
+  color: color-mix(in srgb, var(--td-lamp-glow) var(--td-lamp-hover-mix), var(--td-lamp-unlit));
+}
+.td-dropzone[data-state="over"] .td-dropzone-icon { color: var(--td-lamp-glow); }
 
-.td-dropzone-icon { color: var(--td-brand); width: 28px; height: 28px; }
-
-.td-dropzone-browse { position: absolute; inset: 0; cursor: pointer; }
+/* The file input covers the whole zone so the plate is one target for the
+   pointer and one stop for the keyboard - but it was never made transparent,
+   so the browser's own "Choose file / No file chosen" control rendered on top
+   of the carved zone. `opacity: 0` rather than `visibility` or a size of zero:
+   it has to stay focusable and clickable, which is the entire reason it is
+   laid over the zone instead of hidden beside it. */
+.td-dropzone-browse { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
 
 .td-dropzone-title { font-family: var(--td-font-ui); font-size: 13px; font-weight: 600; color: var(--td-ink); }
 

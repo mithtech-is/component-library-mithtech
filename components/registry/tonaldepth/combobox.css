@@ -24,11 +24,13 @@
      input inside can flex correctly within narrow flex parents. */
   min-width: 0;
   border-radius: 12px;
-  background: color-mix(in srgb, var(--td-surface) 88%, black);
-  border: 1px solid color-mix(in srgb, var(--td-surface) 76%, black);
-  box-shadow:
-    inset 2px 2px 4px rgba(0, 0, 0, 0.18),
-    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 50%, transparent);
+  /* The field grammar, from the tokens rather than from literals: a hard
+     `rgba(0, 0, 0, 0.18)` inset does not move when the depth tokens are
+     retuned, and 0.18 of black is the wrong order of magnitude against a dark
+     surface. */
+  background: var(--td-surface);
+  border: 0;
+  box-shadow: var(--td-inset-soft);
   padding: 0 10px 0 11px;
   gap: 7px;
   transition:
@@ -229,7 +231,12 @@
   gap: 5px;
   padding: 3px 4px 3px 9px;
   border-radius: 7px;
-  background: color-mix(in srgb, var(--td-brand) 22%, var(--td-surface));
+  /* Category as INK on the page's own material, never a fill. */
+  background: var(--td-raise-fill);
+  box-shadow:
+    1px 1px 3px color-mix(in srgb, var(--td-shadow-dark) 52%, transparent),
+    -1px -1px 3px color-mix(in srgb, var(--td-shadow-light) 58%, transparent),
+    0 0 0 1px var(--td-edge);
   color: var(--td-brand-text);
   font-family: var(--td-font-ui);
   font-size: 12px;

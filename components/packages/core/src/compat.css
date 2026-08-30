@@ -4823,20 +4823,23 @@ html, body { margin: 0; background: var(--td-bg); }
   min-height: 42px;
   padding: 6px 8px;
   border-radius: 12px;
-  background: color-mix(in srgb, var(--td-surface) 88%, black);
-  border: 1px solid color-mix(in srgb, var(--td-surface) 76%, black);
-  box-shadow:
-    inset 2px 2px 4px rgba(0, 0, 0, 0.18),
-    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 50%, transparent);
+  /* The field grammar, from the tokens rather than from literals. It was a
+     border over a darkened fill with a hard `inset ... rgba(0, 0, 0, 0.18)`,
+     so it did not move when the depth tokens were retuned - and 0.18 of black
+     is the wrong order of magnitude against a dark surface, which is the exact
+     reason the inset ladder became a token with its own dark values. */
+  background: var(--td-surface);
+  border: 0;
+  box-shadow: var(--td-inset-soft);
   min-width: 240px;
-  transition: box-shadow var(--td-t-base) var(--td-ease), border-color var(--td-t-fast) var(--td-ease);
+  transition: box-shadow var(--td-t-base) var(--td-ease);
 }
+/* Focus is the accent ring every other field in the system uses, not a brand
+   wash - a field being typed into is not a category. */
 .td-taginput:focus-within {
-  border-color: var(--td-brand);
-  box-shadow:
-    inset 2px 2px 4px rgba(0, 0, 0, 0.18),
-    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 50%, transparent),
-    0 0 0 1.5px color-mix(in srgb, var(--td-brand) 18%, transparent);
+  box-shadow: var(--td-inset-soft);
+  outline: 2px solid var(--td-accent);
+  outline-offset: 2px;
 }
 .td-taginput-tag {
   display: inline-flex;
@@ -4844,7 +4847,15 @@ html, body { margin: 0; background: var(--td-bg); }
   gap: 5px;
   padding: 3px 4px 3px 9px;
   border-radius: 7px;
-  background: color-mix(in srgb, var(--td-brand) 22%, var(--td-surface));
+  /* A tag is a small raised object sitting in the trough, and its category
+     arrives as INK on the page's own material. It was a 22% brand fill, which
+     is the one move the system forbids - and a row of them read as a strip of
+     paint rather than as things you can pick up and remove. */
+  background: var(--td-raise-fill);
+  box-shadow:
+    1px 1px 3px color-mix(in srgb, var(--td-shadow-dark) 52%, transparent),
+    -1px -1px 3px color-mix(in srgb, var(--td-shadow-light) 58%, transparent),
+    0 0 0 1px var(--td-edge);
   color: var(--td-brand-text);
   font-family: var(--td-font-ui);
   font-size: 12px;
@@ -6462,6 +6473,18 @@ html, body { margin: 0; background: var(--td-bg); }
   animation: td-mic-pulse 1.4s ease-out infinite;
 }
 .td-mic svg { width: 22px; height: 22px; }
+/* A dropzone is, literally, A PLACE TO PUT SOMETHING - which is the one thing
+   the recessed grammar means in this system. So it is a well cut from the
+   surface, not a dashed rectangle drawn on top of it.
+
+   What it was: a 2px dashed border over a flat tint, and hovering swapped the
+   border to brand and washed the plate in 8% brand. Three things the system
+   forbids in one control - a border where depth belongs, a fill where ink
+   belongs, and a category colour reporting a state.
+
+   The ladder is the well deepening as the file comes toward it: rest is the
+   soft inset, hover presses, a file actually dragged over presses further.
+   Nothing changes colour except the lamp. */
 .td-dropzone {
   display: flex;
   flex-direction: column;
@@ -6469,20 +6492,41 @@ html, body { margin: 0; background: var(--td-bg); }
   gap: 8px;
   padding: 22px 16px;
   border-radius: 14px;
-  border: 2px dashed color-mix(in srgb, var(--td-ink-2) 28%, transparent);
-  background: color-mix(in srgb, var(--td-ink-2) 4%, var(--td-surface));
+  border: 0;
+  background: var(--td-surface);
+  box-shadow: var(--td-inset-soft);
   text-align: center;
   cursor: pointer;
-  transition: border-color var(--td-t-base) var(--td-ease), background var(--td-t-base) var(--td-ease);
+  transition: box-shadow var(--td-t-base) var(--td-ease);
   min-width: 0;
   max-width: 100%;
+  --td-lamp-glow: var(--td-dropzone-ink, var(--td-brand));
 }
-.td-dropzone:hover, .td-dropzone[data-state="over"] {
-  border-color: var(--td-brand);
-  background: color-mix(in srgb, var(--td-brand) 8%, var(--td-surface));
+.td-dropzone:hover { box-shadow: var(--td-row-hover); }
+.td-dropzone[data-state="over"] { box-shadow: var(--td-row-press); }
+.td-dropzone:focus-within { outline: 2px solid var(--td-accent); outline-offset: 3px; }
+
+/* The glyph is the lamp and runs the four-rung colour ladder like every other
+   lamp: unlit at rest, dim as the pointer arrives, the full light only when a
+   file is actually over the zone. Named with a fallback - a bare `var()` that
+   fails to resolve inherits the root's green. */
+.td-dropzone-icon {
+  width: 28px;
+  height: 28px;
+  color: var(--td-lamp-unlit);
+  transition: color var(--td-t-base) var(--td-ease);
 }
-.td-dropzone-icon { color: var(--td-brand); width: 28px; height: 28px; }
-.td-dropzone-browse { position: absolute; inset: 0; cursor: pointer; }
+.td-dropzone:hover .td-dropzone-icon {
+  color: color-mix(in srgb, var(--td-lamp-glow) var(--td-lamp-hover-mix), var(--td-lamp-unlit));
+}
+.td-dropzone[data-state="over"] .td-dropzone-icon { color: var(--td-lamp-glow); }
+/* The file input covers the whole zone so the plate is one target for the
+   pointer and one stop for the keyboard - but it was never made transparent,
+   so the browser's own "Choose file / No file chosen" control rendered on top
+   of the carved zone. `opacity: 0` rather than `visibility` or a size of zero:
+   it has to stay focusable and clickable, which is the entire reason it is
+   laid over the zone instead of hidden beside it. */
+.td-dropzone-browse { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
 .td-dropzone { position: relative; }
 .td-dropzone-title { font-family: var(--td-font-ui); font-size: 13px; font-weight: 600; color: var(--td-ink); }
 .td-dropzone-text { font-size: 11.5px; color: var(--td-ink-2); }
