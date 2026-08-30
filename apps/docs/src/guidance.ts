@@ -721,10 +721,14 @@ export const GUIDANCE = {
   "time-picker": {
     aliases: ["time field", "clock", "hour picker", "choose a time"],
     useCases: ["pick a time of day", "set an appointment slot", "choose opening hours", "set a reminder time"],
-    whenToUse: "A time of day on a known date. Hour and minute grids, so any time is two presses.",
+    whenToUse: "A time of day on a known date. Hour and minute grids, so any time is two presses, on a 24-hour or a 12-hour clock.",
     whenNotToUse: [
       { instead: "date-time-picker", because: "The day is not already fixed. Two separate fields let the reader set a time against no date." },
       { instead: "date-picker", because: "Only the day matters." },
+    ],
+    variants: [
+      { name: "hourCycle={24}", when: "The default. An operations screen, a log, a rota — anywhere the reader reads times off a system and 14:45 is unambiguous." },
+      { name: "hourCycle={12}", when: "A form a customer fills in on a 12-hour clock. Adds an AM/PM column and writes the field as 2:45 PM." },
     ],
   },
   "date-range-picker": {
@@ -739,10 +743,14 @@ export const GUIDANCE = {
   "date-time-picker": {
     aliases: ["datetime", "timestamp picker", "schedule", "when picker"],
     useCases: ["schedule a meeting", "set a publish time", "pick an exact moment", "book a slot on a day"],
-    whenToUse: "A precise instant — the calendar and the time grid in one popover, so the reader sets both without closing anything.",
+    whenToUse: "A precise instant — the calendar and the time grid in one popover, so the reader sets both without closing anything. `hourCycle` picks the clock the time half shows.",
     whenNotToUse: [
       { instead: "date-picker", because: "The time of day does not matter, and asking for it invents a 00:00 nobody chose." },
       { instead: "date-range-picker", because: "It is a span, not a moment." },
+    ],
+    variants: [
+      { name: "hourCycle={24}", when: "The default. The time half runs a 24-hour grid." },
+      { name: "hourCycle={12}", when: "A 12-hour grid with an AM/PM column. `time` is 24-hour `HH:MM` either way, so the form is unaffected." },
     ],
   },
   "file-upload": {
