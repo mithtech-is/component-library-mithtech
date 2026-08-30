@@ -260,6 +260,7 @@ export const GUIDANCE = {
     whenNotToUse: [
       { instead: "confirm-button", because: "The act is recoverable and the ceremony is not earned." },
       { instead: "toast", because: "Nothing is being asked — it is just news." },
+      { instead: "overlays", because: "You are building one rather than using one, or its scrim is covering the wrong box. That page is the rule every overlay in the library obeys." },
     ],
   },
   "tooltip": {
@@ -299,7 +300,10 @@ export const GUIDANCE = {
     aliases: ["navbar", "header", "top nav", "main menu", "masthead"],
     useCases: ["site header", "public website navbar", "mega menu navigation", "sticky header"],
     whenToUse: "The header of a public marketing site — brand, links, mega panels, and the sticky retract behaviour.",
-    whenNotToUse: [{ instead: "application-shell", because: "The page is inside a signed-in product, where navigation is a sidebar and there are no mega panels." }],
+    whenNotToUse: [
+      { instead: "application-shell", because: "The page is inside a signed-in product, where navigation is a sidebar and there are no mega panels." },
+      { instead: "overlays", because: "The question is about the sheet's scrim rather than the bar. That page carries the containing-block rule this component's scrim was on the wrong side of for a release." },
+    ],
   },
   "footer": {
     aliases: ["site footer", "page foot", "bottom nav"],
