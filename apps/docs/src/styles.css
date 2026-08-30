@@ -889,6 +889,45 @@ main { min-width: 0; overflow-x: clip; overflow-y: visible; }
    the carved one and the saturated one behave differently and that is the
    half people get wrong. The three rungs are forced with data-rung rather
    than left to :hover, so all three are on screen at once. */
+/* ── the overlay trap demo ────────────────────────────────────────────
+   One scrim, one set of declarations, two containing blocks. `.trapdemo-bar`
+   is the only thing that changes, and it changes by gaining a transform. */
+.trapdemo-stage {
+  position: relative;
+  min-height: 190px;
+  padding: 14px;
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  border-radius: var(--td-radius-6);
+  background: var(--td-surface-2);
+  box-shadow: var(--td-inset-soft);
+}
+.trapdemo-page { font-size: 11.5px; color: var(--td-ink-3); padding: 26px 12px; text-align: center; }
+.trapdemo-bar {
+  position: relative;
+  height: 56px;
+  display: flex; align-items: center; padding: 0 14px;
+  font-size: 11.5px; color: var(--td-ink-2);
+  border-radius: var(--td-radius-4);
+  background: var(--td-raise-fill);
+  box-shadow: 0 0 0 1px var(--td-edge);
+}
+.trapdemo-scrim {
+  position: fixed;
+  inset: 0;
+  display: grid; place-items: center;
+  font-family: var(--td-font-mono); font-size: 11px; color: var(--td-ink);
+  background: color-mix(in srgb, var(--td-brand) 16%, transparent);
+  box-shadow: inset 0 0 0 1px var(--td-brand-text);
+  border-radius: var(--td-radius-4);
+}
+/* Escaped, the scrim covers the reader's viewport — which is the whole point.
+   It must not take the page with it: no pointer capture, and under the docs
+   chrome so the control that put it there stays reachable. */
+.trapdemo-scrim[data-escaped] { pointer-events: none; z-index: 5; border-radius: 0; }
+.trapdemo-scrim > span { padding: 4px 10px; border-radius: 999px; background: var(--td-bg); box-shadow: 0 0 0 1px var(--td-edge); }
+
 .lampdemo { display: grid; gap: 22px; }
 .lampdemo-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; }
 .lampdemo-case { display: grid; gap: 10px; }

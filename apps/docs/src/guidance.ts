@@ -864,6 +864,15 @@ export const GUIDANCE = {
       { name: "active", when: "Pressed — a solid core plus a wide halo." },
     ],
   },
+  "overlays": {
+    aliases: ["portal", "scrim", "backdrop", "z-index", "stacking context", "position fixed", "containing block", "createPortal", "overlay not covering the page", "backdrop-filter not working"],
+    useCases: ["build an overlay", "make a scrim cover the page", "fix an overlay that only covers part of the screen", "work out why backdrop-filter does nothing", "decide where an overlay should be rendered"],
+    whenToUse: "Read this before adding any surface that has to escape its trigger — a scrim, a sheet, a popover, a toast viewport. It is the one rule that makes a correct stylesheet render wrong.",
+    whenNotToUse: [
+      { instead: "dialog", because: "You want the component rather than the rule. That page is the modal; this one is why its scrim is rendered where it is." },
+      { instead: "site-navigation", because: "You want the header. This page records the defect its scrim shipped with, and the rule the fix generalises to." },
+    ],
+  },
 } satisfies Record<string, Guidance>;
 
 /**
