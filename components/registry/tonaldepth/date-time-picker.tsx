@@ -156,6 +156,27 @@ interface TonalDepthTimeGridProps {
   /** Minutes between offered slots. Default 5 — twelve cells, one grid. */
   minuteStep?: number;
   label?: string;
+  /** 24-hour grid, or a 12-hour grid with a meridiem column. Default 24. */
+  hourCycle?: 12 | 24;
+}
+
+const TonalDepthto12 = (hour: number) => hour % 12 || 12;
+
+const TonalDepthfrom12 = (hour12: number, pm: boolean) => (hour12 % 12) + (pm ? 12 : 0);
+
+/**
+ * `HH:MM` in, a reader's time out.
+ *
+ * The stored value is 24-hour in both cycles. A component that changed its wire
+ * format with its presentation would make every consumer parse the display back
+ * to know what it holds, and two forms on one page could not agree.
+ */
+function TonalDepthformatTime(value: string | undefined, hourCycle: 12 | 24) {
+  const [hh, mm] = (value ?? "").split(":");
+  if (hh === undefined || hh === "" || mm === undefined) return hourCycle === 12 ? "--:-- --" : "--:--";
+  const hour = Number(hh);
+  if (hourCycle === 24) return `${TonalDepthpad(hour)}:${mm}`;
+  return `${TonalDepthto12(hour)}:${mm} ${hour >= 12 ? "PM" : "AM"}`;
 }
 
 /**
@@ -166,36 +187,44 @@ interface TonalDepthTimeGridProps {
  * at. A grid is what the calendar beside it already does, and it costs two
  * presses for any time on the clock.
  */
-function TonalDepthTimeGrid({ value, onPick, minuteStep = 5, label = "Time" }: TonalDepthTimeGridProps) {
+function TonalDepthTimeGrid({ value, onPick, minuteStep = 5, label = "Time", hourCycle = 24 }: TonalDepthTimeGridProps) {
   const [hh, mm] = (value ?? "").split(":");
   const hour = hh === undefined || hh === "" ? null : Number(hh);
   const minute = mm === undefined || mm === "" ? null : Number(mm);
   const minutes = Array.from({ length: Math.ceil(60 / minuteStep) }, (_, index) => index * minuteStep);
+  const twelve = hourCycle === 12;
+  /* An unset picker reads as AM. The meridiem is a two-way switch and has no
+     third position, so it shows the half that midnight falls in rather than
+     leaving both rungs unlit and the column looking broken. */
+  const pm = (hour ?? 0) >= 12;
+  /* 12 leads, because a 12-hour clock starts its half there — a column running
+     1..12 puts noon and midnight at the bottom, where nobody looks first. */
+  const hours = twelve ? [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] : Array.from({ length: 24 }, (_, h) => h);
 
   const set = (nextHour: number | null, nextMinute: number | null) => {
     onPick(`${TonalDepthpad(nextHour ?? 0)}:${TonalDepthpad(nextMinute ?? 0)}`);
   };
 
   return (
-    <div className="td-timegrid" role="group" aria-label={label}>
+    <div className="td-timegrid" role="group" aria-label={label} data-cycle={hourCycle}>
       <div className="td-timegrid-head">
         <span className="td-timegrid-label">{label}</span>
-        <span className="td-timegrid-value">{hour === null && minute === null ? "--:--" : `${TonalDepthpad(hour ?? 0)}:${TonalDepthpad(minute ?? 0)}`}</span>
+        <span className="td-timegrid-value">{TonalDepthformatTime(value, hourCycle)}</span>
       </div>
       <div className="td-timegrid-cols">
         <div className="td-timegrid-col">
           <div className="td-timegrid-col-h">Hour</div>
           <div className="td-timegrid-grid" role="listbox" aria-label="Hour">
-            {Array.from({ length: 24 }, (_, h) => (
+            {hours.map(h => (
               <button
                 type="button"
                 key={h}
                 role="option"
                 className="td-timegrid-opt"
-                aria-selected={hour === h}
-                onClick={() => set(h, minute)}
+                aria-selected={hour !== null && (twelve ? TonalDepthto12(hour) === h : hour === h)}
+                onClick={() => set(twelve ? TonalDepthfrom12(h, pm) : h, minute)}
               >
-                {TonalDepthpad(h)}
+                {twelve ? h : TonalDepthpad(h)}
               </button>
             ))}
           </div>
@@ -217,6 +246,28 @@ function TonalDepthTimeGrid({ value, onPick, minuteStep = 5, label = "Time" }: T
             ))}
           </div>
         </div>
+        {/* A third column rather than a toggle beside the field: AM and PM are
+            the same kind of choice as an hour, so they take the same rungs and
+            the reader crosses one row of controls instead of two kinds. */}
+        {twelve ? (
+          <div className="td-timegrid-col">
+            <div className="td-timegrid-col-h">AM/PM</div>
+            <div className="td-timegrid-grid td-registry-timegrid-meridiem" role="listbox" aria-label="Before or after noon">
+              {([["AM", false], ["PM", true]] as const).map(([text, isPm]) => (
+                <button
+                  type="button"
+                  key={text}
+                  role="option"
+                  className="td-timegrid-opt"
+                  aria-selected={pm === isPm}
+                  onClick={() => set(TonalDepthfrom12(TonalDepthto12(hour ?? 0), isPm), minute)}
+                >
+                  {text}
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : null}
       </div>
     </div>
   );
@@ -272,13 +323,15 @@ export interface TonalDepthDateTimePickerProps {
   onDateTimeChange?: (date: string, time: string) => void;
   label?: string;
   minuteStep?: number;
+  /** `12` gives the time half an AM/PM column. The value stays 24-hour. */
+  hourCycle?: 12 | 24;
   disabled?: boolean;
   className?: string;
 }
 
 /** A precise instant — the calendar and the time grid in one popover. */
 export const TonalDepthDateTimePicker = forwardRef<HTMLButtonElement, TonalDepthDateTimePickerProps>(function TonalDepthDateTimePicker(
-  { date, time, onDateTimeChange, label = "When", minuteStep = 5, disabled, className }, ref,
+  { date, time, onDateTimeChange, label = "When", minuteStep = 5, hourCycle = 24, disabled, className }, ref,
 ) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -296,7 +349,7 @@ export const TonalDepthDateTimePicker = forwardRef<HTMLButtonElement, TonalDepth
           else if (ref) ref.current = node;
         }}
         fieldLabel={label}
-        display={<><DateIcon weight={LAMP_WEIGHT} aria-hidden="true" /> {TonalDepthformatIsoDate(date)}{time ? ` · ${time}` : ""}</>}
+        display={<><DateIcon weight={LAMP_WEIGHT} aria-hidden="true" /> {TonalDepthformatIsoDate(date)}{time ? ` · ${TonalDepthformatTime(time, hourCycle)}` : ""}</>}
         open={open}
         disabled={disabled}
         onClick={() => setOpen(v => !v)}
@@ -306,7 +359,7 @@ export const TonalDepthDateTimePicker = forwardRef<HTMLButtonElement, TonalDepth
           <>
             <span className="td-registry-vh" id={titleId}>{label}</span>
             <TonalDepthCalendar value={date} onPick={iso => onDateTimeChange?.(iso, time ?? "09:00")} label="Date" />
-            <TonalDepthTimeGrid value={time} minuteStep={minuteStep} onPick={next => onDateTimeChange?.(date ?? "", next)} label="Time" />
+            <TonalDepthTimeGrid value={time} minuteStep={minuteStep} hourCycle={hourCycle} onPick={next => onDateTimeChange?.(date ?? "", next)} label="Time" />
           </>
         ) : null}
       </div>

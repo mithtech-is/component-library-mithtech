@@ -30,3 +30,11 @@
 
 /* Named so a screen reader gets the popover's title without it being drawn. */
 .td-react-vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* The meridiem column, for `hourCycle={12}`. Two options rather than the hour
+   grid's twelve, so it drops to a single column — four across would leave AM
+   and PM sitting in a quarter of the width with three empty cells beside them.
+   The cells keep `.td-timegrid-opt`, so the rungs are the grid's own: flat at
+   rest, a shallow well on hover, the deeper well with papaya text when picked.
+   A meridiem is a choice like an hour, and reads like one. */
+.td-react-timegrid-meridiem { grid-template-columns: 1fr; }

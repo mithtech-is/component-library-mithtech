@@ -1869,6 +1869,11 @@
       "5"
     ],
     [
+      "hourCycle",
+      "12 | 24",
+      "24"
+    ],
+    [
       "disabled",
       "boolean",
       "—"
@@ -1961,6 +1966,11 @@
       "minuteStep",
       "number",
       "5"
+    ],
+    [
+      "hourCycle",
+      "12 | 24",
+      "24"
     ],
     [
       "disabled",

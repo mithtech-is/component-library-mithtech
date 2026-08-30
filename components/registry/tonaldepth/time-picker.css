@@ -84,3 +84,9 @@
 
 /* Named so a screen reader gets the popover's title without it being drawn. */
 .td-registry-vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* The meridiem column holds exactly two options, so it stacks rather than
+   inheriting `.td-timegrid-grid`'s four columns and leaving two empty cells
+   beside AM and PM. Added 2026-08-30 to complete the 12-hour grid: the
+   modifier class was already being emitted with no rule behind it. */
+.td-registry-timegrid-meridiem { grid-template-columns: 1fr; }

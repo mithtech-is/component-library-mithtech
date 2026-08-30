@@ -172,6 +172,26 @@ interface TimeGridProps {
   /** Minutes between offered slots. Default 5 — twelve cells, one grid. */
   minuteStep?: number;
   label?: string;
+  /** 24-hour grid, or a 12-hour grid with a meridiem column. Default 24. */
+  hourCycle?: 12 | 24;
+}
+
+const to12 = (hour: number) => hour % 12 || 12;
+const from12 = (hour12: number, pm: boolean) => (hour12 % 12) + (pm ? 12 : 0);
+
+/**
+ * `HH:MM` in, a reader's time out.
+ *
+ * The stored value is 24-hour in both cycles. A component that changed its wire
+ * format with its presentation would make every consumer parse the display back
+ * to know what it holds, and two forms on one page could not agree.
+ */
+function formatTime(value: string | undefined, hourCycle: 12 | 24) {
+  const [hh, mm] = (value ?? "").split(":");
+  if (hh === undefined || hh === "" || mm === undefined) return hourCycle === 12 ? "--:-- --" : "--:--";
+  const hour = Number(hh);
+  if (hourCycle === 24) return `${pad(hour)}:${mm}`;
+  return `${to12(hour)}:${mm} ${hour >= 12 ? "PM" : "AM"}`;
 }
 
 /**
@@ -182,36 +202,44 @@ interface TimeGridProps {
  * at. A grid is what the calendar beside it already does, and it costs two
  * presses for any time on the clock.
  */
-function TimeGrid({ value, onPick, minuteStep = 5, label = "Time" }: TimeGridProps) {
+function TimeGrid({ value, onPick, minuteStep = 5, label = "Time", hourCycle = 24 }: TimeGridProps) {
   const [hh, mm] = (value ?? "").split(":");
   const hour = hh === undefined || hh === "" ? null : Number(hh);
   const minute = mm === undefined || mm === "" ? null : Number(mm);
   const minutes = Array.from({ length: Math.ceil(60 / minuteStep) }, (_, index) => index * minuteStep);
+  const twelve = hourCycle === 12;
+  /* An unset picker reads as AM. The meridiem is a two-way switch and has no
+     third position, so it shows the half that midnight falls in rather than
+     leaving both rungs unlit and the column looking broken. */
+  const pm = (hour ?? 0) >= 12;
+  /* 12 leads, because a 12-hour clock starts its half there — a column running
+     1..12 puts noon and midnight at the bottom, where nobody looks first. */
+  const hours = twelve ? [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] : Array.from({ length: 24 }, (_, h) => h);
 
   const set = (nextHour: number | null, nextMinute: number | null) => {
     onPick(`${pad(nextHour ?? 0)}:${pad(nextMinute ?? 0)}`);
   };
 
   return (
-    <div className="td-timegrid" role="group" aria-label={label}>
+    <div className="td-timegrid" role="group" aria-label={label} data-cycle={hourCycle}>
       <div className="td-timegrid-head">
         <span className="td-timegrid-label">{label}</span>
-        <span className="td-timegrid-value">{hour === null && minute === null ? "--:--" : `${pad(hour ?? 0)}:${pad(minute ?? 0)}`}</span>
+        <span className="td-timegrid-value">{formatTime(value, hourCycle)}</span>
       </div>
       <div className="td-timegrid-cols">
         <div className="td-timegrid-col">
           <div className="td-timegrid-col-h">Hour</div>
           <div className="td-timegrid-grid" role="listbox" aria-label="Hour">
-            {Array.from({ length: 24 }, (_, h) => (
+            {hours.map(h => (
               <button
                 type="button"
                 key={h}
                 role="option"
                 className="td-timegrid-opt"
-                aria-selected={hour === h}
-                onClick={() => set(h, minute)}
+                aria-selected={hour !== null && (twelve ? to12(hour) === h : hour === h)}
+                onClick={() => set(twelve ? from12(h, pm) : h, minute)}
               >
-                {pad(h)}
+                {twelve ? h : pad(h)}
               </button>
             ))}
           </div>
@@ -233,6 +261,28 @@ function TimeGrid({ value, onPick, minuteStep = 5, label = "Time" }: TimeGridPro
             ))}
           </div>
         </div>
+        {/* A third column rather than a toggle beside the field: AM and PM are
+            the same kind of choice as an hour, so they take the same rungs and
+            the reader crosses one row of controls instead of two kinds. */}
+        {twelve ? (
+          <div className="td-timegrid-col">
+            <div className="td-timegrid-col-h">AM/PM</div>
+            <div className="td-timegrid-grid td-react-timegrid-meridiem" role="listbox" aria-label="Before or after noon">
+              {([["AM", false], ["PM", true]] as const).map(([text, isPm]) => (
+                <button
+                  type="button"
+                  key={text}
+                  role="option"
+                  className="td-timegrid-opt"
+                  aria-selected={pm === isPm}
+                  onClick={() => set(from12(to12(hour ?? 0), isPm), minute)}
+                >
+                  {text}
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : null}
       </div>
     </div>
   );
@@ -329,11 +379,19 @@ export const DatePicker = forwardRef<HTMLButtonElement, DatePickerProps>(functio
 /* ── TimePicker ───────────────────────────────────────────────────────── */
 
 export interface TimePickerProps {
-  /** `HH:MM`, 24-hour. */
+  /** `HH:MM`, 24-hour — in both cycles. `hourCycle` changes the display only. */
   value?: string;
   onValueChange?: (value: string) => void;
   label?: string;
   minuteStep?: number;
+  /**
+   * `24` shows a 24-hour grid; `12` shows a 12-hour grid with an AM/PM column
+   * and renders the field as `9:30 AM`. Default 24.
+   *
+   * The value is unaffected — it is `HH:MM` either way, so a form does not have
+   * to know which cycle the field was showing.
+   */
+  hourCycle?: 12 | 24;
   disabled?: boolean;
   invalid?: boolean;
   className?: string;
@@ -341,7 +399,7 @@ export interface TimePickerProps {
 
 /** A time of day, on the hour/minute grid. */
 export const TimePicker = forwardRef<HTMLButtonElement, TimePickerProps>(function TimePicker(
-  { value, onValueChange, label = "Time", minuteStep = 5, disabled, invalid, className }, ref,
+  { value, onValueChange, label = "Time", minuteStep = 5, hourCycle = 24, disabled, invalid, className }, ref,
 ) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -358,14 +416,14 @@ export const TimePicker = forwardRef<HTMLButtonElement, TimePickerProps>(functio
           else if (ref) ref.current = node;
         }}
         fieldLabel={label}
-        display={value || "--:--"}
+        display={formatTime(value, hourCycle)}
         open={open}
         disabled={disabled}
         aria-invalid={invalid || undefined}
         onClick={() => setOpen(v => !v)}
       />
       <div className="td-drpop" data-open={open || undefined} role="dialog" aria-label={label}>
-        {open ? <TimeGrid value={value} minuteStep={minuteStep} onPick={next => onValueChange?.(next)} label={label} /> : null}
+        {open ? <TimeGrid value={value} minuteStep={minuteStep} hourCycle={hourCycle} onPick={next => onValueChange?.(next)} label={label} /> : null}
       </div>
     </div>
   );
@@ -460,13 +518,15 @@ export interface DateTimePickerProps {
   onDateTimeChange?: (date: string, time: string) => void;
   label?: string;
   minuteStep?: number;
+  /** `12` gives the time half an AM/PM column. The value stays 24-hour. */
+  hourCycle?: 12 | 24;
   disabled?: boolean;
   className?: string;
 }
 
 /** A precise instant — the calendar and the time grid in one popover. */
 export const DateTimePicker = forwardRef<HTMLButtonElement, DateTimePickerProps>(function DateTimePicker(
-  { date, time, onDateTimeChange, label = "When", minuteStep = 5, disabled, className }, ref,
+  { date, time, onDateTimeChange, label = "When", minuteStep = 5, hourCycle = 24, disabled, className }, ref,
 ) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -484,7 +544,7 @@ export const DateTimePicker = forwardRef<HTMLButtonElement, DateTimePickerProps>
           else if (ref) ref.current = node;
         }}
         fieldLabel={label}
-        display={<><DateIcon weight={LAMP_WEIGHT} aria-hidden="true" /> {formatIsoDate(date)}{time ? ` · ${time}` : ""}</>}
+        display={<><DateIcon weight={LAMP_WEIGHT} aria-hidden="true" /> {formatIsoDate(date)}{time ? ` · ${formatTime(time, hourCycle)}` : ""}</>}
         open={open}
         disabled={disabled}
         onClick={() => setOpen(v => !v)}
@@ -494,7 +554,7 @@ export const DateTimePicker = forwardRef<HTMLButtonElement, DateTimePickerProps>
           <>
             <span className="td-react-vh" id={titleId}>{label}</span>
             <Calendar value={date} onPick={iso => onDateTimeChange?.(iso, time ?? "09:00")} label="Date" />
-            <TimeGrid value={time} minuteStep={minuteStep} onPick={next => onDateTimeChange?.(date ?? "", next)} label="Time" />
+            <TimeGrid value={time} minuteStep={minuteStep} hourCycle={hourCycle} onPick={next => onDateTimeChange?.(date ?? "", next)} label="Time" />
           </>
         ) : null}
       </div>
