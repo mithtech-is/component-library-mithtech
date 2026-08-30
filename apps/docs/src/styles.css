@@ -883,3 +883,55 @@ main { min-width: 0; overflow-x: clip; overflow-y: visible; }
    growing, so nothing below it moves while a file is over it. */
 .pg-drop { transition: box-shadow var(--td-t-base) var(--td-ease); }
 .pg-drop.is-dragging { box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--td-accent) 55%, transparent); }
+
+/* ═══ THE LAMP DEMO ═══════════════════════════════════════════════════
+   The docs page for the lamp pattern. Two housings side by side, because
+   the carved one and the saturated one behave differently and that is the
+   half people get wrong. The three rungs are forced with data-rung rather
+   than left to :hover, so all three are on screen at once. */
+.lampdemo { display: grid; gap: 22px; }
+.lampdemo-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; }
+.lampdemo-case { display: grid; gap: 10px; }
+.lampdemo-case > h4 { margin: 0; font-family: var(--td-font-ui); font-size: 12.5px; font-weight: 700; color: var(--td-ink); }
+.lampdemo-case > p { margin: 0; font-size: 11.5px; color: var(--td-ink-2); }
+.lampdemo-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.lampdemo-cell { display: grid; gap: 6px; justify-items: center; }
+.lampdemo-cell > span { font-family: var(--td-font-mono); font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--td-ink-3); }
+
+/* The housings. Carved = the surface button; saturated = a brand fill. */
+.lampdemo-chip {
+  width: 46px; height: 46px;
+  border-radius: 13px;
+  display: grid; place-items: center;
+  border: 0;
+}
+.lampdemo-chip--carved {
+  background: var(--td-raise-fill);
+  box-shadow:
+    2px 2px 6px color-mix(in srgb, var(--td-shadow-dark) 44%, transparent),
+    -2px -2px 6px color-mix(in srgb, var(--td-shadow-light) 60%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil), 0 0 0 1px var(--td-edge);
+  --td-lamp-glow: var(--td-brand);
+}
+.lampdemo-chip--filled {
+  background: var(--td-brand);
+  box-shadow: var(--td-btn-rest);
+  /* White on a saturated housing: the brand colour glowing on itself is
+     invisible, which is the SocialButton bug in one line. */
+  --td-lamp-glow: #fff;
+}
+.lampdemo-mark { width: 45%; height: 45%; display: block; fill: currentColor; }
+
+/* The three rungs, forced. Colour first, glow second — on the filled
+   housing the bloom is nearly invisible and the colour is doing the work. */
+.lampdemo-chip--carved .lampdemo-mark { color: color-mix(in srgb, var(--td-brand-text) 62%, transparent); filter: var(--td-lamp-off); }
+.lampdemo-chip--carved[data-rung="hover"] .lampdemo-mark { color: var(--td-brand-text); filter: var(--td-lamp-hover); }
+.lampdemo-chip--carved[data-rung="active"] .lampdemo-mark { color: var(--td-brand-text); filter: var(--td-lamp-active); }
+.lampdemo-chip--filled .lampdemo-mark { color: color-mix(in srgb, #fff 68%, transparent); filter: var(--td-lamp-off); }
+.lampdemo-chip--filled[data-rung="hover"] .lampdemo-mark { color: #fff; filter: var(--td-lamp-hover); }
+.lampdemo-chip--filled[data-rung="active"] .lampdemo-mark { color: color-mix(in srgb, #fff 88%, white); filter: var(--td-lamp-active); }
+
+/* The trap, shown rather than described: no fallback, so the root default
+   leaks in. Scoped to the demo so it cannot escape into a real control. */
+.lampdemo-chip--trap { background: var(--td-raise-fill); box-shadow: var(--td-btn-rest); }
+.lampdemo-chip--trap .lampdemo-mark { color: var(--td-ink-2); filter: var(--td-lamp-active); }

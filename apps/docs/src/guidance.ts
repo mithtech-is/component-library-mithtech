@@ -836,6 +836,22 @@ export const GUIDANCE = {
       { instead: "number-field", because: "The reader knows the exact figures. A slider makes them hunt for 4,50,000." },
     ],
   },
+
+  /* ── Patterns ─────────────────────────────────────────────────────── */
+  "lamp": {
+    aliases: ["glow", "icon glow", "hover glow", "lit icon", "drop-shadow state", "filament"],
+    useCases: ["make an icon show state on hover", "add a glow to a button icon", "show a control is pressed", "light an icon without changing its colour meaning"],
+    whenToUse: "The technique every icon-carrying control uses to report state: unlit at rest, lit on hover, brighter on press. Read this before adding a glow to anything.",
+    whenNotToUse: [
+      { instead: "icon-button", because: "You want the component, not the technique. That page is the control; this one is why its glyph behaves the way it does." },
+      { instead: "social-button", because: "The mark is a trademark. It lights, but it must not take a state colour — that page records the one exception." },
+    ],
+    variants: [
+      { name: "off", when: "Rest. Two explicit zero shadows, never `none`." },
+      { name: "hover", when: "Lit — the colour lifts and a soft bloom appears." },
+      { name: "active", when: "Pressed — a solid core plus a wide halo." },
+    ],
+  },
 } satisfies Record<string, Guidance>;
 
 /**

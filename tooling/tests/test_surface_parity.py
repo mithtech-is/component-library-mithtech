@@ -39,7 +39,9 @@ ITEM_TO_MODULE = {
 
 # Docs entries that are composition demos rather than registry items. They have
 # no `.tsx` to install and are documented on purpose.
-DOC_ONLY = {"forms", "feedback", "ordered-states"}
+# `lamp` is the interaction pattern IconButton, Button, Alert and SocialButton
+# all ride. It is a page about a technique, not a component to install.
+DOC_ONLY = {"forms", "feedback", "ordered-states", "lamp"}
 
 # `tokens` ships a stylesheet, not a component.
 STYLE_ONLY = {"tokens"}
@@ -56,7 +58,7 @@ ICON_MODULES = {"icons", "td-icons", "brands", "td-brands"}
 # Components with no props of their own — they pass native DOM attributes
 # through and nothing else. An empty props table is correct for these, and the
 # docs say so in words rather than rendering a blank table.
-NO_OWN_PROPS = {"table"}
+NO_OWN_PROPS = {"table", "lamp"}
 
 # Classes a component emits purely so a consumer can target them — a router
 # link, a mega-menu trigger. They carry no rule on purpose, and are listed here
