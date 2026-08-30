@@ -1,13 +1,13 @@
 {
   "packages": [
     "mithtech-bengaluru-tonaldepth-core-0.1.0-alpha.1.tgz",
-    "mithtech-bengaluru-tonaldepth-react-0.1.0-alpha.26.tgz"
+    "mithtech-bengaluru-tonaldepth-react-0.1.0-alpha.27.tgz"
   ],
   "vite": {
     "status": "verified",
     "dist_files": [
-      "assets/index-4jYkTUJL.css",
-      "assets/index-yfwnsLn-.js",
+      "assets/index-BGSW5CJD.js",
+      "assets/index-yL3cbe45.css",
       "index.html"
     ]
   },
