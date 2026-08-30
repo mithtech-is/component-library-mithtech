@@ -72,7 +72,7 @@ export const Rating = forwardRef<HTMLDivElement, RatingProps>(function Rating(
     return "empty" as const;
   });
 
-  const rootClass = cx("td-rating", size === "lg" && "td-rating--lg", inset && "td-rating--inset", className);
+  const rootClass = cx("td-rating", "td-react-rating", size === "lg" && "td-rating--lg", inset && "td-rating--inset", className);
 
   if (readOnly) {
     return (

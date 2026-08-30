@@ -7,3 +7,55 @@
 .td-rating[data-disabled] { opacity: 0.55; cursor: not-allowed; }
 .td-rating[data-disabled] .td-rating-btn { cursor: not-allowed; }
 .td-rating-star > svg { width: 100%; height: 100%; display: block; }
+
+/* ── the stars run the lamp's four-rung ladder, by colour ──────────────
+   The base layer collapses them: rest is grey, hover is `--td-brand`, checked
+   is `--td-brand` — the SAME colour — and the press only nudges the glyph half
+   a pixel. So a star you are hovering, a star you have chosen and a star you
+   are pressing are three states wearing one colour, which is the fault the
+   lamp ladder exists to prevent.
+
+   Four rungs now, and colour is the whole of it. The light is NAMED with a
+   fallback ([[L20]]) — a bare `var()` that fails to resolve inherits the
+   root's green, on a control that has nothing to do with success.
+
+   The sibling rule the base layer uses is kept: DOM order is 5 to 1 under
+   `row-reverse`, so a star's later siblings are the ones below it and one
+   `~` selector fills the whole run with no per-star state. */
+.td-rating.td-react-rating { --td-lamp-glow: var(--td-rating-ink, var(--td-brand)); }
+
+.td-rating.td-react-rating .td-rating-btn {
+  color: var(--td-lamp-unlit);
+  transition: color var(--td-t-base) var(--td-ease);
+}
+.td-rating.td-react-rating .td-rating-btn[aria-checked="true"],
+.td-rating.td-react-rating .td-rating-btn[aria-checked="true"] ~ .td-rating-btn {
+  color: color-mix(in srgb, var(--td-lamp-glow) var(--td-lamp-held-mix), var(--td-lamp-unlit));
+}
+.td-rating.td-react-rating .td-rating-btn:hover,
+.td-rating.td-react-rating .td-rating-btn:hover ~ .td-rating-btn {
+  color: color-mix(in srgb, var(--td-lamp-glow) var(--td-lamp-hover-mix), var(--td-lamp-unlit));
+}
+/* The press is the top of the ladder and has to beat the two above it, so it
+   is written last and at the same weight. A held star that is also being
+   pressed reads as the press — that is the point of a fourth rung. */
+.td-rating.td-react-rating .td-rating-btn:active,
+.td-rating.td-react-rating .td-rating-btn:active ~ .td-rating-btn {
+  color: var(--td-lamp-glow);
+}
+
+/* ── the strip you can set is a FIELD, so it sits in a trough ──────────
+   Chrome is raised and the thing being entered is recessed. A rating you can
+   change is data going in, so it belongs in a well cut from the surface —
+   without one it was a row of bare glyphs on the page with nothing saying it
+   could be operated at all ([[L12]]).
+
+   The read-only form keeps `inset` as an opt-in, because a rating being
+   REPORTED is not a place to put something and a trough around it would say
+   the reader can change it. */
+.td-rating.td-react-rating:has(.td-rating-input) {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--td-surface);
+  box-shadow: var(--td-inset-soft);
+}

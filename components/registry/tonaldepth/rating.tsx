@@ -121,7 +121,7 @@ export const TonalDepthRating = forwardRef<HTMLDivElement, TonalDepthRatingProps
     return "empty" as const;
   });
 
-  const rootClass = cx("td-rating", size === "lg" && "td-rating--lg", inset && "td-rating--inset", className);
+  const rootClass = cx("td-rating", "td-registry-rating", size === "lg" && "td-rating--lg", inset && "td-rating--inset", className);
 
   if (readOnly) {
     return (

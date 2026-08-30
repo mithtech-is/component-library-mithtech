@@ -691,7 +691,33 @@ main { min-width: 0; overflow-x: clip; overflow-y: visible; }
    height at all, the grid collapses to its tallest column and the whole point
    — that the sheet never resizes — is invisible. The stage supplies the height
    the sheet would have on a page. */
-.mega-stage { display: block; min-width: 0; height: 420px; }
+/* The stage IS the sheet.
+
+   These four components render a panel BODY — the sheet, its head, its close
+   control and its footer belong to SiteNavigation. Previewing the body on the
+   bare page left it with nothing behind it: the wells inside read as holes cut
+   in the document rather than as content recessed into a surface, and the
+   whole thing had no edge, no lift and no ground. A panel judged outside its
+   housing is judged against nothing.
+
+   So the stage draws exactly the plate the real sheet draws — the design
+   system's own raised recipe, the veil and the edge ring included — and every
+   mega preview is now seen in the surface it actually drops out of. Same
+   values as `.td-react-sitenav-panel`; if that plate is retuned, retune this
+   with it. */
+.mega-stage {
+  display: block;
+  min-width: 0;
+  height: 420px;
+  padding: var(--td-sp-8, 16px);
+  background: var(--td-raise-fill);
+  border-radius: var(--td-radius-8);
+  box-shadow:
+    4px 5px 12px color-mix(in srgb, var(--td-shadow-dark) 70%, transparent),
+    -4px -5px 12px color-mix(in srgb, var(--td-shadow-light) 66%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+}
 /* The wide panel carries a feature and two columns; 420px crops the steps. */
 .mega-stage--wide { height: 520px; }
 .mega-stage > .td-react-mega-columns { height: 100%; }
