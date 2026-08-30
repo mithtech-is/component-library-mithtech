@@ -1,0 +1,11 @@
+/* TagInput.
+
+   `.td-taginput`, its chip and its `×` are the design system's. What is here is
+   the wrapper's own state: the whole well is a click target for the field, and
+   error and disabled have to reach a container the core sheet only styles at
+   `:focus-within`. */
+
+.td-react-taginput { cursor: text; max-width: 100%; }
+.td-react-taginput[data-state="error"] { border-color: var(--td-brand); }
+.td-react-taginput[data-disabled] { opacity: 0.55; cursor: not-allowed; }
+.td-react-taginput[data-disabled] .td-taginput-input { cursor: not-allowed; }

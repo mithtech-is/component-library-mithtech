@@ -1,0 +1,22 @@
+/* PhoneField — a country combobox and a national-number input reading as one
+   field. Both halves are existing components, so there is no new housing here:
+   only the seam between them and the mono dial code in the leading slot. */
+
+.td-react-phone { display: flex; align-items: flex-start; gap: var(--td-sp-4, 6px); min-width: 0; max-width: 100%; }
+.td-react-phone[data-disabled] { opacity: 0.55; }
+
+.td-react-phone-combo { flex: 0 0 auto; min-width: 132px; max-width: 168px; }
+.td-react-phone-country { font-size: 12.5px; }
+.td-react-phone-number { flex: 1 1 auto; min-width: 0; }
+
+/* A dial code is a machine value, so it is mono and sits quiet — it labels the
+   number rather than competing with it. */
+.td-react-phone-dial { font-family: var(--td-font-mono); font-size: 12.5px; font-weight: 600; color: var(--td-ink-2); }
+.td-react-phone-input { font-family: var(--td-font-mono); font-variant-numeric: tabular-nums; letter-spacing: 0.02em; }
+
+@media (max-width: 420px) {
+  /* Below this the two halves cannot both hold their minimum, so the country
+     takes its own line rather than squeezing the number to four digits. */
+  .td-react-phone { flex-wrap: wrap; }
+  .td-react-phone-combo { max-width: none; width: 100%; }
+}

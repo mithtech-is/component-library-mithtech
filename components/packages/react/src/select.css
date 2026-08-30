@@ -1,0 +1,33 @@
+/* Select and Combobox.
+
+   The base `.td-select-*`, `.td-combobox-*` and `.td-taginput-tag` recipes are
+   the design system's and live in the core layer. What is here is only what the
+   React composition adds: the chip row a multi-select grows above its field,
+   the keyboard highlight (the core sheet styles `:hover` and `aria-selected`,
+   but a reader arrowing with the keyboard is neither), and the disabled state. */
+
+.td-react-combobox { min-width: 240px; max-width: 100%; }
+
+/* The field is an Input, so the chevron has to clear the trailing slot rather
+   than sit where the native select's does. */
+.td-react-combobox-slot { position: relative; width: 100%; padding-right: 30px; }
+
+.td-react-combobox-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--td-sp-4, 6px);
+  margin-bottom: var(--td-sp-4, 6px);
+}
+
+/* Keyboard highlight. Depth, not colour — the row the reader has arrowed to is
+   a shallow well, the same one `:hover` draws, so pointer and keyboard put the
+   reader in the same place rather than inventing a second vocabulary. */
+.td-combobox-option[data-active] {
+  background: color-mix(in srgb, var(--td-brand) 14%, var(--td-surface));
+  color: var(--td-brand-text);
+}
+.td-combobox-option[aria-disabled="true"] { opacity: 0.45; cursor: not-allowed; }
+
+.td-react-combobox[data-disabled] { opacity: 0.55; pointer-events: none; }
+.td-select-wrap[data-disabled] { opacity: 0.55; }
+.td-select-wrap[data-state="error"] { border-color: var(--td-brand); }

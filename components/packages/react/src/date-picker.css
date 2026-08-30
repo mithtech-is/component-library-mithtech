@@ -1,0 +1,32 @@
+/* The date and time fields.
+
+   `.td-cal`, `.td-drfield`, `.td-drpop`, `.td-timegrid` and the quick-span chip
+   are the design system's. What is here is what the React composition adds: the
+   leading blanks a month needs before its first weekday, the in-range wash
+   between two selected ends, and the popover's own layout when it carries more
+   than one instrument. */
+
+.td-react-cal-blank { aspect-ratio: 1; }
+
+/* Between the two ends of a range. A wash rather than a well: these days are
+   included, but the reader did not choose them one at a time, so they must not
+   read as pressed. */
+.td-cal-day[data-state~="inrange"] {
+  background: color-mix(in srgb, var(--td-brand) 10%, var(--td-surface));
+  color: var(--td-ink);
+}
+
+.td-react-datepick .td-drpop,
+.td-react-timepick .td-drpop { flex-direction: column; }
+.td-react-datetime .td-drpop { align-items: flex-start; }
+.td-react-daterange .td-drpop { flex-direction: column; }
+
+.td-react-daterange-presets { display: flex; flex-wrap: wrap; gap: var(--td-sp-4, 6px); }
+
+.td-drpick[data-disabled] { opacity: 0.55; pointer-events: none; }
+.td-drfield[aria-invalid="true"] { box-shadow: inset 1.5px 1.5px 4px color-mix(in srgb, var(--td-shadow-dark) 40%, transparent), inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 40%, transparent), 0 0 0 1.5px var(--td-brand); }
+.td-cal-day:focus-visible { outline: 2px solid var(--td-accent); outline-offset: 1px; }
+.td-cal-day:disabled { opacity: 0.3; cursor: not-allowed; }
+
+/* Named so a screen reader gets the popover's title without it being drawn. */
+.td-react-vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }

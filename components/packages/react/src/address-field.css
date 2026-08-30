@@ -1,0 +1,14 @@
+/* AddressField — layout only. Every part is an existing component in its own
+   housing, so there is nothing to draw here except the grid they sit in. */
+
+.td-react-address { display: grid; gap: var(--td-sp-6, 10px); min-width: 0; max-width: 100%; }
+.td-react-address-row { display: grid; gap: var(--td-sp-6, 10px); min-width: 0; }
+.td-react-address-row--split { grid-template-columns: 1fr 1fr; }
+.td-react-address-wide { width: 100%; }
+.td-react-address .td-react-combobox { min-width: 0; width: 100%; }
+/* A postal code is a machine value and is read back digit by digit. */
+.td-react-address-postcode { font-family: var(--td-font-mono); letter-spacing: 0.04em; }
+
+@media (max-width: 520px) {
+  .td-react-address-row--split { grid-template-columns: 1fr; }
+}

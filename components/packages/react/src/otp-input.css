@@ -1,0 +1,7 @@
+/* OtpInput. `.td-otp` and `.td-otp-cell` are the design system's; only the
+   group's own error and disabled states are added here. */
+
+.td-react-otp { flex-wrap: wrap; }
+.td-react-otp[data-disabled] { opacity: 0.55; }
+.td-react-otp[data-state="error"] .td-otp-cell { border-color: var(--td-brand); }
+.td-otp-cell:disabled { cursor: not-allowed; }
