@@ -296,12 +296,11 @@ describe("LogoStrip", () => {
     }
   });
 
-  it("lights the hovered mark with a white shadow and puts no plate under it", () => {
-    // 2026-08-30: *"The logo plate looks bad. just add a small white shadow the
-    // plates look ugly."* The near-white chip was a flat fill behind every
-    // mark, which on `#F5F5F5` read as a rendering fault rather than a state.
-    // A `drop-shadow` follows the glyph's own alpha, so the light is behind the
-    // MARK rather than under a rectangle containing it.
+  it("restores the artwork on hover and puts nothing behind or under it", () => {
+    // The hovered mark has been through a near-white plate (a flat fill, which
+    // the system forbids) and a white drop-shadow (a halo on a mark whose shape
+    // we do not control). Both were decorating the hover rather than trusting
+    // the one change that actually reads: the colour coming back.
     for (const [label, css, P] of STYLESHEETS) {
       const item = css.match(new RegExp(`\\.td-logos-item\\.td-${P}-logos-item \\{[\\s\\S]*?\\n\\}`))![0];
       const hover = css.match(new RegExp(`\\.td-logos-item\\.td-${P}-logos-item:hover,[\\s\\S]*?\\n\\}`))![0];
@@ -311,9 +310,27 @@ describe("LogoStrip", () => {
       }
       expect(hover, label).toMatch(/transform: scale\(1\.14\)/);
 
+      // The artwork restores, and no rung of the ladder carries a shadow.
       const lit = css.match(new RegExp(`:hover \\.td-${P}-logos-art,[\\s\\S]*?filter: ([^;]+);`))![1];
-      expect(lit, label).toMatch(/drop-shadow\(0 0 5px rgb\(255 255 255 \/ 0\.55\)\)/);
-      expect(lit, label).toMatch(/drop-shadow\(0 0 13px rgb\(255 255 255 \/ 0\.3\)\)/);
+      expect(lit, label).toBe("brightness(1) invert(0) opacity(1)");
+      for (const rung of artRungs(css, P)) expect(rung, label).not.toMatch(/drop-shadow/);
+    }
+  });
+
+  it("houses the moving strip in a trough, on a fill that reads in the dark", () => {
+    // A wall of proof reads as one object, so the track sits in a trough cut
+    // from the surface. The fill is `--td-surface-2` — a step LIGHTER than the
+    // page — because a near-black band on a near-black page is not a trough,
+    // it is an absence, and the depth has nothing to separate.
+    for (const [label, css, P] of STYLESHEETS) {
+      const strip = css.match(new RegExp(`\\.td-${P}-logos--scroll \\{[\\s\\S]*?\\n\\}`))![0];
+      expect(strip, label).toMatch(/background: var\(--td-surface-2\)/);
+      expect(strip, label).toMatch(/box-shadow: var\(--td-inset-soft\)/);
+      // NOT on the viewport: that carries the edge mask, and `mask-image` fades
+      // the element's own background with its contents.
+      const viewport = css.match(new RegExp(`\\.td-${P}-logos-viewport \\{[\\s\\S]*?\\n\\}`))![0];
+      expect(viewport, label).not.toMatch(/background:/);
+      expect(viewport, label).toMatch(/mask-image/);
     }
   });
 
@@ -861,7 +878,16 @@ describe("LogoStrip as a carousel", () => {
     const runs = container.querySelectorAll(".td-react-logos-run");
     expect(runs).toHaveLength(2);
     expect(runs[1]).toHaveAttribute("aria-hidden", "true");
-    expect(runs[1]).toHaveAttribute("inert");
+    // NOT `inert`. It also makes the copy non-interactive, and in a moving
+    // track that meant half the marks on screen would not light and could not
+    // be clicked — with which half depending on where the loop had got to.
+    expect(runs[1]).not.toHaveAttribute("inert");
+    // The copy is out of the tab order one link at a time instead, so a screen
+    // reader reads the client list once and Tab traverses it once.
+    const copies = runs[1].querySelectorAll("a");
+    expect(copies.length).toBeGreaterThan(0);
+    for (const copy of copies) expect(copy).toHaveAttribute("tabindex", "-1");
+    for (const real of runs[0].querySelectorAll("a")) expect(real).not.toHaveAttribute("tabindex");
     // The real run keeps the only copy of each name and each link.
     expect(screen.getAllByRole("link", { name: "Coastal Freight" })).toHaveLength(1);
   });

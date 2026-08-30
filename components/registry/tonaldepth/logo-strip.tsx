@@ -57,30 +57,49 @@ export interface TonalDepthLogoStripProps extends HTMLAttributes<HTMLElement> {
  * - **It stops entirely under `prefers-reduced-motion`** and becomes a track
  *   the reader scrolls themselves. Slowing an infinite animation is not
  *   honouring that preference; stopping it is.
- * - **The marks are rendered twice** so the loop has no seam. The second run
- *   is `inert`, which takes it out of the tab order and the accessibility tree
- *   together — otherwise a screen reader reads the client list twice.
+ * - **The marks are rendered twice** so the loop has no seam. The second run is
+ *   `aria-hidden` and its links are out of the tab order, so a screen reader
+ *   reads the client list once and Tab traverses it once. It is deliberately
+ *   NOT `inert`: that also makes the copy non-interactive, and in a moving
+ *   track it meant half the marks on screen would not light and could not be
+ *   clicked, with which half depending on where the loop had got to.
  */
 export const TonalDepthLogoStrip = forwardRef<HTMLElement, TonalDepthLogoStripProps>(function TonalDepthLogoStrip(
   { items, label, scroll = false, speed = 32, reverse = false, renderLink, className, style, ...props },
   ref,
 ) {
-  const renderItem = (item: TonalDepthLogoStripItem, index: number) => {
+  /*
+   * `duplicate` is the seam-hiding second run.
+   *
+   * It used to be `inert`, which takes the copy out of the tab order and the
+   * accessibility tree in one attribute — and also makes it non-interactive.
+   * In the moving track that meant HALF the marks the reader sees do nothing:
+   * a logo slides under the pointer, does not light, and cannot be clicked,
+   * and which half depends on where the loop happens to be. The reader has no
+   * way of knowing they are looking at the copy.
+   *
+   * So the copy is hidden from assistive tech with `aria-hidden` and taken out
+   * of the tab order one link at a time instead. A screen reader still reads
+   * the client list once and Tab still traverses it once; the pointer works on
+   * every mark on screen, which is the only thing a reader can actually see.
+   */
+  const renderItem = (item: TonalDepthLogoStripItem, index: number, duplicate = false) => {
     const inner = <span className="td-registry-logos-art" aria-hidden="true">{item.logo}</span>;
     const cls = cx("td-logos-item", "td-registry-logos-item");
+    const name = <span className="td-registry-logos-name">{item.name}</span>;
     if (item.href) {
       return (
         <span className="td-registry-logos-slot" key={index}>
           {renderLink
-            ? renderLink({ className: cls, href: item.href, children: <>{inner}<span className="td-registry-logos-name">{item.name}</span></> })
-            : <a className={cls} href={item.href}>{inner}<span className="td-registry-logos-name">{item.name}</span></a>}
+            ? renderLink({ className: cls, href: item.href, children: <>{inner}{name}</> })
+            : <a className={cls} href={item.href} tabIndex={duplicate ? -1 : undefined}>{inner}{name}</a>}
         </span>
       );
     }
     return (
       <span className={cls} key={index}>
         {inner}
-        <span className="td-registry-logos-name">{item.name}</span>
+        {name}
       </span>
     );
   };
@@ -93,7 +112,7 @@ export const TonalDepthLogoStrip = forwardRef<HTMLElement, TonalDepthLogoStripPr
     return (
       <section {...props} ref={ref} style={style} className={cx("td-logos", "td-registry-logos", className)}>
         {heading}
-        {items.map(renderItem)}
+        {items.map((item, i) => renderItem(item, i))}
       </section>
     );
   }
@@ -109,11 +128,12 @@ export const TonalDepthLogoStrip = forwardRef<HTMLElement, TonalDepthLogoStripPr
       {heading}
       <div className="td-registry-logos-viewport">
         <div className="td-registry-logos-track">
-          <span className="td-registry-logos-run">{items.map(renderItem)}</span>
-          {/* The seam-hider. `inert` takes the copy out of the tab order and
-              the accessibility tree at once, so the client list is announced
-              once rather than twice. */}
-          <span className="td-registry-logos-run" aria-hidden="true" inert>{items.map(renderItem)}</span>
+          <span className="td-registry-logos-run">{items.map((item, i) => renderItem(item, i))}</span>
+          {/* The seam-hider. Hidden from assistive tech so the client list is
+              announced once, and its links are taken out of the tab order —
+              but NOT `inert`, which would also stop half the marks on screen
+              lighting or being clickable. See `renderItem`. */}
+          <span className="td-registry-logos-run" aria-hidden="true">{items.map((item, i) => renderItem(item, i, true))}</span>
         </div>
       </div>
     </section>

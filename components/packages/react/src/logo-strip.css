@@ -12,11 +12,11 @@
    as one material besides. The artwork is still only filtered, never altered,
    and the real thing is one hover away.
 
-   Hover restores the artwork and lights it with a SMALL WHITE SHADOW — a soft
-   light behind the glyph, not a card under it. The near-white plate that used
-   to arrive with the colour solved the right problem the wrong way: a flat
-   fill is the one move the system forbids ([[L11]]), and on a light page it
-   read as a rendering bug rather than a state.
+   Hover restores the artwork and nothing else. It has been through a plate
+   (a flat fill, which the system forbids) and a white drop-shadow (a halo on
+   a mark whose shape we do not control); both were doing the same job twice.
+   The colour coming back IS the state, and it is the loudest change on a wall
+   that is otherwise one flat silhouette.
 
    The name is always in the DOM as the alternative text and is visually
    hidden, because a logo is an image of a word: without it the wall is a row
@@ -78,32 +78,25 @@
   display: inline-flex;
   align-items: center;
   height: 30px;
-  filter: brightness(0) invert(0) opacity(0.62) drop-shadow(0 0 0 rgb(255 255 255 / 0)) drop-shadow(0 0 0 rgb(255 255 255 / 0));
+  filter: brightness(0) invert(0) opacity(0.62);
   transition: filter var(--td-t-base) var(--td-ease);
 }
-[data-theme="dark"] .td-react-logos-art { filter: brightness(0) invert(1) opacity(0.62) drop-shadow(0 0 0 rgb(255 255 255 / 0)) drop-shadow(0 0 0 rgb(255 255 255 / 0)); }
+[data-theme="dark"] .td-react-logos-art { filter: brightness(0) invert(1) opacity(0.62); }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .td-react-logos-art { filter: brightness(0) invert(1) opacity(0.62) drop-shadow(0 0 0 rgb(255 255 255 / 0)) drop-shadow(0 0 0 rgb(255 255 255 / 0)); }
+  :root:not([data-theme="light"]) .td-react-logos-art { filter: brightness(0) invert(1) opacity(0.62); }
 }
-/* THE LIT STATE — 2026-08-30, replacing the plate.
+/* THE LIT STATE.
 
-   *"The logo plate looks bad. just add a small white shadow the plates look
-   ugly."* The plate existed for a real reason and the reason still holds: a
-   dark-ink logo returning to its real colours on a dark page returns to being
-   invisible, so the hover state was useless for exactly the marks that needed
-   it most. A white card behind the mark is not the answer to that — a flat
-   fill is the one move the system forbids, and on `#F5F5F5` it read as a
-   rendering fault.
+   The mark comes back to its real colours and steps forward. That is the whole
+   state: no plate under it and no light behind it. Both were tried and both
+   were the same mistake in different clothes — decorating the hover rather
+   than trusting the one change that actually reads.
 
-   A `drop-shadow` follows the glyph's own alpha, so the light sits BEHIND THE
-   MARK rather than under a rectangle containing it: a dark mark on a dark page
-   gets a rim to sit against and nothing else appears. Two lights — a tight
-   core and a wider bloom — because one at a readable strength reads as a
-   halo, and two at a lower one read as light.
-
-   Deliberately subtle. It exists to give a dark mark something to sit against,
-   not to announce itself, and it is nearly invisible on a light page — where
-   the restored artwork was legible anyway.
+   The trade-off the plate was invented for is real and is NOT solved here: a
+   dark-ink logo on a dark page returns to being hard to see at the moment it
+   returns to its own colours. The wall stays legible because REST is a
+   silhouette in the page's ink; hover is for looking at one mark, not for
+   reading the wall.
 
    1.14 rather than a nudge: the wall is quiet until you look at one of them,
    and that only reads if the one you are looking at is plainly bigger.
@@ -116,7 +109,7 @@ a.td-logos-item.td-react-logos-item:focus-visible {
 }
 .td-logos-item.td-react-logos-item:hover .td-react-logos-art,
 a.td-logos-item.td-react-logos-item:focus-visible .td-react-logos-art {
-  filter: brightness(1) invert(0) opacity(1) drop-shadow(0 0 5px rgb(255 255 255 / 0.55)) drop-shadow(0 0 13px rgb(255 255 255 / 0.3));
+  filter: brightness(1) invert(0) opacity(1);
 }
 a.td-logos-item.td-react-logos-item:focus-visible { outline: 2px solid var(--td-accent); outline-offset: 4px; border-radius: var(--td-radius-2); }
 
@@ -148,10 +141,27 @@ a.td-logos-item.td-react-logos-item:focus-visible { outline: 2px solid var(--td-
    It pauses on hover and on `focus-within`. A mark that slides out from under
    the pointer is a link nobody can click, and one that slides away from a
    focus ring is worse. */
+/* The moving strip is HOUSED, not laid on the page.
+
+   The track is a wall of proof and it reads as one object, so it sits in a
+   trough cut from the surface rather than floating on the page ground. In dark
+   the fill is `--td-surface-2` — a step LIGHTER than the page, closer to dark
+   grey — because a near-black band on a near-black page is not a trough, it is
+   an absence, and the depth has nothing to separate.
+
+   The housing is on the SECTION rather than on the viewport: the viewport
+   carries the edge mask, and `mask-image` fades the element's own background
+   with its contents, so a trough drawn there would dissolve at both ends. */
 .td-react-logos--scroll {
   --td-logos-speed: 32s;
   display: block;
+  padding: var(--td-sp-8, 16px) 0;
+  border-radius: var(--td-radius-6);
+  background: var(--td-surface-2);
+  box-shadow: var(--td-inset-soft);
 }
+/* The label belongs above the trough, not inside it. */
+.td-react-logos--scroll .td-react-logos-label { margin-bottom: var(--td-sp-6); }
 .td-react-logos-viewport {
   overflow: hidden;
   min-width: 0;
