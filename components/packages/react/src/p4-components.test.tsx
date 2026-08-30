@@ -71,6 +71,25 @@ describe("CopyChip", () => {
     expect(screen.getByRole("button", { name: "Copy abc123" })).toBeInTheDocument();
   });
 
+  it("settles on hover rather than lifting, and keeps the shadow count", () => {
+    /* The control ladder descends: --td-btn-rest 2px -> --td-btn-hover 1px ->
+       --td-btn-active inset. A chip that grows its outer shadow on hover is
+       climbing a ladder the rest of the system descends — the bug SocialButton
+       had, found again here. The count must not change either, or the two
+       states snap instead of interpolating ([[L18]]). */
+    const css = read("copy-chip.css");
+    const body = (selector: string) =>
+      new RegExp(`\\${selector}[^{]*\\{([^}]*)\\}`).exec(css)?.[1] ?? "";
+    const outer = (rule: string) =>
+      [...rule.matchAll(/(?:^|,)\s*(-?[\d.]+)px\s+(-?[\d.]+)px\s+([\d.]+)px/g)]
+        .map(m => Number(m[3]));
+    const rest = outer(body(".td-react-copy"));
+    const hover = outer(body(".td-react-copy:hover"));
+    expect(rest.length).toBeGreaterThan(0);
+    expect(hover.length).toBe(rest.length);
+    expect(Math.max(...hover)).toBeLessThan(Math.max(...rest));
+  });
+
   it("never paints a category behind the chip", () => {
     // [[L11]] / [[L25]]: the original's green plate is deliberately not ported.
     const css = read("copy-chip.css");

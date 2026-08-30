@@ -72,6 +72,13 @@
 .td-react-isostack-card {
   transition: transform var(--td-t-base) var(--td-ease), box-shadow var(--td-t-base) var(--td-ease);
 }
+/* THE LIFT ON HOVER IS DELIBERATE — audited 2026-08-30.
+
+   3px/12px -> 5px/18px, against a control ladder that descends. IsoStack's
+   whole subject is the SET rather than any card in it, and the gesture the
+   component exists for is one card coming out of the stack far enough to read.
+   Settling it would take away the only thing the interaction says. This is a
+   surface, not a control; the chips' rule does not apply. */
 .td-react-isostack-card:hover,
 .td-react-isostack-card:focus-visible {
   transform: translateY(-6px);

@@ -35,6 +35,13 @@
     0 0 0 1px var(--td-edge);
   transition: box-shadow var(--td-t-base) var(--td-ease), background var(--td-t-base) var(--td-ease);
 }
+/* THE LIFT ON HOVER IS DELIBERATE — audited 2026-08-30.
+
+   3px/12px -> 4px/11px. The offset grows while the blur TIGHTENS, which reads
+   as the cell coming closer and sharpening rather than simply inflating. Each
+   cell is a whole navigation target rather than a control, and at that size a
+   settle is imperceptible while a tighten tells the reader the entire plate is
+   the link. A surface may lift; a chip may not. */
 .td-linkcell.td-registry-linkcell:hover {
   box-shadow:
     4px 4px 11px color-mix(in srgb, var(--td-shadow-dark) 52%, transparent),

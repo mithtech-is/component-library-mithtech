@@ -37,11 +37,17 @@
     color var(--td-t-base) var(--td-ease),
     box-shadow var(--td-t-base) var(--td-ease);
 }
+/* Hover SETTLES the chip, it does not lift it. The control ladder every button
+   in the system rides goes 2px -> 1px on the cast between rest and hover
+   (`--td-btn-rest` -> `--td-btn-hover`) before pressing fully in on active, so
+   a chip that GREW its shadow on hover was climbing a ladder everything around
+   it descends — the same bug SocialButton had. The shadow count is unchanged
+   so the two states still interpolate ([[L18]]). */
 .td-react-copy:hover {
   color: var(--td-ink);
   box-shadow:
-    3.5px 3.5px 9px color-mix(in srgb, var(--td-shadow-dark) 56%, transparent),
-    -3px -3px 12px color-mix(in srgb, var(--td-shadow-light) 78%, transparent),
+    1.5px 1.5px 4px color-mix(in srgb, var(--td-shadow-dark) 44%, transparent),
+    -1.5px -1.5px 4px color-mix(in srgb, var(--td-shadow-light) 52%, transparent),
     inset 0 1px 0 var(--td-shadow-veil),
     inset 0 0 0 0 rgb(from var(--td-shadow-light) r g b / 0),
     0 0 0 1px var(--td-edge);

@@ -44,6 +44,14 @@
   transition: box-shadow var(--td-t-base) var(--td-ease), color var(--td-t-base) var(--td-ease);
 }
 .td-react-chat-launcher--bare { padding: 0; width: var(--td-btn-h-lg, 50px); height: var(--td-btn-h-lg, 50px); justify-content: center; }
+/* THE LIFT ON HOVER IS DELIBERATE — audited 2026-08-30.
+
+   Every other control in the system SETTLES on hover, because the control
+   ladder descends (`--td-btn-rest` 2px -> `--td-btn-hover` 1px -> inset). This
+   one grows, 4px/12px -> 5px/15px, and that is correct: a floating action
+   button is not seated in the sheet. It is the one element that is explicitly
+   ABOVE the page rather than cut from it, so it answers a hover by rising
+   further out, not by pressing in. Do not "fix" this to match the chips. */
 .td-react-chat-launcher:hover {
   color: var(--td-brand-text);
   box-shadow:
