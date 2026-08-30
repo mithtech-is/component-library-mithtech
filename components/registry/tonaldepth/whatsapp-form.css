@@ -26,31 +26,51 @@
   .td-registry-wa-row { grid-template-columns: 1fr; }
 }
 
-/* The seam between what is required and what is not — carved, like every other
-   boundary in the system ([[L03]]), and inset so it reads as a groove in the
-   panel rather than a rule cutting it in two. */
-.td-registry-wa-aside {
+/* The optional half, as a carved well.
+
+   It replaces a hairline rule and a grey sentence. Eight fields at one weight
+   read as a wall; four of them sitting IN a recess read as one thing the
+   reader may skip, which is what depth is for in this system ([[L03]]). The
+   legend rides the top edge of the well so the panel names itself instead of
+   needing a caption above it. */
+.td-registry-wa-optional {
   position: relative;
-  margin: var(--td-sp-2) 0 0;
-  padding-top: var(--td-sp-7);
-  font-family: var(--td-font-ui);
-  font-size: 0.72rem;
-  color: var(--td-ink-3);
-}
-.td-registry-wa-aside::before {
-  content: "";
-  position: absolute;
-  inset-inline: 0;
-  top: 0;
-  height: 1px;
-  background: color-mix(in srgb, var(--td-shadow-dark) 55%, transparent);
-  box-shadow: 0 1px 0 color-mix(in srgb, var(--td-shadow-light) 55%, transparent);
+  display: grid;
+  gap: var(--td-sp-7);
+  margin: var(--td-sp-3) 0 0;
+  padding: var(--td-sp-8) var(--td-sp-7) var(--td-sp-7);
+  border: 0;
+  border-radius: var(--td-radius-5);
+  min-width: 0;
+  background: color-mix(in srgb, var(--td-surface) 94%, black);
+  box-shadow:
+    inset 2px 2px 5px color-mix(in srgb, var(--td-shadow-dark) 42%, transparent),
+    inset -1px -1px 3px color-mix(in srgb, var(--td-shadow-light) 46%, transparent);
 }
 
+/* A real `legend`, so the group is named for a screen reader too — taken out
+   of the fieldset's own layout and placed on the well's top edge. */
+.td-registry-wa-optional-legend {
+  float: none;
+  padding: 0;
+  margin: 0 0 var(--td-sp-2);
+  font-family: var(--td-font-mono);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--td-ink-3);
+}
+
+/* Fine print, and it should read as fine print: it is a statement about what
+   the message will contain, not a field and not an instruction. */
 .td-registry-wa-page {
   margin: 0;
+  padding-inline-start: var(--td-sp-2);
+  border-inline-start: 2px solid color-mix(in srgb, var(--td-ink-3) 30%, transparent);
   font-family: var(--td-font-ui);
   font-size: 0.68rem;
+  line-height: 1.45;
   color: var(--td-ink-3);
 }
 

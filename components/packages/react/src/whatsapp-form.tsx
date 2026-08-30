@@ -244,26 +244,34 @@ export const WhatsAppForm = forwardRef<HTMLDivElement, WhatsAppFormProps>(functi
               onChange={event => set("subject")(event.target.value)} />
           </FormField>
 
-          <p className="td-react-wa-aside">Everything below is optional — it only changes who picks the message up.</p>
+          {/* The optional half is a carved WELL rather than a rule and a grey
+              sentence. Depth is how this system says "subordinate": four more
+              fields at the same weight as the four above read as a wall of
+              eight, while the same four sitting IN the panel read as one
+              thing the reader may skip. The fields inside keep their own
+              `optional` tags, so nothing depends on seeing the recess. */}
+          <fieldset className="td-react-wa-optional">
+            <legend className="td-react-wa-optional-legend">Optional — it only changes who picks the message up</legend>
 
-          <div className="td-react-wa-row">
-            <FormField label="Company" htmlFor={`${base}-company`} optional>
-              <Input id={`${base}-company`} autoComplete="organization" value={values.company}
-                onChange={event => set("company")(event.target.value)} />
+            <div className="td-react-wa-row">
+              <FormField label="Company" htmlFor={`${base}-company`} optional>
+                <Input id={`${base}-company`} autoComplete="organization" value={values.company}
+                  onChange={event => set("company")(event.target.value)} />
+              </FormField>
+              <FormField label="Industry" htmlFor={`${base}-industry`} optional>
+                {choice("industry", industries, "Choose an industry")}
+              </FormField>
+            </div>
+
+            <FormField label="Service required" htmlFor={`${base}-service`} optional>
+              {choice("service", services, "Choose a service")}
             </FormField>
-            <FormField label="Industry" htmlFor={`${base}-industry`} optional>
-              {choice("industry", industries, "Choose an industry")}
+
+            <FormField label="Anything else" htmlFor={`${base}-message`} optional>
+              <Textarea id={`${base}-message`} rows={3} value={values.message}
+                onChange={event => set("message")(event.target.value)} />
             </FormField>
-          </div>
-
-          <FormField label="Service required" htmlFor={`${base}-service`} optional>
-            {choice("service", services, "Choose a service")}
-          </FormField>
-
-          <FormField label="Anything else" htmlFor={`${base}-message`} optional>
-            <Textarea id={`${base}-message`} rows={3} value={values.message}
-              onChange={event => set("message")(event.target.value)} />
-          </FormField>
+          </fieldset>
 
           {includePage ? (
             <p className="td-react-wa-page">

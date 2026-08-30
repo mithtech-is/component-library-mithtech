@@ -2683,6 +2683,42 @@ html, body { margin: 0; background: var(--td-bg); }
   gap: 16px;
   animation: td-overlay-pop 220ms var(--td-ease) both;
 }
+
+/* The head and the actions hold their place while the body scrolls.
+
+   A long dialog — the WhatsApp enquiry is eight fields — pushed its own submit
+   button below the fold, so the reader had to scroll past everything they had
+   just filled in to find the thing that sends it. Sticking both ends keeps the
+   title naming what this is and the action reachable at every scroll position.
+   Both carry the panel's own background, or the fields slide visibly under
+   translucent bars. */
+.td-modal-head {
+  position: sticky;
+  top: calc(var(--td-sp-8, 24px) * -1);
+  z-index: 1;
+  background: var(--td-surface);
+  padding-block: var(--td-sp-8, 24px) var(--td-sp-4, 8px);
+  margin-block: calc(var(--td-sp-8, 24px) * -1) 0;
+}
+.td-modal-actions {
+  position: sticky;
+  bottom: calc(var(--td-sp-8, 24px) * -1);
+  z-index: 1;
+  background: var(--td-surface);
+  padding-block: var(--td-sp-6, 12px) var(--td-sp-8, 24px);
+  margin-block: 0 calc(var(--td-sp-8, 24px) * -1);
+}
+/* The seam only appears once there is something scrolled under it. */
+.td-modal-actions::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 1px;
+  background: color-mix(in srgb, var(--td-shadow-dark) 45%, transparent);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--td-shadow-light) 45%, transparent);
+}
+.td-modal-actions { position: sticky; }
 .td-modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
 .td-modal-title { font-family: var(--td-font-ui); font-size: 18px; font-weight: 600; color: var(--td-ink); margin: 0; }
 .td-modal-desc { font-family: var(--td-font-sans); font-size: 13px; line-height: 1.55; color: var(--td-ink-2); margin: 0; }
