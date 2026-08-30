@@ -115,13 +115,25 @@
 
    `backdrop-filter` is progressive: where it is unsupported the tint alone
    still reads as inactive, so nothing is lost, and the tint is deliberately
-   light BECAUSE the blur is doing the work. */
+   light BECAUSE the blur is doing the work.
+
+   **This rule only works because the component portals the scrim to
+   `document.body`.** Rendered inside the header it was measurably dead: the
+   header takes a `transform` for the retract, a transformed element is the
+   containing block for its `position: fixed` descendants, so `inset: 0`
+   resolved against the 86px bar and the scrim covered the bar alone — and the
+   same transform opened a new backdrop root, so `backdrop-filter` computed to
+   `none`. Neither failure reports: the declarations below read as correct and
+   the rendering model discards them. Do not move it back into the header. */
 .td-react-sitenav-scrim {
   position: fixed;
   inset: 0;
   /* Under the bar AND the panels, over the page. The bar must stay lit:
-     a menu whose own trigger goes dark is a modal. */
-  z-index: 30;
+     a menu whose own trigger goes dark is a modal. The scrim sits at the body
+     level now, so this competes with the consumer's own page furniture rather
+     than with the header's children — override the variable where a page keeps
+     something of its own above 30. */
+  z-index: var(--td-react-sitenav-scrim-z, 30);
   background: color-mix(in srgb, var(--td-bg) 14%, transparent);
   backdrop-filter: blur(8px) saturate(1.04);
   -webkit-backdrop-filter: blur(8px) saturate(1.04);
@@ -159,10 +171,10 @@
       tint is down to 14% and the blur down to 8px: the page behind should look
       *set down*, not switched off. */
 .td-react-sitenav[data-nav-open] { z-index: 59; }
-/* The scrim is a CHILD of the header, after the bar in the DOM, so inside the
-   header's own stacking context it paints over the bar however low its z-index
-   is — which is what kept washing the navigation out. The bar is lifted above
-   it here; the sheet (`.td-mega`, z-index 60) stays above both. */
+/* The bar's own lift inside the header, kept rather than removed: the portal
+   settles the scrim, but a consumer placing anything absolutely inside the bar
+   still wants the bar to be a context of its own. The sheet (`.td-mega`,
+   z-index 60) stays above both. */
 .td-react-sitenav .td-navbar { position: relative; z-index: 45; }
 
 .td-mega-panel.td-react-sitenav-panel {

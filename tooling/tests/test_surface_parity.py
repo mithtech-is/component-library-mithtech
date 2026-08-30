@@ -41,7 +41,9 @@ ITEM_TO_MODULE = {
 # no `.tsx` to install and are documented on purpose.
 # `lamp` is the interaction pattern IconButton, Button, Alert and SocialButton
 # all ride. It is a page about a technique, not a component to install.
-DOC_ONLY = {"forms", "feedback", "ordered-states", "lamp"}
+# `overlays` is the same shape: the containing-block rule every scrim, sheet and
+# popover in the library obeys, written once instead of on seven pages.
+DOC_ONLY = {"forms", "feedback", "ordered-states", "lamp", "overlays"}
 
 # `tokens` ships a stylesheet, not a component.
 STYLE_ONLY = {"tokens"}
@@ -58,7 +60,7 @@ ICON_MODULES = {"icons", "td-icons", "brands", "td-brands"}
 # Components with no props of their own — they pass native DOM attributes
 # through and nothing else. An empty props table is correct for these, and the
 # docs say so in words rather than rendering a blank table.
-NO_OWN_PROPS = {"table", "lamp"}
+NO_OWN_PROPS = {"table", "lamp", "overlays"}
 
 # Classes a component emits purely so a consumer can target them — a router
 # link, a mega-menu trigger. They carry no rule on purpose, and are listed here
@@ -322,6 +324,33 @@ class SurfaceParityTests(unittest.TestCase):
                                 cwd=ROOT, capture_output=True, text=True)
         self.assertEqual(0, result.returncode, result.stdout + result.stderr)
 
+    def test_registry_carries_every_package_import_it_still_calls(self):
+        """A generated item that calls what it never imported is a runtime crash
+        in a consumer's tree, and it ships silently.
+
+        `createPortal` found this: the generator only ever rebuilt the `react`
+        import, so portalling SiteNavigation's scrim produced a registry item
+        calling an undefined function. Nothing in the build objected — the item
+        is not typechecked here and the package copy was fine.
+
+        Checked for the packages a component may legitimately reach for beyond
+        React itself. Phosphor and the brand marks are excluded: those are
+        rewritten on the way across on purpose.
+        """
+        for item in registry_items():
+            if item["name"] in STYLE_ONLY:
+                continue
+            source = (REGISTRY_SRC / f"{item['name']}.tsx").read_text(encoding="utf-8")
+            body = re.sub(r"^import .*$", "", source, flags=re.MULTILINE)
+            for package, symbols in (("react-dom", ("createPortal", "flushSync", "createRoot")),):
+                called = sorted(name for name in symbols if re.search(rf"\b{name}\s*\(", body))
+                if not called:
+                    continue
+                imported = re.search(rf'import \{{([^}}]*)\}} from "{package}";', source)
+                have = {part.strip() for part in imported.group(1).split(",")} if imported else set()
+                self.assertLessEqual(set(called), have,
+                                     f"{item['name']}.tsx calls {called} without importing it from {package}")
+
     def test_docs_props_are_generated_from_the_package(self):
         """The props table is the component's interface. Retyped by hand it goes
         stale silently — Button's documented default said "primary" for as long
@@ -460,7 +489,13 @@ class CompletenessTests(unittest.TestCase):
             # ahead of a quoted phrase reads as an import otherwise — which it
             # did, reporting a sentence as an npm package.
             source = code_only((REGISTRY_SRC / f"{item['name']}.tsx").read_text(encoding="utf-8"))
-            imported = {package for package in re.findall(r'from "([^.][^"]*)"', source) if package != "react"}
+            # `react` and `react-dom` are peers of any React DOM application, so
+            # neither is a package `shadcn add` should install. `react-dom` joins
+            # the list because every overlay in the library portals itself with
+            # `createPortal`, and declaring it would put a peer in a consumer's
+            # dependency list for nothing.
+            imported = {package for package in re.findall(r'from "([^.][^"]*)"', source)
+                        if package not in {"react", "react-dom"}}
             declared = set(item.get("dependencies", []))
             if imported != declared:
                 wrong[item["name"]] = {"imports": sorted(imported), "declares": sorted(declared)}

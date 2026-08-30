@@ -139,7 +139,25 @@ const CLIENT_HOOKS = /\b(useState|useEffect|useLayoutEffect|useReducer|useRef|us
  * `addEventListener` shadows the global and stops it compiling.
  */
 function reactImportSpecifiers(moduleSource) {
-  const match = moduleSource.match(/import \{([^}]*)\} from "react";/);
+  return namedImportSpecifiers(moduleSource, "react");
+}
+
+/**
+ * `react-dom` is the second package a component may legitimately reach for, and
+ * it is the one that gets lost.
+ *
+ * Every overlay in the library portals itself to `document.body` — a transformed
+ * ancestor is the containing block for its `position: fixed` descendants, so an
+ * overlay rendered in place stops covering the page. Carrying `createPortal`
+ * across is therefore not optional: dropping it left the copied item calling an
+ * undefined function, and nothing here would have said so.
+ */
+function reactDomImportSpecifiers(moduleSource) {
+  return namedImportSpecifiers(moduleSource, "react-dom");
+}
+
+function namedImportSpecifiers(moduleSource, from) {
+  const match = moduleSource.match(new RegExp(`import \\{([^}]*)\\} from "${from}";`));
   if (!match) return [];
   return match[1].split(",").map(part => part.trim()).filter(Boolean);
 }
@@ -464,9 +482,13 @@ function buildItem(itemName, spec, moduleSource) {
   const specifiers = [...fromReact, ...extraReact.filter(name => !fromReact.includes(name))]
     .filter(specifier => used.has(specifier.replace(/^type\s+/, "")));
 
+  const domSpecifiers = reactDomImportSpecifiers(moduleSource)
+    .filter(specifier => used.has(specifier.replace(/^type\s+/, "")));
+
   const head = [];
   if (CLIENT_HOOKS.test(body)) head.push('"use client";', "");
   if (specifiers.length) head.push(`import { ${specifiers.join(", ")} } from "react";`);
+  if (domSpecifiers.length) head.push(`import { ${domSpecifiers.join(", ")} } from "react-dom";`);
   if (icons?.line) head.push(icons.line);
   head.push(`import "./tonaldepth-${itemName}.css";`);
   head.push(...needed);

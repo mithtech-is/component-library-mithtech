@@ -1,6 +1,7 @@
 "use client";
 
 import { forwardRef, useCallback, useEffect, useRef, useState, type HTMLAttributes, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 import { cx } from "./utils";
 import { ChevronDownIcon, CloseIcon, LAMP_WEIGHT } from "./icons";
 import "./site-navigation.css";
@@ -301,10 +302,23 @@ export const SiteNavigation = forwardRef<HTMLElement, SiteNavigationProps>(funct
 
       {/* The scrim. An open sheet is a modal moment: the page behind it is out
           of reach, and saying so with glass rather than a flat black wash keeps
-          the page legible underneath while making it plainly inactive. It is
-          before the panels in the DOM so it paints under them, and it closes
-          the sheet on click like an outside press. */}
-      {openMenu ? <div className="td-react-sitenav-scrim" aria-hidden="true" onClick={close} /> : null}
+          the page legible underneath while making it plainly inactive. It
+          closes the sheet on click, like an outside press.
+
+          **It is portalled to `document.body`, and that is load-bearing.** The
+          header takes a `transform` for the retract, and a transformed element
+          becomes the containing block for its `position: fixed` descendants —
+          so rendered in place the scrim's `inset: 0` resolved against the 86px
+          bar instead of the viewport and covered only the bar. The same
+          transform opens a new backdrop root, which left `backdrop-filter`
+          with nothing painted behind it to sample, so it computed to `none`
+          and there was no glass at all. Both symptoms, one cause; see the
+          overlay rule in the docs. Portalling puts the scrim beyond the reach
+          of every ancestor, which also settles its stacking for good: it is a
+          child of `body`, and the header is its own context above it. */}
+      {openMenu && typeof document !== "undefined"
+        ? createPortal(<div className="td-react-sitenav-scrim" aria-hidden="true" onClick={close} />, document.body)
+        : null}
 
       <div className="td-mega">
         {menus.map((menu) =>

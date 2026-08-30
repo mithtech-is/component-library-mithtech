@@ -1,8 +1,38 @@
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import axe from "axe-core";
 import { Footer, FooterBottom, FooterBrand, FooterColumn, FooterContact, FooterGrid, FooterSocial, SiteNavigation, type SiteNavigationItem } from "./index";
+
+const SRC = dirname(fileURLToPath(import.meta.url));
+
+/**
+ * The ancestor a `position: fixed` element actually resolves its insets
+ * against, or `null` when that is the viewport.
+ *
+ * This is the whole of the scrim defect. A transformed ancestor becomes the
+ * containing block for its fixed descendants, so `inset: 0` stops meaning "the
+ * viewport" and starts meaning "that box" — and nothing errors, nothing warns,
+ * and the declaration still reads as correct. The properties below are the
+ * ones the spec says do it.
+ */
+function fixedContainingBlock(node: Element): Element | null {
+  const establishes = (style: CSSStyleDeclaration) => {
+    const set = (value: string | null) => Boolean(value) && value !== "none" && value !== "normal";
+    if (set(style.transform) || set(style.translate) || set(style.rotate) || set(style.scale)) return true;
+    if (set(style.perspective) || set(style.filter) || set(style.backdropFilter)) return true;
+    if (set(style.containerType)) return true;
+    if (/\b(transform|perspective|filter)\b/.test(style.willChange ?? "")) return true;
+    return /\b(paint|layout|strict|content)\b/.test(style.contain ?? "");
+  };
+  for (let parent = node.parentElement; parent && parent !== document.documentElement; parent = parent.parentElement) {
+    if (establishes(getComputedStyle(parent))) return parent;
+  }
+  return null;
+}
 
 const ITEMS: SiteNavigationItem[] = [
   {
@@ -157,6 +187,64 @@ describe("SiteNavigation", () => {
     expect(document.getElementById("services-mega-panel")).not.toBeNull();
 
     await user.click(screen.getByRole("link", { name: "Migration services" }));
+    expect(document.getElementById("services-mega-panel")).toBeNull();
+  });
+
+  /*
+   * The scrim, and the reason it is portalled.
+   *
+   * Measured on the production homepage at alpha.26: the scrim declared
+   * `position: fixed; inset: 0` and rendered 86px tall — the height of the bar
+   * — with `backdrop-filter` computing to `none`. The header carries the
+   * retract transform, a transformed element is the containing block for its
+   * fixed descendants and opens a new backdrop root, and the scrim was inside
+   * it. Both reported symptoms, one cause.
+   *
+   * **jsdom performs no layout**, so `getBoundingClientRect()` is 0×0 for
+   * every element and the geometry cannot be read off the rendered box here.
+   * The two halves that produce that geometry are each checkable, so both are
+   * asserted: the declared box below, and the containing block it resolves
+   * against above. A test that checked only the declaration passed for the
+   * whole life of this defect.
+   */
+  it("keeps the scrim's containing block the viewport while the header is mid-retract", async () => {
+    const user = userEvent.setup();
+    render(<Nav />);
+    await user.click(screen.getByRole("button", { name: /Services/ }));
+
+    const header = document.querySelector(".td-react-sitenav") as HTMLElement;
+    // The measured state: partway through the retract transition, which is
+    // where the transform is live and the containing block moves.
+    header.style.transform = "matrix(1, 0, 0, 1, 0, -6.4)";
+
+    const scrim = document.querySelector(".td-react-sitenav-scrim") as HTMLElement;
+    expect(scrim).not.toBeNull();
+    expect(header.contains(scrim)).toBe(false);
+    expect(scrim.parentElement).toBe(document.body);
+    expect(fixedContainingBlock(scrim)).toBeNull();
+  });
+
+  it("declares the scrim as a full-viewport fixed box in both distributions", () => {
+    for (const [file, selector] of [
+      ["site-navigation.css", ".td-react-sitenav-scrim"],
+      ["../../../registry/tonaldepth/site-navigation.css", ".td-registry-sitenav-scrim"],
+    ]) {
+      const css = readFileSync(join(SRC, file), "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
+      const body = css.slice(css.indexOf(`${selector} {`)).slice(0, css.slice(css.indexOf(`${selector} {`)).indexOf("}"));
+      expect(body, file).toMatch(/position:\s*fixed/);
+      expect(body, file).toMatch(/inset:\s*0/);
+    }
+  });
+
+  it("closes the sheet when the scrim is pressed, though it is outside the header", async () => {
+    const user = userEvent.setup();
+    render(<Nav />);
+    await user.click(screen.getByRole("button", { name: /Services/ }));
+
+    // The outside-press handler measures against the header, and the scrim is
+    // no longer inside it — so the portal must not turn the scrim into a
+    // surface that swallows its own dismissal.
+    await user.click(document.querySelector(".td-react-sitenav-scrim") as HTMLElement);
     expect(document.getElementById("services-mega-panel")).toBeNull();
   });
 
