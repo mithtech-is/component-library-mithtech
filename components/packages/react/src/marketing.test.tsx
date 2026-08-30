@@ -8,7 +8,7 @@ import type { ReactNode } from "react";
 
 const SRC = dirname(fileURLToPath(import.meta.url));
 import axe from "axe-core";
-import { ArticleCard, ArticleCardGrid, Button, Card, CaseCard, ThemeToggle, CaseCardGrid, ComparisonTable, CtaBanner, FeatureCard, FeatureGrid, LinkCells, Prose, RectTitle, splitRectTitle, Timeline, type ArticleCardAsset } from "./index";
+import { ArticleCard, ArticleCardGrid, Button, Card, CaseCard, ThemeToggle, CaseCardGrid, ComparisonTable, CtaBanner, FeatureCard, FeatureGrid, LinkCells, Prose, RectTitle, splitRectTitle, Timeline, WhatsAppForm, type ArticleCardAsset } from "./index";
 
 /** Manoj's own card: two live tools, two files, a dataset and a checklist. */
 const PAYLOAD: ArticleCardAsset[] = [
@@ -570,5 +570,128 @@ describe("marketing components", () => {
     );
     const result = await axe.run(container, { rules: { "color-contrast": { enabled: false } } });
     expect(result.violations.filter(item => item.impact === "critical" || item.impact === "serious")).toEqual([]);
+  });
+});
+
+
+/**
+ * WhatsAppForm's two adoption blockers, both reported the same way: *"all the
+ * WhatsApp buttons should use that component sitewide"*, which could not be
+ * done.
+ *
+ * It rendered its own `Button variant="whatsapp"` unconditionally — even when
+ * the caller was already driving it with `open` / `onOpenChange` — so the only
+ * way to adopt it was to accept that button. A site's WhatsApp entry points
+ * are a row in a floating menu, a hero control, a channel tile, a link in
+ * prose, an action in a sticky bar: six deliberately different triggers, none
+ * of them that button.
+ *
+ * And it hard-required a phone number on a channel that supplies the number by
+ * definition, so adopting it would have added a mandatory field to every
+ * WhatsApp CTA on the site.
+ *
+ * The default is asserted first in both cases, because the fix is only correct
+ * if it changed nothing for anyone already calling this.
+ */
+describe("WhatsAppForm — the trigger is not the component", () => {
+  /* `onSend` returns false throughout, which cancels the hand-off — so the
+     composed message can be read without jsdom being asked to navigate. */
+
+  it("still renders its own button when no trigger is named", () => {
+    render(<WhatsAppForm phone="+91 80 4718 2200" />);
+    expect(screen.getByRole("button", { name: "WhatsApp us" })).toBeInTheDocument();
+  });
+
+  it("renders no trigger at all with trigger={false}, and still opens from the caller's state", () => {
+    const { rerender } = render(<WhatsAppForm phone="+919000000000" trigger={false} open={false} onOpenChange={() => {}} />);
+    expect(screen.queryByRole("button", { name: "WhatsApp us" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    rerender(<WhatsAppForm phone="+919000000000" trigger={false} open onOpenChange={() => {}} />);
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+  });
+
+  it("takes a control of the caller's own and wires it", async () => {
+    const user = userEvent.setup();
+    render(
+      <WhatsAppForm
+        phone="+919000000000"
+        trigger={({ open, isOpen }) => (
+          <button type="button" onClick={open} aria-expanded={isOpen}>Chat with the team</button>
+        )}
+      />,
+    );
+    expect(screen.queryByRole("button", { name: "WhatsApp us" })).not.toBeInTheDocument();
+    const own = screen.getByRole("button", { name: "Chat with the team" });
+    await user.click(own);
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+  });
+
+  it("asks for a phone number by default, and stops the hand-off without one", async () => {
+    const user = userEvent.setup();
+    const onSend = vi.fn(() => false as const);
+    render(<WhatsAppForm phone="+919000000000" defaultOpen onSend={onSend} includePage={false} />);
+    await user.type(screen.getByLabelText(/^Name/), "Asha");
+    await user.type(screen.getByLabelText(/^Email/), "asha@example.com");
+    await user.type(screen.getByLabelText(/^Subject/), "ERPNext rollout");
+    await user.click(screen.getByRole("button", { name: "Open WhatsApp" }));
+    expect(onSend).not.toHaveBeenCalled();
+    expect(screen.getByText("The number you are messaging from.")).toBeInTheDocument();
+  });
+
+  it("drops the phone field entirely on { phone: \"off\" } — no field, no block, no line in the message", async () => {
+    const user = userEvent.setup();
+    const onSend = vi.fn(() => false as const);
+    render(<WhatsAppForm phone="+919000000000" defaultOpen fields={{ phone: "off" }} onSend={onSend} includePage={false} />);
+    expect(screen.queryByLabelText(/^Phone/)).not.toBeInTheDocument();
+    await user.type(screen.getByLabelText(/^Name/), "Asha");
+    await user.type(screen.getByLabelText(/^Email/), "asha@example.com");
+    await user.type(screen.getByLabelText(/^Subject/), "ERPNext rollout");
+    await user.click(screen.getByRole("button", { name: "Open WhatsApp" }));
+    expect(onSend).toHaveBeenCalledTimes(1);
+    const message = onSend.mock.calls[0][0] as unknown as string;
+    expect(message).toContain("Name: Asha");
+    expect(message).not.toContain("Phone:");
+  });
+
+  it("moves a field between the required block and the optional well with its mode", async () => {
+    const user = userEvent.setup();
+    const onSend = vi.fn(() => false as const);
+    render(<WhatsAppForm phone="+919000000000" defaultOpen fields={{ phone: "optional" }} onSend={onSend} includePage={false} />);
+    const optional = screen.getByRole("group", { name: /Optional/ });
+    expect(within(optional).getByLabelText(/^Phone/)).toBeInTheDocument();
+    await user.type(screen.getByLabelText(/^Name/), "Asha");
+    await user.type(screen.getByLabelText(/^Email/), "asha@example.com");
+    await user.type(screen.getByLabelText(/^Subject/), "ERPNext rollout");
+    await user.click(screen.getByRole("button", { name: "Open WhatsApp" }));
+    expect(onSend).toHaveBeenCalledTimes(1);
+  });
+
+  /* Optional says the reader need not answer. It says nothing about whether
+     what they typed is an address — and a mistyped optional address is a reply
+     that never arrives. */
+  it("still checks the format of an optional field the reader actually filled in", async () => {
+    const user = userEvent.setup();
+    const onSend = vi.fn(() => false as const);
+    render(<WhatsAppForm phone="+919000000000" defaultOpen fields={{ email: "optional" }} onSend={onSend} includePage={false} />);
+    await user.type(screen.getByLabelText(/^Name/), "Asha");
+    await user.type(screen.getByLabelText(/^Phone/), "9876543210");
+    await user.type(screen.getByLabelText(/^Subject/), "ERPNext rollout");
+    await user.type(screen.getByLabelText(/^Email/), "asha@@example");
+    await user.click(screen.getByRole("button", { name: "Open WhatsApp" }));
+    expect(onSend).not.toHaveBeenCalled();
+    expect(screen.getByText("That does not look like an email address.")).toBeInTheDocument();
+  });
+
+  /* An empty well with a legend on it is a promise of fields that are not
+     there — the recess IS what "optional" means in this form. */
+  it("drops the optional well when nothing is optional", () => {
+    render(
+      <WhatsAppForm
+        phone="+919000000000"
+        defaultOpen
+        fields={{ company: "off", industry: "off", service: "off", message: "off" }}
+      />,
+    );
+    expect(screen.queryByRole("group", { name: /Optional/ })).not.toBeInTheDocument();
   });
 });

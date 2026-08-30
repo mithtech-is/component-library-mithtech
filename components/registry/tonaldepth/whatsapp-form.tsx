@@ -20,6 +20,92 @@ export interface TonalDepthWhatsAppFormValues {
   page: string;
 }
 
+/** Every field the form can draw. `page` is captured, never typed, so it is not one. */
+export type TonalDepthWhatsAppFormField = "name" | "email" | "phone" | "subject" | "company" | "industry" | "service" | "message";
+
+/**
+ * How a field is drawn, or whether it is drawn at all.
+ *
+ * `required` puts it in the top block and refuses the hand-off without it,
+ * `optional` puts it in the carved well, and `off` removes it from the form,
+ * from the validation and from the composed message alike.
+ */
+export type TonalDepthWhatsAppFieldMode = "required" | "optional" | "off";
+
+/**
+ * The control that opens the form.
+ *
+ * - **Omitted** — the component's own `Button variant="whatsapp"`. Unchanged,
+ *   so no existing caller moves.
+ * - **A function** — your control, wired. It is a render function rather than
+ *   a `ReactNode` on purpose: taking an element would mean cloning it to
+ *   attach the handler, which silently loses a caller's own `onClick` and
+ *   breaks the moment the element is a fragment or a component that does not
+ *   forward props.
+ * - **`false`** — no trigger at all. The form is then a dialog and nothing
+ *   else, opened by whatever the page already has: a row in a floating menu,
+ *   a channel tile, a link in prose, an action in a sticky bar. Drive it with
+ *   `open` and `onOpenChange`.
+ *
+ * The `false` case is the one this component was missing, and it is why it
+ * could not be adopted sitewide: a site with six WhatsApp entry points, none
+ * of which is a standalone button, cannot use a component that renders one.
+ */
+export type TonalDepthWhatsAppFormTrigger = false | ((props: { open: () => void; isOpen: boolean }) => ReactNode);
+
+/** The order the form draws its fields in, and which of them share a line. */
+const TonalDepthROWS: TonalDepthWhatsAppFormField[][] = [
+  ["name", "phone"],
+  ["email"],
+  ["subject"],
+  ["company", "industry"],
+  ["service"],
+  ["message"],
+];
+
+/**
+ * What the form asks for when the caller says nothing.
+ *
+ * Kept exactly as it shipped so `fields` is additive. It is worth knowing that
+ * `phone: "required"` is the debatable one: WhatsApp supplies the number by
+ * definition, so asking for it again is a mandatory field on a channel that
+ * already carries the answer. It stays the default because changing it would
+ * silently change every existing caller's form; set `{ phone: "off" }` where
+ * the number is genuinely redundant.
+ */
+const TonalDepthDEFAULT_FIELDS: Record<TonalDepthWhatsAppFormField, TonalDepthWhatsAppFieldMode> = {
+  name: "required",
+  email: "required",
+  phone: "required",
+  subject: "required",
+  company: "optional",
+  industry: "optional",
+  service: "optional",
+  message: "optional",
+};
+
+/** What a required field says when it is empty. */
+const TonalDepthMISSING: Record<TonalDepthWhatsAppFormField, string> = {
+  name: "Tell us who you are.",
+  email: "We need somewhere to reply if WhatsApp fails.",
+  phone: "The number you are messaging from.",
+  subject: "One line on what this is about.",
+  company: "Which company this is for.",
+  industry: "Which industry you are in.",
+  service: "Which service you are after.",
+  message: "Say a little about what you need.",
+};
+
+/** The label each field carries into the message, in the order it is read. */
+const TonalDepthLINES: [TonalDepthWhatsAppFormField, string][] = [
+  ["name", "Name"],
+  ["email", "Email"],
+  ["phone", "Phone"],
+  ["company", "Company"],
+  ["industry", "Industry"],
+  ["service", "Service required"],
+];
+
 export interface TonalDepthWhatsAppFormProps extends Omit<HTMLAttributes<HTMLDivElement>, "title" | "onSubmit"> {
   /**
    * The number the message goes to, in international format. Punctuation is
@@ -52,6 +138,22 @@ export interface TonalDepthWhatsAppFormProps extends Omit<HTMLAttributes<HTMLDiv
   page?: string;
   /** Off drops that line entirely. */
   includePage?: boolean;
+  /**
+   * The control that opens the form — or `false` for none at all. See
+   * `TonalDepthWhatsAppFormTrigger`; omitted keeps the component's own button.
+   */
+  trigger?: TonalDepthWhatsAppFormTrigger;
+  /**
+   * Which fields the form asks for, merged over the defaults. Name them one at
+   * a time: `{ phone: "off" }` drops the phone number and leaves everything
+   * else exactly as it was.
+   *
+   * A field set to `off` is not rendered, not validated and not written into
+   * the message. A field moved between `required` and `optional` moves between
+   * the top block and the carved well with it — the well is *what optional
+   * means* here, so the two cannot disagree.
+   */
+  fields?: Partial<Record<TonalDepthWhatsAppFormField, TonalDepthWhatsAppFieldMode>>;
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -76,20 +178,20 @@ const TonalDepthEMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
    and a country code are allowed through and normalised later. */
 const TonalDepthPHONE = /^\+?[\d\s().-]{7,}
 
-/** The message, in the order a person reads one. */
+/**
+ * The message, in the order a person reads one.
+ *
+ * Only what was actually filled in. A run of "Company: —" lines makes the
+ * message look like a form rather than like somebody writing to you — which
+ * is also what makes a turned-off field cost nothing here: it is empty, so it
+ * was already being skipped.
+ */
 function TonalDepthcompose(values: TonalDepthWhatsAppFormValues): string {
-  const lines = [
-    `*${values.subject}*`,
-    "",
-    `Name: ${values.name}`,
-    `Email: ${values.email}`,
-    `Phone: ${values.phone}`,
-  ];
-  // Only what was actually filled in. A run of "Company: —" lines makes the
-  // message look like a form rather than like somebody writing to you.
-  if (values.company) lines.push(`Company: ${values.company}`);
-  if (values.industry) lines.push(`Industry: ${values.industry}`);
-  if (values.service) lines.push(`Service required: ${values.service}`);
+  const lines: string[] = [];
+  if (values.subject) lines.push(`*${values.subject}*`, "");
+  for (const [field, label] of TonalDepthLINES) {
+    if (values[field]) lines.push(`${label}: ${values[field]}`);
+  }
   if (values.message) lines.push("", values.message);
   if (values.page) lines.push("", `Sent from: ${values.page}`);
   return lines.join("\n");
@@ -114,6 +216,31 @@ function TonalDepthcompose(values: TonalDepthWhatsAppFormValues): string {
  * The page the reader was on is captured rather than asked for, because nobody
  * types their way to a useful answer, and it is the single field that most
  * changes how the enquiry should be answered.
+ *
+ * ## The trigger is not the component
+ *
+ * It renders a `Button variant="whatsapp"` by default and did so
+ * unconditionally, which meant adopting the component meant accepting that
+ * button. A site's WhatsApp entry points are almost never one shape — a row
+ * inside a floating menu, a hero control whose icon carries the state, a
+ * channel tile beside Email and Phone, a link in prose, an action in a sticky
+ * bar — and replacing six deliberately different triggers with six identical
+ * ones is a worse page, not a more consistent one.
+ *
+ * So `trigger` takes a render function for a control of your own, or `false`
+ * for none at all. With `false` this is a dialog and nothing else: hold `open`
+ * yourself and open it from whatever the page already has. The default is
+ * unchanged.
+ *
+ * ## The fields are the caller's decision
+ *
+ * `fields` names one field at a time. The one worth thinking about is the
+ * phone number: WhatsApp supplies it by definition, so a required phone field
+ * asks again for the thing the channel already carries — which is a good way
+ * to lose a conversation somebody was one tap from starting. It is still
+ * required by default, because changing that would change every existing
+ * caller's form without them asking; pass `{ phone: "off" }` where it is
+ * redundant.
  */
 export const TonalDepthWhatsAppForm = forwardRef<HTMLDivElement, TonalDepthWhatsAppFormProps>(function TonalDepthWhatsAppForm(
   {
@@ -126,6 +253,8 @@ export const TonalDepthWhatsAppForm = forwardRef<HTMLDivElement, TonalDepthWhats
     industries,
     page,
     includePage = true,
+    trigger,
+    fields,
     open,
     defaultOpen = false,
     onOpenChange,
@@ -140,6 +269,13 @@ export const TonalDepthWhatsAppForm = forwardRef<HTMLDivElement, TonalDepthWhats
   const isOpen = open ?? uncontrolled;
   const [values, setValues] = useState<TonalDepthWhatsAppFormValues>(TonalDepthEMPTY);
   const [errors, setErrors] = useState<Partial<Record<keyof TonalDepthWhatsAppFormValues, string>>>({});
+
+  /* Merged rather than replaced, so `fields` names only what differs from the
+     shipped form. Passing the whole record would make every caller restate
+     seven decisions to change one, and a caller who forgets a key would find
+     the field silently gone rather than left alone. */
+  const mode = { ...TonalDepthDEFAULT_FIELDS, ...fields };
+  const shown = TonalDepthROWS.flat().filter(field => mode[field] !== "off");
 
   const setOpen = (next: boolean) => {
     if (open === undefined) setUncontrolled(next);
@@ -160,12 +296,19 @@ export const TonalDepthWhatsAppForm = forwardRef<HTMLDivElement, TonalDepthWhats
   const submit = (event: FormEvent) => {
     event.preventDefault();
     const found: Partial<Record<keyof TonalDepthWhatsAppFormValues, string>> = {};
-    if (!values.name.trim()) found.name = "Tell us who you are.";
-    if (!values.email.trim()) found.email = "We need somewhere to reply if WhatsApp fails.";
-    else if (!TonalDepthEMAIL.test(values.email.trim())) found.email = "That does not look like an email address.";
-    if (!values.phone.trim()) found.phone = "The number you are messaging from.";
-    else if (!TonalDepthPHONE.test(values.phone.trim())) found.phone = "That does not look like a phone number.";
-    if (!values.subject.trim()) found.subject = "One line on what this is about.";
+    for (const field of shown) {
+      const value = values[field].trim();
+      if (!value) {
+        if (mode[field] === "required") found[field] = TonalDepthMISSING[field];
+        continue;
+      }
+      /* Format is checked on anything the reader actually typed, whether or
+         not it was demanded. An optional address with a typo in it is a reply
+         that never arrives, and the field being optional says nothing about
+         whether what was entered is an address. */
+      if (field === "email" && !TonalDepthEMAIL.test(value)) found.email = "That does not look like an email address.";
+      if (field === "phone" && !TonalDepthPHONE.test(value)) found.phone = "That does not look like a phone number.";
+    }
     if (Object.keys(found).length) { setErrors(found); return; }
 
     /* The page is read HERE rather than in an effect on open, so it is right
@@ -175,7 +318,11 @@ export const TonalDepthWhatsAppForm = forwardRef<HTMLDivElement, TonalDepthWhats
     const captured = includePage
       ? page ?? (typeof window === "undefined" ? "" : window.location.href)
       : "";
+    /* A field that is off contributes nothing, even if it holds a value from
+       before the caller turned it off — the composed message and the values
+       handed to `onSend` have to agree with the form the reader saw. */
     const filled = { ...values, page: captured };
+    for (const field of TonalDepthROWS.flat()) if (mode[field] === "off") filled[field] = "";
     const message = TonalDepthcompose(filled);
     if (onSend?.(message, filled) === false) return;
 
@@ -202,9 +349,62 @@ export const TonalDepthWhatsAppForm = forwardRef<HTMLDivElement, TonalDepthWhats
       <Input id={`${base}-${key}`} value={values[key]} onChange={event => set(key)(event.target.value)} />
     );
 
+  /** One field, drawn the way that field is drawn. */
+  const draw = (field: TonalDepthWhatsAppFormField) => {
+    const id = `${base}-${field}`;
+    const isRequired = mode[field] === "required";
+    /* `key` is passed explicitly rather than spread: React 19 warns on a key
+       inside a spread object and reads it as an ordinary prop. */
+    const shared = { htmlFor: id, error: errors[field], ...(isRequired ? { required: true } : { optional: true }) };
+    const onChange = (event: { target: { value: string } }) => set(field)(event.target.value);
+    if (field === "industry" || field === "service") {
+      return <FormField key={field} label={field === "industry" ? "Industry" : "Service required"} {...shared}>
+        {choice(field, field === "industry" ? industries : services, field === "industry" ? "Choose an industry" : "Choose a service")}
+      </FormField>;
+    }
+    if (field === "message") {
+      return <FormField key={field} label="Anything else" {...shared}>
+        <Textarea id={id} rows={3} value={values.message} onChange={onChange} />
+      </FormField>;
+    }
+    const TYPES: Partial<Record<TonalDepthWhatsAppFormField, { type?: string; autoComplete?: string }>> = {
+      name: { autoComplete: "name" },
+      phone: { type: "tel", autoComplete: "tel" },
+      email: { type: "email", autoComplete: "email" },
+      company: { autoComplete: "organization" },
+    };
+    const LABELS: Partial<Record<TonalDepthWhatsAppFormField, string>> = {
+      name: "Name", phone: "Phone", email: "Email", subject: "Subject", company: "Company",
+    };
+    return <FormField key={field} label={LABELS[field]} {...shared}>
+      <Input id={id} {...TYPES[field]} value={values[field]} onChange={onChange} />
+    </FormField>;
+  };
+
+  /* The declared rows, filtered to the block being drawn. Filtering rather
+     than re-deriving keeps the shipped layout byte-identical when nothing is
+     reconfigured, and a row whose partner was turned off collapses to a single
+     full-width field instead of leaving half a line empty. */
+  const block = (want: TonalDepthWhatsAppFieldMode) =>
+    TonalDepthROWS
+      .map(row => row.filter(field => mode[field] === want))
+      .filter(row => row.length > 0)
+      .map(row => row.length > 1
+        ? <div className="td-registry-wa-row" key={row.join("-")}>{row.map(draw)}</div>
+        : draw(row[0]));
+
+  const optional = block("optional");
+
   return (
     <div {...props} ref={ref} className={cx("td-registry-wa", className)}>
-      <Button variant="whatsapp" onClick={() => setOpen(true)}>{label}</Button>
+      {/* `trigger === false` renders nothing at all — the form is then a
+          dialog the page opens from whatever control it already has. The
+          wrapper is `display: contents`, so an empty one costs no layout. */}
+      {trigger === false
+        ? null
+        : trigger
+          ? trigger({ open: () => setOpen(true), isOpen })
+          : <Button variant="whatsapp" onClick={() => setOpen(true)}>{label}</Button>}
 
       <Dialog
         open={isOpen}
@@ -223,55 +423,23 @@ export const TonalDepthWhatsAppForm = forwardRef<HTMLDivElement, TonalDepthWhats
         }
       >
         <form id={`${base}-form`} className="td-registry-wa-form" onSubmit={submit} noValidate>
-          <div className="td-registry-wa-row">
-            <FormField label="Name" htmlFor={`${base}-name`} required error={errors.name}>
-              <Input id={`${base}-name`} autoComplete="name" value={values.name}
-                onChange={event => set("name")(event.target.value)} />
-            </FormField>
-            <FormField label="Phone" htmlFor={`${base}-phone`} required error={errors.phone}>
-              <Input id={`${base}-phone`} type="tel" autoComplete="tel" value={values.phone}
-                onChange={event => set("phone")(event.target.value)} />
-            </FormField>
-          </div>
-
-          <FormField label="Email" htmlFor={`${base}-email`} required error={errors.email}>
-            <Input id={`${base}-email`} type="email" autoComplete="email" value={values.email}
-              onChange={event => set("email")(event.target.value)} />
-          </FormField>
-
-          <FormField label="Subject" htmlFor={`${base}-subject`} required error={errors.subject}>
-            <Input id={`${base}-subject`} value={values.subject}
-              onChange={event => set("subject")(event.target.value)} />
-          </FormField>
+          {block("required")}
 
           {/* The optional half is a carved WELL rather than a rule and a grey
               sentence. Depth is how this system says "subordinate": four more
               fields at the same weight as the four above read as a wall of
               eight, while the same four sitting IN the panel read as one
               thing the reader may skip. The fields inside keep their own
-              `optional` tags, so nothing depends on seeing the recess. */}
-          <fieldset className="td-registry-wa-optional">
-            <legend className="td-registry-wa-optional-legend">Optional — it only changes who picks the message up</legend>
+              `optional` tags, so nothing depends on seeing the recess.
 
-            <div className="td-registry-wa-row">
-              <FormField label="Company" htmlFor={`${base}-company`} optional>
-                <Input id={`${base}-company`} autoComplete="organization" value={values.company}
-                  onChange={event => set("company")(event.target.value)} />
-              </FormField>
-              <FormField label="Industry" htmlFor={`${base}-industry`} optional>
-                {choice("industry", industries, "Choose an industry")}
-              </FormField>
-            </div>
-
-            <FormField label="Service required" htmlFor={`${base}-service`} optional>
-              {choice("service", services, "Choose a service")}
-            </FormField>
-
-            <FormField label="Anything else" htmlFor={`${base}-message`} optional>
-              <Textarea id={`${base}-message`} rows={3} value={values.message}
-                onChange={event => set("message")(event.target.value)} />
-            </FormField>
-          </fieldset>
+              It is dropped entirely when nothing is optional: an empty well
+              with a legend on it is a promise of fields that are not there. */}
+          {optional.length ? (
+            <fieldset className="td-registry-wa-optional">
+              <legend className="td-registry-wa-optional-legend">Optional — it only changes who picks the message up</legend>
+              {optional}
+            </fieldset>
+          ) : null}
 
           {includePage ? (
             <p className="td-registry-wa-page">
