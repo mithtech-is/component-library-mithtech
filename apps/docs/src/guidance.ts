@@ -388,15 +388,22 @@ export const GUIDANCE = {
     whenNotToUse: [{ instead: "mega-grid", because: "The options are a flat set of peers with no nesting." }],
   },
   "mega-tabs": {
-    aliases: ["mega menu", "two column menu", "menu with panes"],
-    useCases: ["mega menu split by audience", "menu panel with its own tabs"],
-    whenToUse: "A mega panel whose content splits cleanly into a few named groups.",
+    aliases: ["mega menu", "two column menu", "menu with panes", "menu with a preview"],
+    useCases: ["mega menu split by audience", "menu panel with its own tabs", "preview an option before choosing it"],
+    whenToUse: "A mega panel whose content splits cleanly into a few named groups — and the only panel where choosing something in the menu shows you more about it before you commit.",
+    whenNotToUse: [
+      { instead: "mega-grid", because: "The cards ARE the destinations. Selecting one to preview it takes the click the card exists for." },
+      { instead: "mega-cascade", because: "The options are categories with depth under them. Putting depth in a pane makes the pane the panel's height." },
+    ],
   },
   "mega-grid": {
-    aliases: ["mega menu", "menu cards", "panel of cards"],
+    aliases: ["mega menu", "menu cards", "panel of cards", "tile menu"],
     useCases: ["mega menu of feature cards", "flat grid of menu options"],
-    whenToUse: "A mega panel holding a flat set of peer options as cards.",
-    whenNotToUse: [{ instead: "mega-cascade", because: "The options nest." }],
+    whenToUse: "A mega panel holding a flat set of peer options as cards, where each card is itself the destination.",
+    whenNotToUse: [
+      { instead: "mega-cascade", because: "The options nest." },
+      { instead: "mega-tabs", because: "You want choosing an option to show more about it before the reader commits. A grid whose cards select a pane is this component with cards in its rail — and it costs the grid the click its cards exist for." },
+    ],
   },
   "mega-columns": {
     aliases: ["mega menu", "link columns", "wide menu", "footer style menu"],
