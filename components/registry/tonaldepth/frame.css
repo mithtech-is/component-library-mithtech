@@ -45,7 +45,18 @@
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
+/* The title's SIZE, which is not its level.
+   `caption` is the 16px the frame has always drawn and is right for a figure
+   inside prose. `section` is the system's own h4 step — for a frame that IS a
+   section of the page and whose title is the claim being made, where 16px
+   reads as filler beside the thing it introduces. */
 .td-registry-frame-title { margin: 0; font-size: 1rem; font-weight: 600; color: var(--td-ink); }
+.td-registry-frame-title--section {
+  font-family: var(--td-font-ui);
+  font-size: clamp(20px, 2.2vw, 28px);
+  line-height: 1.12;
+  letter-spacing: 0.02em;
+}
 .td-registry-frame-description { margin: 0; max-width: 62ch; color: var(--td-ink-2); font-size: 0.86rem; line-height: 1.6; }
 .td-registry-frame-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--td-sp-4); flex: 0 0 auto; }
 

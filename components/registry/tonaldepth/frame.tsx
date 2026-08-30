@@ -22,6 +22,29 @@ export type TonalDepthFrameDepth = "well" | "flush" | "deep";
  */
 export type TonalDepthFrameElement = "section" | "figure" | "article" | "div";
 
+/**
+ * The heading level the title renders at.
+ *
+ * A document's headings are an outline, and an outline with a level missing
+ * from it is a broken one. The frame cannot know where on a page it sits, so
+ * the caller says: a frame taken as a section's own heading under an `h1` is
+ * `h2`, one inside a section is `h3` (the default), one inside a subsection is
+ * `h4`. `p` is for a housing whose title is a caption rather than a heading —
+ * it belongs in no outline at all.
+ */
+export type TonalDepthFrameTitleLevel = "h2" | "h3" | "h4" | "p";
+
+/**
+ * How large the title is drawn — which is a separate question from what level
+ * it is.
+ *
+ * `caption` is the default and is right for a figure inside prose: a chart
+ * caption should not out-shout the paragraph it belongs to. `section` is the
+ * system's h4 step, for a frame that IS a section of the page and whose title
+ * is the claim being made.
+ */
+export type TonalDepthFrameTitleScale = "caption" | "section";
+
 export interface TonalDepthFrameProps extends Omit<HTMLAttributes<HTMLElement>, "title"> {
   /** Small caps above the title. The category, not a sentence. */
   eyebrow?: ReactNode;
@@ -34,6 +57,17 @@ export interface TonalDepthFrameProps extends Omit<HTMLAttributes<HTMLElement>, 
   footnote?: ReactNode;
   depth?: TonalDepthFrameDepth;
   as?: TonalDepthFrameElement;
+  /**
+   * The title's heading level. `h3` by default, so no existing caller moves.
+   *
+   * **Level and size are deliberately separate.** `titleAs` decides where the
+   * title sits in the document outline and `titleScale` decides how big it is
+   * drawn; neither overrides the other, because a section heading that has to
+   * stay quiet and a figure caption that has to be loud are both real.
+   */
+  titleAs?: TonalDepthFrameTitleLevel;
+  /** How large the title is drawn. `caption` by default — see `titleScale`. */
+  titleScale?: TonalDepthFrameTitleScale;
   /**
    * Let the well's content bleed to its edges. Charts usually want this — a
    * plot already carries its own margins and would otherwise sit in two.
@@ -58,15 +92,24 @@ export interface TonalDepthFrameProps extends Omit<HTMLAttributes<HTMLElement>, 
  * terminal transcript, a rendered specimen. Do not use it as a generic card —
  * `Card` is the raised surface for content that is being *offered*, and a
  * frame is for content that is being *shown*.
+ *
+ * **The head slots work at section scale as well as figure scale**, and that
+ * is why `titleAs` and `titleScale` exist. The title used to be a hard `h3` at
+ * 16px, which is right for a chart caption and wrong for a frame that is the
+ * section — so a consumer whose page headed at `h2` either skipped a level or
+ * abandoned the head slots and composed the header outside the frame, which
+ * makes `eyebrow` / `title` / `description` unusable for half of what a frame
+ * houses. Neither prop changes anything for an existing caller.
  */
 export const TonalDepthFrame = forwardRef<HTMLElement, TonalDepthFrameProps>(function TonalDepthFrame(
-  { eyebrow, title, description, actions, footnote, depth = "well", as: Element = "section", flushContent = false, className, children, ...props },
+  { eyebrow, title, description, actions, footnote, depth = "well", as: Element = "section", titleAs = "h3", titleScale = "caption", flushContent = false, className, children, ...props },
   ref,
 ) {
   const titleId = useId();
   const hasHead = Boolean(eyebrow || title || description || actions);
   // The union would otherwise narrow the ref to one member's element type.
   const Tag = Element as ElementType;
+  const TitleTag = titleAs as ElementType;
   return (
     <Tag
       {...props}
@@ -78,7 +121,7 @@ export const TonalDepthFrame = forwardRef<HTMLElement, TonalDepthFrameProps>(fun
         <header className="td-registry-frame-head">
           <div className="td-registry-frame-identity">
             {eyebrow ? <p className="td-registry-frame-eyebrow">{eyebrow}</p> : null}
-            {title ? <h3 id={titleId} className="td-registry-frame-title">{title}</h3> : null}
+            {title ? <TitleTag id={titleId} className={cx("td-registry-frame-title", `td-registry-frame-title--${titleScale}`)}>{title}</TitleTag> : null}
             {description ? <p className="td-registry-frame-description">{description}</p> : null}
           </div>
           {actions ? <div className="td-registry-frame-actions">{actions}</div> : null}

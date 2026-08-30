@@ -1593,6 +1593,16 @@
       "—"
     ],
     [
+      "titleAs",
+      "FrameTitleLevel",
+      "\"h3\""
+    ],
+    [
+      "titleScale",
+      "FrameTitleScale",
+      "\"caption\""
+    ],
+    [
       "flushContent",
       "boolean",
       "false"

@@ -127,6 +127,61 @@ describe("Frame", () => {
     expect(container.querySelector(".td-react-frame-well [data-testid='plot']")).not.toBeNull();
   });
 
+  it("heads at h3 by default and at the level the caller names", () => {
+    // A frame taken as a section's only heading emitted an h3 under an h1's
+    // page of h2s, so the outline had a level missing from it. Nothing warned
+    // — the workaround was to drop the title slot and compose the header
+    // outside the frame, which makes eyebrow/title/description unusable for
+    // any frame that is a section rather than a figure.
+    const { rerender } = render(<Frame title="9 plants · 1 operating system">plot</Frame>);
+    expect(screen.getByText("9 plants · 1 operating system").tagName).toBe("H3");
+
+    for (const level of ["h2", "h3", "h4"] as const) {
+      rerender(<Frame titleAs={level} title="9 plants">plot</Frame>);
+      const heading = screen.getByRole("heading", { name: "9 plants" });
+      expect(heading.tagName).toBe(level.toUpperCase());
+      // The tag is the only thing that moves: the class, the id wiring and the
+      // region's accessible name all hold.
+      expect(heading).toHaveClass("td-react-frame-title");
+      expect(screen.getByRole("region", { name: "9 plants" })).toBeTruthy();
+    }
+
+    // `p` is the opt-out: a caption belongs in no outline at all.
+    rerender(<Frame titleAs="p" title="9 plants">plot</Frame>);
+    expect(screen.queryByRole("heading")).toBeNull();
+    expect(screen.getByText("9 plants").tagName).toBe("P");
+  });
+
+  it("sizes the title separately from the level it heads at", () => {
+    // The two are deliberately independent: a section heading that has to stay
+    // quiet and a figure caption that has to be loud are both real, so neither
+    // prop overrides the other.
+    const { rerender } = render(<Frame title="Days to collect">plot</Frame>);
+    expect(screen.getByText("Days to collect")).toHaveClass("td-react-frame-title--caption");
+
+    rerender(<Frame titleAs="h2" titleScale="section" title="Days to collect">plot</Frame>);
+    const heading = screen.getByRole("heading", { name: "Days to collect" });
+    expect(heading.tagName).toBe("H2");
+    expect(heading).toHaveClass("td-react-frame-title--section");
+
+    // And the other way round, which is the half that proves they are separate.
+    rerender(<Frame titleAs="h4" titleScale="section" title="Days to collect">plot</Frame>);
+    expect(screen.getByRole("heading", { name: "Days to collect" })).toHaveClass("td-react-frame-title--section");
+    rerender(<Frame titleAs="h2" title="Days to collect">plot</Frame>);
+    expect(screen.getByRole("heading", { name: "Days to collect" })).toHaveClass("td-react-frame-title--caption");
+  });
+
+  it("draws the section scale bigger than the caption, in both distributions", () => {
+    for (const { label, css } of copies("frame.css")) {
+      const P = label.startsWith("registry") ? "registry" : "react";
+      const caption = decl(rule(css, new RegExp(`^\\.td-${P}-frame-title$`)), "font-size");
+      const section = decl(rule(css, new RegExp(`^\\.td-${P}-frame-title--section$`)), "font-size");
+      expect(caption, label).toBe("1rem");
+      // The system's own h4 step rather than a number invented for the frame.
+      expect(section, label).toBe("clamp(20px, 2.2vw, 28px)");
+    }
+  });
+
   it("carries the grid's minimum through as a custom property", () => {
     const { container } = render(<FrameGrid min={260} />);
     expect((container.firstElementChild as HTMLElement).style.getPropertyValue("--td-frame-min")).toBe("260px");
