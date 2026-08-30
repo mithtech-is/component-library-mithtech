@@ -12,6 +12,12 @@
    as one material besides. The artwork is still only filtered, never altered,
    and the real thing is one hover away.
 
+   Hover restores the artwork and lights it with a SMALL WHITE SHADOW — a soft
+   light behind the glyph, not a card under it. The near-white plate that used
+   to arrive with the colour solved the right problem the wrong way: a flat
+   fill is the one move the system forbids ([[L11]]), and on a light page it
+   read as a rendering bug rather than a state.
+
    The name is always in the DOM as the alternative text and is visually
    hidden, because a logo is an image of a word: without it the wall is a row
    of unlabelled pictures to a screen reader. */
@@ -44,48 +50,60 @@
   border-radius: var(--td-radius-5);
   color: var(--td-ink);
   text-decoration: none;
-  background: transparent;
-  /* Declared unlit so the plate arrives by interpolation rather than snapping
-     in ([[L18]]) — same five slots, same order, as the hover rung. */
-  box-shadow:
-    0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
-    0 0 0 rgb(from var(--td-shadow-light) r g b / 0),
-    inset 0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
-    inset 0 0 0 rgb(from var(--td-shadow-light) r g b / 0),
-    0 0 0 1px rgb(from var(--td-edge) r g b / 0);
-  transition:
-    background var(--td-t-base) var(--td-ease),
-    box-shadow var(--td-t-base) var(--td-ease),
-    transform var(--td-t-base) var(--td-ease);
+  /* No background and no box-shadow, in any state. Both draw a rectangle
+     around the mark, and a rectangle is a card — which is what the hover plate
+     was and why it went. The item contributes the scale; the light belongs to
+     the glyph, so it is a `drop-shadow` on the artwork below. */
+  transition: transform var(--td-t-base) var(--td-ease);
 }
 /* Whatever the mark actually is — an inline svg, a PNG, an object URL from a
    file the reader just picked — it is sized and filtered identically, so
    nothing about a logo's format changes how it behaves.
 
-   The filter is on the ARTWORK rather than on the item, because the item now
-   carries a plate of its own and `filter` on it would flatten that too. */
+   THE LADDER IS ONE FILTER LIST, and every rung carries the same five
+   functions in the same order. A filter list only interpolates against a list
+   of the same shape ([[L18]]), so the old `filter: none` on hover snapped the
+   silhouette off rather than fading it — the same fault the box-shadow ladder
+   had been written carefully to avoid, one property along. `brightness(0)`
+   rises to `1`, `opacity` to `1`, and the two lights come up from zero.
+
+   `invert()` is declared in both themes even though light passes `0`. It costs
+   an identity function and it keeps the two theme rungs the same length, which
+   is the whole requirement.
+
+   The unlit lights are WHITE at zero alpha, not `transparent` — `transparent`
+   is black at zero alpha, so the transition would pass through a dark
+   midpoint and smear the mark on its way to being lit ([[L20]]). */
 .td-registry-logos-art {
   display: inline-flex;
   align-items: center;
   height: 30px;
-  filter: brightness(0) opacity(0.62);
+  filter: brightness(0) invert(0) opacity(0.62) drop-shadow(0 0 0 rgb(255 255 255 / 0)) drop-shadow(0 0 0 rgb(255 255 255 / 0));
   transition: filter var(--td-t-base) var(--td-ease);
 }
-[data-theme="dark"] .td-registry-logos-art { filter: brightness(0) invert(1) opacity(0.62); }
+[data-theme="dark"] .td-registry-logos-art { filter: brightness(0) invert(1) opacity(0.62) drop-shadow(0 0 0 rgb(255 255 255 / 0)) drop-shadow(0 0 0 rgb(255 255 255 / 0)); }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .td-registry-logos-art { filter: brightness(0) invert(1) opacity(0.62); }
+  :root:not([data-theme="light"]) .td-registry-logos-art { filter: brightness(0) invert(1) opacity(0.62) drop-shadow(0 0 0 rgb(255 255 255 / 0)) drop-shadow(0 0 0 rgb(255 255 255 / 0)); }
 }
-/* THE PLATE.
+/* THE LIT STATE — 2026-08-30, replacing the plate.
 
-   The mark comes back to full colour and steps forward — and lands on a near
-   white chip while it does. Without one, a dark-ink logo returning to its real
-   colours on a dark page returns to being invisible, which made the hover
-   state useless for exactly the marks that needed it most. Logos are drawn for
-   light grounds; this gives every one of them the ground it was drawn for.
+   *"The logo plate looks bad. just add a small white shadow the plates look
+   ugly."* The plate existed for a real reason and the reason still holds: a
+   dark-ink logo returning to its real colours on a dark page returns to being
+   invisible, so the hover state was useless for exactly the marks that needed
+   it most. A white card behind the mark is not the answer to that — a flat
+   fill is the one move the system forbids, and on `#F5F5F5` it read as a
+   rendering fault.
 
-   Near white in both themes rather than the page's own surface, for the same
-   reason. It is loud on a dark page — but it is one mark at a time, under the
-   pointer, and being able to see the artwork is the whole point of the state.
+   A `drop-shadow` follows the glyph's own alpha, so the light sits BEHIND THE
+   MARK rather than under a rectangle containing it: a dark mark on a dark page
+   gets a rim to sit against and nothing else appears. Two lights — a tight
+   core and a wider bloom — because one at a readable strength reads as a
+   halo, and two at a lower one read as light.
+
+   Deliberately subtle. It exists to give a dark mark something to sit against,
+   not to announce itself, and it is nearly invisible on a light page — where
+   the restored artwork was legible anyway.
 
    1.14 rather than a nudge: the wall is quiet until you look at one of them,
    and that only reads if the one you are looking at is plainly bigger.
@@ -95,17 +113,10 @@
 a.td-logos-item.td-registry-logos-item:focus-visible {
   transform: scale(1.14);
   transform-origin: center;
-  background: color-mix(in srgb, #fff 94%, var(--td-surface));
-  box-shadow:
-    3px 4px 10px color-mix(in srgb, var(--td-shadow-dark) 62%, transparent),
-    -3px -3px 8px color-mix(in srgb, var(--td-shadow-light) 60%, transparent),
-    inset 0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
-    inset 0 1px 0 rgb(255 255 255 / 0.5),
-    0 0 0 1px rgb(0 0 0 / 0.07);
 }
 .td-logos-item.td-registry-logos-item:hover .td-registry-logos-art,
 a.td-logos-item.td-registry-logos-item:focus-visible .td-registry-logos-art {
-  filter: none;
+  filter: brightness(1) invert(0) opacity(1) drop-shadow(0 0 5px rgb(255 255 255 / 0.55)) drop-shadow(0 0 13px rgb(255 255 255 / 0.3));
 }
 a.td-logos-item.td-registry-logos-item:focus-visible { outline: 2px solid var(--td-accent); outline-offset: 4px; border-radius: var(--td-radius-2); }
 
@@ -144,6 +155,15 @@ a.td-logos-item.td-registry-logos-item:focus-visible { outline: 2px solid var(--
 .td-registry-logos-viewport {
   overflow: hidden;
   min-width: 0;
+  /* Room for the hover to happen inside a clipping box.
+     `overflow: hidden` cuts at the padding edge, so the scaled mark and its
+     light have somewhere to go; the matching negative margin gives the strip
+     back the height it would have had. Without it the top and bottom of every
+     hovered mark are sliced off — and only in the `scroll` variant, which is
+     the one the homepage hero runs. */
+  --td-registry-logos-bleed: 18px;
+  padding-block: var(--td-registry-logos-bleed);
+  margin-block: calc(var(--td-registry-logos-bleed) * -1);
   /* Cut, not ended: the marks fade out at both edges instead of stopping at a
      hard line, so nothing reads as the last one. */
   mask-image: linear-gradient(to right, transparent 0, #000 7%, #000 93%, transparent 100%);

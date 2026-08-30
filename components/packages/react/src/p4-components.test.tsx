@@ -274,24 +274,100 @@ describe("LogoStrip", () => {
     expect(screen.getByRole("link", { name: "Coastal Freight" })).toHaveAttribute("href", "/c");
   });
 
+  /* Both distributions, because the registry stylesheet is hand-authored and
+     the plate was in both. `P` is the only thing that differs. */
+  const STYLESHEETS: [label: string, css: string, P: string][] = [
+    ["package", read("logo-strip.css"), "react"],
+    ["registry", readFileSync(join(SRC, "../../../registry/tonaldepth/logo-strip.css"), "utf8").replace(/\/\*[\s\S]*?\*\//g, ""), "registry"],
+  ];
+  /** Every rung of the artwork ladder: the two theme rests and the lit state. */
+  const artRungs = (css: string, P: string) => [...css.matchAll(new RegExp(`td-${P}-logos-art[^{]*\\{[^}]*?filter: ([^;]+);`, "g"))].map(m => m[1]);
+
   it("flattens the artwork to a silhouette rather than altering it, and is legible in both themes", () => {
-    const css = read("logo-strip.css");
-    // `grayscale(1)` kept each mark's own values, so a near-black logo stayed
-    // near-black and vanished on a dark page. `brightness(0)` is what makes
-    // legibility independent of the colour its owner picked.
-    expect(css).toMatch(/\.td-react-logos-art \{[^}]*filter: brightness\(0\) opacity\(0\.62\)/);
-    expect(css).toMatch(/\[data-theme="dark"\] \.td-react-logos-art \{ filter: brightness\(0\) invert\(1\)/);
-    expect(css).toMatch(/prefers-color-scheme: dark[\s\S]*?logos-art \{ filter: brightness\(0\) invert\(1\)/);
-    // Filtered, never rewritten: no rule touches the artwork's own colours.
-    expect(css).not.toMatch(/\.td-react-logos-art[^{]*\{[^}]*\bfill:/);
+    for (const [label, css, P] of STYLESHEETS) {
+      // `grayscale(1)` kept each mark's own values, so a near-black logo stayed
+      // near-black and vanished on a dark page. `brightness(0)` is what makes
+      // legibility independent of the colour its owner picked.
+      expect(css, label).toMatch(new RegExp(`\\.td-${P}-logos-art \\{[^}]*filter: brightness\\(0\\) invert\\(0\\) opacity\\(0\\.62\\)`));
+      expect(css, label).toMatch(new RegExp(`\\[data-theme="dark"\\] \\.td-${P}-logos-art \\{ filter: brightness\\(0\\) invert\\(1\\)`));
+      expect(css, label).toMatch(new RegExp(`prefers-color-scheme: dark[\\s\\S]*?logos-art \\{ filter: brightness\\(0\\) invert\\(1\\)`));
+      // Filtered, never rewritten: no rule touches the artwork's own colours.
+      expect(css, label).not.toMatch(new RegExp(`\\.td-${P}-logos-art[^{]*\\{[^}]*\\bfill:`));
+    }
   });
 
-  it("gives the hovered mark a light plate, so a dark-ink logo is visible on a dark page", () => {
-    const css = read("logo-strip.css");
-    const hover = css.match(/\.td-logos-item\.td-react-logos-item:hover,[\s\S]*?\n\}/)![0];
-    expect(hover).toMatch(/background: color-mix\(in srgb, #fff 94%/);
-    expect(hover).toMatch(/transform: scale\(1\.14\)/);
-    expect(css).toMatch(/:hover \.td-react-logos-art,[\s\S]*?filter: none/);
+  it("lights the hovered mark with a white shadow and puts no plate under it", () => {
+    // 2026-08-30: *"The logo plate looks bad. just add a small white shadow the
+    // plates look ugly."* The near-white chip was a flat fill behind every
+    // mark, which on `#F5F5F5` read as a rendering fault rather than a state.
+    // A `drop-shadow` follows the glyph's own alpha, so the light is behind the
+    // MARK rather than under a rectangle containing it.
+    for (const [label, css, P] of STYLESHEETS) {
+      const item = css.match(new RegExp(`\\.td-logos-item\\.td-${P}-logos-item \\{[\\s\\S]*?\\n\\}`))![0];
+      const hover = css.match(new RegExp(`\\.td-logos-item\\.td-${P}-logos-item:hover,[\\s\\S]*?\\n\\}`))![0];
+      for (const [rung, body] of [["rest", item], ["hover", hover]] as const) {
+        expect(body, `${label} ${rung}`).not.toMatch(/background:/);
+        expect(body, `${label} ${rung}`).not.toMatch(/box-shadow:/);
+      }
+      expect(hover, label).toMatch(/transform: scale\(1\.14\)/);
+
+      const lit = css.match(new RegExp(`:hover \\.td-${P}-logos-art,[\\s\\S]*?filter: ([^;]+);`))![1];
+      expect(lit, label).toMatch(/drop-shadow\(0 0 5px rgb\(255 255 255 \/ 0\.55\)\)/);
+      expect(lit, label).toMatch(/drop-shadow\(0 0 13px rgb\(255 255 255 \/ 0\.3\)\)/);
+    }
+  });
+
+  it("keeps the artwork ladder interpolable — same functions at every rung, unlit in the light's own colour", () => {
+    // [[L18]] one property along. `filter: none` on hover against a filter list
+    // at rest is a mismatched list, so the silhouette SNAPPED off instead of
+    // fading; and an unlit `transparent` shadow is black at zero alpha, so the
+    // transition would smear the mark on its way to being lit ([[L20]]).
+    for (const [label, css, P] of STYLESHEETS) {
+      // Rest, the two dark rests, and the lit state — `artRungs` finds all four.
+      const rungs = artRungs(css, P);
+      expect(rungs.length, label).toBe(4);
+      const shape = (filter: string) => filter.match(/[a-z-]+\(/g)!.join(" ");
+      expect(new Set(rungs.map(shape)).size, `${label}: ${rungs.map(shape).join(" | ")}`).toBe(1);
+      for (const rung of rungs) {
+        expect(rung, label).not.toMatch(/\btransparent\b/);
+        expect(rung, label).not.toBe("none");
+      }
+    }
+  });
+
+  it("gives the moving track room to show a hover at all", () => {
+    // The viewport clips (`overflow: hidden`), so inside `scroll` — the variant
+    // the homepage hero runs — the scaled mark and its light were sliced off at
+    // the top and bottom. The padding is where they go; the negative margin
+    // gives the strip back the height it would have had.
+    for (const [label, css, P] of STYLESHEETS) {
+      const viewport = css.match(new RegExp(`\\.td-${P}-logos-viewport \\{[\\s\\S]*?\\n\\}`))![0];
+      expect(viewport, label).toMatch(new RegExp(`padding-block: var\\(--td-${P}-logos-bleed\\)`));
+      expect(viewport, label).toMatch(new RegExp(`margin-block: calc\\(var\\(--td-${P}-logos-bleed\\) \\* -1\\)`));
+    }
+  });
+
+  it("treats a black mark and a white one identically, in both themes", () => {
+    // [[L52]]'s own rule, and the reason the plate shipped untested against a
+    // light ground. What makes the treatment value-independent is that it is
+    // applied to the WRAPPER and never to the artwork, so nothing about the
+    // mark's own colour can reach it.
+    const marks = [
+      { name: "Ink", logo: <svg data-mark="black"><path fill="#000" d="M0 0h1v1H0z" /></svg> },
+      { name: "Paper", logo: <svg data-mark="white"><path fill="#fff" d="M0 0h1v1H0z" /></svg> },
+    ];
+    for (const theme of ["light", "dark"]) {
+      document.documentElement.setAttribute("data-theme", theme);
+      const { container, unmount } = render(<LogoWall items={marks} />);
+      const arts = [...container.querySelectorAll(".td-react-logos-art")];
+      expect(arts, theme).toHaveLength(2);
+      // Same wrapper, same class, no per-mark styling of any kind: the two are
+      // indistinguishable to every rule in the stylesheet.
+      expect(new Set(arts.map(art => art.className)).size, theme).toBe(1);
+      for (const art of arts) expect(art.getAttribute("style"), theme).toBeNull();
+      unmount();
+    }
+    document.documentElement.removeAttribute("data-theme");
   });
 
   it("treats a picked file exactly like an inline mark", () => {
