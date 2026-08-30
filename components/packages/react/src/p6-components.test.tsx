@@ -276,15 +276,22 @@ describe("SocialButton", () => {
     expect(css).toMatch(/\.td-react-social--surface:hover \{[^}]*color: var\(--td-social-c\)/);
     // The lamp lights the platform's colour there — white on a carved surface
     // is a hole rather than a light.
-    expect(css).toMatch(/\.td-react-social--surface \{ --td-lamp-glow: var\(--td-social-c\); \}/);
+    // The fallback is required, not incidental: `--td-lamp-glow` defaults to
+    // `--td-green` at the root, so an unresolved platform variable would hand
+    // this control a green halo from another file.
+    expect(css).toMatch(/\.td-react-social--surface \{ --td-lamp-glow: var\(--td-social-c, var\(--td-ink\)\); \}/);
     expect(css).toMatch(/\.td-react-social \{ --td-lamp-glow: #fff; \}/);
   });
 
   it("lights its mark on hover and press, with the ladder every other lamp rides", () => {
     const css = read("social-button.css");
     expect(css).toMatch(/\.td-react-social-mark \{[^}]*filter: var\(--td-lamp-off\)/);
-    expect(css).toMatch(/:hover \.td-react-social-mark \{ filter: var\(--td-lamp-hover\)/);
-    expect(css).toMatch(/:active \.td-react-social-mark \{ filter: var\(--td-lamp-active\)/);
+    // Colour first, glow second. The mark itself brightens across the three
+    // rungs — off, lit, brighter — because a 4px drop-shadow alone is not
+    // visible enough on a saturated housing to read as a lamp.
+    expect(css).toMatch(/:hover \.td-react-social-mark \{[^}]*color: var\(--td-social-i\);[^}]*filter: var\(--td-lamp-hover\)/);
+    expect(css).toMatch(/:active \.td-react-social-mark \{[^}]*color: color-mix\(in srgb, var\(--td-social-i\) 88%, white\);[^}]*filter: var\(--td-lamp-active\)/);
+    expect(css).toMatch(/\.td-react-social-mark \{[^}]*color: color-mix\(in srgb, var\(--td-social-i\) 68%, transparent\)/);
     // The bloom is clipped to the housing, or it paints onto the page and reads
     // as the button leaking light.
     expect(css).toMatch(/\.td-react-social \{[\s\S]*?overflow: hidden;/);

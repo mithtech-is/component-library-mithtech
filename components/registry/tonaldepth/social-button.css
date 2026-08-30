@@ -93,25 +93,57 @@
   height: 45%;
   display: block;
   fill: currentColor;
+  /* Unlit. A lamp that is off is DIMMER than its housing's ink, not merely
+     un-glowing — a bloom alone is invisible against a saturated fill, so the
+     mark has to arrive at rest already holding back the brightness it spends
+     on hover and press. */
+  color: color-mix(in srgb, var(--td-social-i) 68%, transparent);
   filter: var(--td-lamp-off);
-  transition: transform var(--td-t-slow) var(--td-ease), filter var(--td-t-base) var(--td-ease);
+  transition:
+    transform var(--td-t-slow) var(--td-ease),
+    filter var(--td-t-base) var(--td-ease),
+    color var(--td-t-base) var(--td-ease);
 }
 /* White on a saturated housing; the platform's own colour on the carved one,
-   where white would be a hole. */
-.td-registry-social { --td-lamp-glow: #fff; }
-.td-registry-social--surface { --td-lamp-glow: var(--td-social-c); }
-.td-registry-social:hover .td-registry-social-mark { filter: var(--td-lamp-hover); }
-.td-registry-social:active .td-registry-social-mark { filter: var(--td-lamp-active); }
-.td-registry-social:disabled .td-registry-social-mark { filter: var(--td-lamp-off); }
+   where white would be a hole.
 
+   The fallback is load-bearing: `--td-lamp-glow` has a root default of
+   `--td-green`, so a mark whose platform variable fails to resolve inherits a
+   GREEN halo from three files away. Naming the fallback keeps that default out
+   of a control it was never meant for. */
+.td-registry-social { --td-lamp-glow: #fff; }
+.td-registry-social--surface { --td-lamp-glow: var(--td-social-c, var(--td-ink)); }
+
+/* THE THREE RUNGS ARE COLOUR FIRST, GLOW SECOND. The bloom is the smaller half
+   of the effect; what makes it read as a lamp is the mark itself getting
+   brighter — off, lit, brighter still — so the ladder survives on a screen
+   where a 4px drop-shadow is barely visible. */
+.td-registry-social:hover .td-registry-social-mark {
+  color: var(--td-social-i);
+  filter: var(--td-lamp-hover);
+}
+.td-registry-social:active .td-registry-social-mark {
+  color: color-mix(in srgb, var(--td-social-i) 88%, white);
+  filter: var(--td-lamp-active);
+}
+.td-registry-social:disabled .td-registry-social-mark {
+  color: color-mix(in srgb, var(--td-social-i) 68%, transparent);
+  filter: var(--td-lamp-off);
+}
+
+/* Hover SETTLES the chip, it does not lift it. The control ladder every other
+   button rides goes 2px→1px on the cast between rest and hover
+   (`--td-btn-rest` → `--td-btn-hover`) before pressing fully in on active, so
+   a chip that grows its shadow on hover is climbing a ladder the rest of the
+   system descends. */
 .td-registry-social:hover {
   background: color-mix(in srgb, var(--td-social-c) 90%, white);
   box-shadow:
-    4px 4px 10px color-mix(in srgb, var(--td-shadow-dark) 52%, transparent),
-    -3px -3px 8px color-mix(in srgb, var(--td-shadow-light) 55%, transparent),
-    inset 0 0 0 rgb(0 0 0 / 0),
-    inset 0 1px 0 rgb(255 255 255 / 0.28),
-    0 0 0 1px rgb(0 0 0 / 0.10);
+    1px 1px 4px color-mix(in srgb, var(--td-shadow-dark) 44%, transparent),
+    -1px -1px 3px color-mix(in srgb, var(--td-shadow-light) 40%, transparent),
+    inset 1px 1px 2px rgb(0 0 0 / 0.10),
+    inset 0 1px 0 rgb(255 255 255 / 0.16),
+    0 0 0 1px rgb(0 0 0 / 0.12);
 }
 /* Pressed, the housing is pushed into the page and the mark travels with it —
    the same 1px the filled button's label moves, so the whole family presses
@@ -143,16 +175,30 @@
     inset 0 1px 0 var(--td-shadow-veil),
     0 0 0 1px var(--td-edge);
 }
+/* Same descent as the filled half: the cast shrinks and a shallow well opens,
+   so hover already reads as pressure before the press arrives. */
 .td-registry-social--surface:hover {
   color: var(--td-social-c);
   background: var(--td-raise-fill-hover);
   box-shadow:
-    4px 4px 10px color-mix(in srgb, var(--td-shadow-dark) 66%, transparent),
-    -3px -3px 8px color-mix(in srgb, var(--td-shadow-light) 76%, transparent),
-    inset 0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    1px 1px 4px color-mix(in srgb, var(--td-shadow-dark) 52%, transparent),
+    -1px -1px 3px color-mix(in srgb, var(--td-shadow-light) 58%, transparent),
+    inset 1px 1px 2px color-mix(in srgb, var(--td-shadow-dark) 30%, transparent),
     inset 0 1px 0 var(--td-shadow-veil),
     0 0 0 1px var(--td-edge);
 }
+
+/* The carved half runs its own three rungs. `--td-social-i` is the ink for a
+   SATURATED housing — white — and would be a hole on this one, so the mark
+   climbs from the page's quiet ink to the platform's own colour instead. */
+.td-registry-social--surface .td-registry-social-mark { color: var(--td-ink-3); }
+.td-registry-social--surface:hover .td-registry-social-mark {
+  color: color-mix(in srgb, var(--td-social-c, var(--td-ink)) 70%, var(--td-ink-2));
+}
+.td-registry-social--surface:active .td-registry-social-mark {
+  color: var(--td-social-c, var(--td-ink));
+}
+.td-registry-social--surface:disabled .td-registry-social-mark { color: var(--td-ink-3); }
 .td-registry-social--surface:active {
   color: var(--td-social-c);
   background: var(--td-raise-fill);
