@@ -1,0 +1,44 @@
+/* TonalDepth OtpInput — self-contained. Requires @tonaldepth/tokens. */
+
+/* Base layer, re-declared: a registry consumer installs files, not the
+   core package, so the rules the component sits on have to travel with it. */
+
+.td-otp {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.td-otp-cell {
+  width: 42px;
+  height: 50px;
+  text-align: center;
+  font-family: var(--td-font-display);
+  font-size: 24px;
+  color: var(--td-ink);
+  background: var(--td-surface);
+  border: 1px solid var(--td-btn-border-rest);
+  border-radius: 10px;
+  box-shadow: var(--td-btn-rest);
+  outline: 0;
+  caret-color: var(--td-brand);
+  transition: box-shadow var(--td-t-base) var(--td-ease), border-color var(--td-t-fast) var(--td-ease);
+}
+
+.td-otp-cell:focus {
+  border-color: var(--td-brand);
+  box-shadow:
+    inset 2px 2px 4px color-mix(in srgb, var(--td-shadow-dark) 22%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 30%, transparent),
+    0 0 0 1.5px color-mix(in srgb, var(--td-brand) 22%, transparent);
+}
+
+.td-otp-cell[data-filled="true"] {
+  border-color: color-mix(in srgb, var(--td-ink-2) 40%, transparent);
+}
+
+/* The component's own rules. */
+.td-registry-otp { flex-wrap: wrap; }
+.td-registry-otp[data-disabled] { opacity: 0.55; }
+.td-registry-otp[data-state="error"] .td-otp-cell { border-color: var(--td-brand); }
+.td-otp-cell:disabled { cursor: not-allowed; }

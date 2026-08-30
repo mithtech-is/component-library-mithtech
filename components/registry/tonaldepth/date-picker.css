@@ -1,0 +1,200 @@
+/* TonalDepth DatePicker — self-contained. Requires @tonaldepth/tokens. */
+
+/* Base layer, re-declared: a registry consumer installs files, not the
+   core package, so the rules the component sits on have to travel with it. */
+
+.td-cal {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px;
+  background: var(--td-surface);
+  border-radius: 16px;
+  border: 0;
+  /* Soft neomorphic housing — the calendar is a raised card, not a
+     bordered box; the light does the framing. */
+  box-shadow:
+    3px 3px 9px color-mix(in srgb, var(--td-shadow-dark) 46%, transparent),
+    -3px -3px 8px color-mix(in srgb, var(--td-shadow-light) 48%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil), 0 0 0 1px var(--td-edge);
+  /* min() caps the min-width at the smaller of 280px and 100% of the
+     parent — at narrow viewports the calendar shrinks rather than
+     overflowing the section card. */
+  min-width: min(280px, 100%);
+  max-width: 100%;
+  width: 100%;
+}
+
+.td-cal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--td-font-ui);
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--td-ink);
+}
+
+.td-cal-nav {
+  appearance: none;
+  background: var(--td-raise-fill);
+  border: 0;
+  width: 26px; height: 26px;
+  border-radius: 8px;
+  color: var(--td-ink-2);
+  cursor: pointer;
+  display: grid; place-items: center;
+  /* Soft lift at rest — a small raised control, pressed in on :active. */
+  box-shadow:
+    1.5px 1.5px 4px color-mix(in srgb, var(--td-shadow-dark) 38%, transparent),
+    -2px -2px 4px color-mix(in srgb, var(--td-shadow-light) 85%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil), 0 0 0 1px var(--td-edge);
+  transition: box-shadow var(--td-t-base) var(--td-ease), background var(--td-t-base) var(--td-ease);
+}
+
+.td-cal-nav:hover { background: var(--td-raise-fill-hover); color: var(--td-ink); }
+
+.td-cal-nav:active {
+  background: var(--td-surface);
+  box-shadow:
+    inset 1.5px 1.5px 4px color-mix(in srgb, var(--td-shadow-dark) 50%, transparent),
+    inset -1px -1px 2.5px color-mix(in srgb, var(--td-shadow-light) 32%, transparent);
+}
+
+.td-cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  font-family: var(--td-font-mono);
+  font-size: 11px;
+}
+
+.td-cal-day-h {
+  text-align: center;
+  color: var(--td-ink-3);
+  font-weight: 600;
+  padding: 4px 0;
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.td-cal-day {
+  border: 1px solid var(--td-edge);
+  /* Soft lift — each date pops a breath off the sheet but stays cut
+     from the same surface: fill = the surface itself, tiny warm shade,
+     tiny highlight. */
+  background: var(--td-raise-fill);
+  box-shadow:
+    1px 1px 3px color-mix(in srgb, var(--td-shadow-dark) 28%, transparent),
+    -1.5px -1.5px 3px color-mix(in srgb, var(--td-shadow-light) 60%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--td-shadow-veil) 60%, transparent);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 7px;
+  color: var(--td-ink-2);
+  cursor: pointer;
+  transition: background var(--td-t-fast) var(--td-ease), color var(--td-t-fast) var(--td-ease);
+  position: relative;
+}
+
+/* Hover = a slight press INTO the sheet; click = further. The lift
+   shadow drops away and a shallow (then deeper) well takes over. */
+.td-cal-day:hover {
+  background: var(--td-surface);
+  color: var(--td-ink);
+  box-shadow:
+    inset 1px 1px 3px color-mix(in srgb, var(--td-shadow-dark) 40%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 40%, transparent);
+}
+
+.td-cal-day:active {
+  background: var(--td-surface);
+  color: var(--td-ink);
+  box-shadow:
+    inset 3px 3px 7px color-mix(in srgb, var(--td-shadow-dark) 60%, transparent),
+    inset -2px -2px 4px color-mix(in srgb, var(--td-shadow-light) 45%, transparent);
+}
+
+.td-cal-day[data-state~="muted"] { color: var(--td-ink-3); opacity: 0.4; }
+
+.td-cal-day[data-state~="today"] {
+  color: var(--td-ink);
+  font-weight: 700;
+  background: var(--td-surface);
+  /* Today sits IN the surface — a shallow well waiting to be picked. */
+  box-shadow:
+    inset 1px 1px 3px color-mix(in srgb, var(--td-shadow-dark) 38%, transparent),
+    inset -0.5px -0.5px 2px color-mix(in srgb, var(--td-shadow-light) 40%, transparent);
+}
+
+.td-cal-day[data-state~="selected"] {
+  background: var(--td-brand);
+  color: #fff;
+  font-weight: 700;
+  /* Selected is pressed in — brand fill seated with a soft inset. */
+  box-shadow:
+    inset 1.5px 1.5px 4px rgba(0, 0, 0, 0.35),
+    inset -1px -1px 2.5px rgba(255, 255, 255, 0.14);
+}
+
+.td-cal-day[data-state~="event"]::after {
+  content: "";
+  position: absolute;
+  bottom: 2px; left: 50%;
+  transform: translateX(-50%);
+  width: 3px; height: 3px;
+  border-radius: 50%;
+  background: var(--td-accent);
+}
+
+.td-cal-day[data-state~="selected"]::after { background: #fff; }
+
+/* Range picker popover — two carved fields open a raised panel holding
+   a calendar and a time column. */
+.td-drpick { position: relative; display: inline-flex; align-items: stretch; gap: 8px; }
+
+.td-drfield { appearance: none; border: 0; cursor: pointer; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 8px 14px; border-radius: 12px; text-align: left; background: var(--td-surface); box-shadow: inset 1.5px 1.5px 4px color-mix(in srgb, var(--td-shadow-dark) 40%, transparent), inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 40%, transparent); transition: box-shadow 160ms var(--td-ease); }
+
+.td-drfield-label { font-family: var(--td-font-mono); font-size: 9.5px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--td-ink-3); }
+
+.td-drfield-value { font-family: var(--td-font-ui); font-size: 13px; font-weight: 600; color: var(--td-ink); }
+
+.td-drfield[aria-expanded="true"] { box-shadow: inset 2.5px 2.5px 6px color-mix(in srgb, var(--td-shadow-dark) 55%, transparent), inset -1.5px -1.5px 3px color-mix(in srgb, var(--td-shadow-light) 40%, transparent); }
+
+.td-drfield[aria-expanded="true"] .td-drfield-label { color: var(--td-brand-text); }
+
+.td-drsep { align-self: center; color: var(--td-ink-3); font-family: var(--td-font-ui); }
+
+.td-drpop { position: absolute; top: calc(100% + 10px); left: 0; z-index: 40; display: none; gap: 16px; padding: 16px; border-radius: 16px; background: var(--td-raise-fill); box-shadow: var(--td-raised); }
+
+.td-drpop[data-open="true"] { display: flex; }
+
+.td-drpop-foot { display: flex; justify-content: flex-end; gap: 8px; padding-top: 12px; }
+
+/* The component's own rules. */
+.td-registry-cal-blank { aspect-ratio: 1; }
+
+/* Between the two ends of a range. A wash rather than a well: these days are
+   included, but the reader did not choose them one at a time, so they must not
+   read as pressed. */
+.td-cal-day[data-state~="inrange"] {
+  background: color-mix(in srgb, var(--td-brand) 10%, var(--td-surface));
+  color: var(--td-ink);
+}
+
+.td-registry-datepick .td-drpop,
+.td-registry-timepick .td-drpop { flex-direction: column; }
+.td-registry-datetime .td-drpop { align-items: flex-start; }
+.td-registry-daterange .td-drpop { flex-direction: column; }
+
+.td-registry-daterange-presets { display: flex; flex-wrap: wrap; gap: var(--td-sp-4, 6px); }
+
+.td-drpick[data-disabled] { opacity: 0.55; pointer-events: none; }
+.td-drfield[aria-invalid="true"] { box-shadow: inset 1.5px 1.5px 4px color-mix(in srgb, var(--td-shadow-dark) 40%, transparent), inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 40%, transparent), 0 0 0 1.5px var(--td-brand); }
+.td-cal-day:focus-visible { outline: 2px solid var(--td-accent); outline-offset: 1px; }
+.td-cal-day:disabled { opacity: 0.3; cursor: not-allowed; }
+
+/* Named so a screen reader gets the popover's title without it being drawn. */
+.td-registry-vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }

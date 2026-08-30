@@ -66,3 +66,25 @@
     inset -0.5px -0.5px 1px color-mix(in srgb, var(--td-shadow-light) 35%, transparent);
 }
 .td-input-wrap:has(input:disabled) .td-input { cursor: not-allowed; }
+
+/* The password reveal, in the trailing slot. A quiet text control rather than
+   an eye glyph: "Show" and "Hide" say which way the toggle goes, where a
+   crossed-out eye leaves the reader guessing whether it is state or action. */
+.td-registry-input-reveal {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-family: var(--td-font-ui);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--td-ink-2);
+  padding: 2px 4px;
+  border-radius: 6px;
+  transition: color var(--td-t-fast) var(--td-ease);
+}
+.td-registry-input-reveal:hover:not(:disabled) { color: var(--td-brand-text); }
+.td-registry-input-reveal:focus-visible { outline: 2px solid var(--td-accent); outline-offset: 1px; }
+.td-registry-input-reveal:disabled { opacity: 0.45; cursor: not-allowed; }

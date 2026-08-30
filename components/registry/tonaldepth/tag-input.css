@@ -1,0 +1,84 @@
+/* TonalDepth TagInput — self-contained. Requires @tonaldepth/tokens. */
+
+/* Base layer, re-declared: a registry consumer installs files, not the
+   core package, so the rules the component sits on have to travel with it. */
+
+.td-taginput {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-height: 42px;
+  padding: 6px 8px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--td-surface) 88%, black);
+  border: 1px solid color-mix(in srgb, var(--td-surface) 76%, black);
+  box-shadow:
+    inset 2px 2px 4px rgba(0, 0, 0, 0.18),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 50%, transparent);
+  min-width: 240px;
+  transition: box-shadow var(--td-t-base) var(--td-ease), border-color var(--td-t-fast) var(--td-ease);
+}
+
+.td-taginput:focus-within {
+  border-color: var(--td-brand);
+  box-shadow:
+    inset 2px 2px 4px rgba(0, 0, 0, 0.18),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 50%, transparent),
+    0 0 0 1.5px color-mix(in srgb, var(--td-brand) 18%, transparent);
+}
+
+.td-taginput-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 4px 3px 9px;
+  border-radius: 7px;
+  background: color-mix(in srgb, var(--td-brand) 22%, var(--td-surface));
+  color: var(--td-brand-text);
+  font-family: var(--td-font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.005em;
+  white-space: nowrap;
+  animation: td-tag-in 180ms var(--td-ease-out);
+}
+
+.td-taginput-x {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  width: 18px; height: 18px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  opacity: 0.65;
+  transition: opacity var(--td-t-fast) var(--td-ease), background var(--td-t-fast) var(--td-ease);
+}
+
+.td-taginput-x:hover { opacity: 1; background: color-mix(in srgb, var(--td-brand) 22%, transparent); }
+
+.td-taginput-input {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  font: inherit;
+  font-family: var(--td-font-ui);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--td-ink);
+  flex: 1 1 100px;
+  min-width: 100px;
+  padding: 4px 0;
+}
+
+.td-taginput-input::placeholder { color: var(--td-ink-3); font-weight: 500; }
+
+/* The component's own rules. */
+.td-registry-taginput { cursor: text; max-width: 100%; }
+.td-registry-taginput[data-state="error"] { border-color: var(--td-brand); }
+.td-registry-taginput[data-disabled] { opacity: 0.55; cursor: not-allowed; }
+.td-registry-taginput[data-disabled] .td-taginput-input { cursor: not-allowed; }

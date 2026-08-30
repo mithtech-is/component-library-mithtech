@@ -1,0 +1,86 @@
+/* TonalDepth TimePicker — self-contained. Requires @tonaldepth/tokens. */
+
+/* Base layer, re-declared: a registry consumer installs files, not the
+   core package, so the rules the component sits on have to travel with it. */
+
+/* Range picker popover — two carved fields open a raised panel holding
+   a calendar and a time column. */
+.td-drpick { position: relative; display: inline-flex; align-items: stretch; gap: 8px; }
+
+.td-drfield { appearance: none; border: 0; cursor: pointer; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 8px 14px; border-radius: 12px; text-align: left; background: var(--td-surface); box-shadow: inset 1.5px 1.5px 4px color-mix(in srgb, var(--td-shadow-dark) 40%, transparent), inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 40%, transparent); transition: box-shadow 160ms var(--td-ease); }
+
+.td-drfield-label { font-family: var(--td-font-mono); font-size: 9.5px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--td-ink-3); }
+
+.td-drfield-value { font-family: var(--td-font-ui); font-size: 13px; font-weight: 600; color: var(--td-ink); }
+
+.td-drfield[aria-expanded="true"] { box-shadow: inset 2.5px 2.5px 6px color-mix(in srgb, var(--td-shadow-dark) 55%, transparent), inset -1.5px -1.5px 3px color-mix(in srgb, var(--td-shadow-light) 40%, transparent); }
+
+.td-drfield[aria-expanded="true"] .td-drfield-label { color: var(--td-brand-text); }
+
+.td-drpop { position: absolute; top: calc(100% + 10px); left: 0; z-index: 40; display: none; gap: 16px; padding: 16px; border-radius: 16px; background: var(--td-raise-fill); box-shadow: var(--td-raised); }
+
+.td-drpop[data-open="true"] { display: flex; }
+
+/* Time selector — a grid, not a list.
+
+   `.td-drtime-list` was a single scrolling column of every slot: reaching 14:45
+   meant scrolling past fifty-nine options, and the reader had no landmark to
+   aim at on the way. `.td-cal` next door already solves that shape — a grid
+   with a head, where a date is one glance and one press — so the time selector
+   is built the same way: an hour grid and a minute grid side by side, which
+   puts every time on the clock two presses away with nothing to scroll.
+
+   The three depth recipes below are `.td-drtime-opt`'s, unchanged: flat at
+   rest, the shallow inset well on :hover, the deeper well with --td-brand-text
+   when selected. Only the layout is new. */
+.td-timegrid { display: flex; flex-direction: column; gap: 10px; min-width: 168px; }
+
+.td-timegrid-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+
+.td-timegrid-label { font-family: var(--td-font-mono); font-size: 9.5px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--td-ink-3); }
+
+.td-timegrid-value { font-family: var(--td-font-mono); font-size: 13px; font-weight: 700; color: var(--td-brand-text); font-variant-numeric: tabular-nums; }
+
+.td-timegrid-cols { display: flex; gap: 10px; }
+
+.td-timegrid-col { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+
+.td-timegrid-col-h { text-align: center; color: var(--td-ink-3); font-family: var(--td-font-mono); font-weight: 600; font-size: 10.5px; letter-spacing: 0.04em; text-transform: uppercase; padding: 2px 0; }
+
+.td-timegrid-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; }
+
+.td-timegrid-opt { appearance: none; border: 0; cursor: pointer; font-family: var(--td-font-mono); font-size: 11.5px; color: var(--td-ink-2); background: transparent; padding: 6px 8px; border-radius: 8px; text-align: center; font-variant-numeric: tabular-nums; transition: box-shadow 140ms var(--td-ease), color 140ms var(--td-ease); }
+
+.td-timegrid-opt:hover { color: var(--td-ink); background: var(--td-surface); box-shadow: inset 1px 1px 3px color-mix(in srgb, var(--td-shadow-dark) 30%, transparent), inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 35%, transparent); }
+
+.td-timegrid-opt[aria-selected="true"] { color: var(--td-brand-text); font-weight: 700; background: var(--td-surface); box-shadow: inset 1.5px 1.5px 4px color-mix(in srgb, var(--td-shadow-dark) 44%, transparent), inset -1px -1px 3px color-mix(in srgb, var(--td-shadow-light) 36%, transparent); }
+
+.td-timegrid-opt:focus-visible { outline: 2px solid var(--td-accent); outline-offset: 1px; }
+
+.td-drpop-foot { display: flex; justify-content: flex-end; gap: 8px; padding-top: 12px; }
+
+/* The component's own rules. */
+.td-registry-cal-blank { aspect-ratio: 1; }
+
+/* Between the two ends of a range. A wash rather than a well: these days are
+   included, but the reader did not choose them one at a time, so they must not
+   read as pressed. */
+.td-cal-day[data-state~="inrange"] {
+  background: color-mix(in srgb, var(--td-brand) 10%, var(--td-surface));
+  color: var(--td-ink);
+}
+
+.td-registry-datepick .td-drpop,
+.td-registry-timepick .td-drpop { flex-direction: column; }
+.td-registry-datetime .td-drpop { align-items: flex-start; }
+.td-registry-daterange .td-drpop { flex-direction: column; }
+
+.td-registry-daterange-presets { display: flex; flex-wrap: wrap; gap: var(--td-sp-4, 6px); }
+
+.td-drpick[data-disabled] { opacity: 0.55; pointer-events: none; }
+.td-drfield[aria-invalid="true"] { box-shadow: inset 1.5px 1.5px 4px color-mix(in srgb, var(--td-shadow-dark) 40%, transparent), inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 40%, transparent), 0 0 0 1.5px var(--td-brand); }
+.td-cal-day:focus-visible { outline: 2px solid var(--td-accent); outline-offset: 1px; }
+.td-cal-day:disabled { opacity: 0.3; cursor: not-allowed; }
+
+/* Named so a screen reader gets the popover's title without it being drawn. */
+.td-registry-vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
