@@ -513,10 +513,13 @@ export const GUIDANCE = {
     whenToUse: "A display heading where the block should read as a rectangle — the treatment the design system is named for.",
   },
   "badge": {
-    aliases: ["pill", "tag", "label", "chip", "status pill"],
-    useCases: ["show a status", "label a category", "count in a corner", "tag"],
-    whenToUse: "A short label carrying a status or a category.",
-    whenNotToUse: [{ instead: "alert", because: "There is something to explain. A badge has room for a word." }],
+    aliases: ["pill", "tag", "label", "chip", "status pill", "status dot", "pill with a dot", "category dot", "eyebrow pill"],
+    useCases: ["show a status", "label a category", "count in a corner", "tag", "pill with a coloured dot before the label", "status indicator next to a label"],
+    whenToUse: "A short label carrying a status or a category, with an optional lit dot before it.",
+    whenNotToUse: [
+      { instead: "alert", because: "There is something to explain. A badge has room for a word." },
+      { instead: "lamp", because: "You want the state indicator on its own, or the technique behind it. A badge is the pill the dot sits in." },
+    ],
   },
 
   /* ── App patterns ─────────────────────────────────────────────────── */

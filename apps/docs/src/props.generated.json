@@ -56,6 +56,11 @@
       "variant",
       "BadgeVariant",
       "\"neutral\""
+    ],
+    [
+      "dot",
+      "boolean",
+      "false"
     ]
   ],
   "card": [

@@ -12,3 +12,53 @@
 }
 
 .td-react-badge--danger { color: var(--td-error-text); background: color-mix(in srgb, var(--td-error) 14%, var(--td-surface)); }
+
+/* ── the category dot ──────────────────────────────────────────────────
+   A lens seated in a socket carved from the badge's own surface, not a painted
+   disc ([[L25]], [[L11]]). The socket is the page's material and is never
+   tinted; the colour exists only where the light is. `Alert`'s lamp is the
+   reference and this is the same recipe at pill scale.
+
+   It carries `.td-lamp` as well as its own class, so the dot Button draws and
+   the dot a Badge draws are the same object with the same name rather than two
+   ways of saying the same thing. Written at (0,2,0) so it beats the base
+   layer's 7px painted disc on specificity rather than on which stylesheet a
+   bundler happens to emit first.
+
+   The light is NAMED on `--td-lamp-glow` ([[L20]]), and it is declared here
+   rather than left to a fallback: `:root` already sets that variable to green,
+   so a `var(--td-lamp-glow, …)` whose own value never resolves inherits a
+   green halo from a file this component does not import. */
+.td-lamp.td-react-badge-dot {
+  --td-lamp-glow: color-mix(in srgb, var(--td-ink-3) 60%, var(--td-surface));
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--td-surface);
+  box-shadow:
+    inset 1px 1px 2px color-mix(in srgb, var(--td-shadow-dark) 62%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 58%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+/* The lens. Two slots — the seat ring and the glow — in one order, so a state
+   added to it later interpolates instead of snapping ([[L18]]). */
+.td-lamp.td-react-badge-dot::after {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--td-lamp-glow);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--td-lamp-glow) 45%, transparent),
+    0 0 4px color-mix(in srgb, var(--td-lamp-glow) 55%, transparent);
+}
+/* Category is the light, never a wash: the variants below move the glow and
+   nothing else. `neutral` keeps the unlit lens — grey glass is what "no
+   category" looks like, and it is not the same as no dot. */
+.td-react-badge.td-badge--brand .td-react-badge-dot { --td-lamp-glow: var(--td-brand); }
+.td-react-badge.td-badge--green .td-react-badge-dot { --td-lamp-glow: var(--td-green); }
+.td-react-badge.td-badge--accent .td-react-badge-dot { --td-lamp-glow: var(--td-accent); }
+.td-react-badge.td-react-badge--danger .td-react-badge-dot { --td-lamp-glow: var(--td-error); }

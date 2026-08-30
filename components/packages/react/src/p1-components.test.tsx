@@ -13,6 +13,8 @@ import { Badge, IconButton, ThemeToggle } from "./index";
 import { FilamentButton, FooterBottom, FooterColumn, SearchBar, SideTabs, SiteNavigation, SplitButton } from "./index";
 import { AcceptIcon, CancelIcon, CloseIcon, StarIcon, SuccessIcon, WhatsAppIcon, LAMP_WEIGHT, TD_ICON_ROLES } from "./index";
 
+const SRC = dirname(fileURLToPath(import.meta.url));
+
 describe("selection controls", () => {
   it("uses native checkbox, radio, and switch behavior", async () => {
     const user = userEvent.setup();
@@ -209,6 +211,56 @@ describe("inline controls size to their content", () => {
     render(<><Button>Open dialog</Button><Badge variant="brand">TonalDepth UI</Badge></>);
     expect(screen.getByRole("button", { name: "Open dialog" })).toHaveClass("td-react-button");
     expect(screen.getByText("TonalDepth UI")).toHaveClass("td-react-badge");
+  });
+});
+
+describe("Badge's category dot", () => {
+  // The design's pills carry a dot before the label — the hero eyebrow in
+  // brand, the integration pills in green. Badge was a bare carved pill, so
+  // the dot was lost and consumers hand-wrote a `.td-pill-dot`.
+  it("is off by default, and carries Button's own lamp class when it is on", () => {
+    const { rerender } = render(<Badge variant="brand">Practice</Badge>);
+    expect(screen.getByText("Practice").querySelector(".td-lamp")).toBeNull();
+
+    rerender(<Badge variant="brand" dot>Practice</Badge>);
+    const lamp = screen.getByText("Practice").querySelector(".td-lamp")!;
+    expect(lamp).not.toBeNull();
+    // Same name, same class as `Button`'s dot: one object, not two ways of
+    // saying the same thing.
+    expect(lamp).toHaveClass("td-react-badge-dot");
+    // The dot repeats the category the label already carries.
+    expect(lamp).toHaveAttribute("aria-hidden", "true");
+    // And it adds nothing to the text the badge reads as.
+    expect(screen.getByText("Practice").textContent).toBe("Practice");
+  });
+
+  it("is a lens in a socket, and says its category with light rather than a fill", () => {
+    for (const [label, css] of [
+      ["package", readFileSync(join(SRC, "badge.css"), "utf8")],
+      ["registry", readFileSync(join(SRC, "../../../registry/tonaldepth/badge.css"), "utf8").replaceAll("td-registry-", "td-react-")],
+    ] as const) {
+      const socket = /\.td-lamp\.td-react-badge-dot \{([^}]*)\}/.exec(css)![1];
+      // The socket is the page's own material, never tinted — colour exists
+      // only where the light is.
+      expect(socket, label).toMatch(/background:\s*var\(--td-surface\)/);
+      expect(socket, label).toMatch(/inset [\s\S]*?var\(--td-shadow-dark\)/);
+      expect(socket, label).toMatch(/0 0 0 1px var\(--td-edge\)/);
+
+      // The lens is the only coloured part, and it is lit by a NAMED light —
+      // declared here rather than left to a fallback, because `:root` sets
+      // `--td-lamp-glow` to green and an unresolved var inherits it.
+      const lens = /\.td-lamp\.td-react-badge-dot::after \{([^}]*)\}/.exec(css)![1];
+      expect(lens, label).toMatch(/background:\s*var\(--td-lamp-glow\)/);
+      expect(socket, label).toMatch(/--td-lamp-glow:\s*color-mix/);
+
+      // Each variant moves the light and nothing else. A variant rule that set
+      // `background` would be the wash the system forbids.
+      for (const [modifier, token] of [["td-badge--brand", "brand"], ["td-badge--green", "green"], ["td-badge--accent", "accent"], ["td-react-badge--danger", "error"]]) {
+        const variant = new RegExp(`\\.td-react-badge\\.${modifier.replace(/\./g, "\\.")} \\.td-react-badge-dot \\{([^}]*)\\}`).exec(css);
+        expect(variant, `${label} ${modifier}`).not.toBeNull();
+        expect(variant![1].trim(), `${label} ${modifier}`).toBe(`--td-lamp-glow: var(--td-${token});`);
+      }
+    }
   });
 });
 
