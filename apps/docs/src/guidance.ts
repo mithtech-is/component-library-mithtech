@@ -673,6 +673,169 @@ export const GUIDANCE = {
       { instead: "progress", because: "Only the quantity matters and no step has a name." },
     ],
   },
+
+  /* ── Form fields, added 2026-08-30 ─────────────────────────────────── */
+  "select": {
+    aliases: ["dropdown", "picker", "option list", "native select"],
+    useCases: ["pick one option from a short list", "choose a category", "set a status", "country dropdown"],
+    whenToUse: "One choice from a handful of known options — under about twenty, where the reader can read the whole list.",
+    whenNotToUse: [
+      { instead: "combobox", because: "The list is long enough that the reader is scanning rather than reading. A filter is the fix, and a native select cannot carry one." },
+      { instead: "radio", because: "There are three or four options and they all matter enough to stay on screen. A select hides its options until pressed." },
+      { instead: "dropdown-menu", because: "The entries are actions, not values. A select sets a field; a menu does something." },
+    ],
+  },
+  "combobox": {
+    aliases: ["autocomplete", "typeahead", "searchable select", "multiselect", "multi-select", "tags from a list"],
+    useCases: ["search a long list of options", "pick a country", "filter as you type", "pick several from a list", "assign people to something"],
+    whenToUse: "One choice — or several with `multiple` — from a list too long to read, where typing narrows it.",
+    whenNotToUse: [
+      { instead: "select", because: "The list is short. A filter over eight options is furniture the reader has to look past." },
+      { instead: "tag-input", because: "The reader invents the values rather than picking them. This one only offers what you gave it." },
+      { instead: "search-bar", because: "The query searches content and the result is a page, not a value set in a field." },
+    ],
+    variants: [
+      { name: "single", when: "One value. The field shows the chosen label when it is not being typed in." },
+      { name: "multiple", when: "Several. Chips appear above the field, the same chip TagInput uses — this IS the multi-select." },
+    ],
+  },
+  "tag-input": {
+    aliases: ["tags", "chips input", "keywords", "token input", "labels"],
+    useCases: ["add keywords", "tag a record", "enter a list of emails", "type several values into one field"],
+    whenToUse: "Several short values the reader makes up — keywords, labels, addresses — committed one at a time.",
+    whenNotToUse: [
+      { instead: "combobox", because: "The values come from a list you control. Free text where a closed set was meant produces four spellings of the same tag." },
+      { instead: "textarea", because: "It is prose. Tags are separate values; a paragraph is one." },
+    ],
+  },
+  "date-picker": {
+    aliases: ["calendar", "date field", "datepicker", "choose a date"],
+    useCases: ["pick a date", "set a deadline", "choose a birthday", "schedule something for a day"],
+    whenToUse: "One day, with no time of day. The value is `YYYY-MM-DD`, so it does not move when the reader does.",
+    whenNotToUse: [
+      { instead: "date-range-picker", because: "The reader is choosing a span — a report period, a stay. Two single pickers let them pick an end before the start." },
+      { instead: "date-time-picker", because: "The time of day matters. A meeting at 'Tuesday' is not scheduled." },
+      { instead: "time-picker", because: "Only the clock matters and the day is already known." },
+    ],
+  },
+  "time-picker": {
+    aliases: ["time field", "clock", "hour picker", "choose a time"],
+    useCases: ["pick a time of day", "set an appointment slot", "choose opening hours", "set a reminder time"],
+    whenToUse: "A time of day on a known date. Hour and minute grids, so any time is two presses.",
+    whenNotToUse: [
+      { instead: "date-time-picker", because: "The day is not already fixed. Two separate fields let the reader set a time against no date." },
+      { instead: "date-picker", because: "Only the day matters." },
+    ],
+  },
+  "date-range-picker": {
+    aliases: ["date range", "period picker", "from and to dates", "reporting period"],
+    useCases: ["choose a reporting period", "pick check-in and check-out", "filter a dashboard by date", "select a span of days"],
+    whenToUse: "A start and an end, on one calendar that fills them in turn — and quick spans for the questions readers actually ask.",
+    whenNotToUse: [
+      { instead: "date-picker", because: "It is one day. A range with both ends the same is a worse way to say that." },
+      { instead: "filter-bar", because: "The date span is one filter among several and belongs in the bar with them." },
+    ],
+  },
+  "date-time-picker": {
+    aliases: ["datetime", "timestamp picker", "schedule", "when picker"],
+    useCases: ["schedule a meeting", "set a publish time", "pick an exact moment", "book a slot on a day"],
+    whenToUse: "A precise instant — the calendar and the time grid in one popover, so the reader sets both without closing anything.",
+    whenNotToUse: [
+      { instead: "date-picker", because: "The time of day does not matter, and asking for it invents a 00:00 nobody chose." },
+      { instead: "date-range-picker", because: "It is a span, not a moment." },
+    ],
+  },
+  "file-upload": {
+    aliases: ["dropzone", "file picker", "attach a file", "image upload", "avatar upload", "drag and drop files"],
+    useCases: ["upload a document", "attach files to a form", "upload an image", "add a profile photo", "drag files in"],
+    whenToUse: "The reader hands over one or more files. `preview` draws thumbnails, which is what makes it an image upload.",
+    whenNotToUse: [
+      { instead: "file-preview", because: "The file is already there and the job is to show it, not to collect it." },
+    ],
+    variants: [
+      { name: "default", when: "Any file. The list names what was picked and how big it is." },
+      { name: 'accept="image/*" preview', when: "The image upload. Same zone, same keyboard path, plus a thumbnail per file — this IS the image upload." },
+      { name: "multiple", when: "More than one at a time. Without it a second pick replaces the first." },
+    ],
+  },
+  "otp-input": {
+    aliases: ["one time code", "verification code", "2fa code", "pin entry", "sms code"],
+    useCases: ["enter a verification code", "two-factor authentication", "confirm a code from an SMS", "enter a PIN"],
+    whenToUse: "A short code, one cell per character, where the reader wants to see the digits land separately.",
+    whenNotToUse: [
+      { instead: "input", because: "The code is long or free-form. Six boxes for a password is a puzzle." },
+    ],
+  },
+  "rating": {
+    aliases: ["stars", "star rating", "score", "review score", "five stars"],
+    useCases: ["show an average review score", "let someone rate something", "display a star rating", "collect feedback out of five"],
+    whenToUse: "A score out of a small maximum, shown or collected. `readOnly` is the display form and honours halves.",
+    whenNotToUse: [
+      { instead: "progress", because: "It is a proportion of a task, not a judgement. Progress is measured; a rating is given." },
+      { instead: "range", because: "The scale is continuous and has units. Stars are ordinal and have none." },
+    ],
+    variants: [
+      { name: "readOnly", when: "An average someone else produced. Halves render; nothing is focusable." },
+      { name: "interactive", when: "The reader's own score. A radio group under the hood, so arrows set it." },
+    ],
+  },
+  "color-picker": {
+    aliases: ["colour picker", "swatch picker", "brand colour", "palette"],
+    useCases: ["pick a brand colour", "choose a label colour", "set a theme colour", "pick from a palette"],
+    whenToUse: "A colour from a palette somebody curated. `allowCustom` adds the platform picker for the cases a hex has to be typed.",
+    whenNotToUse: [
+      { instead: "select", because: "The options are named things that happen to have colours — a status, a category. Then the name is the value and the colour is decoration." },
+    ],
+  },
+  "number-field": {
+    aliases: ["number input", "stepper", "quantity", "spinner", "currency field", "price field", "percent field", "amount"],
+    useCases: ["set a quantity", "enter an amount of money", "enter a percentage", "increase or decrease a number", "set a price"],
+    whenToUse: "A number the reader types or nudges. A `prefix` or `suffix` makes it the currency or percent field — no separate component.",
+    whenNotToUse: [
+      { instead: "range", because: "The reader is choosing roughly where on a scale, not stating an exact figure. A slider cannot say 4,50,000." },
+      { instead: "input", because: "The value is a code that happens to be digits — a PIN, an invoice number. Those must not be nudgeable." },
+    ],
+    variants: [
+      { name: 'prefix="₹"', when: "Money. The symbol sits in Input's leading slot — this IS the currency field." },
+      { name: 'suffix="%"', when: "A percentage. Trailing slot — this IS the percent field." },
+      { name: "precision", when: "Fixed decimals when the field is not being typed in, so a column of amounts lines up." },
+    ],
+  },
+  "phone-field": {
+    aliases: ["telephone", "mobile number", "country code", "dial code", "tel input"],
+    useCases: ["enter a phone number", "collect a mobile number", "pick a country dialling code", "capture a WhatsApp number"],
+    whenToUse: "A phone number that has to reach a real network — the country is picked, not typed, and the value comes back as E.164.",
+    whenNotToUse: [
+      { instead: "input", because: "The number is internal and never dialled — an extension, a desk number. Then the country selector is 239 rows of noise." },
+    ],
+  },
+  "address-field": {
+    aliases: ["postal address", "billing address", "shipping address", "street address"],
+    useCases: ["collect a delivery address", "enter a billing address", "capture a postal address", "add a location to a record"],
+    whenToUse: "A whole postal address as one value, in the order each line narrows the next — country, then state, then city.",
+    whenNotToUse: [
+      { instead: "input", because: "One line is all that is wanted. This asks for six." },
+    ],
+  },
+  "checkbox-group": {
+    aliases: ["multiple checkboxes", "checkbox list", "select many", "multi choice"],
+    useCases: ["choose several options", "tick multiple boxes", "select all that apply", "set several preferences at once"],
+    whenToUse: "Several checkboxes read as one question, in a fieldset with a legend so the group has a name.",
+    whenNotToUse: [
+      { instead: "radio", because: "Exactly one answer is allowed. Checkboxes say 'any number, including none'." },
+      { instead: "combobox", because: "The list is long. Fifteen checkboxes is a wall; a filtered multi-select is a field." },
+      { instead: "checkbox", because: "It is one independent switch — a consent box — not one of a set." },
+    ],
+  },
+  "range-dual": {
+    aliases: ["range slider", "min max slider", "price range", "two thumbs", "between filter"],
+    useCases: ["filter by price range", "set a minimum and maximum", "choose a band", "narrow results between two values"],
+    whenToUse: "A span on a scale — both ends set by dragging, with the pair kept in order whichever thumb moved.",
+    whenNotToUse: [
+      { instead: "range", because: "Only one end is being set. A second thumb pinned to the maximum is a slider pretending to be a filter." },
+      { instead: "number-field", because: "The reader knows the exact figures. A slider makes them hunt for 4,50,000." },
+    ],
+  },
 } satisfies Record<string, Guidance>;
 
 /**
