@@ -29,6 +29,17 @@
    (the focus ring) is not clipped either. */
 .td-registry-button:is(.td-primary, .td-coloured) { overflow: hidden; }
 
+/* ── The anchor form ──────────────────────────────────────────────────
+   `href` renders an `<a>`, and every rule in this file and in the base layer
+   is written at a class, so the housing, the lamp and the whole ladder arrive
+   unchanged. Two things do not: the UA's underline, which a housing has no
+   room for, and `link` — whose underline IS its housing, so it keeps its own.
+
+   Nothing here handles the disabled state. A disabled or loading link renders
+   as `<button disabled>` instead, because the disabled ladder is written at
+   `:disabled` and an anchor can never match it. */
+a.td-registry-button:not(.td-registry-button--link) { text-decoration: none; }
+
 .td-registry-button.td-registry-button--sm:is(.td-primary, .td-coloured) { min-height: 34px; padding-inline: 12px; font-size: 12px; border-radius: 10px; }
 .td-registry-button.td-registry-button--md:is(.td-primary, .td-coloured) { min-height: var(--td-btn-h, 42px); }
 .td-registry-button.td-registry-button--lg:is(.td-primary, .td-coloured) { min-height: var(--td-btn-h-lg, 50px); padding-inline: 20px; font-size: 14px; }

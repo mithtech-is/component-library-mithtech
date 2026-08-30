@@ -61,6 +61,79 @@ describe("Button", () => {
   });
 });
 
+describe("Button as a link", () => {
+  // Every primary call to action on a marketing page is a link, and while
+  // `Button` could only be a `<button>` every consumer hand-wrote an
+  // `<a className="td-primary">` with its own `<span className="td-lamp">`
+  // inside it — the design system's primary control, reimplemented at the
+  // call site.
+  it("renders an anchor carrying the same classes as the button form", () => {
+    const { container, rerender } = render(<Button variant="primary" size="lg">Book</Button>);
+    const asButton = screen.getByRole("button", { name: "Book" }).className;
+
+    rerender(<Button variant="primary" size="lg" href="/audit">Book</Button>);
+    const link = screen.getByRole("link", { name: "Book" });
+    expect(link.tagName).toBe("A");
+    expect(link).toHaveAttribute("href", "/audit");
+    expect(link.className).toBe(asButton);
+    // `type` is a button attribute and means nothing on an anchor.
+    expect(link).not.toHaveAttribute("type");
+    expect(container.querySelector("button")).toBeNull();
+  });
+
+  it("keeps the lamp on `primary` and `filled` in the anchor form", () => {
+    const { container, rerender } = render(<Button variant="primary" href="/audit">Book</Button>);
+    expect(container.querySelector("a .td-lamp")).not.toBeNull();
+    rerender(<Button variant="filled" href="/audit">Book</Button>);
+    expect(container.querySelector("a .td-lamp")).not.toBeNull();
+  });
+
+  it("hands `renderLink` the resolved class, the href and the glow", () => {
+    const calls: { className: string; href: string; style?: Record<string, unknown> }[] = [];
+    render(
+      <Button
+        variant="primary"
+        href="/audit"
+        glow="#FF5E29"
+        renderLink={({ className, href, style, children }) => {
+          calls.push({ className, href, style: style as Record<string, unknown> });
+          return <a className={className} href={href} style={style} data-router="next">{children}</a>;
+        }}
+      >
+        Book
+      </Button>,
+    );
+    expect(calls).toHaveLength(1);
+    expect(calls[0].href).toBe("/audit");
+    expect(calls[0].className).toContain("td-react-button");
+    expect(calls[0].className).toContain("td-primary");
+    expect(calls[0].className).toContain("td-react-button--primary");
+    // The glow rides on `style`, so a router link that spreads it still lights
+    // the colour the caller asked for.
+    expect(calls[0].style?.["--td-lamp-glow"]).toBe("#FF5E29");
+    const link = screen.getByRole("link", { name: "Book" });
+    expect(link).toHaveAttribute("data-router", "next");
+  });
+
+  it("falls back to a disabled button when the link cannot be followed", () => {
+    // `disabled` is not something HTML gives an anchor, and the whole disabled
+    // ladder is written at `:disabled` — an `<a aria-disabled>` would keep the
+    // lit press ladder and read as pressable while doing nothing.
+    let rendered = 0;
+    const { rerender } = render(
+      <Button href="/audit" disabled renderLink={({ className, href, children }) => { rendered++; return <a className={className} href={href}>{children}</a>; }}>Book</Button>,
+    );
+    expect(screen.getByRole("button", { name: "Book" })).toBeDisabled();
+    expect(screen.queryByRole("link")).toBeNull();
+    expect(rendered).toBe(0);
+
+    rerender(<Button href="/audit" loading loadingLabel="Opening">Book</Button>);
+    const busy = screen.getByRole("button", { name: "Opening" });
+    expect(busy).toBeDisabled();
+    expect(busy).toHaveAttribute("aria-busy", "true");
+  });
+});
+
 describe("Form controls", () => {
   it("connects label, help, required and input semantics", () => {
     render(

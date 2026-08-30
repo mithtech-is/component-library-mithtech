@@ -52,14 +52,15 @@ export interface Guidance {
 export const GUIDANCE = {
   /* ── Actions ──────────────────────────────────────────────────────── */
   "button": {
-    aliases: ["cta", "action button", "submit button", "primary button"],
-    useCases: ["submit a form", "trigger an action", "add a call to action", "confirm or cancel something", "link that looks like a button"],
+    aliases: ["cta", "action button", "submit button", "primary button", "link button", "anchor button", "button as a link"],
+    useCases: ["submit a form", "trigger an action", "add a call to action", "confirm or cancel something", "link that looks like a button", "make the call to action a link", "button that navigates to a page", "mailto button"],
     whenToUse: "The default control for any action — the one to reach for unless something below says otherwise.",
     whenNotToUse: [
       { instead: "icon-button", because: "The control is a glyph with no words, or a glyph whose label must not change colour with the state. An icon-only Button has no accessible name." },
       { instead: "split-button", because: "There is a primary action AND a short list of alternatives to it. Two buttons side by side make the reader choose before they have read either." },
       { instead: "filament-button", because: "It is one of a row of mutually exclusive choices that stays put — a sideways tab, not a thing that happens when pressed." },
       { instead: "confirm-button", because: "The action is destructive and should ask once before it fires." },
+      { instead: "link-cells", because: "It is a SET of onward links rather than one action. Six buttons in a row make the reader weigh six equal choices; cells read as a list of places to go." },
     ],
     variants: [
       { name: "primary", when: "The surface housing with the lamp lit — the design system's own primary. Most buttons." },
@@ -653,6 +654,9 @@ export const GUIDANCE = {
     aliases: ["related links", "next steps", "link grid", "read more"],
     useCases: ["grid of links", "explore more pages", "related links block"],
     whenToUse: "A grid of onward links with no other content in them.",
+    whenNotToUse: [
+      { instead: "button", because: "There is ONE destination and it is what the page is asking for. A single cell is a call to action with a box drawn round it — give the button an `href` instead." },
+    ],
   },
   "iso-stack": {
     aliases: ["layered card", "stacked cards", "depth stack"],

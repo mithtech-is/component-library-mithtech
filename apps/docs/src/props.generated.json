@@ -39,6 +39,16 @@
       "glow",
       "string",
       "—"
+    ],
+    [
+      "href",
+      "string",
+      "—"
+    ],
+    [
+      "renderLink",
+      "(props: { className: string; href: string; style?: CSSProperties; children: ReactNode }) => ReactNode",
+      "—"
     ]
   ],
   "badge": [

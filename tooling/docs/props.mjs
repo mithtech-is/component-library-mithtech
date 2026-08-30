@@ -23,7 +23,10 @@ const CHECK = process.argv.includes("--check");
 
 /** Docs id -> the module and the props interface behind it. */
 const TABLES = {
-  "button": ["button", "ButtonProps", "Button"],
+  // ButtonProps became an intersection (button + anchor attributes) when
+  // `href` landed, so the table is cut from the component's own props rather
+  // than the DOM passthrough — as IconButton's is below.
+  "button": ["button", "ButtonOwnProps", "Button"],
   "badge": ["badge", "BadgeProps", "Badge"],
   "card": ["card", "CardProps", "Card"],
   "input": ["input", "InputProps", "Input"],
