@@ -55,6 +55,43 @@ class CoreFoundationTests(unittest.TestCase):
                      "--td-glow-active-blur", "--td-glow-active-strength"):
             self.assertIn(knob, variables)
 
+    def test_the_well_carves_in_both_themes_and_deep_is_deeper(self):
+        """The well reads on paper, and `deep` is deeper than `soft`.
+
+        Reported as *"the frame's well is nearly flat on #F5F5F5"*, and the
+        cause was the one [[L40]] records for the row ladder: both inset
+        tokens were a single mix over `--td-shadow-*`, whose light value is a
+        third of its dark strength and whose dark `--td-shadow-light` is
+        `0.062`. Ninety-two percent of 0.062 is an alpha of 0.057 — the carved
+        upper edge simply was not drawn, and no percentage of that token can
+        draw it.
+
+        So both wells state their own dark values, and both carry the three
+        parts a cut edge needs: the lip, the shade falling from it, the bounce
+        off the lower wall. Two invariants are checked because the second is
+        the one that goes wrong quietly — retuning `soft` and leaving `deep`
+        on its old numbers makes the deeper well the shallower one, and
+        nothing about the stylesheet looks wrong.
+        """
+        by_var = {item["$extensions"]["tonaldepth"]["cssVariable"]: item for item in self.tokens}
+        strengths = {}
+        for name in ("--td-inset-soft", "--td-inset-deep"):
+            item = by_var[name]
+            modes = item["$extensions"]["tonaldepth"]["modes"]
+            self.assertIn("dark", modes, f"{name} has no dark value — a mix over --td-shadow-light draws no lip in dark")
+            for mode, value in (("light", item["$value"]), ("dark", modes["dark"])):
+                self.assertEqual(3, value.count("inset"), f"{name} {mode} is not lip + shade + bounce")
+                self.assertNotIn("color-mix", value, f"{name} {mode} mixes over a token instead of stating its own strength")
+                # The lip: a hairline on the cut upper edge, no blur.
+                self.assertRegex(value.split(",")[0].strip(), r"^inset 0 [\d.]+px 0 ",
+                                 f"{name} {mode} does not open with an unblurred top lip")
+                strengths[(name, mode)] = [float(a) for a in re.findall(r"rgba\([^)]*?([\d.]+)\)", value)]
+
+        for mode in ("light", "dark"):
+            soft, deep = strengths[("--td-inset-soft", mode)], strengths[("--td-inset-deep", mode)]
+            for slot, (a, b) in enumerate(zip(soft, deep)):
+                self.assertGreater(b, a, f"--td-inset-deep is not deeper than --td-inset-soft in {mode} at slot {slot}")
+
     def test_lamp_ladder_is_interpolable_and_never_none(self):
         """The glow ladder has to animate, not snap.
 

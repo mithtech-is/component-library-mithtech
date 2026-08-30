@@ -9,9 +9,12 @@
    `--td-well-radius` computes. Concentric curves read as a well cut into the
    plate; equal radii read as a sticker stuck on it.
 
-   The well is carved — shade above, highlight below — never a painted outline
-   and never a fill. In light mode all four sides must read, so the ring is
-   part of the recipe rather than an afterthought. */
+   The well is carved — never a painted outline and never a fill. The carve
+   itself lives in `--td-inset-soft`: a lip on the cut upper edge, the shade
+   falling from it, the bounce off the lower wall, stated absolutely with its
+   own dark value so the well reads on `#F5F5F5` and in the dark from one
+   token. Reach for the token; do not answer a shallow well with a ring
+   around it. */
 
 .td-registry-frame {
   display: grid;
@@ -75,10 +78,13 @@
 /* A chart carries its own margins; two sets of padding is one too many. */
 .td-registry-frame-well--flush { padding: 0; overflow: hidden; }
 
+/* Deeper is `--td-inset-deep`, not a second recipe. This rule used to mix its
+   own strengths over `--td-shadow-*`, and once the soft well was retuned that
+   left `deep` measurably SHALLOWER than the default it was supposed to
+   exceed — a hand-written copy of a shared ladder going stale the moment the
+   shared one moved. */
 .td-registry-frame--deep .td-registry-frame-well {
-  box-shadow:
-    inset 3px 3px 12px color-mix(in srgb, var(--td-shadow-dark) 66%, transparent),
-    inset -2px -2px 6px color-mix(in srgb, var(--td-shadow-light) 42%, transparent);
+  box-shadow: var(--td-inset-deep);
 }
 /* No well at all — the frame is only supplying a caption and a boundary. */
 .td-registry-frame--flush .td-registry-frame-well { padding: 0; background: transparent; box-shadow: none; overflow: visible; }
@@ -112,8 +118,13 @@
   grid-template-columns: repeat(auto-fit, minmax(min(var(--td-frame-min, 320px), 100%), 1fr));
 }
 
-/* Light mode carves shallower than dark, so a well can read as flat paper.
-   The extra ring is what keeps all four sides visible on a pale ground. */
-:root:not([data-theme="dark"]) .td-registry-frame-well {
-  box-shadow: var(--td-inset-soft), 0 0 0 1px var(--td-edge);
-}
+/* There was a light-mode-only rule here that answered the flat carve with an
+   outer `0 0 0 1px var(--td-edge)` ring. It is gone, and the reason is worth
+   keeping: the ring had been in the stylesheet the whole time the well was
+   reported as reading flat on paper, so it was not the thing making the well
+   read — it was a hairline drawn AROUND a recess, which is an outline doing
+   depth's job, and a well is separated by shadow alone.
+
+   `--td-inset-soft` now carries the carve itself, absolutely and per theme:
+   a lip on the cut upper edge, the shade falling from it, the bounce off the
+   lower wall. One token, both themes, every well in the system. */

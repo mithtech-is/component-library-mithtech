@@ -33,6 +33,20 @@ function rule(css: string, test: RegExp): string {
   }
   return "";
 }
+/** Split a `box-shadow` on its top-level commas — `color-mix()` and a `var()`
+ *  fallback both carry commas of their own. */
+function slots(value: string): string[] {
+  const out: string[] = [];
+  let depth = 0, current = "";
+  for (const character of value) {
+    if (character === "(") depth += 1;
+    if (character === ")") depth -= 1;
+    if (character === "," && depth === 0) { out.push(current.trim()); current = ""; } else current += character;
+  }
+  if (current.trim()) out.push(current.trim());
+  return out;
+}
+
 const decl = (body: string, property: string) =>
   new RegExp(`(?:^|;)\\s*${property}\\s*:\\s*([^;]+)`).exec(body)?.[1].replace(/\s+/g, " ").trim() ?? "";
 
@@ -74,6 +88,39 @@ describe("the frame's well is cut, not stuck on", () => {
         if (!/-frame-well\b/.test(selector)) continue;
         expect(`${label} ${selector}: ${decl(body, "background")}`).not.toMatch(/black/);
       }
+    }
+  });
+
+  /**
+   * Reported as *"the well isn't distinctive enough — make it so sitewide"*,
+   * and both halves of the fix are the kind that get undone by the next
+   * person answering the same symptom locally.
+   *
+   * The well used to carry a light-mode-only `0 0 0 1px var(--td-edge)` ring,
+   * on the reasoning that light carves shallower and needs all four sides.
+   * That ring was in the stylesheet the entire time the well was being
+   * reported as flat, so it was never what made the well read — it is an
+   * outline doing depth's job, and a well is separated by shadow alone
+   * ([[L32]]). The carve now lives in `--td-inset-soft`, per theme ([[L40]]).
+   *
+   * And `deep` must be the shared token rather than its own numbers. It was a
+   * hand-rolled mix, which was fine until `soft` was retuned past it — at
+   * which point the deeper well was the shallower one, with nothing in either
+   * rule looking wrong.
+   */
+  it("carves the well with the shared tokens rather than a local ring or local numbers", () => {
+    for (const { label, css } of copies("frame.css")) {
+      for (const [selector, body] of [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)].map(m => [m[1].trim().replace(/\s+/g, " "), m[2]] as const)) {
+        if (!/-frame-well\b/.test(selector)) continue;
+        const shadow = decl(body, "box-shadow");
+        if (!shadow || shadow === "none") continue;
+        // A non-inset slot on a well is a ring drawn around a recess.
+        for (const slot of slots(shadow)) {
+          expect(slot, `${label} ${selector}`).toMatch(/^(inset|var\()/);
+        }
+      }
+      const deep = rule(css, /-frame--deep .td-(react|registry)-frame-well$/);
+      expect(decl(deep, "box-shadow"), label).toBe("var(--td-inset-deep)");
     }
   });
 });

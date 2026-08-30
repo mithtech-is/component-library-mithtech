@@ -98,8 +98,6 @@
   .td-registry-terminal-cursor { animation: none; }
 }
 
-/* Light mode carves shallower than dark, so the well needs its ring to read on
-   all four sides ([[L27]]). */
-:root:not([data-theme="dark"]) .td-registry-terminal-body {
-  box-shadow: var(--td-inset-soft), 0 0 0 1px var(--td-edge);
-}
+/* The light-mode ring that used to sit here is gone: `--td-inset-soft` now
+   carries the carve absolutely and per theme, so a transcript well reads on
+   paper without an outline drawn round it. See the note in `frame.css`. */

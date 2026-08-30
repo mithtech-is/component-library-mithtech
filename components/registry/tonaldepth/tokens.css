@@ -53,7 +53,12 @@
   /* Raised & inset surfaces */
   --td-raise-fill: var(--td-surface);
   --td-raise-fill-hover: color-mix(in srgb, var(--td-surface) 99%, white);
-  --td-inset-soft: inset 2px 2px 5px color-mix(in srgb, var(--td-shadow-dark) 65%, transparent), inset -2px -2px 5px color-mix(in srgb, var(--td-shadow-light) 92%, transparent);
+  /* The well: the plain surface pressed in. Three parts — a lip on the cut
+     upper edge, the shade falling from it, the bounce off the lower wall —
+     stated absolutely with their own dark values below, because
+     --td-shadow-light is 6.2% in dark and no percentage of it draws a lip. */
+  --td-inset-soft: inset 0 1px 0 rgba(58, 48, 36, 0.20), inset 3px 3px 8px rgba(82, 70, 54, 0.34), inset -2px -2px 6px rgba(255, 255, 255, 0.88);
+  --td-inset-deep: inset 0 1.5px 0 rgba(58, 48, 36, 0.28), inset 4px 5px 12px rgba(82, 70, 54, 0.46), inset -2px -3px 8px rgba(255, 255, 255, 0.95);
   --td-raised: 4px 5px 12px color-mix(in srgb, var(--td-shadow-dark) 70%, transparent), -4px -5px 10px color-mix(in srgb, var(--td-shadow-light) 95%, transparent), inset 0 1px 0 var(--td-shadow-veil), 0 0 0 1px var(--td-edge);
 
   /* Radii & spacing */
@@ -101,6 +106,9 @@
   --td-row-hover: inset 2px 2px 5px rgba(0, 0, 0, 0.55), inset -1.5px -1.5px 4px rgba(255, 248, 230, 0.055);
   --td-row-press: inset 3px 3px 8px rgba(0, 0, 0, 0.72), inset -2px -2px 5px rgba(255, 248, 230, 0.075);
   --td-row-selected: inset 2.5px 2.5px 6px rgba(0, 0, 0, 0.64), inset -1.5px -1.5px 4px rgba(255, 248, 230, 0.065);
+
+  --td-inset-soft: inset 0 1px 0 rgba(0, 0, 0, 0.62), inset 3px 3px 8px rgba(0, 0, 0, 0.72), inset -2px -2px 6px rgba(255, 248, 230, 0.070);
+  --td-inset-deep: inset 0 1.5px 0 rgba(0, 0, 0, 0.78), inset 4px 5px 12px rgba(0, 0, 0, 0.88), inset -2px -3px 8px rgba(255, 248, 230, 0.095);
 }
 
 body {
