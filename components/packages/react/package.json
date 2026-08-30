@@ -1,6 +1,6 @@
 {
   "name": "@mithtech-bengaluru/tonaldepth-react",
-  "version": "0.1.0-alpha.22",
+  "version": "0.1.0-alpha.23",
   "description": "Typed React components for the TonalDepth design system",
   "license": "UNLICENSED",
   "type": "module",
