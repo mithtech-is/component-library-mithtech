@@ -12,8 +12,27 @@
    min-content width of a `white-space: nowrap` line — i.e. the whole headline.
    That is enough to blow out a column and take the page's horizontal scroll
    with it. The fitter measures against clientWidth, so the box has to be
-   allowed to shrink first. */
-.td-react-rect-title { min-width: 0; }
+   allowed to shrink first.
+
+   `min-width: 0` is NOT enough on its own, and it took a real page to show it:
+   it only helps when the heading is itself the grid or flex item. Put a
+   wrapper round it — or a `display: contents` ancestor, which is what the docs
+   use — and the item is an element this component does not own and cannot set
+   a property on, so the min-content width propagates up and blows out the
+   track anyway. Measured on the docs' own RectTitle page: a 960px column
+   resolved to 1080px and the whole document took a horizontal scrollbar.
+
+   So the heading has to stop CONTRIBUTING that width rather than trying to
+   survive it. Inline-size containment computes this element's inline size as
+   though it had no contents, which zeroes its min-content contribution to
+   every ancestor — and then `clientWidth` is the width actually available,
+   which is what makes the fitter's shrink branch able to fire at all. Before
+   this it was measuring the space it had already taken and concluding it fit.
+
+   Containment here is inline-size only. `layout` and `paint` would make this a
+   containing block for fixed descendants, which is the trap the Overlays page
+   is about. */
+.td-react-rect-title { min-width: 0; contain: inline-size; }
 
 /* Lines are sized individually by the fitter, so the block's own line-height
    would otherwise be computed against the heading's base size and leave the

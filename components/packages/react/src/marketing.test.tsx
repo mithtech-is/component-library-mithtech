@@ -457,6 +457,30 @@ describe("marketing components", () => {
     expect(lines.some(line => line.contains(suffix))).toBe(false);
   });
 
+  it("cannot blow out the column it is placed in", () => {
+    // `.td-h1-line` is `white-space: nowrap`, so the heading's min-content
+    // width is the whole headline. Under `min-width: auto` that propagates up
+    // and sizes the grid track — measured on the docs' own page, a 960px
+    // column resolved to 1080px and the document took a horizontal scrollbar.
+    //
+    // `min-width: 0` alone does not fix it: it only helps when the heading IS
+    // the grid item, and a wrapper (or a `display: contents` ancestor) makes
+    // the item an element this component does not own. Inline-size containment
+    // zeroes the contribution instead — and it is what lets the fitter read
+    // the width actually available rather than the width it had already taken.
+    for (const [label, css] of [
+      ["package", readFileSync(join(SRC, "rect-title.css"), "utf8")],
+      ["registry", readFileSync(join(SRC, "../../../registry/tonaldepth/rect-title.css"), "utf8").replaceAll("td-registry-", "td-react-")],
+    ] as const) {
+      const body = /\.td-react-rect-title \{([^}]*)\}/.exec(css)![1];
+      expect(body, label).toMatch(/min-width:\s*0/);
+      expect(body, label).toMatch(/contain:\s*inline-size/);
+      // Inline-size only. `layout` and `paint` would make the heading a
+      // containing block for fixed descendants, which is the Overlays trap.
+      expect(body, label).not.toMatch(/contain:[^;]*\b(layout|paint|strict|content)\b/);
+    }
+  });
+
   it("hides the suffix from sight without hiding it from a screen reader", () => {
     for (const css of [readFileSync(join(SRC, "rect-title.css"), "utf8"),
                        readFileSync(join(SRC, "../../../registry/tonaldepth/rect-title.css"), "utf8")]) {
