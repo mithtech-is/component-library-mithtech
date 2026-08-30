@@ -229,6 +229,81 @@ describe("TimePicker — the redesigned selector", () => {
   });
 });
 
+describe("TimePicker — the 12-hour cycle", () => {
+  it("keeps the meridiem column out of the grid at the default cycle", async () => {
+    const user = userEvent.setup();
+    render(<TimePicker value="09:30" label="Slot" />);
+    await user.click(screen.getByRole("button", { name: /Slot/ }));
+    expect(screen.queryByRole("listbox", { name: "Before or after noon" })).not.toBeInTheDocument();
+    expect(within(screen.getByRole("listbox", { name: "Hour" })).getAllByRole("option")).toHaveLength(24);
+  });
+
+  it("adds the meridiem as a third column, on a twelve-lead hour column", async () => {
+    const user = userEvent.setup();
+    render(<TimePicker value="09:30" hourCycle={12} label="Slot" />);
+    await user.click(screen.getByRole("button", { name: /Slot/ }));
+
+    const hours = within(screen.getByRole("listbox", { name: "Hour" })).getAllByRole("option");
+    expect(hours).toHaveLength(12);
+    // 12 leads: a column running 1..12 strands noon and midnight at the bottom.
+    expect(hours[0]).toHaveTextContent("12");
+    const meridiem = within(screen.getByRole("listbox", { name: "Before or after noon" }));
+    expect(meridiem.getAllByRole("option")).toHaveLength(2);
+    expect(meridiem.getByRole("option", { name: "AM" })).toHaveAttribute("aria-selected", "true");
+  });
+
+  it("moves the stored hour across noon when the meridiem changes, and back again", async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    const { rerender } = render(<TimePicker value="09:30" hourCycle={12} onValueChange={onValueChange} label="Slot" />);
+    await user.click(screen.getByRole("button", { name: /Slot/ }));
+
+    await user.click(within(screen.getByRole("listbox", { name: "Before or after noon" })).getByRole("option", { name: "PM" }));
+    expect(onValueChange).toHaveBeenLastCalledWith("21:30");
+
+    rerender(<TimePicker value="21:30" hourCycle={12} onValueChange={onValueChange} label="Slot" />);
+    await user.click(within(screen.getByRole("listbox", { name: "Before or after noon" })).getByRole("option", { name: "AM" }));
+    expect(onValueChange).toHaveBeenLastCalledWith("09:30");
+  });
+
+  it("stores midnight for 12 AM rather than noon, which is where 12-hour clocks break", async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    render(<TimePicker value="09:30" hourCycle={12} onValueChange={onValueChange} label="Slot" />);
+    await user.click(screen.getByRole("button", { name: /Slot/ }));
+    await user.click(within(screen.getByRole("listbox", { name: "Hour" })).getByRole("option", { name: "12" }));
+    expect(onValueChange).toHaveBeenLastCalledWith("00:30");
+  });
+
+  it("writes the field in the reader's cycle without changing what it stores", () => {
+    const { rerender } = render(<TimePicker value="09:30" hourCycle={12} label="Slot" />);
+    expect(screen.getByRole("button", { name: /Slot/ })).toHaveTextContent("9:30 AM");
+    expect(screen.getByRole("button", { name: /Slot/ })).not.toHaveTextContent("09:30");
+
+    // Midnight and noon are the two the arithmetic gets wrong if `% 12` stands alone.
+    rerender(<TimePicker value="00:15" hourCycle={12} label="Slot" />);
+    expect(screen.getByRole("button", { name: /Slot/ })).toHaveTextContent("12:15 AM");
+    rerender(<TimePicker value="12:15" hourCycle={12} label="Slot" />);
+    expect(screen.getByRole("button", { name: /Slot/ })).toHaveTextContent("12:15 PM");
+    rerender(<TimePicker value="13:00" hourCycle={12} label="Slot" />);
+    expect(screen.getByRole("button", { name: /Slot/ })).toHaveTextContent("1:00 PM");
+  });
+
+  it("takes the meridiem from the keyboard, because the column is a listbox", async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    render(<TimePicker value="09:30" hourCycle={12} onValueChange={onValueChange} label="Slot" />);
+    await user.click(screen.getByRole("button", { name: /Slot/ }));
+
+    const meridiem = within(screen.getByRole("listbox", { name: "Before or after noon" }));
+    meridiem.getByRole("option", { name: "AM" }).focus();
+    await user.tab();
+    expect(meridiem.getByRole("option", { name: "PM" })).toHaveFocus();
+    await user.keyboard("{Enter}");
+    expect(onValueChange).toHaveBeenLastCalledWith("21:30");
+  });
+});
+
 describe("DateRangePicker", () => {
   it("orders the pair whichever end was set first", async () => {
     const user = userEvent.setup();
@@ -272,6 +347,14 @@ describe("DateTimePicker", () => {
     await user.click(screen.getByRole("button", { name: /When/ }));
     await user.click(screen.getByRole("gridcell", { name: /^16 September/ }));
     expect(onDateTimeChange).toHaveBeenCalledWith("2026-09-16", "09:00");
+  });
+
+  it("carries hourCycle into both the field and the time grid", async () => {
+    const user = userEvent.setup();
+    render(<DateTimePicker date="2026-09-14" time="13:00" hourCycle={12} label="When" />);
+    expect(screen.getByRole("button", { name: /When/ })).toHaveTextContent("1:00 PM");
+    await user.click(screen.getByRole("button", { name: /When/ }));
+    expect(screen.getByRole("listbox", { name: "Before or after noon" })).toBeInTheDocument();
   });
 });
 
