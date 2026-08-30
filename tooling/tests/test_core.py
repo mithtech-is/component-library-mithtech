@@ -22,11 +22,18 @@ class CoreFoundationTests(unittest.TestCase):
         self.tokens = build.validate(self.source)
 
     def test_canonical_schema_and_legacy_variables(self):
-        self.assertEqual(138, len(self.tokens))
+        self.assertEqual(141, len(self.tokens))
         variables = {item["$extensions"]["tonaldepth"]["cssVariable"] for item in self.tokens}
         self.assertIn("--td-bg", variables)
         self.assertIn("--td-font-ui", variables)
         self.assertIn("--td-density", variables)
+        # The lamp's colour ladder. Only the STRENGTHS are tokens: a rung
+        # written as `var(--td-lamp-glow)` at `:root` resolves there, so it
+        # bakes in the root's green and every housing inherits it whatever
+        # light it names. The mix has to happen where the glow is in scope.
+        for name in ("--td-lamp-unlit", "--td-lamp-hover-mix", "--td-lamp-held-mix"):
+            self.assertIn(name, variables)
+        self.assertNotIn("--td-lamp-ink-press", variables)
         # The row ladder is a token too, and it has to be: every component with
         # rows reads its press from these, and the dark values are not a
         # percentage of the light ones — `--td-shadow-light` is 6% in dark, so

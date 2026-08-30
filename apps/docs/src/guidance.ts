@@ -858,17 +858,18 @@ export const GUIDANCE = {
 
   /* ── Patterns ─────────────────────────────────────────────────────── */
   "lamp": {
-    aliases: ["glow", "icon glow", "hover glow", "lit icon", "drop-shadow state", "filament"],
+    aliases: ["glow", "icon glow", "hover glow", "lit icon", "filament", "state ladder", "four states", "hover press active"],
     useCases: ["make an icon show state on hover", "add a glow to a button icon", "show a control is pressed", "light an icon without changing its colour meaning"],
-    whenToUse: "The technique every icon-carrying control uses to report state: unlit at rest, lit on hover, brighter on press. Read this before adding a glow to anything.",
+    whenToUse: "The technique every icon-carrying control uses to report state, in four rungs and by colour alone. Read this before lighting anything.",
     whenNotToUse: [
       { instead: "icon-button", because: "You want the component, not the technique. That page is the control; this one is why its glyph behaves the way it does." },
       { instead: "social-button", because: "The mark is a trademark. It lights, but it must not take a state colour — that page records the one exception." },
     ],
     variants: [
-      { name: "off", when: "Rest. Two explicit zero shadows, never `none`." },
-      { name: "hover", when: "Lit — the colour lifts and a soft bloom appears." },
-      { name: "active", when: "Pressed — a solid core plus a wide halo." },
+      { name: "off", when: "Rest. Grey glass, carrying no hue at all — a dead filament is not a dim green one." },
+      { name: "hover", when: "Dim light. The filament has started to warm and is well short of its colour." },
+      { name: "held", when: "The standing lit state — pressed, expanded, selected, current. Brighter than hover, deliberately short of the press. It survives the pointer leaving." },
+      { name: "press", when: "The maximum, and the only rung that reaches `--td-lamp-glow` exactly." },
     ],
   },
   "overlays": {

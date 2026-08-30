@@ -961,16 +961,44 @@ main { min-width: 0; overflow-x: clip; overflow-y: visible; }
 }
 .lampdemo-mark { width: 45%; height: 45%; display: block; fill: currentColor; }
 
-/* The three rungs, forced. Colour first, glow second — on the filled
-   housing the bloom is nearly invisible and the colour is doing the work. */
-.lampdemo-chip--carved .lampdemo-mark { color: color-mix(in srgb, var(--td-brand-text) 62%, transparent); filter: var(--td-lamp-off); }
-.lampdemo-chip--carved[data-rung="hover"] .lampdemo-mark { color: var(--td-brand-text); filter: var(--td-lamp-hover); }
-.lampdemo-chip--carved[data-rung="active"] .lampdemo-mark { color: var(--td-brand-text); filter: var(--td-lamp-active); }
-.lampdemo-chip--filled .lampdemo-mark { color: color-mix(in srgb, #fff 68%, transparent); filter: var(--td-lamp-off); }
-.lampdemo-chip--filled[data-rung="hover"] .lampdemo-mark { color: #fff; filter: var(--td-lamp-hover); }
-.lampdemo-chip--filled[data-rung="active"] .lampdemo-mark { color: color-mix(in srgb, #fff 88%, white); filter: var(--td-lamp-active); }
+/* The four rungs, forced.
+
+   COLOUR ONLY - there is no `filter` on any rung. A halo behind a glyph is a
+   smear on paper and is invisible on a saturated fill, so it was never the
+   thing reporting the state; the colour was, and the halo was hiding how
+   little the colour actually moved.
+
+   The recipe is written out at each rung rather than read from a
+   `--td-lamp-ink-*` token, and that is not verbosity. A custom property
+   resolves its own `var()`s at the element it is DECLARED on, so a rung token
+   defined at `:root` bakes in the root's `--td-lamp-glow` - green - and every
+   housing inherits green however it sets its own light. Only the STRENGTHS can
+   be shared; the mix has to happen where the glow is in scope.
+
+   Both housings run the same recipe. What differs is the unlit ink and the
+   light: a carved housing is grey glass lighting to the category colour, a
+   saturated one is translucent white lighting to white. */
+.lampdemo-mark { transition: color var(--td-t-base) var(--td-ease); }
+.lampdemo-chip .lampdemo-mark { color: var(--td-lamp-unlit); }
+.lampdemo-chip[data-rung="hover"] .lampdemo-mark { color: color-mix(in srgb, var(--td-lamp-glow) var(--td-lamp-hover-mix), var(--td-lamp-unlit)); }
+.lampdemo-chip[data-rung="held"] .lampdemo-mark { color: color-mix(in srgb, var(--td-lamp-glow) var(--td-lamp-held-mix), var(--td-lamp-unlit)); }
+.lampdemo-chip[data-rung="press"] .lampdemo-mark { color: var(--td-lamp-glow); }
+
+/* A saturated housing IS the ground, so the unlit ink is translucent white
+   rather than grey glass - grey on papaya reads as a dead pixel, not a lamp. */
+.lampdemo-chip--filled { --td-lamp-unlit: rgb(255 255 255 / 0.5); }
+
+/* The live chip runs the same four rungs off real interaction, so the ladder is
+   something the reader operates rather than four forced states to take on
+   trust. `held` is `aria-pressed`, because it is a standing choice and has to
+   survive the pointer leaving. */
+.lampdemo-chip--live { cursor: pointer; padding: 0; }
+.lampdemo-chip--live:hover .lampdemo-mark { color: color-mix(in srgb, var(--td-lamp-glow) var(--td-lamp-hover-mix), var(--td-lamp-unlit)); }
+.lampdemo-chip--live[aria-pressed="true"] .lampdemo-mark { color: color-mix(in srgb, var(--td-lamp-glow) var(--td-lamp-held-mix), var(--td-lamp-unlit)); }
+.lampdemo-chip--live:active .lampdemo-mark { color: var(--td-lamp-glow); }
+.lampdemo-chip--live:focus-visible { outline: 2px solid var(--td-accent); outline-offset: 3px; }
 
 /* The trap, shown rather than described: no fallback, so the root default
    leaks in. Scoped to the demo so it cannot escape into a real control. */
 .lampdemo-chip--trap { background: var(--td-raise-fill); box-shadow: var(--td-btn-rest); }
-.lampdemo-chip--trap .lampdemo-mark { color: var(--td-ink-2); filter: var(--td-lamp-active); }
+.lampdemo-chip--trap .lampdemo-mark { color: color-mix(in srgb, var(--td-lamp-glow) var(--td-lamp-held-mix), var(--td-lamp-unlit)); }
