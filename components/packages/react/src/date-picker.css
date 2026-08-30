@@ -30,25 +30,3 @@
 
 /* Named so a screen reader gets the popover's title without it being drawn. */
 .td-react-vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-
-/* The time grid, carried here as well as in the core layer.
-
-   `.td-timegrid-*` is the design system's and lives in `compat.css`, which is
-   how every other base class in this file arrives. But `tonaldepth-core` is
-   still published at `0.1.0-alpha.0` and predates these rules, so an npm
-   consumer inheriting the base layer gets the component with no styling for it
-   — verified by installing the published package into a clean tree. Every
-   other class these fields emit IS in the published core; this is the only
-   gap. Delete this block once core is republished. */
-.td-timegrid { display: flex; flex-direction: column; gap: 10px; min-width: 168px; }
-.td-timegrid-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
-.td-timegrid-label { font-family: var(--td-font-mono); font-size: 9.5px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--td-ink-3); }
-.td-timegrid-value { font-family: var(--td-font-mono); font-size: 13px; font-weight: 700; color: var(--td-brand-text); font-variant-numeric: tabular-nums; }
-.td-timegrid-cols { display: flex; gap: 10px; }
-.td-timegrid-col { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-.td-timegrid-col-h { text-align: center; color: var(--td-ink-3); font-family: var(--td-font-mono); font-weight: 600; font-size: 10.5px; letter-spacing: 0.04em; text-transform: uppercase; padding: 2px 0; }
-.td-timegrid-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; }
-.td-timegrid-opt { appearance: none; border: 0; cursor: pointer; font-family: var(--td-font-mono); font-size: 11.5px; color: var(--td-ink-2); background: transparent; padding: 6px 8px; border-radius: 8px; text-align: center; font-variant-numeric: tabular-nums; transition: box-shadow 140ms var(--td-ease), color 140ms var(--td-ease); }
-.td-timegrid-opt:hover { color: var(--td-ink); background: var(--td-surface); box-shadow: inset 1px 1px 3px color-mix(in srgb, var(--td-shadow-dark) 30%, transparent), inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 35%, transparent); }
-.td-timegrid-opt[aria-selected="true"] { color: var(--td-brand-text); font-weight: 700; background: var(--td-surface); box-shadow: inset 1.5px 1.5px 4px color-mix(in srgb, var(--td-shadow-dark) 44%, transparent), inset -1px -1px 3px color-mix(in srgb, var(--td-shadow-light) 36%, transparent); }
-.td-timegrid-opt:focus-visible { outline: 2px solid var(--td-accent); outline-offset: 1px; }

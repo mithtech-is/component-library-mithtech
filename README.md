@@ -8,9 +8,10 @@ Private-ready, multi-platform TonalDepth design-system reconstruction.
 - **Prepared:** the documented monorepo boundaries and Phase 0 audit workflow exist.
 - **Verified:** `python tooling/audit/audit_html.py` produces deterministic token, selector, font, resource, markup, and script/style inventories.
 - **Confirmed:** GitHub organization `Mithtech-Bengaluru`, intended npm scope `@mithtech-bengaluru`, private repository name `tonaldepth`, and the offline HTML as the final design/typography baseline.
-- **Deferred:** remote creation, teams, maintainers, and approvers. Font licensing evidence and formal web 1.x scope approval remain open; Phase 1 proceeded on the user's explicit instruction.
+- **Deferred:** remote creation, teams, maintainers, and approvers. Formal web 1.x scope approval remains open; Phase 1 proceeded on the user's explicit instruction.
+- **Closed 2026-08-30:** font licensing and provenance. All four families are SIL OFL 1.1, redistribution and web embedding are permitted, and every referenced binary has an audited SHA-256 that matches what the CDN serves. The evidence is in [`FONTS.md`](FONTS.md).
 - **Phase 1 implemented locally:** 115 canonical tokens, deterministic CSS/JSON generation, the preserved web 1.x compatibility layer, a private-ready core prerelease, and packed-consumer verification.
-- **Phase 1 limitations:** GitHub publication, font binaries/licenses, reusable icon source, chart runtime, and formal visual approval remain open.
+- **Phase 1 limitations:** reusable icon source, chart runtime, and formal visual approval remain open. GitHub publication and font binaries/licences are closed — see [`FONTS.md`](FONTS.md).
 
 The pre-development pack is copied into `others/docs/predevelopment/`; its authoritative source copy is not modified.
 
@@ -90,27 +91,20 @@ declared **once**, in `components/packages/core/dist/tokens.css`, generated from
   `@font-face` imports `@mithtech-bengaluru/tonaldepth-core/no-fonts` instead of
   dropping the tokens.
 
-  > **The `@font-face` blocks do NOT currently reach an npm consumer.**
-  > `tonaldepth-core` has only ever been published at `0.1.0-alpha.0`, whose
-  > `dist/fonts.css` is a single line — *"Font binaries are intentionally
-  > excluded until Google Fonts licenses are mapped to audited hashes."* The
-  > working tree builds 14 `@font-face` blocks into that file, but nothing has
-  > republished core since, so an installed consumer gets the four family names
-  > with no faces behind them and every role falls through to its fallback
-  > stack. The page reads *almost* right, which is the same silent failure this
-  > section warns about for the registry.
+  > **Verified reaching a real consumer, 2026-08-30.** This claim was false for
+  > most of the library's life and nothing caught it: `tonaldepth-core` sat at
+  > `0.1.0-alpha.0`, whose `fonts.css` was a single comment, so an installed
+  > consumer got four family names with no faces behind them. `core@0.1.0-alpha.1`
+  > carries the 14 `@font-face` blocks, and `tonaldepth-react` now depends on
+  > that version rather than `alpha.0`.
   >
-  > Verified 2026-08-30 by installing the published `tonaldepth-react@0.1.0-alpha.22`
-  > into a clean consumer. **Do not verify this by grepping the docs app** — the
-  > docs resolve core from the workspace, where `fonts.css` is fully built, so
-  > that check passes while a real install fails. This is how the claim survived.
+  > **Do not verify this by grepping the docs app.** The docs resolve core from
+  > the workspace, where `fonts.css` is always fully built, so that check passes
+  > while a real install fails — which is exactly how the false claim survived
+  > three audits. Verify by installing the published package into a clean tree.
   >
-  > Closing it means publishing `tonaldepth-core` at a version whose `fonts.css`
-  > carries the faces. That is gated on the font-licensing question this README
-  > still records as open, so it is a decision rather than a chore. One fact for
-  > it: the generated `fonts.css` embeds **no binaries** — it references
-  > `cdn.jsdelivr.net` and `unpkg.com` Fontsource URLs with a self-hosted
-  > `/fonts/…` fallback, which is a lighter question than shipping audited files.
+  > Licence and provenance for all four families: [`FONTS.md`](FONTS.md).
+
 - **The registry must carry its own copy.** A registry consumer installs *files*,
   not a package, and has no `tonaldepth-core` to inherit from — so
   `components/registry/tonaldepth/tokens.css` is the one place a duplicate is correct, and

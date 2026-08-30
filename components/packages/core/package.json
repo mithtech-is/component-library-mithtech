@@ -1,10 +1,15 @@
 {
   "name": "@mithtech-bengaluru/tonaldepth-core",
-  "version": "0.1.0-alpha.0",
+  "version": "0.1.0-alpha.1",
   "description": "TonalDepth platform-neutral web tokens and 1.x compatibility CSS",
   "license": "UNLICENSED",
-  "sideEffects": ["*.css"],
-  "files": ["dist", "README.md"],
+  "sideEffects": [
+    "*.css"
+  ],
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "exports": {
     ".": "./dist/index.css",
     "./no-fonts": "./dist/index-no-fonts.css",
@@ -23,4 +28,3 @@
     "directory": "components/packages/core"
   }
 }
-

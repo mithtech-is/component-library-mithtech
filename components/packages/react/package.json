@@ -30,7 +30,7 @@
     "test": "vitest run --pool=forks --maxWorkers=1"
   },
   "dependencies": {
-    "@mithtech-bengaluru/tonaldepth-core": "0.1.0-alpha.0",
+    "@mithtech-bengaluru/tonaldepth-core": "0.1.0-alpha.1",
     "@phosphor-icons/react": "^2.1.10"
   },
   "peerDependencies": {

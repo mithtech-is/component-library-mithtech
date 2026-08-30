@@ -18,7 +18,7 @@
     "test": "vitest run --pool=forks --maxWorkers=1"
   },
   "dependencies": {
-    "@mithtech-bengaluru/tonaldepth-core": "0.1.0-alpha.0"
+    "@mithtech-bengaluru/tonaldepth-core": "0.1.0-alpha.1"
   },
   "peerDependencies": { "vue": "^3.5.0" },
   "publishConfig": { "registry": "https://npm.po5.in", "access": "restricted" },
