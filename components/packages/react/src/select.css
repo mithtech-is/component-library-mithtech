@@ -31,3 +31,41 @@
 .td-react-combobox[data-disabled] { opacity: 0.55; pointer-events: none; }
 .td-select-wrap[data-disabled] { opacity: 0.55; }
 .td-select-wrap[data-state="error"] { border-color: var(--td-brand); }
+
+/* ── the field sizes to its content, in every parent ───────────────────
+   `.td-select-wrap` is declared `inline-flex`, and CSS blockifies an
+   inline-level box to `flex` the moment it becomes a grid or flex item — a
+   stretched item then fills its whole track. Dropped into a `display: grid`
+   form the select spanned a 900px measure and read as a text field somebody
+   had pulled sideways, rather than as a control sized to the longest option
+   it holds.
+
+   `width: fit-content` is a definite size, so the stretch cannot apply, and it
+   holds in grid, flex-column and block contexts alike. Same fault and same fix
+   as `.td-react-badge` — it is worth checking any `inline-flex` control against
+   this, because nothing about the rule looks wrong until it is in a grid. */
+.td-select-wrap.td-react-select {
+  width: fit-content;
+  max-width: 100%;
+}
+
+/* ── the highlighted option is PRESSED, not tinted ─────────────────────
+   It washed the active row in 14% brand, under a comment claiming it was
+   depth. A row the reader has arrowed to is not a category, so a tint there
+   says nothing and spends the one signal the system reserves for meaning; and
+   the row ladder is a token with its own dark values precisely because no
+   percentage of a shared shadow reads in both themes.
+
+   The same ladder every other row in the library takes, so pointer and
+   keyboard put the reader in one place rather than inventing a second
+   vocabulary. */
+.td-combobox-option[data-active] {
+  background: transparent;
+  color: var(--td-ink);
+  box-shadow: var(--td-row-hover);
+}
+.td-combobox-option[aria-selected="true"] {
+  background: transparent;
+  color: var(--td-ink);
+  box-shadow: var(--td-row-selected);
+}

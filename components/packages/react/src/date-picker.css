@@ -38,3 +38,15 @@
    rest, a shallow well on hover, the deeper well with papaya text when picked.
    A meridiem is a choice like an hour, and reads like one. */
 .td-react-timegrid-meridiem { grid-template-columns: 1fr; }
+
+/* ── a day inside the range is not a category ──────────────────────────
+   It carried a 10% brand wash. The reasoning in the old comment was right —
+   these days are included but were not chosen one at a time, so they must not
+   read as pressed — and the conclusion was wrong: the answer to "not pressed"
+   is a shallower rung of the row ladder, not a colour band. Colour is category
+   ([[L11]]), and "between the two days you picked" is not one. */
+.td-cal-day[data-state~="inrange"] {
+  background: transparent;
+  color: var(--td-ink);
+  box-shadow: var(--td-row-hover);
+}

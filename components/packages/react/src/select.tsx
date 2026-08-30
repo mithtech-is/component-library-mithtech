@@ -50,7 +50,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
   const effectiveInvalid = invalid || ariaInvalid === true || ariaInvalid === "true";
   return (
     <span
-      className={cx("td-select-wrap", containerClassName)}
+      className={cx("td-select-wrap", "td-react-select", containerClassName)}
       data-state={effectiveInvalid ? "error" : undefined}
       data-disabled={disabled || undefined}
     >

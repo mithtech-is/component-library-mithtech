@@ -38,7 +38,7 @@ export const TonalDepthSelect = forwardRef<HTMLSelectElement, TonalDepthSelectPr
   const effectiveInvalid = invalid || ariaInvalid === true || ariaInvalid === "true";
   return (
     <span
-      className={cx("td-select-wrap", containerClassName)}
+      className={cx("td-select-wrap", "td-registry-select", containerClassName)}
       data-state={effectiveInvalid ? "error" : undefined}
       data-disabled={disabled || undefined}
     >
