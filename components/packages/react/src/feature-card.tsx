@@ -47,11 +47,36 @@ export const FeatureCard = forwardRef<HTMLElement, FeatureCardProps>(function Fe
 });
 
 export interface FeatureGridProps extends HTMLAttributes<HTMLDivElement> {
+  /**
+   * **How many columns to draw** — a count, not a hint.
+   *
+   * It used to be a min-width hint with no cap on it, so `columns={3}` drew
+   * FOUR tracks at a 1216px measure and getting a clean 3 x 2 meant narrowing
+   * the container instead. The container, not the prop, decided the count. A
+   * variant's name is a promise about what appears on screen.
+   */
   columns?: 2 | 3 | 4;
+  /**
+   * The reflow floor, in pixels: how narrow a column may get before the grid
+   * drops one. Defaults to what each column count has always implied — 300 at
+   * two, 260 at three, 216 at four — so passing only `columns` reflows exactly
+   * as it did.
+   *
+   * This is the half of the old `columns` that was doing real work. It now has
+   * its own name, and `columns` means what it says.
+   */
+  min?: number;
 }
 
 export const FeatureGrid = forwardRef<HTMLDivElement, FeatureGridProps>(function FeatureGrid(
-  { columns = 3, className, ...props }, ref,
+  { columns = 3, min, className, style, ...props }, ref,
 ) {
-  return <div {...props} ref={ref} className={cx("td-mk-feature-grid", `td-mk-feature-grid--${columns}`, className)} />;
+  return (
+    <div
+      {...props}
+      ref={ref}
+      style={min === undefined ? style : { ...style, ["--td-grid-min" as string]: `${min}px` }}
+      className={cx("td-mk-feature-grid", `td-mk-feature-grid--${columns}`, className)}
+    />
+  );
 });

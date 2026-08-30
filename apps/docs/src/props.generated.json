@@ -2461,6 +2461,16 @@
       "renderLink",
       "(props: { className: string; href: string; children: ReactNode }) => ReactNode",
       "—"
+    ],
+    [
+      "columns",
+      "2 | 3 | 4",
+      "—"
+    ],
+    [
+      "min",
+      "number",
+      "—"
     ]
   ],
   "logo-strip": [

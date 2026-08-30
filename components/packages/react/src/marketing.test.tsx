@@ -5,8 +5,10 @@ import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import type { ReactNode } from "react";
+
+const SRC = dirname(fileURLToPath(import.meta.url));
 import axe from "axe-core";
-import { ArticleCard, ArticleCardGrid, Button, Card, CaseCard, ThemeToggle, CaseCardGrid, ComparisonTable, CtaBanner, FeatureCard, FeatureGrid, Prose, RectTitle, splitRectTitle, Timeline, type ArticleCardAsset } from "./index";
+import { ArticleCard, ArticleCardGrid, Button, Card, CaseCard, ThemeToggle, CaseCardGrid, ComparisonTable, CtaBanner, FeatureCard, FeatureGrid, LinkCells, Prose, RectTitle, splitRectTitle, Timeline, type ArticleCardAsset } from "./index";
 
 /** Manoj's own card: two live tools, two files, a dataset and a checklist. */
 const PAYLOAD: ArticleCardAsset[] = [
@@ -175,6 +177,90 @@ describe("marketing components", () => {
     expect(screen.getByLabelText("Capabilities")).toHaveClass("td-mk-feature-grid--4");
     expect(screen.getByRole("article")).toHaveClass("td-mk-feature--accent");
     expect(within(screen.getByRole("list")).getAllByRole("listitem")).toHaveLength(2);
+  });
+
+  /*
+   * `columns` is a COUNT, and this is the test that makes that true.
+   *
+   * It used to be a min-width hint: `columns={3}` set
+   * `minmax(min(100%, 260px), 1fr)` under `auto-fit`, which lays down FOUR
+   * tracks at a 1216px measure. A variant name is a promise about what appears
+   * on screen, and getting a clean 3 x 2 out of six cards meant narrowing the
+   * container to 960px — so the container, not the prop, decided the count.
+   *
+   * jsdom performs no layout, so the count is checked the only honest way
+   * available here: the track expression is read out of the stylesheet and its
+   * arithmetic evaluated at a real measure. Both halves matter — the shape,
+   * so the formula cannot be swapped for a hint again, and the numbers, so the
+   * floors chosen actually let `n` tracks fit at the page's width.
+   */
+  const gridRule = (css: string, selector: string) => {
+    const body = new RegExp(`${selector.replace(/[.[\]]/g, "\\$&")}\\s*\\{([^}]*)\\}`).exec(css)?.[1] ?? "";
+    return body.replace(/\s+/g, " ");
+  };
+  /** The count `auto-fit` lays down for a track floor and a cap, at `width`. */
+  const tracks = (width: number, floor: number, n: number, gap: number) => {
+    // The expression in the stylesheet, evaluated: a track is the wider of the
+    // floor and one of `n` equal columns.
+    const track = Math.max(floor, (width - (n - 1) * gap) / n);
+    return Math.max(1, Math.min(n, Math.floor((width + gap) / (track + gap))));
+  };
+
+  it("draws the number of columns it is asked for, and still reflows below the floor", () => {
+    const css = readFileSync(join(SRC, "feature-card.css"), "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
+    const base = gridRule(css, ".td-mk-feature-grid");
+    // The cap is the whole fix: `max(floor, one of n equal tracks)`.
+    expect(base).toMatch(/repeat\(auto-fit, minmax\(min\(100%, max\(var\(--td-grid-min\), calc\(\(100% - \(var\(--td-grid-n\) - 1\) \* var\(--td-grid-gap\)\) \/ var\(--td-grid-n\)\)\)\), 1fr\)\)/);
+    // The gap is read from one variable in both places, so the arithmetic and
+    // the actual gutter cannot drift apart.
+    expect(base).toMatch(/gap: var\(--td-grid-gap\)/);
+
+    const FLOORS: Record<number, number> = { 2: 300, 3: 260, 4: 216 };
+    const GAP = 22;
+    for (const n of [2, 3, 4]) {
+      expect(gridRule(css, `.td-mk-feature-grid--${n}`), `columns=${n}`)
+        .toMatch(new RegExp(`--td-grid-n: ${n};\\s*--td-grid-min: ${FLOORS[n]}px`));
+      // The homepage's own measure, at the 22px `--td-sp-10` resolves to.
+      expect(tracks(1216, FLOORS[n], n, GAP), `columns=${n} at 1216`).toBe(n);
+      // And it still gives way rather than squashing: at a tablet measure a
+      // four-column grid is not four columns of 216px it has no room for.
+      expect(tracks(700, FLOORS[4], 4, GAP), "columns=4 at 700").toBeLessThan(4);
+    }
+    // The defect itself, stated as arithmetic: an uncapped 260px floor at 1216
+    // fits four tracks, which is what `columns={3}` used to draw.
+    expect(Math.floor((1216 + GAP) / (260 + GAP))).toBe(4);
+  });
+
+  it("gives LinkCells the same column count, and leaves it uncapped when unasked", () => {
+    // Six cells broke 5 + 1 at the page measure and orphaned the sixth, which
+    // is how a set of onward links lost the job to FeatureGrid.
+    const { container, rerender } = render(<LinkCells items={[{ href: "/a", title: "One" }]} />);
+    const nav = () => container.firstElementChild as HTMLElement;
+    expect(nav().className).not.toMatch(/td-react-linkcells--/);
+
+    rerender(<LinkCells columns={3} items={[{ href: "/a", title: "One" }]} />);
+    expect(nav()).toHaveClass("td-react-linkcells--3");
+
+    rerender(<LinkCells columns={3} min={200} items={[{ href: "/a", title: "One" }]} />);
+    expect(nav().style.getPropertyValue("--td-grid-min")).toBe("200px");
+
+    const css = readFileSync(join(SRC, "link-cells.css"), "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
+    // The same expression as FeatureGrid's, because the two must not diverge.
+    expect(css).toMatch(/minmax\(min\(100%, max\(var\(--td-grid-min\), calc\(\(100% - \(var\(--td-grid-n\) - 1\) \* var\(--td-grid-gap\)\) \/ var\(--td-grid-n\)\)\)\), 1fr\)/);
+  });
+
+  it("takes a reflow floor separately from the count", () => {
+    // The half of the old `columns` that was doing real work, under its own
+    // name — so a caller can ask for three columns AND say how narrow one may
+    // get, which the single prop could never express.
+    const { container } = render(<FeatureGrid columns={3} min={200} />);
+    const grid = container.firstElementChild as HTMLElement;
+    expect(grid).toHaveClass("td-mk-feature-grid--3");
+    expect(grid.style.getPropertyValue("--td-grid-min")).toBe("200px");
+
+    // Omitted, the class's own default stands rather than an inline override.
+    const { container: plain } = render(<FeatureGrid columns={3} />);
+    expect((plain.firstElementChild as HTMLElement).style.getPropertyValue("--td-grid-min")).toBe("");
   });
 
   it("routes every card's link through renderLink when one is supplied", () => {

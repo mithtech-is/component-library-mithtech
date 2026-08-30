@@ -6,11 +6,32 @@
    about something that only says "onward". */
 
 .td-linkcells.td-registry-linkcells {
+  --td-grid-gap: var(--td-sp-6);
+  --td-grid-min: 230px;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  gap: var(--td-sp-6);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--td-grid-min)), 1fr));
+  gap: var(--td-grid-gap);
   min-width: 0;
 }
+
+/* ── the column cap ────────────────────────────────────────────────────
+   Without one, six cells break 5 + 1 at the page measure and the sixth is
+   orphaned — which is how a set of six onward links lost the job to
+   `FeatureGrid` and a hand-narrowed container. `columns` is a COUNT here, the
+   same expression FeatureGrid uses: `max(floor, one of n equal tracks)` caps
+   the count while the container is wide and hands back to the floor once a
+   track would fall under it. Omit `columns` and the grid is the uncapped
+   auto-fit it has always been.
+
+   See `FeatureGrid` for the full reasoning; the two must not diverge. */
+.td-linkcells.td-registry-linkcells--2,
+.td-linkcells.td-registry-linkcells--3,
+.td-linkcells.td-registry-linkcells--4 {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, max(var(--td-grid-min), calc((100% - (var(--td-grid-n) - 1) * var(--td-grid-gap)) / var(--td-grid-n)))), 1fr));
+}
+.td-linkcells.td-registry-linkcells--2 { --td-grid-n: 2; }
+.td-linkcells.td-registry-linkcells--3 { --td-grid-n: 3; }
+.td-linkcells.td-registry-linkcells--4 { --td-grid-n: 4; }
 
 /* Five slots in a fixed order in every rung — outer shade, outer highlight,
    inset shade, inset highlight, edge ring — with the unused ones at zero alpha

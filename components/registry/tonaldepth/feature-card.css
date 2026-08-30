@@ -1,10 +1,41 @@
 /* TonalDepth FeatureCard — the reused shape for a capability, a service, a
    platform. Tone is category only: it moves the icon's ink, never a fill. */
 
-.td-mk-feature-grid { display: grid; gap: var(--td-sp-10); min-width: 0; }
-.td-mk-feature-grid--2 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
-.td-mk-feature-grid--3 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); }
-.td-mk-feature-grid--4 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 216px), 1fr)); }
+/* ── the grid: `columns` is a COUNT, `min` is the reflow floor ─────────
+   `columns={3}` used to set `minmax(min(100%, 260px), 1fr)` — a min-width hint
+   with no cap on it, which draws FOUR tracks at a 1216px measure. A variant's
+   name is a promise about what appears on screen and that one did not keep it,
+   so getting a clean 3 x 2 meant narrowing the container instead: the
+   container, not the prop, was deciding the count.
+
+   The track expression does both jobs at once:
+
+     max(--td-grid-min, (100% - (n - 1) * gap) / n)
+
+   The right-hand term is the exact width of one of `n` equal tracks. While the
+   container is wide that term is the larger, so `auto-fit` lays down exactly
+   `n` of them. Once the container narrows far enough that a track would fall
+   under the floor, the floor wins and `auto-fit` packs as many as fit —
+   the reflow, unchanged. `min(100%, …)` keeps a single track from overflowing
+   a container narrower than the floor itself.
+
+   The gap is read from `--td-grid-gap` in both places, so the arithmetic and
+   the actual gutter cannot drift apart. */
+.td-mk-feature-grid {
+  --td-grid-gap: var(--td-sp-10);
+  --td-grid-min: 260px;
+  --td-grid-n: 3;
+  display: grid;
+  gap: var(--td-grid-gap);
+  min-width: 0;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, max(var(--td-grid-min), calc((100% - (var(--td-grid-n) - 1) * var(--td-grid-gap)) / var(--td-grid-n)))), 1fr));
+}
+/* The count, and the floor each count used to imply — so a caller who passed
+   only `columns` gets the same reflow behaviour it always had, with the cap
+   the name promised added on top. `min` overrides the floor inline. */
+.td-mk-feature-grid--2 { --td-grid-n: 2; --td-grid-min: 300px; }
+.td-mk-feature-grid--3 { --td-grid-n: 3; --td-grid-min: 260px; }
+.td-mk-feature-grid--4 { --td-grid-n: 4; --td-grid-min: 216px; }
 
 .td-mk-feature {
   position: relative;
