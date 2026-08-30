@@ -53,6 +53,40 @@ describe("overlays", () => {
     expect(trigger).toHaveFocus();
   });
 
+  it("keeps the caret in the field while typing, with a fresh onOpenChange each render", async () => {
+    /* The bug this exists for: `onOpenChange` was an effect dependency, so a
+       caller passing an inline arrow — the normal way — tore the effect down
+       and re-ran it on every render. Cleanup restored focus, setup moved it to
+       the first focusable, and every keystroke threw the caret to the close
+       button. The original test missed it by passing `setOpen` straight from
+       `useState`, whose identity never changes; this one passes an arrow. */
+    const user = userEvent.setup();
+    function Example() {
+      const [open, setOpen] = useState(true);
+      const [text, setText] = useState("");
+      return (
+        <Dialog open={open} onOpenChange={next => setOpen(next)} title="Enquiry">
+          <input aria-label="Name" />
+          <input aria-label="Subject" value={text} onChange={event => setText(event.target.value)} />
+        </Dialog>
+      );
+    }
+    render(<Example />);
+    // The SECOND field on purpose. Typing in the first hides the bug, because
+    // the re-run lands focus back where it already was.
+    const second = screen.getByRole("textbox", { name: "Subject" });
+    await user.click(second);
+    await user.keyboard("Replatform");
+    expect(second).toHaveValue("Replatform");
+    expect(second).toHaveFocus();
+  });
+
+  it("opens onto the first real control rather than onto the close button", () => {
+    render(<Dialog open onOpenChange={() => {}} title="Enquiry"><input aria-label="Name" /></Dialog>);
+    // Dismiss is always reachable; the first question should not sit behind it.
+    expect(screen.getByRole("textbox", { name: "Name" })).toHaveFocus();
+  });
+
   it("navigates dropdown items and selects a value", async () => {
     const user = userEvent.setup();
     let selected = "";
