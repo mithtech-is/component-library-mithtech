@@ -29,3 +29,25 @@
 .td-react-rect-title .td-h1-line--accent { color: var(--td-accent-text); }
 .td-react-rect-title .td-h1-line--green { color: var(--td-green-text); }
 .td-react-rect-title .td-h1-line--error { color: var(--td-error-text); }
+
+/* The screen-reader suffix.
+
+   The page's primary heading is where the positioning and the geo belong for
+   search, and an iconic three-line headline has no room for either. This puts
+   them inside the same heading element without moving a pixel of it.
+
+   `clip-path` rather than `display: none`, which would take the text out of
+   the accessibility tree along with the layout — the point is that it IS read.
+   And it is not a `.td-h1-line`, so the fitter never measures it: the
+   rectangle is exactly the rectangle it would have been. */
+.td-react-rect-title-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}

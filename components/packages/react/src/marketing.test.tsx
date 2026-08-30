@@ -3,7 +3,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import type { ReactNode } from "react";
 
 const SRC = dirname(fileURLToPath(import.meta.url));
@@ -409,6 +409,71 @@ describe("marketing components", () => {
     expect(accented[0]).not.toHaveClass("accent");
     rerender(<RectTitle text="Order to cash in four days" accent={false} />);
     expect(screen.getByRole("heading", { level: 1 }).querySelectorAll(".accent")).toHaveLength(0);
+  });
+
+  /** The homepage h1: three locked lines, the third in the brand tone. */
+  const HOME = ["One operating system.", "Every stakeholder.", "Engineered to run."];
+
+  it("takes an explicit break set and does not re-break it", () => {
+    // The fitter chooses balanced breaks, and for this headline the breaks ARE
+    // the design — a balanced split of the same words is a different headline.
+    // `text: string` had nowhere to put them.
+    render(<RectTitle lines={HOME} tones={["ink", "ink", "brand"]} />);
+    const heading = screen.getByRole("heading", { level: 1 });
+    const lines = [...heading.querySelectorAll(".td-h1-line")];
+    expect(lines).toHaveLength(3);
+    expect(lines.map(line => line.textContent)).toEqual(HOME);
+    // `tones` already covered the third-line accent, and still does.
+    expect(lines[2]).toHaveClass("accent");
+    // The whole headline is still one accessible name, with the separators.
+    expect(heading).toHaveAccessibleName(HOME.join(" "));
+  });
+
+  it("still takes a number of lines, which is the other thing `lines` means", () => {
+    render(<RectTitle text="Nine plants moved onto one ERPNext instance in eleven weeks" lines={2} />);
+    expect(screen.getByRole("heading", { level: 1 }).querySelectorAll(".td-h1-line")).toHaveLength(2);
+  });
+
+  it("carries a screen-reader suffix inside the heading, out of every measured line", () => {
+    // The homepage h1 carries the positioning and the geo for search while the
+    // iconic three-line headline stays pixel-identical. Dropping it is an SEO
+    // regression, and `text: string` had nowhere to put it either.
+    const SUFFIX = "— Enterprise systems engineering, ERPNext implementation, and integration practice · Bengaluru, India · global delivery";
+    render(<RectTitle lines={HOME} srSuffix={SUFFIX} />);
+    const heading = screen.getByRole("heading", { level: 1 });
+
+    // Inside the heading, so it is part of the heading's own text and name.
+    const suffix = heading.querySelector(".td-react-rect-title-sr")!;
+    expect(suffix).not.toBeNull();
+    expect(suffix).toHaveTextContent(SUFFIX);
+    expect(heading).toHaveAccessibleName(new RegExp("global delivery$"));
+
+    // And NOT part of any measured line — the fitter reads `.td-h1-line`, so a
+    // suffix that landed in one would stretch the rectangle to fit a sentence
+    // nobody can see.
+    expect(suffix.closest(".td-h1-line")).toBeNull();
+    const lines = [...heading.querySelectorAll(".td-h1-line")];
+    expect(lines.map(line => line.textContent)).toEqual(HOME);
+    expect(lines.some(line => line.contains(suffix))).toBe(false);
+  });
+
+  it("hides the suffix from sight without hiding it from a screen reader", () => {
+    for (const css of [readFileSync(join(SRC, "rect-title.css"), "utf8"),
+                       readFileSync(join(SRC, "../../../registry/tonaldepth/rect-title.css"), "utf8")]) {
+      const body = /-rect-title-sr \{([^}]*)\}/.exec(css)![1];
+      // `display: none` would take it out of the accessibility tree too, which
+      // is the one thing it must not do.
+      expect(body).not.toMatch(/display:\s*none/);
+      expect(body).toMatch(/clip-path:\s*inset\(50%\)/);
+      expect(body).toMatch(/position:\s*absolute/);
+    }
+  });
+
+  it("warns rather than rendering an empty heading when it is given no words", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    render(<RectTitle />);
+    expect(warn).toHaveBeenCalledOnce();
+    warn.mockRestore();
   });
 
   it("never emits one line for a multi-word headline, because the fitter needs two to square off", () => {

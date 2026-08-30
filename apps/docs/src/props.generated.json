@@ -1330,7 +1330,7 @@
     [
       "text",
       "string",
-      "required"
+      "—"
     ],
     [
       "level",
@@ -1344,7 +1344,12 @@
     ],
     [
       "lines",
-      "number",
+      "number | string[]",
+      "—"
+    ],
+    [
+      "srSuffix",
+      "ReactNode",
       "—"
     ],
     [

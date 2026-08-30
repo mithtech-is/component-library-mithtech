@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, forwardRef, useCallback, useEffect, useLayoutEffect, useRef, type HTMLAttributes } from "react";
+import { Fragment, forwardRef, useCallback, useEffect, useLayoutEffect, useRef, type HTMLAttributes, type ReactNode } from "react";
 import "./tonaldepth-rect-title.css";
 
 function cx(...values: Array<string | false | null | undefined>): string {
@@ -27,22 +27,49 @@ export interface TonalDepthRectTitleProps extends Omit<HTMLAttributes<HTMLHeadin
    * Put a newline in it to break where you say rather than where the splitter
    * would: explicit breaks win outright, and the automatic count and the
    * two-line floor are both skipped.
+   *
+   * Optional only because `lines` may carry the headline instead. One of the
+   * two is required, and the component warns when neither is there.
    */
-  text: string;
+  text?: string;
   /** Which heading this is. The rect system runs at h1–h3; h4 and below are UI face. */
   level?: TonalDepthRectTitleLevel;
   /** Ceiling on the split. Two lines is the floor whenever the text has two words. */
   maxLines?: number;
   /**
-   * Exactly this many lines, overriding the automatic count.
+   * How the lines are decided: **how many**, or **exactly which**.
    *
-   * `maxLines` only caps the split, and the automatic count is also held down
-   * by a words-per-line heuristic — so a five-word headline stays at two lines
-   * however high `maxLines` goes. Set `lines` when you want a specific number
-   * and mean it. Clamped to the word count: four lines from three words is not
-   * a rectangle, it is three lines and a gap.
+   * A **number** overrides the automatic count. `maxLines` only caps the
+   * split, and the automatic count is also held down by a words-per-line
+   * heuristic — so a five-word headline stays at two lines however high
+   * `maxLines` goes. Pass a number when you want a specific count and mean it.
+   * Clamped to the word count: four lines from three words is not a rectangle,
+   * it is three lines and a gap.
+   *
+   * An **array** is the break set itself, and the splitter never runs. The
+   * fitter still scales the block, so it is still a rectangle — it just does
+   * not choose where the lines end. Reach for it when the breaks are the
+   * design: a page's own `h1`, where three specific lines are the mark and a
+   * balanced split would be a different headline.
+   *
+   * With an array, `text` is not used and may be omitted.
    */
-  lines?: number;
+  lines?: number | string[];
+  /**
+   * Screen-reader-only text rendered INSIDE the heading, after the visible
+   * lines.
+   *
+   * The page's primary heading is where the positioning and the geo belong for
+   * search, and an iconic three-line headline has no room for either. This
+   * puts them in the same heading element without moving a pixel of it: the
+   * suffix carries the library's own visually-hidden class, and it is not a
+   * `.td-h1-line`, so the fitter never measures it and the rectangle is
+   * unchanged.
+   *
+   * Keep it a phrase that continues the heading — it is read as part of the
+   * heading, not as a separate sentence.
+   */
+  srSuffix?: ReactNode;
   /** Land the last line in the brand colour. Ignored when `tones` is given. */
   accent?: boolean;
   /**
@@ -274,18 +301,37 @@ const useTonalDepthFitEffect = typeof window === "undefined" ? useEffect : useLa
  * `fitHeadings()` runtime, which walks the whole document and would fight
  * React over inline styles it did not set.
  *
- * **Three ways to decide the lines, in order of who wins.** A newline in
- * `text` is an explicit break and beats everything. `lines` asks for an exact
- * count. Otherwise the splitter chooses, capped by `maxLines` and by a
- * words-per-line heuristic — which is why raising `maxLines` on a short
- * headline appears to do nothing, and why `lines` exists.
+ * **Four ways to decide the lines, in order of who wins.** An ARRAY of
+ * `lines` is the break set itself and beats everything — `text` is not read at
+ * all. A newline in `text` is an explicit break and beats the rest. A NUMBER
+ * of `lines` asks for an exact count. Otherwise the splitter chooses, capped
+ * by `maxLines` and by a words-per-line heuristic — which is why raising
+ * `maxLines` on a short headline appears to do nothing, and why `lines`
+ * exists.
+ *
+ * **The fitter runs either way.** An explicit break set stops the block being
+ * re-broken; it does not stop it being squared off, which is the whole point
+ * of the component.
  */
 export const TonalDepthRectTitle = forwardRef<HTMLHeadingElement, TonalDepthRectTitleProps>(function TonalDepthRectTitle(
-  { text, level = 1, maxLines = 3, lines: lineCount, accent = true, tones, forceRectangle = false, maxScale, className, ...props },
+  { text, level = 1, maxLines = 3, lines: lineSpec, srSuffix, accent = true, tones, forceRectangle = false, maxScale, className, ...props },
   ref,
 ) {
   const heading = useRef<HTMLHeadingElement | null>(null);
-  const lines = TonalDepthsplitRectTitle(text, maxLines, lineCount);
+  /* An array is the break set; a number is a count for the splitter to hit.
+     The array short-circuits the splitter entirely, so a headline whose breaks
+     ARE the design cannot be re-broken by a heuristic that has no way of
+     knowing that. */
+  const written = Array.isArray(lineSpec)
+    ? lineSpec.map(line => line.trim()).filter(Boolean)
+    : null;
+  const lines = written ?? TonalDepthsplitRectTitle(text ?? "", maxLines, typeof lineSpec === "number" ? lineSpec : undefined);
+  if (!lines.length) {
+    // Unconditional rather than dev-only, and matching IconButton's missing
+    // name: it only fires on a real defect, and the package carries no
+    // build-time environment flag to gate it on.
+    console.warn("TonalDepthRectTitle: pass `text`, or a `lines` array. Neither is set, so the heading is empty.");
+  }
   const scaleCeiling = maxScale ?? (forceRectangle ? Infinity : TonalDepthDEFAULT_MAX_SCALE);
 
   const setRefs = useCallback(
@@ -328,7 +374,10 @@ export const TonalDepthRectTitle = forwardRef<HTMLHeadingElement, TonalDepthRect
       cancelAnimationFrame(frame);
       observer?.disconnect();
     };
-  }, [text, maxLines, level, scaleCeiling]);
+    // `lines.join` rather than the array identity: a caller writing the break
+    // set inline hands a fresh array every render, and refitting on every one
+    // of those is a resize observer's worth of work for no change.
+  }, [text, maxLines, level, scaleCeiling, lines.join("\n")]);
 
   const Heading = `h${level}` as const;
   return (
@@ -344,6 +393,10 @@ export const TonalDepthRectTitle = forwardRef<HTMLHeadingElement, TonalDepthRect
           </span>
         </Fragment>
       ))}
+      {/* Inside the heading, so it is part of the heading's accessible name and
+          its text — and NOT a `.td-h1-line`, so the fitter never measures it
+          and the rectangle is untouched. */}
+      {srSuffix ? <span className="td-registry-rect-title-sr">{srSuffix}</span> : null}
     </Heading>
   );
 });
