@@ -120,6 +120,7 @@ const ITEMS = {
   "multi-step": { module: "multi-step", symbols: ["MultiStep"], needs: [{ item: "button", symbols: ["Button"] }] },
   "spotlight": { module: "spotlight", symbols: ["Spotlight"] },
   "footer": { module: "footer", symbols: ["Footer", "FooterGrid", "FooterBrand", "FooterColumn", "FooterContact", "FooterSocial", "FooterBottom"] },
+  "window-controls": { module: "window-controls", symbols: ["WindowControls"] },
 };
 
 /**
@@ -234,11 +235,21 @@ function declaredNames(chunk) {
   return names;
 }
 
-/** Identifiers a chunk references, minus the ones it declares itself. */
+/**
+ * Identifiers a chunk references, minus the ones it declares itself.
+ *
+ * Comments are stripped first, and that is load-bearing rather than tidy. The
+ * closure below decides what gets COPIED into a self-contained item, so a doc
+ * comment naming a sibling — "the thing `SiteNavigation` exists to prevent" —
+ * pulled that whole component into an item that never calls it, along with
+ * every class it emits and every stylesheet rule those then demanded. The
+ * prose is documentation, not a dependency.
+ */
 function referencedNames(chunk) {
   const own = new Set(declaredNames(chunk));
   const found = new Set();
-  for (const match of chunk.matchAll(/\b[A-Za-z_$][\w$]*\b/g)) {
+  const code = chunk.replace(/\/\*[\s\S]*?\*\//g, " ").replace(/\/\/[^\n]*/g, " ");
+  for (const match of code.matchAll(/\b[A-Za-z_$][\w$]*\b/g)) {
     if (!own.has(match[0])) found.add(match[0]);
   }
   return found;
