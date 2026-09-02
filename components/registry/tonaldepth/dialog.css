@@ -82,3 +82,38 @@
   backdrop-filter: blur(14px) saturate(1.1);
   -webkit-backdrop-filter: blur(14px) saturate(1.1);
 }
+
+.td-registry-dialog::-webkit-scrollbar {
+  width: 6px;
+}
+.td-registry-dialog::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 3px;
+}
+.td-registry-dialog::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--td-ink) 22%, transparent);
+  border-radius: 3px;
+}
+.td-registry-dialog::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--td-ink) 38%, transparent);
+}
+/* Firefox */
+.td-registry-dialog {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--td-ink) 22%, transparent) transparent;
+}
+
+/* ── Width ────────────────────────────────────────────────────────────
+   `.td-modal` ships one width — `min(560px, 100vw - 40px)` — which is right
+   for the thing a dialog usually is: a question and two buttons. It is wrong
+   for a dialog that carries a layout. A settings panel listing five zones and
+   their toggles is two-dimensional, and at 560px every row wraps to three
+   lines; the first consumer to build one reached past the component and
+   overrode `.td-modal` at the call site.
+
+   Each size is a CEILING against the viewport, not a width, so all three
+   collapse to the same measure on a phone — `min()` picks the gutter-inset
+   viewport there whatever the ceiling says. */
+.td-registry-dialog.td-registry-dialog--sm { width: min(420px, calc(100vw - 40px)); }
+.td-registry-dialog.td-registry-dialog--md { width: min(560px, calc(100vw - 40px)); }
+.td-registry-dialog.td-registry-dialog--lg { width: min(880px, calc(100vw - 40px)); }
