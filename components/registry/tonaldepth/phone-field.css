@@ -277,14 +277,37 @@
 .td-registry-phone { display: flex; align-items: flex-start; gap: var(--td-sp-4, 6px); min-width: 0; max-width: 100%; }
 .td-registry-phone[data-disabled] { opacity: 0.55; }
 
-.td-registry-phone-combo { flex: 0 0 auto; min-width: 132px; max-width: 168px; }
+/* The country yields, the number does not. `flex: 0 0 auto` held the
+   combobox at its full width inside a two-up row — name beside phone in
+   `WhatsAppForm` — and the number was squeezed to four visible digits
+   while a country name nobody needs to read in full took the rest. The
+   dial code is already shown in the number's own leading slot, so a
+   truncated country label loses nothing. */
+.td-registry-phone-combo { flex: 0 1 auto; min-width: 104px; max-width: 168px; }
 .td-registry-phone-country { font-size: 12.5px; }
-.td-registry-phone-number { flex: 1 1 auto; min-width: 0; }
+.td-registry-phone-number { flex: 1 1 auto; min-width: 132px; }
 
 /* A dial code is a machine value, so it is mono and sits quiet — it labels the
    number rather than competing with it. */
 .td-registry-phone-dial { font-family: var(--td-font-mono); font-size: 12.5px; font-weight: 600; color: var(--td-ink-2); }
 .td-registry-phone-input { font-family: var(--td-font-mono); font-variant-numeric: tabular-nums; letter-spacing: 0.02em; }
+
+/* ── the dial code is TEXT in a slot sized for an ICON ─────────────────────
+   `.td-input-icon` in the base layer is a fixed 13x13 box with
+   `overflow: visible`, which is right for the 13px glyphs it was written for
+   and wrong for a string. `+91` renders 22px wide inside it and spills over
+   the number: measured on the docs preview at 12.7px of slot holding 22.05px
+   of text, so the input's first digits were drawn UNDERNEATH the code. Longer
+   codes are worse — `+1868` buries three characters — and nothing reports it,
+   because both declarations are individually correct.
+
+   Scoped to this field rather than widened in the base layer: an icon slot
+   that hugs its content would resize every input that has one, and the bug is
+   this component putting text where a glyph was expected. */
+.td-registry-phone-number .td-input-icon {
+  width: auto;
+  height: auto;
+}
 
 @media (max-width: 420px) {
   /* Below this the two halves cannot both hold their minimum, so the country
