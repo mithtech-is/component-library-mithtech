@@ -2,7 +2,7 @@
 
 import { forwardRef, useCallback, useEffect, useLayoutEffect, useRef, useState, type HTMLAttributes, type ReactNode, type SVGProps } from "react";
 import { createPortal } from "react-dom";
-import { CaretDownIcon as ChevronDownIcon } from "@phosphor-icons/react";
+import { CaretDownIcon as ChevronDownIcon, ListIcon } from "@phosphor-icons/react";
 import "./tonaldepth-site-navigation.css";
 
 const LAMP_WEIGHT = "fill" as const;
@@ -124,6 +124,35 @@ export type TonalDepthSiteNavigationMenuWidth = "full" | "wide" | "content";
  */
 export type TonalDepthSiteNavigationMenuHeight = "tall" | "short" | "fit";
 
+/**
+ * One destination in the drawer — the small form of a link inside a panel.
+ *
+ * Structurally the same record as `MegaLink`, and deliberately so: a consumer
+ * whose panel is `MegaColumns` passes the identical `sections` array to the
+ * panel and to the menu, and the navigation is declared once. The type is
+ * restated here rather than imported so `TonalDepthSiteNavigation` keeps no dependency
+ * on the mega-menu module — TypeScript is structural, so the assignment works
+ * either way and the coupling would only cost a registry item its
+ * self-containment.
+ */
+export interface TonalDepthNavDrawerLink {
+  href: string;
+  title: ReactNode;
+  /** A second, dimmer line under the title. */
+  detail?: ReactNode;
+  /** A filled glyph, in its own tile. */
+  icon?: ReactNode;
+  current?: boolean;
+}
+
+/** A labelled block of destinations inside one menu's disclosure. */
+export interface TonalDepthNavDrawerSection {
+  id: string;
+  /** A heading in small caps over the rows. Omit for an unlabelled block. */
+  label?: ReactNode;
+  links: TonalDepthNavDrawerLink[];
+}
+
 export interface TonalDepthSiteNavigationMenu {
   kind: "menu";
   id: string;
@@ -153,6 +182,22 @@ export interface TonalDepthSiteNavigationMenu {
   /** Pinned strip along the bottom of the sheet, outside the scroll area. */
   footer?: ReactNode;
   content: ReactNode;
+  /**
+   * The same menu at the drawer's measure, for `NavDrawer`.
+   *
+   * `content` cannot serve both. It is a `ReactNode` on purpose — the bar owns
+   * the sheet and owns nothing about what is inside one — so the library
+   * cannot read a menu's destinations out of it, and a three-column
+   * `MegaCascade` rendered into a 400px drawer would be a rail with no room
+   * to be a rail. This is the same menu said as data, which both breakpoints
+   * can project: `MegaColumns` takes this array verbatim as its `sections`,
+   * and `megaCascadeSections` derives it from a cascade's own `groups`, so a
+   * consumer still declares its navigation ONCE.
+   *
+   * A menu that omits it is dropped from the drawer, with a warning — see
+   * `NavDrawer`.
+   */
+  sections?: TonalDepthNavDrawerSection[];
   ariaLabel?: string;
   /**
    * The sheet's width for this menu alone. Defaults to `full`, so a menu that
@@ -179,12 +224,32 @@ export interface TonalDepthSiteNavigationProps extends Omit<HTMLAttributes<HTMLE
   /** Below this scroll depth the bar is always present. */
   revealFloor?: number;
   closeLabel?: string;
-  /** Placed between the bar and the panels — a mobile drawer, say. */
+  /**
+   * Opens the small-screen drawer, and switches the bar to its compact form.
+   *
+   * Passing it puts a burger at the end of the bar and, below 900px, hides the
+   * row of triggers the burger replaces — the two halves of one decision, so a
+   * consumer cannot ship a bar with both or with neither. Omitting it leaves
+   * the bar exactly as it was at every width, which is why the responsive rule
+   * is gated on this prop rather than applied to every navigation.
+   *
+   * The burger is a plain control: hand it `NavDrawer`'s setter and nothing
+   * else. Where a consumer wants its own trigger instead, leave this off and
+   * drive `NavDrawer`'s `open` from wherever it likes.
+   */
+  onMenuOpen?: () => void;
+  /** Screen-reader name for that burger. */
+  menuLabel?: string;
+  /** Placed between the bar and the panels — the drawer goes here. */
   children?: ReactNode;
 }
 
 const TonalDepthCHEVRON = (
   <ChevronDownIcon className="td-navbtn-chevron" weight={LAMP_WEIGHT} aria-hidden="true" />
+);
+
+const TonalDepthBURGER = (
+  <ListIcon weight={LAMP_WEIGHT} aria-hidden="true" />
 );
 
 const TonalDepthCLOSE = (
@@ -283,6 +348,8 @@ export const TonalDepthSiteNavigation = forwardRef<HTMLElement, TonalDepthSiteNa
     retract = true,
     revealFloor = 140,
     closeLabel = "Close menu",
+    onMenuOpen,
+    menuLabel = "Open navigation menu",
     children,
     className,
     ...props
@@ -433,6 +500,10 @@ export const TonalDepthSiteNavigation = forwardRef<HTMLElement, TonalDepthSiteNa
        * the navigation lit: a menu whose own trigger goes dark is a modal.
        */
       data-nav-open={openMenu || undefined}
+      /* The bar has a small form only once it has somewhere to send a reader
+         at that size. Without it the trigger row keeps its old behaviour at
+         every width, so an existing consumer renders unchanged. */
+      data-nav-compact={onMenuOpen ? "" : undefined}
     >
       <nav className="td-navbar" aria-label={label} ref={barRef}>
         <div className="td-registry-sitenav-brand">{brand}</div>
@@ -490,7 +561,27 @@ export const TonalDepthSiteNavigation = forwardRef<HTMLElement, TonalDepthSiteNa
           })}
         </div>
 
-        {actions ? <div className="td-nav-right">{actions}</div> : null}
+        {actions || onMenuOpen ? (
+          <div className="td-nav-right">
+            {actions}
+            {/* Last in the rail, and the bar's own rather than the consumer's:
+                the burger and the hidden trigger row are one decision, and a
+                consumer that has to place it also has to know which class
+                hides what — which is how `.td-nav-burger` came to be invented
+                downstream in the first place. */}
+            {onMenuOpen ? (
+              <button
+                type="button"
+                className="td-iconbtn td-registry-sitenav-burger"
+                aria-label={menuLabel}
+                aria-haspopup="dialog"
+                onClick={onMenuOpen}
+              >
+                {TonalDepthBURGER}
+              </button>
+            ) : null}
+          </div>
+        ) : null}
       </nav>
 
       {children}

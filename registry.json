@@ -72,6 +72,25 @@
       ]
     },
     {
+      "name": "bottom-nav",
+      "type": "registry:ui",
+      "title": "TonalDepth BottomNav",
+      "description": "The bar of destinations under the thumb: four always present, the rest behind a More control that expands the bar upward into a sheet. Pins itself to the viewport and publishes `--bottom-nav-offset` so a page can clear it.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "components/registry/tonaldepth/bottom-nav.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-bottom-nav.tsx"
+        }
+      ],
+      "dependencies": [
+        "@phosphor-icons/react"
+      ]
+    },
+    {
       "name": "breadcrumbs",
       "type": "registry:ui",
       "title": "TonalDepth Breadcrumbs",
@@ -619,7 +638,7 @@
       "name": "mega-cascade",
       "type": "registry:ui",
       "title": "TonalDepth MegaCascade",
-      "description": "A typed TonalDepth three-level cascading mega panel \u2014 categories, subcategories, items \u2014 each column a well, with roving-tabindex rails.",
+      "description": "A typed TonalDepth three-level cascading mega panel \u2014 categories, subcategories, items \u2014 each column a well, with roving-tabindex rails. `megaCascadeSections` flattens the same groups for a NavDrawer.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
@@ -946,7 +965,7 @@
       "name": "site-navigation",
       "type": "registry:ui",
       "title": "TonalDepth SiteNavigation",
-      "description": "The marketing site navigation \u2014 a raised pill that sticks flush, retracts on the way down and returns on the way up, with mega panels held at one size whatever they hold. Publishes `--nav-offset` for in-page sticky toolbars.",
+      "description": "The marketing site navigation \u2014 a raised pill that sticks flush, retracts on the way down and returns on the way up, with mega panels held at one size whatever they hold. Draws its own burger below 900px; `nav-drawer` is what that burger opens. Publishes `--nav-offset` for in-page sticky toolbars.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
@@ -959,6 +978,23 @@
       ],
       "dependencies": [
         "@phosphor-icons/react"
+      ]
+    },
+    {
+      "name": "nav-drawer",
+      "type": "registry:ui",
+      "title": "TonalDepth NavDrawer",
+      "description": "The navigation's small form: a sheet off the edge holding the SAME `items` array the bar holds, with a disclosure per menu and a row per flat link. Its own focus trap, scroll lock, Escape and dismissal, in React.",
+      "registryDependencies": [
+        "@tonaldepth/tokens",
+        "@tonaldepth/faq"
+      ],
+      "files": [
+        {
+          "path": "components/registry/tonaldepth/nav-drawer.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-nav-drawer.tsx"
+        }
       ]
     },
     {
@@ -1477,6 +1513,22 @@
           "path": "components/registry/tonaldepth/range-dual.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-range-dual.tsx"
+        }
+      ]
+    },
+    {
+      "name": "window-controls",
+      "type": "registry:ui",
+      "title": "TonalDepth WindowControls",
+      "description": "The three window actions as the platform's traffic lights: close, minimise and maximise, left to right. Each is a real button with a real name, the marks appear on hover of the cluster, and an action with no handler is disabled rather than dropped so the row never reflows.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "components/registry/tonaldepth/window-controls.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-window-controls.tsx"
         }
       ]
     }

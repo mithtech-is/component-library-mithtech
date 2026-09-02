@@ -102,11 +102,16 @@ const ITEMS = {
   "profile-card": { module: "profile-card", symbols: ["ProfileCard"] },
   "frame": { module: "frame", symbols: ["Frame", "FrameGrid"] },
   "theme-toggle": { module: "theme-toggle", symbols: ["ThemeToggle"] },
-  "mega-cascade": { module: "mega-menu", symbols: ["MegaCascade"] },
+  "mega-cascade": { module: "mega-menu", symbols: ["MegaCascade", "megaCascadeSections"] },
   "mega-tabs": { module: "mega-menu", symbols: ["MegaTabs"] },
   "mega-grid": { module: "mega-menu", symbols: ["MegaGrid", "MegaActions"] },
   "mega-columns": { module: "mega-menu", symbols: ["MegaColumns", "MegaFeature"] },
   "site-navigation": { module: "site-navigation", symbols: ["SiteNavigation"] },
+  /* Cut from the same module as SiteNavigation, and a separate item on purpose:
+     the two are one navigation, but a consumer building an app bar with
+     link-only items has no drawer to install, and inlining NavDrawer into
+     site-navigation would give anyone who wanted both two copies of it. */
+  "nav-drawer": { module: "site-navigation", symbols: ["NavDrawer"], needs: [{ item: "faq", symbols: ["Faq"] }] },
   "reading-progress": { module: "reading-progress", symbols: ["ReadingProgress"] },
   "counter": { module: "counter", symbols: ["Counter", "CounterRow"] },
   "testimonial": { module: "testimonial", symbols: ["Testimonial", "TestimonialGrid"] },
@@ -114,6 +119,7 @@ const ITEMS = {
   "terminal": { module: "terminal", symbols: ["Terminal"] },
   "file-preview": { module: "file-preview", symbols: ["FilePreview", "FilePreviewList"] },
   "sub-nav": { module: "sub-nav", symbols: ["SubNav"] },
+  "bottom-nav": { module: "bottom-nav", symbols: ["BottomNav"] },
   "page-nav": { module: "page-nav", symbols: ["PageNav"] },
   "chat-launcher": { module: "chat-launcher", symbols: ["ChatLauncher", "AiHalo"] },
   "confirm-button": { module: "confirm-button", symbols: ["ConfirmButton"], needs: [{ item: "button", symbols: ["Button"] }] },

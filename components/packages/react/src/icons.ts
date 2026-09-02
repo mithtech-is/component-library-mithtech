@@ -85,6 +85,13 @@ export {
   // uses. Ratings are the only place the system draws one, and it has to be a
   // solid mark for the half-star clip to read.
   TdStar as StarIcon,
+  // The two marks a window's traffic lights draw that Phosphor cannot supply:
+  // both of its equivalents (`Minus`, `ArrowsOut`) are stroke-only, and at
+  // `fill` a stroke-only Phosphor glyph is a square plate with the mark knocked
+  // out. At the 6px these are drawn that is a filled square, not a dash. The
+  // close mark is `CloseIcon` above — the same bare cross, at a third the size.
+  TdMinus as WindowMinimiseIcon,
+  TdExpandCorners as WindowZoomIcon,
 } from "./td-icons";
 
 /**
@@ -96,7 +103,7 @@ export {
  * is exactly the set of roles the `./td-icons` export block claims, so the
  * duplication cannot drift.
  */
-export const TD_ICON_ROLES = ["AcceptIcon", "CancelIcon", "CloseIcon", "StarIcon", "WhatsAppIcon"] as const;
+export const TD_ICON_ROLES = ["AcceptIcon", "CancelIcon", "CloseIcon", "StarIcon", "WhatsAppIcon", "WindowMinimiseIcon", "WindowZoomIcon"] as const;
 
 // ── Phosphor — the fallback ──────────────────────────────────────────────
 export {
@@ -152,6 +159,10 @@ export {
   ChatCircleIcon as ChatCircleIcon,
   CubeIcon as CubeIcon,
   ListIcon as ListIcon,
+  // The overflow role, for what did not fit: a bottom bar's "More", a row's
+  // own menu. Three discs at `fill` — a solid mark that glows as a mark, where
+  // an ellipsis of outlines would glow as three smudges.
+  DotsThreeIcon as MoreIcon,
   EnvelopeSimpleIcon as EnvelopeSimpleIcon,
   PhoneIcon as PhoneIcon,
 
@@ -173,6 +184,35 @@ export {
   // kinds with nothing to borrow are named here.
   ChartBarIcon as DatasetIcon,
   CursorClickIcon as InteractiveIcon,
+
+  // Canvas controls. A pannable, zoomable map needs zoom, fit and a sound
+  // toggle, and every one of those is a lamp — so every one has to be a filled
+  // glyph. The outline equivalents render as an empty disc inside IconButton,
+  // which is what sent the first consumer back to hand-writing its own button.
+  MagnifyingGlassPlusIcon as ZoomInIcon,
+  MagnifyingGlassMinusIcon as ZoomOutIcon,
+  // Fit-to-bounds, not recentre: the control frames the whole scene. Crosshair
+  // reads as "aim at a point", which is a different promise.
+  CornersOutIcon as FitIcon,
+  SpeakerHighIcon as SoundOnIcon,
+  SpeakerSlashIcon as SoundOffIcon,
+  // Reset, which is not Fit. `fit` frames whatever is there now; `reset` puts
+  // the scene back where it started, including whatever the reader turned off.
+  // A canvas usually offers both, and a consumer with only `fit` reached past
+  // the set for the second one.
+  ArrowCounterClockwiseIcon as ResetIcon,
+
+  // ── Window actions ─────────────────────────────────────────────────────
+  // For a control that goes fullscreen without the traffic lights — a chart
+  // that expands, a canvas with an expand button in its corner. `WindowControls`
+  // draws the macOS discs and their marks itself; these are the plain buttons.
+  //
+  // Both are solid arrow clusters at `fill` rather than stroke-only glyphs, so
+  // they take the lamp's glow. Phosphor's `Minus` would not: at `fill` it is a
+  // square PLATE with the bar knocked out, which is the trap the Actions block
+  // above names.
+  ArrowsOutIcon as MaximizeIcon,
+  ArrowsInIcon as MinimizeIcon,
 } from "@phosphor-icons/react";
 
 /**

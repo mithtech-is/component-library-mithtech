@@ -1,10 +1,12 @@
 "use client";
 
-import { forwardRef, useCallback, useEffect, useLayoutEffect, useRef, useState, type HTMLAttributes, type ReactNode } from "react";
+import { forwardRef, useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type HTMLAttributes, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { cx } from "./utils";
-import { ChevronDownIcon, CloseIcon, LAMP_WEIGHT } from "./icons";
+import { ChevronDownIcon, CloseIcon, ListIcon, LAMP_WEIGHT } from "./icons";
+import { Faq } from "./faq";
 import "./site-navigation.css";
+import "./nav-drawer.css";
 
 /**
  * Renders the anchor for a flat nav link.
@@ -53,6 +55,35 @@ export type SiteNavigationMenuWidth = "full" | "wide" | "content";
  */
 export type SiteNavigationMenuHeight = "tall" | "short" | "fit";
 
+/**
+ * One destination in the drawer — the small form of a link inside a panel.
+ *
+ * Structurally the same record as `MegaLink`, and deliberately so: a consumer
+ * whose panel is `MegaColumns` passes the identical `sections` array to the
+ * panel and to the menu, and the navigation is declared once. The type is
+ * restated here rather than imported so `SiteNavigation` keeps no dependency
+ * on the mega-menu module — TypeScript is structural, so the assignment works
+ * either way and the coupling would only cost a registry item its
+ * self-containment.
+ */
+export interface NavDrawerLink {
+  href: string;
+  title: ReactNode;
+  /** A second, dimmer line under the title. */
+  detail?: ReactNode;
+  /** A filled glyph, in its own tile. */
+  icon?: ReactNode;
+  current?: boolean;
+}
+
+/** A labelled block of destinations inside one menu's disclosure. */
+export interface NavDrawerSection {
+  id: string;
+  /** A heading in small caps over the rows. Omit for an unlabelled block. */
+  label?: ReactNode;
+  links: NavDrawerLink[];
+}
+
 export interface SiteNavigationMenu {
   kind: "menu";
   id: string;
@@ -82,6 +113,22 @@ export interface SiteNavigationMenu {
   /** Pinned strip along the bottom of the sheet, outside the scroll area. */
   footer?: ReactNode;
   content: ReactNode;
+  /**
+   * The same menu at the drawer's measure, for `NavDrawer`.
+   *
+   * `content` cannot serve both. It is a `ReactNode` on purpose — the bar owns
+   * the sheet and owns nothing about what is inside one — so the library
+   * cannot read a menu's destinations out of it, and a three-column
+   * `MegaCascade` rendered into a 400px drawer would be a rail with no room
+   * to be a rail. This is the same menu said as data, which both breakpoints
+   * can project: `MegaColumns` takes this array verbatim as its `sections`,
+   * and `megaCascadeSections` derives it from a cascade's own `groups`, so a
+   * consumer still declares its navigation ONCE.
+   *
+   * A menu that omits it is dropped from the drawer, with a warning — see
+   * `NavDrawer`.
+   */
+  sections?: NavDrawerSection[];
   ariaLabel?: string;
   /**
    * The sheet's width for this menu alone. Defaults to `full`, so a menu that
@@ -108,12 +155,32 @@ export interface SiteNavigationProps extends Omit<HTMLAttributes<HTMLElement>, "
   /** Below this scroll depth the bar is always present. */
   revealFloor?: number;
   closeLabel?: string;
-  /** Placed between the bar and the panels — a mobile drawer, say. */
+  /**
+   * Opens the small-screen drawer, and switches the bar to its compact form.
+   *
+   * Passing it puts a burger at the end of the bar and, below 900px, hides the
+   * row of triggers the burger replaces — the two halves of one decision, so a
+   * consumer cannot ship a bar with both or with neither. Omitting it leaves
+   * the bar exactly as it was at every width, which is why the responsive rule
+   * is gated on this prop rather than applied to every navigation.
+   *
+   * The burger is a plain control: hand it `NavDrawer`'s setter and nothing
+   * else. Where a consumer wants its own trigger instead, leave this off and
+   * drive `NavDrawer`'s `open` from wherever it likes.
+   */
+  onMenuOpen?: () => void;
+  /** Screen-reader name for that burger. */
+  menuLabel?: string;
+  /** Placed between the bar and the panels — the drawer goes here. */
   children?: ReactNode;
 }
 
 const CHEVRON = (
   <ChevronDownIcon className="td-navbtn-chevron" weight={LAMP_WEIGHT} aria-hidden="true" />
+);
+
+const BURGER = (
+  <ListIcon weight={LAMP_WEIGHT} aria-hidden="true" />
 );
 
 const CLOSE = (
@@ -212,6 +279,8 @@ export const SiteNavigation = forwardRef<HTMLElement, SiteNavigationProps>(funct
     retract = true,
     revealFloor = 140,
     closeLabel = "Close menu",
+    onMenuOpen,
+    menuLabel = "Open navigation menu",
     children,
     className,
     ...props
@@ -362,6 +431,10 @@ export const SiteNavigation = forwardRef<HTMLElement, SiteNavigationProps>(funct
        * the navigation lit: a menu whose own trigger goes dark is a modal.
        */
       data-nav-open={openMenu || undefined}
+      /* The bar has a small form only once it has somewhere to send a reader
+         at that size. Without it the trigger row keeps its old behaviour at
+         every width, so an existing consumer renders unchanged. */
+      data-nav-compact={onMenuOpen ? "" : undefined}
     >
       <nav className="td-navbar" aria-label={label} ref={barRef}>
         <div className="td-react-sitenav-brand">{brand}</div>
@@ -419,7 +492,27 @@ export const SiteNavigation = forwardRef<HTMLElement, SiteNavigationProps>(funct
           })}
         </div>
 
-        {actions ? <div className="td-nav-right">{actions}</div> : null}
+        {actions || onMenuOpen ? (
+          <div className="td-nav-right">
+            {actions}
+            {/* Last in the rail, and the bar's own rather than the consumer's:
+                the burger and the hidden trigger row are one decision, and a
+                consumer that has to place it also has to know which class
+                hides what — which is how `.td-nav-burger` came to be invented
+                downstream in the first place. */}
+            {onMenuOpen ? (
+              <button
+                type="button"
+                className="td-iconbtn td-react-sitenav-burger"
+                aria-label={menuLabel}
+                aria-haspopup="dialog"
+                onClick={onMenuOpen}
+              >
+                {BURGER}
+              </button>
+            ) : null}
+          </div>
+        ) : null}
       </nav>
 
       {children}
@@ -493,5 +586,332 @@ export const SiteNavigation = forwardRef<HTMLElement, SiteNavigationProps>(funct
         )}
       </div>
     </header>
+  );
+});
+
+/* ── The drawer ─────────────────────────────────────────────────────────────
+   The other half of the same navigation. Everything below owns its sheet, its
+   header, its focus trap, its scroll lock and its dismissal IN REACT: the
+   design system's vanilla `tonaldepth.js` supplies all five for a static page
+   through `data-overlay-open` / `data-overlay-close`, and a consumer that has
+   to ship that runtime to get a working menu has a convention and a
+   stylesheet, not a component. Nothing here reads or writes an attribute that
+   runtime binds — the same rule the bar follows with `data-nav` and
+   `.is-open`. */
+
+/**
+ * What Tab may land on inside the sheet. Same selector `Dialog` traps with,
+ * because it is the same problem.
+ */
+const DRAWER_FOCUSABLE = 'button:not([disabled]),[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+
+export interface NavDrawerProps extends Omit<HTMLAttributes<HTMLDivElement>, "title"> {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  /**
+   * The SAME array the bar is given.
+   *
+   * That is the whole point of the component: a consumer declares its
+   * navigation once and both breakpoints read it. A `link` becomes a row; a
+   * `menu` becomes a disclosure holding that menu's `sections`.
+   */
+  items: SiteNavigationItem[];
+  /** The sheet's heading. */
+  title?: ReactNode;
+  closeLabel?: string;
+  /** Names the navigation landmark inside the sheet. */
+  label?: string;
+  /** Between the heading and the sections — a search trigger, a "start here" link. */
+  header?: ReactNode;
+  /** Pinned under the scroll area — the calls to action, the theme toggle. */
+  footer?: ReactNode;
+  /** Hand your router the anchor, for every link the drawer draws. */
+  renderLink?: SiteNavigationLinkRenderer;
+  /** One menu open at a time. */
+  single?: boolean;
+  /** Menu ids expanded on first render. */
+  defaultOpen?: string[];
+}
+
+/**
+ * The navigation, small: a sheet off the edge holding the same `items` the bar
+ * holds.
+ *
+ * ## What it owns, and what it does not
+ *
+ * It owns the sheet, its heading, the close control, the scrim, the focus
+ * trap, the scroll lock, Escape, outside-press and close-on-navigate. It owns
+ * nothing about what a menu contains — that is `sections` on the menu, exactly
+ * as the bar owns the sheet and `content` owns the panel. The `header` and
+ * `footer` slots are yours; put `Button`s in them, with an `href`, the way the
+ * panels' footers hold `MegaActions`. An anchor hand-dressed in `td-primary`
+ * with a `td-lamp` span inside it is the primary button reimplemented at the
+ * call site, and it is what `href` on Button exists to delete.
+ *
+ * ## The disclosure is `Faq`
+ *
+ * Not a second disclosure implementation. `Faq` documents itself as "this
+ * component with a single item — which it always was", and it already carries
+ * the real `button` with `aria-expanded`, the region it controls, and the
+ * `hidden` that keeps a closed panel out of in-page search as well as out of
+ * the accessibility tree. What a drawer needs on top of that is a MEASURE, and
+ * a measure is a stylesheet's job. Two looks for one list would be two things
+ * to keep beautiful.
+ *
+ * A run of adjacent menus becomes one `Faq`, so the seam between two menus is
+ * the plate parting rather than two plates meeting; a flat `link` between them
+ * splits the run and is drawn as a row, because a link with nothing under it
+ * must not wear a chevron.
+ *
+ * ## A menu with no `sections` is dropped, loudly
+ *
+ * The alternative is rendering `content` — the desktop panel — into a 400px
+ * sheet, and it is worse than it looks: `MegaCascade` and `MegaTabs` are three
+ * and two rails of a fixed-height sheet, and `MegaCascade` moves focus to its
+ * first category on mount, so a closed disclosure would steal the caret the
+ * moment the drawer opened. Dropping the menu is visible in one console line
+ * and fixable in one field. Rendering it is a menu that half-works and a focus
+ * bug nobody traces back here.
+ *
+ * ## It is portalled to `document.body`, and it has to be
+ *
+ * The natural place to write it is inside `SiteNavigation`'s `children`, and
+ * the header carries the retract transform — which makes it the containing
+ * block for its `position: fixed` descendants and opens a backdrop root. In
+ * place, the sheet's `inset` would resolve against the 86px bar and the
+ * scrim's glass would compute to `none`. That is the defect the sheet's own
+ * scrim shipped with in `0.1.0-alpha.26`; see `Overlays`. Unlike that scrim
+ * this one wants to be ABOVE the bar rather than under it, so it goes to the
+ * body outright rather than hunting for the header's stacking context.
+ */
+export const NavDrawer = forwardRef<HTMLDivElement, NavDrawerProps>(function NavDrawer(
+  {
+    open,
+    onOpenChange,
+    items,
+    title = "Menu",
+    closeLabel = "Close menu",
+    label = "Site navigation",
+    header,
+    footer,
+    renderLink,
+    single = true,
+    defaultOpen = [],
+    className,
+    ...props
+  },
+  forwardedRef,
+) {
+  const titleId = useId();
+  const [expanded, setExpanded] = useState<string[]>(defaultOpen);
+  const sheetRef = useRef<HTMLDivElement | null>(null);
+  const previousFocus = useRef<HTMLElement | null>(null);
+  /* Read through a ref rather than named as a dependency. Named, the effect
+     tore down and re-ran on every render where the caller passed a fresh
+     arrow — which is the normal way to pass it — and the cleanup restores
+     focus. Dialog carries the same note and the same fix. */
+  const onOpenChangeRef = useRef(onOpenChange);
+  onOpenChangeRef.current = onOpenChange;
+
+  const setSheetRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      sheetRef.current = node;
+      if (typeof forwardedRef === "function") forwardedRef(node);
+      else if (forwardedRef) forwardedRef.current = node;
+    },
+    [forwardedRef],
+  );
+
+  // Focus in, Escape and Tab out, focus back where it came from.
+  useEffect(() => {
+    if (!open) return;
+    previousFocus.current = document.activeElement as HTMLElement;
+    const sheet = sheetRef.current;
+    const focusables = () => [...(sheet?.querySelectorAll<HTMLElement>(DRAWER_FOCUSABLE) ?? [])];
+    /* Land on the first real control, not on the close button: dismiss is the
+       one thing a reader can always reach, and opening a menu with the caret
+       on "close" asks them to tab past the exit to reach the first section. */
+    const nodes = focusables();
+    (nodes.find(node => !node.hasAttribute("data-drawer-close")) ?? nodes[0] ?? sheet)?.focus();
+
+    const onKey = (event: globalThis.KeyboardEvent) => {
+      if (event.key === "Escape") { event.preventDefault(); onOpenChangeRef.current(false); return; }
+      if (event.key !== "Tab" || !sheet) return;
+      const current = focusables();
+      if (!current.length) { event.preventDefault(); sheet.focus(); return; }
+      const first = current[0], last = current[current.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => { document.removeEventListener("keydown", onKey); previousFocus.current?.focus(); };
+  }, [open]);
+
+  /*
+   * The scroll lock.
+   *
+   * `overflow: hidden` on the body alone reclaims the scrollbar's gutter,
+   * which slides the whole page — and this component's own bar with it — a
+   * scrollbar's width sideways at the moment the drawer opens. The gutter is
+   * paid back as padding so nothing moves. Both are restored to whatever the
+   * page had rather than to a literal, because a consumer may be running a
+   * smooth-scroll library that owns `overflow` itself.
+   */
+  useEffect(() => {
+    if (!open) return;
+    const body = document.body;
+    const previousOverflow = body.style.overflow;
+    const previousPadding = body.style.paddingRight;
+    const gutter = window.innerWidth - document.documentElement.clientWidth;
+    body.style.overflow = "hidden";
+    if (gutter > 0) body.style.paddingRight = `${gutter}px`;
+    return () => { body.style.overflow = previousOverflow; body.style.paddingRight = previousPadding; };
+  }, [open]);
+
+  const close = useCallback(() => onOpenChangeRef.current(false), []);
+
+  /* Following a link closes the drawer, so no row has to know it is inside
+     one. Bound on click rather than mousedown for the reason the sheet binds
+     it there: unmounting the anchor before its own click had been dispatched
+     would stop every link in the drawer navigating. */
+  const closeOnNavigate = useCallback((event: { target: EventTarget | null }) => {
+    if (event.target instanceof Element && event.target.closest("a")) onOpenChangeRef.current(false);
+  }, []);
+
+  if (!open || typeof document === "undefined") return null;
+
+  const row = (link: NavDrawerLink, key: string) => {
+    const children = (
+      <>
+        {link.icon ? <span className="td-react-navdrawer-icon">{link.icon}</span> : null}
+        <span className="td-react-navdrawer-copy">
+          <strong>{link.title}</strong>
+          {link.detail ? <span>{link.detail}</span> : null}
+        </span>
+      </>
+    );
+    return (
+      <li key={key}>
+        {renderLink
+          ? renderLink({ className: "td-react-navdrawer-link", href: link.href, children })
+          : (
+            <a className="td-react-navdrawer-link" href={link.href} aria-current={link.current ? "page" : undefined}>
+              {children}
+            </a>
+          )}
+      </li>
+    );
+  };
+
+  const body = (menu: SiteNavigationMenu) => (
+    <div className="td-react-navdrawer-panel">
+      {(menu.sections ?? []).map(section => (
+        <section className="td-react-navdrawer-section" key={section.id}>
+          {section.label ? <h4 className="td-react-navdrawer-section-label">{section.label}</h4> : null}
+          <ul className="td-react-navdrawer-links">
+            {/* Keyed by href AND position, for the reason the bar keys its flat
+                links that way: two rows to the same page under different words
+                is ordinary in a menu, and React reconciles the pair into one. */}
+            {section.links.map((link, index) => row(link, `${link.href}-${index}`))}
+          </ul>
+        </section>
+      ))}
+    </div>
+  );
+
+  /*
+   * Split into runs so DOM order matches `items` order.
+   *
+   * Adjacent menus share one `Faq` — the plate parting between two disclosures
+   * is the grammar, and one plate per menu would put N raised objects inside
+   * an already raised sheet. A flat link ends the run: it opens nothing, so it
+   * is a row, and a row inside a disclosure list would wear a chevron it
+   * cannot honour.
+   */
+  const runs: Array<{ menus: SiteNavigationMenu[] } | { link: SiteNavigationLink; key: string }> = [];
+  items.forEach((item, index) => {
+    if (item.kind === "link") { runs.push({ link: item, key: `${item.href}-${index}` }); return; }
+    if (!item.sections?.length) {
+      // Unconditional rather than dev-only, like IconButton's: it fires only on
+      // a real defect, and the package carries no build-time environment flag.
+      console.warn(`NavDrawer: menu "${item.id}" has no \`sections\`, so it cannot be drawn at this measure and is omitted.`);
+      return;
+    }
+    const last = runs[runs.length - 1];
+    if (last && "menus" in last) last.menus.push(item);
+    else runs.push({ menus: [item] });
+  });
+
+  return createPortal(
+    <>
+      <div className="td-react-navdrawer-scrim" aria-hidden="true" onClick={close} />
+      <div
+        {...props}
+        ref={setSheetRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        tabIndex={-1}
+        /* No `data-overlay` and no `data-state`. Those are what the vanilla
+           runtime hunts for, and its close-all is unscoped — the sheet is
+           invisible to it rather than merely resistant to it. `display: flex`
+           comes from `.td-react-navdrawer`, at a specificity that beats
+           `.td-drawer`'s `display: none` outright. */
+        className={cx("td-drawer", "td-react-navdrawer", className)}
+        onClick={closeOnNavigate}
+      >
+        <div className="td-react-navdrawer-head">
+          <h2 id={titleId} className="td-react-navdrawer-title">{title}</h2>
+          <button
+            type="button"
+            data-drawer-close
+            className="td-alert-close td-react-navdrawer-close"
+            aria-label={closeLabel}
+            onClick={close}
+          >
+            {CLOSE}
+          </button>
+        </div>
+
+        {header ? <div className="td-react-navdrawer-header">{header}</div> : null}
+
+        <nav className="td-react-navdrawer-body" aria-label={label} data-lenis-prevent>
+          {runs.map((run, index) =>
+            "menus" in run ? (
+              <Faq
+                key={`menus-${index}`}
+                single={single}
+                /* Controlled from here, and every run is handed the SAME array.
+                   `Faq` computes the next set from the array it was given, so
+                   `single` closes a menu in one run when a menu in another
+                   opens — which is what a reader means by "one at a time". */
+                value={expanded}
+                onValueChange={setExpanded}
+                items={run.menus.map(menu => ({ id: menu.id, question: menu.label, answer: body(menu) }))}
+              />
+            ) : (
+              <div className="td-react-navdrawer-rowslot" key={run.key}>
+                {run.link.renderLink
+                  ? run.link.renderLink({ className: "td-react-navdrawer-row", href: run.link.href, children: run.link.label })
+                  : renderLink
+                    ? renderLink({ className: "td-react-navdrawer-row", href: run.link.href, children: run.link.label })
+                    : (
+                      <a
+                        className="td-react-navdrawer-row"
+                        href={run.link.href}
+                        aria-current={run.link.current ? "page" : undefined}
+                      >
+                        {run.link.label}
+                      </a>
+                    )}
+              </div>
+            ),
+          )}
+        </nav>
+
+        {footer ? <div className="td-react-navdrawer-foot">{footer}</div> : null}
+      </div>
+    </>,
+    document.body,
   );
 });

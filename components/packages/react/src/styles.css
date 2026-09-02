@@ -63,6 +63,8 @@
 @import "./search-bar.css";
 @import "./side-tabs.css";
 @import "./site-navigation.css";
+@import "./nav-drawer.css";
+@import "./bottom-nav.css";
 @import "./select.css";
 @import "./tag-input.css";
 @import "./date-picker.css";
@@ -77,6 +79,7 @@
 @import "./table.css";
 @import "./toc.css";
 @import "./tooltip.css";
+@import "./window-controls.css";
 
 /* Rules below re-declare names the design system already owns. They stay in the
    aggregate stylesheet only: a consumer serving its own `.td-*` layer would get

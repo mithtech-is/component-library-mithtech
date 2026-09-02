@@ -1,0 +1,293 @@
+/* NavDrawer — the navigation's small form, as a copied-in item.
+
+   Self-contained by construction: a registry consumer has no
+   `@mithtech-bengaluru/tonaldepth-core` to inherit from, so the two base
+   classes the sheet rides on are declared here alongside the deltas. The
+   disclosures themselves are `tonaldepth-faq`, which brings its own. */
+
+/* ── base layer: the drawer, and the dismiss mark ─────────────────────────*/
+.td-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(380px, 100vw);
+  background: var(--td-surface);
+  box-shadow: var(--td-raised);
+  z-index: 200;
+  display: none;
+  flex-direction: column;
+  padding: 24px;
+  gap: 14px;
+  animation: td-drawer-slide 260ms var(--td-ease) both;
+}
+@keyframes td-drawer-slide { from { transform: translateX(100%); } to { transform: none; } }
+
+.td-alert-close {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  color: var(--td-ink-2);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+.td-alert-close:hover { color: var(--td-ink); background: color-mix(in srgb, var(--td-surface) 92%, black); }
+/* ── the drawer ────────────────────────────────────────────────────────
+   The navigation's other half. `.td-drawer` in the base layer supplies the
+   fixed placement, the slide and the z-index; what is added here is the
+   measure, the depth grammar and a scroll area that is the sheet's rather
+   than the page's.
+
+   `display` is stated at (0,2,0) so it beats `.td-drawer`'s `display: none` on
+   specificity rather than on source order — the same move `.td-registry-sitenav-panel`
+   makes against `.td-mega-panel`, and for the same reason: the component then
+   never has to carry the `data-state` the vanilla runtime writes and strips. */
+.td-drawer.td-registry-navdrawer {
+  display: flex;
+  /* The sheet is chrome, so it is RAISED — the system's own plate strength
+     ([[L39]]) rather than the flat `--td-surface` the base rule uses. */
+  background: var(--td-raise-fill);
+  box-shadow: var(--td-raised);
+  /* Its own children own their padding: the head and the foot are pinned and
+     the middle scrolls, so a padding on the sheet would scroll the head away
+     or fence the scrollbar off from the edge. */
+  padding: 0;
+  gap: 0;
+  width: min(var(--td-registry-navdrawer-w, 400px), calc(100vw - var(--td-sp-11)));
+  /* A drawer scrolled to its end must not hand the gesture to the page
+     underneath, which is still there and still scrollable in engines that
+     ignore the body lock. */
+  overscroll-behavior: contain;
+}
+
+/* Under the sheet, over everything else. `.td-drawer` is 200 in the base
+   layer, so this is one below it — raise the variable where a page keeps
+   something of its own above that. */
+.td-registry-navdrawer-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: var(--td-registry-navdrawer-scrim-z, 199);
+  /* The same glass as the mega sheet's scrim, because it is the same moment:
+     the page behind is out of reach, and saying so with blur rather than a
+     flat wash keeps the reader oriented in the page they opened this from. */
+  background: color-mix(in srgb, var(--td-bg) 14%, transparent);
+  backdrop-filter: blur(8px) saturate(1.04);
+  -webkit-backdrop-filter: blur(8px) saturate(1.04);
+  animation: td-registry-glass-in var(--td-t-slow) var(--td-ease) both;
+}
+@keyframes td-registry-glass-in {
+  from { opacity: 0; backdrop-filter: blur(0) saturate(1); -webkit-backdrop-filter: blur(0) saturate(1); }
+  to { opacity: 1; backdrop-filter: blur(8px) saturate(1.04); -webkit-backdrop-filter: blur(8px) saturate(1.04); }
+}
+
+.td-registry-navdrawer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--td-sp-6);
+  flex: 0 0 auto;
+  padding: var(--td-sp-9) var(--td-sp-9) var(--td-sp-6);
+}
+.td-registry-navdrawer-title {
+  margin: 0;
+  font-family: var(--td-font-ui);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--td-ink);
+}
+.td-registry-navdrawer-close { flex: 0 0 auto; }
+
+.td-registry-navdrawer-header {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--td-sp-5);
+  padding: 0 var(--td-sp-9) var(--td-sp-6);
+}
+
+.td-registry-navdrawer-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: flex;
+  flex-direction: column;
+  padding: 0 var(--td-sp-7) var(--td-sp-7);
+}
+
+/* ── the disclosure, at this measure ───────────────────────────────────
+   It is `Faq`. Not a second disclosure: `Faq` already carries the real button
+   with `aria-expanded`, the region it controls and the `hidden` that keeps a
+   closed panel out of in-page search — and its own note says a disclosure is
+   that component with a single item, which it always was. What a drawer needs
+   on top is a MEASURE, and a measure belongs in a stylesheet.
+
+   The plate is the first thing to go. `Faq` is a raised plate because it sits
+   on the page ground; here it sits inside a sheet that is already raised, and
+   two raised objects one inside the other read as a card in a card. The list
+   lies flat on the sheet and the ITEMS keep their depth, which is where the
+   state actually is. */
+.td-registry-navdrawer .td-faq.td-registry-faq {
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+
+/* A nav row is a tap target before it is a line of type: bigger than a
+   question in a list of questions, and set in the UI face at the size the
+   bar's own triggers use. */
+.td-registry-navdrawer .td-faq-q.td-registry-faq-q {
+  gap: var(--td-sp-6);
+  padding: var(--td-sp-7) var(--td-sp-6);
+  border-radius: var(--td-radius-5);
+  font-size: 0.92rem;
+  color: var(--td-ink);
+}
+
+.td-registry-navdrawer .td-faq-a.td-registry-faq-a {
+  padding: 0 var(--td-sp-3) var(--td-sp-5);
+  font-size: inherit;
+}
+
+.td-registry-navdrawer-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--td-sp-7);
+}
+
+.td-registry-navdrawer-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--td-sp-2);
+  min-width: 0;
+}
+
+/* A label, not a divider — the same mark `MegaColumns` heads a column with, so
+   a section reads the same whichever breakpoint drew it. */
+.td-registry-navdrawer-section-label {
+  display: flex;
+  align-items: center;
+  gap: var(--td-sp-4);
+  margin: 0;
+  font-family: var(--td-font-mono);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--td-ink-3);
+}
+.td-registry-navdrawer-section-label::before {
+  content: "";
+  width: 3px;
+  height: 0.9em;
+  border-radius: 999px;
+  background: var(--td-brand);
+  flex: 0 0 auto;
+}
+
+.td-registry-navdrawer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  min-width: 0;
+}
+
+/* The row that presses. Same ladder as every other row in the system, and
+   stated at element strength for `text-decoration` and `justify-content`
+   because a row here is an `<a>` inside a `<nav>` — a consumer with a bare
+   `nav a` rule would otherwise underline the whole menu and strand the icon
+   at the far edge. */
+a.td-registry-navdrawer-link { text-decoration: none; color: var(--td-ink-2); }
+/* The flat row carries full ink at rest: it is a destination in its own right,
+   at the same weight as the disclosure row beside it, and a reader scanning the
+   list should not have to work out why one row looks lighter. Both are
+   element-qualified for the reason the bar's links are — a consumer with a bare
+   `nav a` colour rule would otherwise take the ladder back. */
+a.td-registry-navdrawer-row { text-decoration: none; color: var(--td-ink); }
+.td-registry-navdrawer-link,
+.td-registry-navdrawer-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--td-sp-5);
+  min-width: 0;
+  border-radius: var(--td-radius-4);
+  color: var(--td-ink-2);
+  box-shadow: var(--td-row-rest);
+  transition:
+    color var(--td-t-base) var(--td-ease),
+    background var(--td-t-base) var(--td-ease),
+    box-shadow var(--td-t-base) var(--td-ease);
+}
+.td-registry-navdrawer-link { padding: var(--td-sp-5) var(--td-sp-5); }
+.td-registry-navdrawer-link:hover,
+.td-registry-navdrawer-row:hover { color: var(--td-ink); background: var(--td-surface); box-shadow: var(--td-row-hover); }
+.td-registry-navdrawer-link:active,
+.td-registry-navdrawer-row:active { color: var(--td-ink); background: var(--td-surface); box-shadow: var(--td-row-press); }
+.td-registry-navdrawer-link:focus-visible,
+.td-registry-navdrawer-row:focus-visible { outline: 2px solid var(--td-accent); outline-offset: -2px; }
+.td-registry-navdrawer-link[aria-current],
+.td-registry-navdrawer-row[aria-current] { color: var(--td-ink); box-shadow: var(--td-row-selected); }
+
+.td-registry-navdrawer-copy { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.td-registry-navdrawer-copy strong { font-family: var(--td-font-ui); font-size: 0.82rem; font-weight: 600; color: var(--td-ink); }
+.td-registry-navdrawer-copy span { font-family: var(--td-font-sans); font-size: 0.72rem; line-height: 1.4; color: var(--td-ink-3); }
+
+.td-registry-navdrawer-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 1.95em;
+  height: 1.95em;
+  border-radius: var(--td-radius-3);
+  color: var(--td-ink-3);
+}
+
+/* A flat `link` item. It carries no chevron and opens nothing, so it is set at
+   the disclosure row's own weight and measure — a reader scanning the list
+   should not have to work out why one row looks lighter than its neighbours. */
+.td-registry-navdrawer-rowslot { display: flex; flex-direction: column; }
+.td-registry-navdrawer-row {
+  padding: var(--td-sp-7) var(--td-sp-6);
+  border-radius: var(--td-radius-5);
+  font-family: var(--td-font-ui);
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--td-ink);
+}
+
+/* The pinned rail. A carved seam rather than a drawn line: a boundary in this
+   system is the surface parting, never a tinted band ([[L03]]). */
+.td-registry-navdrawer-foot {
+  position: relative;
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--td-sp-5);
+  padding: var(--td-sp-8) var(--td-sp-9) var(--td-sp-9);
+}
+.td-registry-navdrawer-foot::before {
+  content: "";
+  position: absolute;
+  inset-inline: var(--td-sp-9);
+  top: 0;
+  height: 1px;
+  background: color-mix(in srgb, var(--td-shadow-dark) 45%, transparent);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--td-shadow-light) 45%, transparent);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .td-drawer.td-registry-navdrawer { animation: none; }
+  .td-registry-navdrawer-scrim { animation: none; }
+  .td-registry-navdrawer-link,
+  .td-registry-navdrawer-row { transition: none; }
+}

@@ -600,3 +600,61 @@ outline: none;
   height: var(--td-registry-sitenav-panel-h, 608px);
   max-height: min(var(--td-registry-sitenav-panel-h, 608px), calc(100vh - 90px));
 }
+
+
+/* ── base layer: the round button the burger rides on ─────────────────────
+   A registry item has no `@mithtech-bengaluru/tonaldepth-core` behind it, so
+   the base class is declared here. The rules below are only the deltas over
+   it. */
+.td-iconbtn {
+  appearance: none;
+  background: var(--td-raise-fill);
+  color: var(--td-ink);
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  box-shadow:
+    2px 2px 5px color-mix(in srgb, var(--td-shadow-dark) 44%, transparent),
+    -2px -2px 5px color-mix(in srgb, var(--td-shadow-light) 88%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil), 0 0 0 1px var(--td-edge);
+  transition:
+    transform var(--td-t-base) var(--td-ease),
+    box-shadow var(--td-t-base) var(--td-ease),
+    background var(--td-t-base) var(--td-ease);
+}
+.td-iconbtn:hover {
+  transform: translateY(0.5px);
+  background: color-mix(in srgb, var(--td-surface) 96%, black);
+  box-shadow:
+    1px 1px 3px color-mix(in srgb, var(--td-shadow-dark) 36%, transparent),
+    inset 1px 1px 3px color-mix(in srgb, var(--td-shadow-dark) 20%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 22%, transparent);
+}
+.td-iconbtn:active {
+  transform: translateY(1px);
+  background: var(--td-surface);
+  box-shadow:
+    inset 3px 3px 7px color-mix(in srgb, var(--td-shadow-dark) 58%, transparent),
+    inset -2px -2px 5px color-mix(in srgb, var(--td-shadow-light) 34%, transparent);
+}
+.td-iconbtn:focus-visible { outline: 2px solid var(--td-accent); outline-offset: 3px; }
+
+/* ── the bar's small form ──────────────────────────────────────────────
+   Both halves are gated on `[data-nav-compact]`, which the component sets
+   only when it was given an `onMenuOpen`. A navigation with nowhere to send a
+   reader at 480px must not hide its triggers, so the responsive rule cannot be
+   unconditional — and a consumer that upgrades without passing the prop keeps
+   the bar it had at every width.
+
+   900px is the system's own breakpoint (`.td-desktop-only`, and the rule below
+   that stands the mega sheets down), not a fourth number. */
+.td-iconbtn.td-registry-sitenav-burger { display: none; }
+
+@media (max-width: 900px) {
+  .td-registry-sitenav[data-nav-compact] .td-navlinks { display: none; }
+  .td-registry-sitenav[data-nav-compact] .td-iconbtn.td-registry-sitenav-burger { display: grid; }
+}

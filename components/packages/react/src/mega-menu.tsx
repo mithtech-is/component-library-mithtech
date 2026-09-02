@@ -259,6 +259,57 @@ export const MegaCascade = forwardRef<HTMLDivElement, MegaCascadeProps>(function
   );
 });
 
+/**
+ * A cascade's own groups, as the flat sections a `NavDrawer` renders.
+ *
+ * Written so a menu is declared ONCE: the same array feeds
+ * `<MegaCascade groups={SERVICES} />` on the bar and
+ * `sections: megaCascadeSections(SERVICES)` in the drawer, and a category
+ * added to the taxonomy reaches both breakpoints without being retyped.
+ *
+ * **A cascade becomes a flat list on a phone, not a drilldown.** Three
+ * columns do not fit, so one of the two has to happen, and the flat list wins
+ * on the reason the third column exists at all: level 1 is a device for
+ * fitting depth into a sheet of FIXED height — it stops the panel being sized
+ * by its biggest category ([[site-navigation]]). A drawer has no fixed height.
+ * It scrolls, so the constraint that produced the rail is simply absent, and
+ * reproducing the rail would import its cost — a drilldown adds a second
+ * navigation state inside a component whose job is to get out of the way,
+ * asks for a third tap and a back affordance to reach a list of links, and
+ * makes the browser's own Back button ambiguous (does it close the drilldown,
+ * or leave the page?). Scrolling is free on a phone; state you can get lost
+ * in is not.
+ *
+ * So level 1 is DROPPED rather than flattened into the labels: one section per
+ * branch, headed by the branch's title, holding its items. Repeating the
+ * category on every heading ("Implementation · ERP", "Implementation ·
+ * Commerce") pays for the category four times over and reads as noise at the
+ * measure a heading gets here. Where a branch is itself navigable its `href`
+ * becomes the last row, which is the only thing the drawer would otherwise
+ * lose — the panel renders it as "See all".
+ *
+ * Hand-write `sections` instead where the small form is genuinely a different
+ * IA: a phone menu that promotes two destinations the desktop panel buries is
+ * a decision, not a projection, and this function has no opinion about it.
+ */
+export function megaCascadeSections(
+  groups: MegaCascadeGroup[],
+  seeAllLabel?: (branch: MegaCascadeBranch) => ReactNode,
+): MegaSection[] {
+  return groups.flatMap(group =>
+    group.branches.map(branch => ({
+      // Prefixed with the group, because two categories may both own a
+      // "Guides" branch and the ids have to stay unique across the flattening.
+      id: `${group.id}-${branch.id}`,
+      label: branch.title,
+      links: [
+        ...branch.items.map(item => ({ href: item.href, title: item.title, detail: item.detail })),
+        ...(branch.href ? [{ href: branch.href, title: seeAllLabel ? seeAllLabel(branch) : `See all ${branch.title}` }] : []),
+      ],
+    })),
+  );
+}
+
 // ── The two-column tab panel ───────────────────────────────────────────────
 
 export interface MegaTabItem {

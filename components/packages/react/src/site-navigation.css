@@ -312,3 +312,19 @@ a.td-react-sitenav-link { text-decoration: none; color: inherit; }
   height: var(--td-react-sitenav-panel-h, 608px);
   max-height: min(var(--td-react-sitenav-panel-h, 608px), calc(100vh - 90px));
 }
+
+/* ── the bar's small form ──────────────────────────────────────────────
+   Both halves are gated on `[data-nav-compact]`, which the component sets
+   only when it was given an `onMenuOpen`. A navigation with nowhere to send a
+   reader at 480px must not hide its triggers, so the responsive rule cannot be
+   unconditional — and a consumer that upgrades without passing the prop keeps
+   the bar it had at every width.
+
+   900px is the system's own breakpoint (`.td-desktop-only`, and the rule below
+   that stands the mega sheets down), not a fourth number. */
+.td-iconbtn.td-react-sitenav-burger { display: none; }
+
+@media (max-width: 900px) {
+  .td-react-sitenav[data-nav-compact] .td-navlinks { display: none; }
+  .td-react-sitenav[data-nav-compact] .td-iconbtn.td-react-sitenav-burger { display: grid; }
+}

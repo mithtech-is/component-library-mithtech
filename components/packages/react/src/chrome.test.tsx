@@ -1,11 +1,12 @@
+import { useState } from "react";
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import axe from "axe-core";
-import { Footer, FooterBottom, FooterBrand, FooterColumn, FooterContact, FooterGrid, FooterSocial, SiteNavigation, type SiteNavigationItem } from "./index";
+import { BottomNav, Footer, FooterBottom, FooterBrand, FooterColumn, FooterContact, FooterGrid, FooterSocial, MegaColumns, NavDrawer, SiteNavigation, WindowControls, megaCascadeSections, type MegaCascadeGroup, type MegaSection, type SiteNavigationItem } from "./index";
 
 const SRC = dirname(fileURLToPath(import.meta.url));
 
@@ -391,6 +392,461 @@ describe("SiteNavigation", () => {
   });
 });
 
+/*
+ * The drawer.
+ *
+ * The half that did not exist. Every consumer wrote its own — mith.tech's was
+ * 205 lines with zero library imports, hand-writing `td-drawer`, the whole
+ * `td-disclose*` family and `td-primary` + `td-lamp`, and driven end to end by
+ * the vanilla runtime's `data-overlay-open` / `data-overlay-close`. The tests
+ * below are that brief read back: same `items`, no `td-*` in the caller, and
+ * nothing that needs `tonaldepth.js` to be on the page.
+ */
+const DRAWER_ITEMS: SiteNavigationItem[] = [
+  {
+    kind: "menu",
+    id: "services",
+    label: "Services",
+    title: "Services",
+    content: <span>the desktop panel</span>,
+    sections: [
+      { id: "implement", label: "Implement", links: [{ href: "/services/erpnext-implementation", title: "ERP implementation", detail: "ERPNext · Frappe" }] },
+      { id: "migrate", label: "Migrate", links: [{ href: "/services/migration/tally-to-erpnext", title: "Tally to ERPNext" }] },
+    ],
+  },
+  {
+    kind: "menu",
+    id: "platforms",
+    label: "Platforms",
+    title: "Platforms",
+    content: <span>the desktop panel</span>,
+    sections: [{ id: "stack", label: "The technology", links: [{ href: "/platforms/erpnext", title: "Frappe and ERPNext" }] }],
+  },
+  { kind: "link", label: "Work", href: "/case-studies" },
+];
+
+function Drawer(props: Partial<React.ComponentProps<typeof NavDrawer>> = {}) {
+  const [open, setOpen] = useState(true);
+  return <NavDrawer open={open} onOpenChange={setOpen} items={DRAWER_ITEMS} {...props} />;
+}
+
+describe("NavDrawer", () => {
+  it("draws the bar's own items — a disclosure per menu, a row per flat link", async () => {
+    const user = userEvent.setup();
+    render(<Drawer />);
+
+    // The same array the bar takes. Nothing here is a second declaration.
+    const services = screen.getByRole("button", { name: "Services" });
+    expect(services).toHaveAttribute("aria-expanded", "false");
+    expect(screen.getByRole("button", { name: "Platforms" })).toBeInTheDocument();
+    // A link opens nothing, so it is a row rather than a disclosure.
+    expect(screen.getByRole("link", { name: "Work" })).toHaveAttribute("href", "/case-studies");
+    expect(screen.queryByRole("button", { name: "Work" })).toBeNull();
+
+    await user.click(services);
+    expect(services).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByRole("link", { name: /ERP implementation/ })).toHaveAttribute("href", "/services/erpnext-implementation");
+  });
+
+  it("keeps DOM order when a flat link sits between two menus", () => {
+    render(
+      <Drawer
+        items={[
+          DRAWER_ITEMS[0],
+          { kind: "link", label: "Work", href: "/case-studies" },
+          DRAWER_ITEMS[1],
+        ]}
+      />,
+    );
+    const nav = screen.getByRole("navigation", { name: "Site navigation" });
+    const labels = [...nav.querySelectorAll(".td-react-faq-q, .td-react-navdrawer-row")].map(node => node.textContent);
+    // A run of adjacent menus shares one Faq; a link ends the run and starts
+    // the next one. Order has to survive that split.
+    expect(labels).toEqual(["Services", "Work", "Platforms"]);
+  });
+
+  it("opens one menu at a time across the runs a flat link splits", async () => {
+    const user = userEvent.setup();
+    render(
+      <Drawer
+        items={[
+          DRAWER_ITEMS[0],
+          { kind: "link", label: "Work", href: "/case-studies" },
+          DRAWER_ITEMS[1],
+        ]}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: "Services" }));
+    await user.click(screen.getByRole("button", { name: "Platforms" }));
+
+    // Two separate Faqs, one `single`. Each is handed the same open array, so
+    // it computes the next set globally rather than within its own view.
+    expect(screen.getByRole("button", { name: "Services" })).toHaveAttribute("aria-expanded", "false");
+    expect(screen.getByRole("button", { name: "Platforms" })).toHaveAttribute("aria-expanded", "true");
+  });
+
+  it("is a disclosure, not a stylesheet: no td-disclose anywhere in it", () => {
+    render(<Drawer defaultOpen={["services"]} />);
+    // The 205-line consumer drawer hand-wrote td-disclose, td-disclose-trigger,
+    // td-disclose-panel, td-disclose-body and td-disclose-chevron, and needed
+    // the vanilla runtime to animate them. This is `Faq` at the drawer's
+    // measure — one disclosure implementation in the library, not two.
+    expect(document.querySelectorAll("[class*='td-disclose']")).toHaveLength(0);
+    expect(document.querySelector(".td-react-navdrawer .td-react-faq")).not.toBeNull();
+    const trigger = screen.getByRole("button", { name: "Services" });
+    expect(trigger).toHaveAttribute("aria-expanded", "true");
+    expect(document.getElementById(trigger.getAttribute("aria-controls") as string)).toHaveAttribute("role", "region");
+  });
+
+  it("needs nothing from the vanilla runtime — no data-overlay, no data-state", () => {
+    render(<Drawer />);
+    const sheet = document.querySelector(".td-react-navdrawer") as HTMLElement;
+    /*
+     * The consumer's drawer was opened by `data-overlay-open="mobile-nav"` and
+     * closed by `data-overlay-close`, with the trap, the lock and the
+     * disclosure animation all supplied by `tonaldepth.js`. That runtime's
+     * close-all is unscoped: it already strips `.is-open` from React-owned mega
+     * panels and clobbers `aria-expanded` through `[data-nav]`. Carrying none
+     * of its attributes makes this sheet invisible to it rather than merely
+     * resistant to it — and makes the drawer work with it absent, which is the
+     * whole point.
+     */
+    expect(sheet.hasAttribute("data-overlay")).toBe(false);
+    expect(sheet.hasAttribute("data-state")).toBe(false);
+    expect(document.querySelectorAll("[data-overlay-close]")).toHaveLength(0);
+    expect(document.querySelectorAll("[data-disclose-toggle]")).toHaveLength(0);
+    expect(sheet).toHaveAttribute("aria-modal", "true");
+  });
+
+  it("portals to the body, so the header's retract transform cannot claim it", () => {
+    render(
+      <div style={{ transform: "translateY(-4px)" }} data-testid="retracting">
+        <Drawer />
+      </div>,
+    );
+    const sheet = document.querySelector(".td-react-navdrawer") as HTMLElement;
+    // The natural place to write the drawer is inside SiteNavigation's
+    // children, and the header carries the retract transform — which is the
+    // containing block for its fixed descendants and a new backdrop root. In
+    // place, the sheet's insets resolve against the 86px bar and the scrim's
+    // glass computes to `none`. Both symptoms, one cause; see Overlays.
+    expect(sheet.closest("[data-testid='retracting']")).toBeNull();
+    expect(fixedContainingBlock(sheet)).toBeNull();
+  });
+
+  it("traps Tab inside the sheet and gives focus back on close", async () => {
+    const user = userEvent.setup();
+    function Host() {
+      const [open, setOpen] = useState(false);
+      return (
+        <>
+          <button type="button" onClick={() => setOpen(true)}>Open navigation menu</button>
+          <NavDrawer open={open} onOpenChange={setOpen} items={DRAWER_ITEMS} />
+        </>
+      );
+    }
+    render(<Host />);
+    const burger = screen.getByRole("button", { name: "Open navigation menu" });
+    await user.click(burger);
+
+    // Lands on the first real control, not on the close button: dismiss is the
+    // one thing always reachable, and opening a menu with the caret on "close"
+    // asks the reader to tab past the exit to reach the first section.
+    expect(screen.getByRole("button", { name: "Services" })).toHaveFocus();
+
+    const sheet = document.querySelector(".td-react-navdrawer") as HTMLElement;
+    const focusables = [...sheet.querySelectorAll<HTMLElement>("button,[href]")];
+    focusables[focusables.length - 1].focus();
+    await user.tab();
+    expect(sheet.contains(document.activeElement)).toBe(true);
+
+    await user.keyboard("{Escape}");
+    expect(document.querySelector(".td-react-navdrawer")).toBeNull();
+    expect(burger).toHaveFocus();
+  });
+
+  it("locks the page behind it and pays back the scrollbar's gutter", () => {
+    const { rerender } = render(<NavDrawer open={false} onOpenChange={() => {}} items={DRAWER_ITEMS} />);
+    expect(document.body.style.overflow).toBe("");
+
+    rerender(<NavDrawer open onOpenChange={() => {}} items={DRAWER_ITEMS} />);
+    expect(document.body.style.overflow).toBe("hidden");
+
+    rerender(<NavDrawer open={false} onOpenChange={() => {}} items={DRAWER_ITEMS} />);
+    // Restored to what the page had, not to a literal — a consumer may be
+    // running a smooth-scroll library that owns `overflow` itself.
+    expect(document.body.style.overflow).toBe("");
+    expect(document.body.style.paddingRight).toBe("");
+  });
+
+  it("closes on the scrim, and on following a link, but not on pressing a disclosure", async () => {
+    const user = userEvent.setup();
+    render(<Drawer />);
+
+    // A disclosure trigger is the drawer's own control, not navigation.
+    await user.click(screen.getByRole("button", { name: "Services" }));
+    expect(document.querySelector(".td-react-navdrawer")).not.toBeNull();
+
+    await user.click(screen.getByRole("link", { name: /ERP implementation/ }));
+    expect(document.querySelector(".td-react-navdrawer")).toBeNull();
+  });
+
+  it("dismisses on the scrim", async () => {
+    const user = userEvent.setup();
+    render(<Drawer />);
+    await user.click(document.querySelector(".td-react-navdrawer-scrim") as HTMLElement);
+    expect(document.querySelector(".td-react-navdrawer")).toBeNull();
+  });
+
+  it("routes every row through renderLink when one is supplied", () => {
+    render(<Drawer defaultOpen={["services"]} renderLink={({ className, href, children }) => <a className={className} href={href} data-router="true">{children}</a>} />);
+    expect(screen.getByRole("link", { name: /ERP implementation/ })).toHaveAttribute("data-router", "true");
+    // The flat item's own renderLink wins where it has one; the drawer's is
+    // the fallback, so a consumer supplies its router once.
+    expect(screen.getByRole("link", { name: "Work" })).toHaveAttribute("data-router", "true");
+  });
+
+  it("drops a menu with no sections rather than pouring a desktop panel into it", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    render(
+      <Drawer
+        items={[{ kind: "menu", id: "industries", label: "Industries", title: "Industries", content: <a href="/industries">the desktop grid</a> }]}
+      />,
+    );
+    /*
+     * `content` is a ReactNode by design — the bar owns the sheet and owns
+     * nothing about what is inside one — so the drawer cannot read a menu's
+     * destinations out of it. Rendering it anyway is worse than it looks:
+     * MegaCascade moves focus to its first category on mount, so a CLOSED
+     * disclosure would steal the caret the moment the drawer opened. One
+     * console line and one field beats a menu that half-works.
+     */
+    expect(screen.queryByRole("button", { name: "Industries" })).toBeNull();
+    expect(screen.queryByRole("link", { name: "the desktop grid" })).toBeNull();
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining("industries"));
+    warn.mockRestore();
+  });
+
+  it("takes MegaColumns' own sections array verbatim", () => {
+    // Structurally the same record, so a consumer whose panel is MegaColumns
+    // passes ONE array to the panel and to the menu. That is the whole of
+    // "declared once" — the type is restated in site-navigation rather than
+    // imported only so a registry item stays self-contained.
+    const sections: MegaSection[] = [
+      { id: "guides", label: "Guides", links: [{ href: "/learn/erpnext", title: "ERPNext guides", detail: "12 guides" }] },
+    ];
+    render(<Drawer items={[{ kind: "menu", id: "knowledge", label: "Knowledge", title: "Knowledge", content: <MegaColumns sections={sections} />, sections }]} defaultOpen={["knowledge"]} />);
+    expect(screen.getAllByRole("link", { name: /ERPNext guides/ }).length).toBeGreaterThan(0);
+  });
+
+  it("derives those sections from a cascade's own groups", () => {
+    const groups: MegaCascadeGroup[] = [
+      {
+        id: "implementation",
+        label: "Implementation",
+        branches: [
+          { id: "erp", title: "ERP", href: "/services/erp", items: [{ href: "/services/erpnext-implementation", title: "ERPNext implementation", detail: "90 days" }] },
+        ],
+      },
+    ];
+    const sections = megaCascadeSections(groups);
+    /*
+     * A cascade becomes a FLAT LIST on a phone, not a drilldown. Level 1 is a
+     * device for fitting depth into a sheet of fixed height; a drawer scrolls,
+     * so the constraint that produced the rail is absent and reproducing it
+     * would import its cost. Level 1 is therefore dropped rather than folded
+     * into the labels, and a navigable branch keeps its `href` as the last row
+     * — the only thing the flattening would otherwise lose.
+     */
+    expect(sections).toHaveLength(1);
+    expect(sections[0].id).toBe("implementation-erp");
+    expect(sections[0].label).toBe("ERP");
+    expect(sections[0].links.map(link => link.title)).toEqual(["ERPNext implementation", "See all ERP"]);
+  });
+});
+
+describe("SiteNavigation's small form", () => {
+  it("renders no burger and hides nothing until it is given somewhere to send a reader", () => {
+    render(<Nav />);
+    const header = document.querySelector(".td-react-sitenav") as HTMLElement;
+    // Additive: a consumer that passes nothing new renders exactly as before,
+    // which is why the responsive rule is gated on the prop rather than
+    // applied to every navigation.
+    expect(header.hasAttribute("data-nav-compact")).toBe(false);
+    expect(document.querySelector(".td-react-sitenav-burger")).toBeNull();
+  });
+
+  it("puts the burger in the bar itself, so no consumer writes a td-* class to place it", async () => {
+    const user = userEvent.setup();
+    const onMenuOpen = vi.fn();
+    render(
+      <SiteNavigation brand="TD" items={ITEMS} actions={<button type="button">Get an estimate</button>} onMenuOpen={onMenuOpen} />,
+    );
+    const header = document.querySelector(".td-react-sitenav") as HTMLElement;
+    expect(header).toHaveAttribute("data-nav-compact", "");
+
+    const burger = screen.getByRole("button", { name: "Open navigation menu" });
+    expect(burger.closest(".td-nav-right")).not.toBeNull();
+    await user.click(burger);
+    expect(onMenuOpen).toHaveBeenCalledTimes(1);
+  });
+
+  it("gates the trigger row and the burger on the same attribute, in one stylesheet, in both distributions", () => {
+    for (const [file, P] of [
+      ["site-navigation.css", "react"],
+      ["../../../registry/tonaldepth/site-navigation.css", "registry"],
+    ]) {
+      const css = readFileSync(join(SRC, file), "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
+      // The burger and the hidden trigger row are one decision. Split across
+      // two rules with two conditions, a consumer ships a bar with both or
+      // with neither — which is how `.td-nav-burger` came to be invented
+      // downstream in the first place.
+      expect(css, file).toMatch(new RegExp(`\\.td-${P}-sitenav\\[data-nav-compact\\] \\.td-navlinks \\{[^}]*display:\\s*none`));
+      expect(css, file).toMatch(new RegExp(`\\.td-${P}-sitenav\\[data-nav-compact\\] \\.td-iconbtn\\.td-${P}-sitenav-burger \\{[^}]*display:\\s*grid`));
+    }
+  });
+
+  it("beats the base layer's `display: none` on specificity, in both distributions", () => {
+    for (const [file, P] of [
+      ["nav-drawer.css", "react"],
+      ["../../../registry/tonaldepth/nav-drawer.css", "registry"],
+    ]) {
+      const css = readFileSync(join(SRC, file), "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
+      // `.td-drawer` ships `display: none` with `[data-state="open"]` turning
+      // it on — and `data-state` is exactly what the vanilla runtime writes
+      // and strips. Winning on specificity instead keeps the sheet invisible
+      // to that runtime, the same move the mega panel makes.
+      expect(css, file).toMatch(new RegExp(`\\.td-drawer\\.td-${P}-navdrawer \\{[^}]*display:\\s*flex`));
+    }
+  });
+});
+
+
+/*
+ * The bottom bar.
+ *
+ * The other place navigation lives on a phone: not the directory behind a
+ * burger, but the three or four destinations a thumb reaches all day. The
+ * base layer shipped `.td-bottomnav` with no component behind it — the same
+ * gap `.td-drawer` had.
+ */
+const BOTTOM_ITEMS = [
+  { id: "home", label: "Home", icon: <span>H</span>, href: "/", current: true },
+  { id: "orders", label: "Orders", icon: <span>O</span>, href: "/orders", badge: 3 },
+  { id: "alerts", label: "Alerts", icon: <span>A</span>, href: "/alerts" },
+  { id: "support", label: "Support", icon: <span>S</span>, href: "/support" },
+  { id: "settings", label: "Settings", icon: <span>G</span>, href: "/settings" },
+  { id: "contact", label: "Contact", icon: <span>C</span>, href: "/contact" },
+];
+
+describe("BottomNav", () => {
+  it("draws what fits and puts the rest behind More", async () => {
+    const user = userEvent.setup();
+    render(<BottomNav items={BOTTOM_ITEMS} placement="inline" />);
+
+    // Four destinations plus More is five things on the bar. One slot goes to
+    // More the moment anything overflows, so the bar never draws four
+    // destinations AND More alongside a fifth.
+    expect(screen.getByRole("link", { name: /Home/ })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Support/ })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /Settings/ })).not.toBeInTheDocument();
+
+    const more = screen.getByRole("button", { name: /More/ });
+    expect(more).toHaveAttribute("aria-expanded", "false");
+    await user.click(more);
+    expect(more).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByRole("link", { name: /Settings/ })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Contact/ })).toBeInTheDocument();
+  });
+
+  it("clamps `max` at five, whatever it is passed", () => {
+    render(<BottomNav items={BOTTOM_ITEMS} max={12} placement="inline" />);
+    /*
+     * A 360px bar divided six ways gives each destination 56px, which is under
+     * the tap minimum once the padding comes out and leaves no room for a word
+     * under the icon. A bar you cannot hit is not a navigation, so the ceiling
+     * is enforced rather than documented.
+     */
+    const bar = screen.getByRole("navigation", { name: "Primary" });
+    expect(within(bar).getAllByRole("link")).toHaveLength(4);
+    expect(within(bar).getByRole("button", { name: /More/ })).toBeInTheDocument();
+  });
+
+  it("draws no More at all when everything fits and nothing extra was given", () => {
+    render(<BottomNav items={BOTTOM_ITEMS.slice(0, 3)} placement="inline" />);
+    expect(screen.queryByRole("button", { name: /More/ })).not.toBeInTheDocument();
+  });
+
+  it("opens More for a caller's extra content even with nothing overflowing", async () => {
+    const user = userEvent.setup();
+    render(
+      <BottomNav items={BOTTOM_ITEMS.slice(0, 3)} placement="inline">
+        <button type="button">Sign out</button>
+      </BottomNav>,
+    );
+    await user.click(screen.getByRole("button", { name: /More/ }));
+    expect(screen.getByRole("button", { name: "Sign out" })).toBeInTheDocument();
+  });
+
+  it("takes the focus, returns it, and closes on Escape", async () => {
+    const user = userEvent.setup();
+    render(<BottomNav items={BOTTOM_ITEMS} placement="inline" />);
+    const more = screen.getByRole("button", { name: /More/ });
+    await user.click(more);
+
+    // Expanding is not modal the way a dialog is — it is one level of a
+    // navigation opening — but a panel over the page the keyboard cannot reach
+    // or leave is worse than no panel.
+    expect(screen.getByRole("dialog")).toContainElement(document.activeElement);
+    await user.keyboard("{Escape}");
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(more).toHaveFocus();
+  });
+
+  it("collapses when a destination in the sheet is followed", async () => {
+    const user = userEvent.setup();
+    render(<BottomNav items={BOTTOM_ITEMS} placement="inline" />);
+    await user.click(screen.getByRole("button", { name: /More/ }));
+    await user.click(screen.getByRole("link", { name: /Settings/ }));
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
+  it("portals the fixed bar out, so a transformed page cannot claim it", () => {
+    render(
+      <div style={{ transform: "translateY(-4px)" }} data-testid="animated">
+        <BottomNav items={BOTTOM_ITEMS} />
+      </div>,
+    );
+    // `position: fixed` resolves against the nearest transformed ancestor
+    // rather than the viewport, so a bar rendered in place would pin itself to
+    // that box instead of the screen — the defect the mega sheet's scrim
+    // shipped with in 0.1.0-alpha.26.
+    const bar = screen.getByRole("navigation", { name: "Primary" });
+    expect(bar.closest("[data-testid='animated']")).toBeNull();
+    expect(fixedContainingBlock(bar)).toBeNull();
+  });
+
+  it("publishes --bottom-nav-offset while it is pinned, and clears it when it is not", () => {
+    const { unmount } = render(<BottomNav items={BOTTOM_ITEMS} />);
+    // A fixed bar covers the end of every scroll; the offset is how a page
+    // pads its last row clear of it.
+    expect(document.documentElement.style.getPropertyValue("--bottom-nav-offset")).not.toBe("");
+    unmount();
+    expect(document.documentElement.style.getPropertyValue("--bottom-nav-offset")).toBe("");
+  });
+
+  it("routes every destination through renderLink when one is supplied", () => {
+    render(
+      <BottomNav
+        items={BOTTOM_ITEMS}
+        placement="inline"
+        renderLink={({ className, href, children }) => <a className={className} href={href} data-router="true">{children}</a>}
+      />,
+    );
+    expect(screen.getByRole("link", { name: /Home/ })).toHaveAttribute("data-router", "true");
+  });
+});
+
 describe("Footer", () => {
   it("routes every column link through renderLink", () => {
     render(
@@ -458,6 +914,96 @@ describe("Footer", () => {
     expect(screen.getByRole("contentinfo")).toHaveClass("td-footer");
     expect(screen.getByRole("link", { name: "MITH.TECH" })).toHaveAttribute("href", "/");
 
+    const result = await axe.run(container, { rules: { "color-contrast": { enabled: false } } });
+    expect(result.violations.filter(item => item.impact === "critical" || item.impact === "serious")).toEqual([]);
+  });
+});
+
+/*
+ * The window actions.
+ *
+ * The half nothing drew. Every consumer that needed the three lights wrote its
+ * own — its own maximise glyph out of whatever icon set was to hand, its own
+ * three hex values off a screenshot — because the library exposed neither the
+ * cluster nor a plain Maximize mark. The tests below are that brief read back:
+ * three real buttons with real names, a silhouette that does not reflow, and
+ * marks that arrive on the cluster rather than on the disc under the pointer.
+ */
+describe("WindowControls", () => {
+  it("draws three named buttons in the platform's order", () => {
+    render(<WindowControls onClose={() => {}} onMinimise={() => {}} onMaximise={() => {}} />);
+    const group = screen.getByRole("group", { name: "Window controls" });
+    const names = within(group).getAllByRole("button").map(button => button.getAttribute("aria-label"));
+    // Left to right, and named — the colour is never the only thing saying
+    // which disc is which.
+    expect(names).toEqual(["Close", "Minimise", "Maximise"]);
+  });
+
+  it("runs the action the disc names", async () => {
+    const user = userEvent.setup();
+    const calls: string[] = [];
+    render(
+      <WindowControls
+        onClose={() => calls.push("close")}
+        onMinimise={() => calls.push("minimise")}
+        onMaximise={() => calls.push("maximise")}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: "Maximise" }));
+    await user.click(screen.getByRole("button", { name: "Close" }));
+    expect(calls).toEqual(["maximise", "close"]);
+  });
+
+  it("disables an action with no handler rather than dropping its disc", () => {
+    /* The cluster is recognised by its silhouette, and a row that is sometimes
+       two wide and sometimes three reflows the title beside it. Every platform
+       greys the light instead. */
+    render(<WindowControls onClose={() => {}} />);
+    expect(screen.getAllByRole("button")).toHaveLength(3);
+    expect(screen.getByRole("button", { name: "Close" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Minimise" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Maximise" })).toBeDisabled();
+  });
+
+  it("reports focus on the cluster, because focus belongs to the window", () => {
+    const { rerender } = render(<WindowControls onClose={() => {}} />);
+    expect(screen.getByRole("group")).toHaveAttribute("data-focused", "true");
+    rerender(<WindowControls onClose={() => {}} focused={false} />);
+    expect(screen.getByRole("group")).toHaveAttribute("data-focused", "false");
+  });
+
+  it("takes the size and the labels from the caller", () => {
+    render(
+      <WindowControls
+        size="sm"
+        label="Preview window"
+        labels={{ close: "Fermer", minimise: "Réduire", maximise: "Agrandir" }}
+        onClose={() => {}}
+      />,
+    );
+    const group = screen.getByRole("group", { name: "Preview window" });
+    expect(group).toHaveClass("td-react-windowcontrols--sm");
+    expect(within(group).getByRole("button", { name: "Fermer" })).toBeInTheDocument();
+  });
+
+  it("gives each disc a mark, hidden from the accessibility tree", () => {
+    /* The marks are the hover affordance, not the name — a screen reader hears
+       "Close", not a cross. And they must be real glyphs: Phosphor's `X` and
+       `Minus` at `fill` are square plates with the mark knocked out, which at
+       6px is a filled square. */
+    const { container } = render(<WindowControls onClose={() => {}} onMinimise={() => {}} onMaximise={() => {}} />);
+    const marks = [...container.querySelectorAll(".td-react-windowcontrols-mark")];
+    expect(marks).toHaveLength(3);
+    for (const mark of marks) {
+      expect(mark).toHaveAttribute("aria-hidden", "true");
+      expect(mark.querySelector("svg")).not.toBeNull();
+    }
+  });
+
+  it("passes an accessibility audit", async () => {
+    const { container } = render(
+      <WindowControls onClose={() => {}} onMinimise={() => {}} onMaximise={() => {}} />,
+    );
     const result = await axe.run(container, { rules: { "color-contrast": { enabled: false } } });
     expect(result.violations.filter(item => item.impact === "critical" || item.impact === "serious")).toEqual([]);
   });
