@@ -850,7 +850,7 @@ const standaloneBase=`/* TonalDepth base tokens. Install once with @tonaldepth/t
 :root {
   --td-bg: #eceae6;
   --td-surface: #eceae6;
-  --td-surface-2: #e3e0da;
+  --td-surface-2: #e1ded9;
   --td-ink: #1f1c17;
   --td-ink-2: #6e685e;
   --td-ink-3: #9a9388;
@@ -860,7 +860,7 @@ const standaloneBase=`/* TonalDepth base tokens. Install once with @tonaldepth/t
   --td-accent-text: #0675b0;
   --td-green: #59d38c;
   --td-green-text: #0c814a;
-  --td-error: #d92a00;
+  --td-error: #ec360e;
   --td-error-text: #d92a00;
   --td-edge: rgba(82, 70, 54, 0.16);
   --td-shadow-dark: rgba(82, 70, 54, 0.30);

@@ -27,8 +27,8 @@ with the native token map, the registry and the docs props table.
 
 | Token | Light | Dark |
 | --- | --- | --- |
-| `--td-bg` / `--td-surface` | `#F5F5F5` | `#1A1815` |
-| `--td-surface-2` | `#E8E8E8` | `#221F1A` |
+| `--td-bg` / `--td-surface` | `#ECEAE6` | `#1A1815` |
+| `--td-surface-2` | `#E1DED9` | `#221F1A` |
 | `--td-ink` | `#1F1C17` | `#F0EDE5` |
 | `--td-ink-2` | `#6E685E` | `#9A9388` |
 | `--td-ink-3` | `#9A9388` | `#6E685E` |
@@ -38,8 +38,8 @@ with the native token map, the registry and the docs props table.
 | `--td-accent-text` | `#0675B0` | `var(--td-accent)` |
 | `--td-green` | `#59D38C` | `#59D38C` |
 | `--td-green-text` | `#0C814A` | `var(--td-green)` |
-| `--td-error` | `#E04A2E` | `#E04A2E` |
-| `--td-error-text` | `#CE381C` | `#E34D31` |
+| `--td-error` | `#EC360E` | `#EC360E` |
+| `--td-error-text` | `#D92A00` | `#E34D31` |
 | `--td-series-1…8` | `oklch(0.66 0.23 <hue>)` at hues 30 / 237 / 160 / 300 / 120 / 190 / 354 / 265 | same |
 
 ---

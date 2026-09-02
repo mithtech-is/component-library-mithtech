@@ -7,6 +7,7 @@
   "scripts": {
     "audit:baseline": "python tooling/audit/audit_html.py",
     "tokens:import": "python tooling/tokens/import_baseline.py",
+    "tokens:check": "python tooling/tokens/import_baseline.py --check",
     "tokens:build": "python tooling/tokens/build.py",
     "tokens:build-native": "python tooling/tokens/build_native.py",
     "test:native-tokens": "python -m unittest tooling.tests.test_native_tokens",
@@ -28,7 +29,7 @@
     "brands:build": "node tooling/brands/build.mjs",
     "docs:props": "node tooling/docs/props.mjs",
     "generate": "pnpm tokens:build && pnpm tokens:build-native && pnpm brands:build && pnpm registry:generate && pnpm docs:props && pnpm registry:build",
-    "registry:check": "node tooling/registry/generate.mjs --check && node tooling/registry/css-parity.mjs && node tooling/brands/build.mjs --check"
+    "registry:check": "pnpm tokens:check && node tooling/registry/generate.mjs --check && node tooling/registry/css-parity.mjs && node tooling/brands/build.mjs --check"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "6.9.1",

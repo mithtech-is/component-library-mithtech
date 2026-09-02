@@ -3,21 +3,21 @@ import 'package:flutter/material.dart';
 
 abstract final class TonalDepthGeneratedColors {
   static const accentLight = Color(0xFF00AAFF);
-  static const bgLight = Color(0xFFF5F5F5);
+  static const bgLight = Color(0xFFECEAE6);
   static const brandLight = Color(0xFFFF5E29);
-  static const errorLight = Color(0xFFFF4A45);
-  static const greenLight = Color(0xFF00C86A);
+  static const errorLight = Color(0xFFEC360E);
+  static const greenLight = Color(0xFF59D38C);
   static const inkLight = Color(0xFF1F1C17);
   static const ink2Light = Color(0xFF6E685E);
   static const ink3Light = Color(0xFF9A9388);
   static const inkOnFillLight = Color(0xFF1F1C17);
-  static const surfaceLight = Color(0xFFF5F5F5);
-  static const surface2Light = Color(0xFFE8E8E8);
+  static const surfaceLight = Color(0xFFECEAE6);
+  static const surface2Light = Color(0xFFE1DED9);
   static const accentDark = Color(0xFF00AAFF);
   static const bgDark = Color(0xFF1A1815);
   static const brandDark = Color(0xFFFF5E29);
-  static const errorDark = Color(0xFFFF4A45);
-  static const greenDark = Color(0xFF00C86A);
+  static const errorDark = Color(0xFFEC360E);
+  static const greenDark = Color(0xFF59D38C);
   static const inkDark = Color(0xFFF0EDE5);
   static const ink2Dark = Color(0xFF9A9388);
   static const ink3Dark = Color(0xFF6E685E);
