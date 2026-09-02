@@ -642,7 +642,7 @@ describe("WhatsAppForm — the trigger is not the component", () => {
     const user = userEvent.setup();
     const onSend = vi.fn(() => false as const);
     render(<WhatsAppForm phone="+919000000000" defaultOpen fields={{ phone: "off" }} onSend={onSend} includePage={false} />);
-    expect(screen.queryByLabelText(/^Phone/)).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Phone")).not.toBeInTheDocument();
     await user.type(screen.getByLabelText(/^Name/), "Asha");
     await user.type(screen.getByLabelText(/^Email/), "asha@example.com");
     await user.type(screen.getByLabelText(/^Subject/), "ERPNext rollout");
@@ -658,7 +658,8 @@ describe("WhatsAppForm — the trigger is not the component", () => {
     const onSend = vi.fn(() => false as const);
     render(<WhatsAppForm phone="+919000000000" defaultOpen fields={{ phone: "optional" }} onSend={onSend} includePage={false} />);
     const optional = screen.getByRole("group", { name: /Optional/ });
-    expect(within(optional).getByLabelText(/^Phone/)).toBeInTheDocument();
+    await user.click(within(optional).getByRole("button", { name: /Optional/ }));
+    expect(within(optional).getByLabelText("Phone")).toBeInTheDocument();
     await user.type(screen.getByLabelText(/^Name/), "Asha");
     await user.type(screen.getByLabelText(/^Email/), "asha@example.com");
     await user.type(screen.getByLabelText(/^Subject/), "ERPNext rollout");
@@ -674,12 +675,25 @@ describe("WhatsAppForm — the trigger is not the component", () => {
     const onSend = vi.fn(() => false as const);
     render(<WhatsAppForm phone="+919000000000" defaultOpen fields={{ email: "optional" }} onSend={onSend} includePage={false} />);
     await user.type(screen.getByLabelText(/^Name/), "Asha");
-    await user.type(screen.getByLabelText(/^Phone/), "9876543210");
+    await user.type(screen.getByLabelText("Phone"), "9876543210");
     await user.type(screen.getByLabelText(/^Subject/), "ERPNext rollout");
+    const optionalGroup = screen.getByRole("group", { name: /Optional/ });
+    await user.click(within(optionalGroup).getByRole("button", { name: /Optional/ }));
     await user.type(screen.getByLabelText(/^Email/), "asha@@example");
     await user.click(screen.getByRole("button", { name: "Open WhatsApp" }));
     expect(onSend).not.toHaveBeenCalled();
     expect(screen.getByText("That does not look like an email address.")).toBeInTheDocument();
+  });
+
+  it("starts the optional well collapsed and expands on click", async () => {
+    const user = userEvent.setup();
+    render(<WhatsAppForm phone="+919000000000" defaultOpen />);
+    expect(screen.queryByLabelText(/^Company/)).not.toBeInTheDocument();
+    const toggle = screen.getByRole("button", { name: /Optional/ });
+    expect(toggle).toHaveAttribute("aria-expanded", "false");
+    await user.click(toggle);
+    expect(toggle).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByLabelText(/^Company/)).toBeInTheDocument();
   });
 
   /* An empty well with a legend on it is a promise of fields that are not
@@ -693,5 +707,119 @@ describe("WhatsAppForm — the trigger is not the component", () => {
       />,
     );
     expect(screen.queryByRole("group", { name: /Optional/ })).not.toBeInTheDocument();
+  });
+});
+
+describe("WhatsAppForm — five named forms and questions of your own", () => {
+  it("draws the form as it shipped when no variant is named", async () => {
+    render(<WhatsAppForm phone="+919000000000" defaultOpen includePage={false} />);
+    // `enquiry` is the default and IS the old default field set, so an existing
+    // caller moves nowhere: name, email, phone and subject in the top block.
+    for (const label of [/^Name/, /^Email/, /^Subject/]) {
+      expect(screen.getByLabelText(label)).toBeInTheDocument();
+    }
+    // Named by role: `PhoneField` draws a "Phone country" combobox beside the
+    // number, so a `/^Phone/` label query matches two controls.
+    expect(screen.getByRole("textbox", { name: "Phone" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Open WhatsApp" })).toBeInTheDocument();
+  });
+
+  it("asks two questions in `quick`, because the channel already knows who they are", () => {
+    render(<WhatsAppForm phone="+919000000000" variant="quick" defaultOpen includePage={false} />);
+    expect(screen.getByLabelText(/^Subject/)).toBeInTheDocument();
+    expect(screen.getByLabelText(/^Anything else/)).toBeInTheDocument();
+    expect(screen.queryByLabelText(/^Name/)).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/^Email/)).not.toBeInTheDocument();
+  });
+
+  it("keeps the phone number in `callback`, which is the one place it is not asking twice", async () => {
+    /*
+     * Everywhere else WhatsApp supplies the number by definition. "Call me
+     * back" is a request for a VOICE call, and the number to ring need not be
+     * the account writing — so this variant asks, and refuses without it.
+     */
+    const user = userEvent.setup();
+    const onSend = vi.fn(() => false as const);
+    render(<WhatsAppForm phone="+919000000000" variant="callback" defaultOpen includePage={false} onSend={onSend} />);
+    expect(screen.getByRole("textbox", { name: "Phone" })).toBeInTheDocument();
+    await user.type(screen.getByLabelText(/^Name/), "Asha");
+    await user.click(screen.getByRole("button", { name: "Send the request" }));
+    expect(onSend).not.toHaveBeenCalled();
+    expect(screen.getByText("The number you are messaging from.")).toBeInTheDocument();
+  });
+
+  it("lets `fields` merge over the variant rather than replacing it", () => {
+    render(<WhatsAppForm phone="+919000000000" variant="quick" fields={{ name: "required" }} defaultOpen includePage={false} />);
+    // The variant is a starting point, not a cage: `quick` turns name off and
+    // one key turns it back on without restating the other seven.
+    expect(screen.getByLabelText(/^Name/)).toBeInTheDocument();
+    expect(screen.getByLabelText(/^Subject/)).toBeInTheDocument();
+    expect(screen.queryByLabelText(/^Email/)).not.toBeInTheDocument();
+  });
+
+  it("carries a caller's own question into the message beside the built-in ones", async () => {
+    const user = userEvent.setup();
+    const onSend = vi.fn(() => false as const);
+    render(
+      <WhatsAppForm
+        phone="+919000000000"
+        variant="quick"
+        defaultOpen
+        includePage={false}
+        onSend={onSend}
+        extraFields={[{ id: "fleet", label: "Fleet size", mode: "required", messageLabel: "Number of vehicles" }]}
+      />,
+    );
+    await user.type(screen.getByLabelText(/^Subject/), "Logistics rollout");
+    await user.type(screen.getByLabelText(/^Anything else/), "Nine depots.");
+    await user.click(screen.getByRole("button", { name: "Open WhatsApp" }));
+    // Required, so the hand-off is refused until it is answered.
+    expect(onSend).not.toHaveBeenCalled();
+
+    await user.type(screen.getByLabelText(/^Fleet size/), "120");
+    await user.click(screen.getByRole("button", { name: "Open WhatsApp" }));
+    expect(onSend).toHaveBeenCalledTimes(1);
+    const [message, values] = onSend.mock.calls[0] as unknown as [string, { custom: Record<string, string> }];
+    // `messageLabel` exists because a form's label and a message's label want
+    // different lengths — "Fleet size" on screen, the unambiguous one in the
+    // message a stranger reads.
+    expect(message).toContain("Number of vehicles: 120");
+    expect(values.custom.fleet).toBe("120");
+  });
+
+  it("refuses a custom id that would shadow a built-in field", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    render(
+      <WhatsAppForm
+        phone="+919000000000"
+        variant="quick"
+        defaultOpen
+        includePage={false}
+        extraFields={[{ id: "phone", label: "Your number" }]}
+      />,
+    );
+    // A second `phone` would render a plain text box over the field that owns
+    // the dial-code picker and the E.164 composition, and the message would
+    // then carry two Phone lines that disagree.
+    expect(screen.queryByLabelText(/^Your number/)).not.toBeInTheDocument();
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining("phone"));
+    warn.mockRestore();
+  });
+
+  it("sizes the dial-code slot to its text, in both distributions", () => {
+    /*
+     * `.td-input-icon` is a fixed 13x13 box with `overflow: visible` — right
+     * for the 13px glyphs it was written for, wrong for a string. `+91`
+     * renders 22px wide inside it, so the number's first digits were drawn
+     * underneath the code; `+1868` buried three characters. Measured on the
+     * docs preview at 12.7px of slot holding 22.05px of text.
+     */
+    for (const [file, P] of [
+      ["phone-field.css", "react"],
+      ["../../../registry/tonaldepth/phone-field.css", "registry"],
+    ]) {
+      const css = readFileSync(join(SRC, file), "utf8").replace(/\/\*[\s\S]*?\*\//g, "");
+      expect(css, file).toMatch(new RegExp(`\\.td-${P}-phone-number \\.td-input-icon \\{[^}]*width:\\s*auto`));
+    }
   });
 });

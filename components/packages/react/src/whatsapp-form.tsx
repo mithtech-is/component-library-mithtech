@@ -6,6 +6,7 @@ import { Button } from "./button";
 import { Dialog } from "./dialog";
 import { FormField } from "./form-field";
 import { Input, Textarea } from "./input";
+import { PhoneField, emptyPhone, PHONE_COUNTRIES, type PhoneValue } from "./phone-field";
 import "./whatsapp-form.css";
 
 export interface WhatsAppFormValues {
@@ -19,6 +20,8 @@ export interface WhatsAppFormValues {
   message: string;
   /** The page the form was opened from. Captured, never typed. */
   page: string;
+  /** Answers to `extraFields`, keyed by their `id`. Empty when there are none. */
+  custom: Record<string, string>;
 }
 
 /** Every field the form can draw. `page` is captured, never typed, so it is not one. */
@@ -57,8 +60,7 @@ export type WhatsAppFormTrigger = false | ((props: { open: () => void; isOpen: b
 /** The order the form draws its fields in, and which of them share a line. */
 const ROWS: WhatsAppFormField[][] = [
   ["name", "phone"],
-  ["email"],
-  ["subject"],
+  ["email", "subject"],
   ["company", "industry"],
   ["service"],
   ["message"],
@@ -84,6 +86,128 @@ const DEFAULT_FIELDS: Record<WhatsAppFormField, WhatsAppFieldMode> = {
   service: "optional",
   message: "optional",
 };
+
+/**
+ * A field the caller defines, beyond the eight this form knows by name.
+ *
+ * The built-in eight are the questions a WhatsApp enquiry almost always asks,
+ * and `fields` turns them on and off. This is the other half: a form that
+ * needs "Fleet size" or "Preferred slot" should not have to fork the
+ * component, and it should not have to reach for a generic form builder
+ * either — the whole value here is the compose-and-hand-off, and that is
+ * indifferent to how many questions produced the message.
+ *
+ * A custom field is drawn, validated and written into the message exactly the
+ * way a built-in one is. It costs nothing when absent.
+ */
+export interface WhatsAppCustomField {
+  /**
+   * The key it is stored under and, by default, the label it carries into the
+   * message. Must not collide with a built-in name — a custom `phone` would
+   * shadow the field that owns the dial-code picker, so it is refused.
+   */
+  id: string;
+  label: ReactNode;
+  /**
+   * Defaults to `optional`, so adding a question never silently starts
+   * blocking a hand-off that used to go through.
+   */
+  mode?: WhatsAppFieldMode;
+  /** How it is drawn. `choice` needs `options`; everything else is one input. */
+  kind?: "text" | "email" | "tel" | "number" | "textarea" | "choice";
+  options?: string[];
+  placeholder?: string;
+  /** What it is called in the composed message. Defaults to the label. */
+  messageLabel?: string;
+  /** What it says when it is required and empty. */
+  missing?: string;
+}
+
+/**
+ * The named forms this component ships.
+ *
+ * A variant is a FIELD SET with a name, not a new component: every one of them
+ * composes the same message and hands it to the same `wa.me`. They exist
+ * because "which questions" is the only thing that actually differs between a
+ * quote request and a callback request, and a consumer choosing between five
+ * named answers makes a better choice than one assembling eight booleans.
+ *
+ * `fields` still merges over whichever variant is chosen, so a variant is a
+ * starting point rather than a cage.
+ */
+export type WhatsAppFormVariant = "enquiry" | "quick" | "callback" | "quote" | "support";
+
+export interface WhatsAppFormVariantSpec {
+  /** What this form is called, for a picker or a docs list. */
+  name: string;
+  /** One line on what it is for, and when to reach for it. */
+  description: string;
+  fields: Record<WhatsAppFormField, WhatsAppFieldMode>;
+  title: string;
+  submitLabel: string;
+}
+
+const OFF: Record<WhatsAppFormField, WhatsAppFieldMode> = {
+  name: "off", email: "off", phone: "off", subject: "off",
+  company: "off", industry: "off", service: "off", message: "off",
+};
+
+export const WHATSAPP_FORM_VARIANTS: Record<WhatsAppFormVariant, WhatsAppFormVariantSpec> = {
+  /* The form as it shipped, named. It is first and it is the default, so a
+     caller who says nothing gets exactly what they had. */
+  enquiry: {
+    name: "Enquiry",
+    description: "The full form: who you are, how to reach you, and what you need. The general-purpose one.",
+    fields: DEFAULT_FIELDS,
+    title: "Message us on WhatsApp",
+    submitLabel: "Open WhatsApp",
+  },
+  /*
+   * The argument against asking anything at all.
+   *
+   * WhatsApp already carries who is writing and how to reach them — the
+   * account IS the identity — so a form in front of it is a toll on a
+   * conversation somebody was one tap from starting. Two questions is the
+   * least that still produces a message worth routing.
+   */
+  quick: {
+    name: "Quick message",
+    description: "Two questions. The channel already knows who they are; this only asks what it is about.",
+    fields: { ...OFF, subject: "required", message: "required" },
+    title: "Message us on WhatsApp",
+    submitLabel: "Open WhatsApp",
+  },
+  /*
+   * The one variant where the phone number is the POINT rather than a
+   * duplicate. "Call me back" is a request for a voice call, and the number to
+   * ring is not necessarily the WhatsApp account writing — a person messaging
+   * from a personal handset may want the desk phone called.
+   */
+  callback: {
+    name: "Call me back",
+    description: "A name and the number to ring. The one form where asking for a phone number is not asking twice — the number to call need not be the account writing.",
+    fields: { ...OFF, name: "required", phone: "required", subject: "optional", message: "optional" },
+    title: "Ask us to call you back",
+    submitLabel: "Send the request",
+  },
+  quote: {
+    name: "Request a quote",
+    description: "Enough to price the work: who, what, which sector and which service. Sized for a sales team that routes by answer.",
+    fields: { ...OFF, name: "required", phone: "required", company: "required", industry: "optional", service: "required", message: "optional" },
+    title: "Ask for a quote",
+    submitLabel: "Send the request",
+  },
+  support: {
+    name: "Support request",
+    description: "For an existing customer with a problem. The account and the number identify them; the subject and the detail are what the desk needs.",
+    fields: { ...OFF, name: "required", phone: "required", subject: "required", message: "required" },
+    title: "Get support on WhatsApp",
+    submitLabel: "Open WhatsApp",
+  },
+};
+
+/** Every built-in name, so a custom field cannot quietly shadow one. */
+const BUILT_IN = new Set<string>(["name", "email", "phone", "subject", "company", "industry", "service", "message", "page"]);
 
 /** What a required field says when it is empty. */
 const MISSING: Record<WhatsAppFormField, string> = {
@@ -117,10 +241,31 @@ export interface WhatsAppFormProps extends Omit<HTMLAttributes<HTMLDivElement>, 
   phone: string;
   /** The trigger's text. */
   label?: ReactNode;
+  /**
+   * Which named form to draw. Defaults to `enquiry`, which is the form exactly
+   * as it shipped — so a caller who says nothing moves nowhere.
+   *
+   * A variant sets the field modes, the dialog's title and the submit label;
+   * `fields` merges over it and an explicit `title` or `submitLabel` wins
+   * outright. Read `WHATSAPP_FORM_VARIANTS` for what each one asks and why.
+   */
+  variant?: WhatsAppFormVariant;
   title?: ReactNode;
   description?: ReactNode;
   /** The button under the form. */
   submitLabel?: ReactNode;
+  /**
+   * Questions of your own, drawn after the built-in ones.
+   *
+   * Each is validated and written into the message the way a built-in field
+   * is, and each obeys the same `required` / `optional` split — so a custom
+   * `optional` field lands in the same carved well as `company` rather than
+   * inventing a third place for a question to live.
+   *
+   * An id that collides with a built-in name is refused with a warning rather
+   * than silently shadowing the field that owns the dial-code picker.
+   */
+  extraFields?: WhatsAppCustomField[];
   /**
    * Offered as a list instead of a free-text box when supplied. A list is
    * worth it for the answers you will act on — routing an enquiry by service
@@ -168,15 +313,32 @@ export interface WhatsAppFormProps extends Omit<HTMLAttributes<HTMLDivElement>, 
 
 const EMPTY: WhatsAppFormValues = {
   name: "", email: "", phone: "", subject: "", company: "", industry: "", service: "", message: "", page: "",
+  custom: {},
 };
 
 /* Deliberately loose. A stricter pattern rejects real addresses — plus
    addressing, new TLDs, quoted locals — and the only thing that ever proves an
    address is sending to it. This catches the typo, not the exotic. */
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-/* Seven digits is the shortest national number in use anywhere; punctuation
-   and a country code are allowed through and normalised later. */
-const PHONE = /^\+?[\d\s().-]{7,}$/;
+
+/**
+ * Detect the reader's country from `navigator.language`. Free, synchronous,
+ * needs no permission, and is right most of the time. Falls back to IN.
+ *
+ * **Privacy:** This reads a value the browser already exposes to every page.
+ * Nothing is sent anywhere — the country prefills the dial-code picker, and
+ * the reader can change it.
+ */
+function countryFromLocale(): string {
+  if (typeof navigator === "undefined") return "IN";
+  const lang = navigator.language ?? "";
+  const match = lang.match(/[-_]([A-Za-z]{2})$/);
+  if (match) {
+    const iso = match[1]!.toUpperCase();
+    if (PHONE_COUNTRIES.some(c => c.iso === iso)) return iso;
+  }
+  return "IN";
+}
 
 /**
  * The message, in the order a person reads one.
@@ -186,11 +348,21 @@ const PHONE = /^\+?[\d\s().-]{7,}$/;
  * is also what makes a turned-off field cost nothing here: it is empty, so it
  * was already being skipped.
  */
-function compose(values: WhatsAppFormValues): string {
+function compose(values: WhatsAppFormValues, custom: WhatsAppCustomField[] = []): string {
   const lines: string[] = [];
   if (values.subject) lines.push(`*${values.subject}*`, "");
   for (const [field, label] of LINES) {
     if (values[field]) lines.push(`${label}: ${values[field]}`);
+  }
+  /* After the built-ins and before the free text, in the order they were
+     declared — a custom field is another labelled answer, and the reader of
+     the message should not be able to tell which half of the form it came
+     from. `messageLabel` exists because a form's label and a message's label
+     want different lengths: "Fleet size" on screen, "Number of vehicles" in
+     the message a stranger reads. */
+  for (const field of custom) {
+    const answer = values.custom[field.id];
+    if (answer) lines.push(`${field.messageLabel ?? (typeof field.label === "string" ? field.label : field.id)}: ${answer}`);
   }
   if (values.message) lines.push("", values.message);
   if (values.page) lines.push("", `Sent from: ${values.page}`);
@@ -232,6 +404,20 @@ function compose(values: WhatsAppFormValues): string {
  * yourself and open it from whatever the page already has. The default is
  * unchanged.
  *
+ * ## Five named forms, and questions of your own
+ *
+ * `variant` picks one of `WHATSAPP_FORM_VARIANTS` — `enquiry` (the default,
+ * and the form exactly as it shipped), `quick`, `callback`, `quote`,
+ * `support`. A variant is a FIELD SET with a name, not a new component: all
+ * five compose the same message and hand it to the same `wa.me`, because
+ * "which questions" is the only thing that actually differs between a quote
+ * request and a callback request.
+ *
+ * `extraFields` adds questions the eight built-ins do not cover — "Fleet
+ * size", "Preferred slot" — drawn, validated and written into the message the
+ * way a built-in is. Between the two, a form that needs a different shape does
+ * not need a different component.
+ *
  * ## The fields are the caller's decision
  *
  * `fields` names one field at a time. The one worth thinking about is the
@@ -241,14 +427,28 @@ function compose(values: WhatsAppFormValues): string {
  * required by default, because changing that would change every existing
  * caller's form without them asking; pass `{ phone: "off" }` where it is
  * redundant.
+ *
+ * ## Phone country detection
+ *
+ * The phone field detects the reader's country from `navigator.language` and
+ * prefills the dial-code picker. This is free, synchronous, needs no
+ * permission, and is right most of the time. The reader can change it.
+ *
+ * **Privacy:** Nothing leaves the browser. The locale is already exposed to
+ * every page, and the detected country is a prefilled default, not a claim.
+ * `navigator.geolocation` is deliberately NOT called on mount — a permission
+ * prompt that fires because a dialog opened is the fastest way to get the
+ * permission denied permanently for the origin.
  */
 export const WhatsAppForm = forwardRef<HTMLDivElement, WhatsAppFormProps>(function WhatsAppForm(
   {
     phone,
     label = "WhatsApp us",
-    title = "Message us on WhatsApp",
+    variant = "enquiry",
+    title,
     description = "Fill this in and it opens WhatsApp with the message ready to send. Nothing is submitted here.",
-    submitLabel = "Open WhatsApp",
+    submitLabel,
+    extraFields,
     services,
     industries,
     page,
@@ -268,62 +468,100 @@ export const WhatsAppForm = forwardRef<HTMLDivElement, WhatsAppFormProps>(functi
   const [uncontrolled, setUncontrolled] = useState(defaultOpen);
   const isOpen = open ?? uncontrolled;
   const [values, setValues] = useState<WhatsAppFormValues>(EMPTY);
+  const [phoneValue, setPhoneValue] = useState<PhoneValue>(() => emptyPhone(countryFromLocale()));
   const [errors, setErrors] = useState<Partial<Record<keyof WhatsAppFormValues, string>>>({});
+  const [customErrors, setCustomErrors] = useState<Record<string, string>>({});
+  const [optionalOpen, setOptionalOpen] = useState(false);
+
+  const spec = WHATSAPP_FORM_VARIANTS[variant] ?? WHATSAPP_FORM_VARIANTS.enquiry;
+  const heading = title ?? spec.title;
+  const send = submitLabel ?? spec.submitLabel;
 
   /* Merged rather than replaced, so `fields` names only what differs from the
-     shipped form. Passing the whole record would make every caller restate
-     seven decisions to change one, and a caller who forgets a key would find
+     chosen variant. Passing the whole record would make every caller restate
+     eight decisions to change one, and a caller who forgets a key would find
      the field silently gone rather than left alone. */
-  const mode = { ...DEFAULT_FIELDS, ...fields };
+  const mode = { ...spec.fields, ...fields };
   const shown = ROWS.flat().filter(field => mode[field] !== "off");
+
+  /* A custom id that shadows a built-in is refused rather than honoured: a
+     second `phone` would render a plain text box over the field that owns the
+     dial-code picker and the E.164 composition, and the message would then
+     carry two Phone lines that disagree. Unconditional rather than dev-only,
+     like IconButton's — it only fires on a real defect. */
+  const custom = (extraFields ?? []).filter(field => {
+    if (!BUILT_IN.has(field.id)) return true;
+    console.warn(`WhatsAppForm: extraFields id "${field.id}" is a built-in field name — use \`fields\` to turn that one on instead.`);
+    return false;
+  });
+  const customShown = custom.filter(field => (field.mode ?? "optional") !== "off");
 
   const setOpen = (next: boolean) => {
     if (open === undefined) setUncontrolled(next);
     onOpenChange?.(next);
-    // A form the reader abandoned should not be waiting for them, half filled,
-    // the next time they open it.
-    if (!next) { setValues(EMPTY); setErrors({}); }
+    if (!next) {
+      setValues(EMPTY);
+      setPhoneValue(emptyPhone(countryFromLocale()));
+      setErrors({});
+      setCustomErrors({});
+      setOptionalOpen(false);
+    }
+  };
+
+  const setCustom = (id: string) => (value: string) => {
+    setValues(current => ({ ...current, custom: { ...current.custom, [id]: value } }));
+    setCustomErrors(current => (current[id] ? { ...current, [id]: undefined as unknown as string } : current));
   };
 
   const set = (key: keyof WhatsAppFormValues) => (value: string) => {
     setValues(current => ({ ...current, [key]: value }));
-    // Clearing on edit rather than re-validating on every keystroke: a message
-    // that disappears the moment you start fixing it is encouraging, and one
-    // that updates while you type mid-word is nagging.
     setErrors(current => (current[key] ? { ...current, [key]: undefined } : current));
   };
 
   const submit = (event: FormEvent) => {
     event.preventDefault();
     const found: Partial<Record<keyof WhatsAppFormValues, string>> = {};
+    const customErrors: Record<string, string> = {};
     for (const field of shown) {
+      if (field === "phone") {
+        const digits = phoneValue.national.replace(/\D/g, "");
+        if (!digits && mode[field] === "required") { found.phone = MISSING.phone; continue; }
+        if (digits && digits.length < 7) { found.phone = "That does not look like a phone number."; continue; }
+        continue;
+      }
       const value = values[field].trim();
       if (!value) {
         if (mode[field] === "required") found[field] = MISSING[field];
         continue;
       }
-      /* Format is checked on anything the reader actually typed, whether or
-         not it was demanded. An optional address with a typo in it is a reply
-         that never arrives, and the field being optional says nothing about
-         whether what was entered is an address. */
       if (field === "email" && !EMAIL.test(value)) found.email = "That does not look like an email address.";
-      if (field === "phone" && !PHONE.test(value)) found.phone = "That does not look like a phone number.";
     }
-    if (Object.keys(found).length) { setErrors(found); return; }
+    for (const field of customShown) {
+      const value = (values.custom[field.id] ?? "").trim();
+      if (!value) {
+        if ((field.mode ?? "optional") === "required") {
+          customErrors[field.id] = field.missing ?? "This one is needed.";
+        }
+        continue;
+      }
+      if (field.kind === "email" && !EMAIL.test(value)) customErrors[field.id] = "That does not look like an email address.";
+    }
+    if (Object.keys(found).length || Object.keys(customErrors).length) {
+      setErrors(found);
+      setCustomErrors(customErrors);
+      return;
+    }
 
-    /* The page is read HERE rather than in an effect on open, so it is right
-       even in a single-page app where the reader navigated with the form
-       already mounted — and so the component never touches `window` during
-       render, which would break server rendering outright. */
     const captured = includePage
       ? page ?? (typeof window === "undefined" ? "" : window.location.href)
       : "";
-    /* A field that is off contributes nothing, even if it holds a value from
-       before the caller turned it off — the composed message and the values
-       handed to `onSend` have to agree with the form the reader saw. */
-    const filled = { ...values, page: captured };
+    const filled = { ...values, phone: phoneValue.e164, page: captured };
     for (const field of ROWS.flat()) if (mode[field] === "off") filled[field] = "";
-    const message = compose(filled);
+    /* A turned-off custom field leaves the message the same way a turned-off
+       built-in does — the answer may still be in state from before it was
+       switched off, and a message must only ever carry what the form asked. */
+    filled.custom = Object.fromEntries(customShown.map(field => [field.id, values.custom[field.id] ?? ""]));
+    const message = compose(filled, customShown);
     if (onSend?.(message, filled) === false) return;
 
     const number = phone.replace(/\D/g, "");
@@ -353,10 +591,23 @@ export const WhatsAppForm = forwardRef<HTMLDivElement, WhatsAppFormProps>(functi
   const draw = (field: WhatsAppFormField) => {
     const id = `${base}-${field}`;
     const isRequired = mode[field] === "required";
-    /* `key` is passed explicitly rather than spread: React 19 warns on a key
-       inside a spread object and reads it as an ordinary prop. */
     const shared = { htmlFor: id, error: errors[field], ...(isRequired ? { required: true } : { optional: true }) };
     const onChange = (event: { target: { value: string } }) => set(field)(event.target.value);
+    if (field === "phone") {
+      return (
+        <FormField key={field} label="Phone" {...shared} htmlFor={`${base}-phone-number`}>
+          <PhoneField
+            id={`${base}-phone-number`}
+            value={phoneValue}
+            onValueChange={next => {
+              setPhoneValue(next);
+              set("phone")(next.e164);
+            }}
+            invalid={Boolean(errors.phone)}
+          />
+        </FormField>
+      );
+    }
     if (field === "industry" || field === "service") {
       return <FormField key={field} label={field === "industry" ? "Industry" : "Service required"} {...shared}>
         {choice(field, field === "industry" ? industries : services, field === "industry" ? "Choose an industry" : "Choose a service")}
@@ -364,42 +615,74 @@ export const WhatsAppForm = forwardRef<HTMLDivElement, WhatsAppFormProps>(functi
     }
     if (field === "message") {
       return <FormField key={field} label="Anything else" {...shared}>
-        <Textarea id={id} rows={3} value={values.message} onChange={onChange} />
+        <Textarea id={id} rows={2} value={values.message} onChange={onChange} />
       </FormField>;
     }
     const TYPES: Partial<Record<WhatsAppFormField, { type?: string; autoComplete?: string }>> = {
       name: { autoComplete: "name" },
-      phone: { type: "tel", autoComplete: "tel" },
       email: { type: "email", autoComplete: "email" },
       company: { autoComplete: "organization" },
     };
     const LABELS: Partial<Record<WhatsAppFormField, string>> = {
-      name: "Name", phone: "Phone", email: "Email", subject: "Subject", company: "Company",
+      name: "Name", email: "Email", subject: "Subject", company: "Company",
     };
     return <FormField key={field} label={LABELS[field]} {...shared}>
       <Input id={id} {...TYPES[field]} value={values[field]} onChange={onChange} />
     </FormField>;
   };
 
-  /* The declared rows, filtered to the block being drawn. Filtering rather
-     than re-deriving keeps the shipped layout byte-identical when nothing is
-     reconfigured, and a row whose partner was turned off collapses to a single
-     full-width field instead of leaving half a line empty. */
-  const block = (want: WhatsAppFieldMode) =>
-    ROWS
+  /** A caller's own field, drawn with the same housing a built-in one gets. */
+  const drawCustom = (field: WhatsAppCustomField) => {
+    const id = `${base}-x-${field.id}`;
+    const isRequired = (field.mode ?? "optional") === "required";
+    const shared = { htmlFor: id, error: customErrors[field.id], ...(isRequired ? { required: true } : { optional: true }) };
+    const answer = values.custom[field.id] ?? "";
+    const onChange = (event: { target: { value: string } }) => setCustom(field.id)(event.target.value);
+    if (field.kind === "textarea") {
+      return <FormField key={field.id} label={field.label} {...shared}>
+        <Textarea id={id} rows={2} placeholder={field.placeholder} value={answer} onChange={onChange} />
+      </FormField>;
+    }
+    if (field.kind === "choice") {
+      return <FormField key={field.id} label={field.label} {...shared}>
+        <span className="td-react-wa-select">
+          <select
+            className="td-react-wa-native"
+            id={id}
+            value={answer}
+            onChange={(event: ChangeEvent<HTMLSelectElement>) => setCustom(field.id)(event.target.value)}
+          >
+            <option value="">{field.placeholder ?? "Choose one"}</option>
+            {(field.options ?? []).map(option => <option key={option} value={option}>{option}</option>)}
+          </select>
+        </span>
+      </FormField>;
+    }
+    const TYPE: Partial<Record<NonNullable<WhatsAppCustomField["kind"]>, string>> = { email: "email", tel: "tel", number: "number" };
+    return <FormField key={field.id} label={field.label} {...shared}>
+      <Input id={id} type={field.kind ? TYPE[field.kind] : undefined} placeholder={field.placeholder} value={answer} onChange={onChange} />
+    </FormField>;
+  };
+
+  /* Built-ins in their fixed rows, then the caller's own, each on its own
+     line. Custom fields are appended rather than interleaved because the rows
+     above are a designed pairing — name beside phone, email beside subject —
+     and a caller cannot know which half of a pair it would be joining. */
+  const block = (want: WhatsAppFieldMode) => [
+    ...ROWS
       .map(row => row.filter(field => mode[field] === want))
       .filter(row => row.length > 0)
       .map(row => row.length > 1
         ? <div className="td-react-wa-row" key={row.join("-")}>{row.map(draw)}</div>
-        : draw(row[0]));
+        : draw(row[0])),
+    ...customShown.filter(field => (field.mode ?? "optional") === want).map(drawCustom),
+  ];
 
   const optional = block("optional");
+  const optionalLabelId = `${base}-optional-label`;
 
   return (
     <div {...props} ref={ref} className={cx("td-react-wa", className)}>
-      {/* `trigger === false` renders nothing at all — the form is then a
-          dialog the page opens from whatever control it already has. The
-          wrapper is `display: contents`, so an empty one costs no layout. */}
       {trigger === false
         ? null
         : trigger
@@ -409,35 +692,32 @@ export const WhatsAppForm = forwardRef<HTMLDivElement, WhatsAppFormProps>(functi
       <Dialog
         open={isOpen}
         onOpenChange={setOpen}
-        title={title}
+        title={heading}
         description={description}
-        /* The submit button lives in the dialog's footer but belongs to the
-           form, which is a sibling of it in the DOM — `form=` is what ties the
-           two together without nesting the footer inside the form or wiring a
-           ref between them. */
         footer={
           <>
             <Button variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
-            <Button variant="whatsapp" type="submit" form={`${base}-form`}>{submitLabel}</Button>
+            <Button variant="whatsapp" type="submit" form={`${base}-form`}>{send}</Button>
           </>
         }
       >
         <form id={`${base}-form`} className="td-react-wa-form" onSubmit={submit} noValidate>
           {block("required")}
 
-          {/* The optional half is a carved WELL rather than a rule and a grey
-              sentence. Depth is how this system says "subordinate": four more
-              fields at the same weight as the four above read as a wall of
-              eight, while the same four sitting IN the panel read as one
-              thing the reader may skip. The fields inside keep their own
-              `optional` tags, so nothing depends on seeing the recess.
-
-              It is dropped entirely when nothing is optional: an empty well
-              with a legend on it is a promise of fields that are not there. */}
           {optional.length ? (
-            <fieldset className="td-react-wa-optional">
-              <legend className="td-react-wa-optional-legend">Optional — it only changes who picks the message up</legend>
-              {optional}
+            <fieldset className={cx("td-react-wa-optional", optionalOpen && "td-react-wa-optional--open")} aria-labelledby={optionalLabelId}>
+              <button
+                type="button"
+                id={optionalLabelId}
+                className="td-react-wa-optional-toggle"
+                onClick={() => setOptionalOpen(!optionalOpen)}
+                aria-expanded={optionalOpen}
+              >
+                <span className="td-react-wa-optional-label">Optional</span>
+                <span className="td-react-wa-optional-hint">it only changes who picks the message up</span>
+                <span className="td-react-wa-optional-chevron" aria-hidden="true" />
+              </button>
+              {optionalOpen ? optional : null}
             </fieldset>
           ) : null}
 
