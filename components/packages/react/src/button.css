@@ -370,7 +370,7 @@ a.td-react-button:not(.td-react-button--link) { text-decoration: none; }
    shade, inset highlight, edge ring. Unused slots are the shadow colour at zero
    alpha, never `transparent` — that is rgba(0, 0, 0, 0) and would drag the
    transition through black ([[L20]]). (0,3,0), as the rest of this file. */
-.td-react-button.td-primary:not(.td-react-button--outline):not(.td-react-button--ghost):not(.td-react-button--link) {
+.td-react-button.td-primary:not(.td-react-button--outline):not(.td-react-button--ghost):not(.td-react-button--link):not(.td-react-button--secondary) {
   box-shadow:
     3px 3px 12px color-mix(in srgb, var(--td-shadow-dark) 72%, transparent),
     -3px -3px 12px color-mix(in srgb, var(--td-shadow-light) 68%, transparent),
@@ -387,8 +387,8 @@ a.td-react-button:not(.td-react-button--link) { text-decoration: none; }
    halo rather than a rim ([[L26]]) and reads as the button being pulled out of
    the page. It is now weaker than its shade, as every other rung in the system
    is. */
-.td-react-button.td-primary:not(.td-react-button--outline):not(.td-react-button--ghost):not(.td-react-button--link):hover,
-.td-react-button.td-primary:not(.td-react-button--outline):not(.td-react-button--ghost):not(.td-react-button--link)[data-state="hover"] {
+.td-react-button.td-primary:not(.td-react-button--outline):not(.td-react-button--ghost):not(.td-react-button--link):not(.td-react-button--secondary):hover,
+.td-react-button.td-primary:not(.td-react-button--outline):not(.td-react-button--ghost):not(.td-react-button--link):not(.td-react-button--secondary)[data-state="hover"] {
   box-shadow:
     1.5px 1.5px 4px color-mix(in srgb, var(--td-shadow-dark) 32%, transparent),
     -1.5px -1.5px 4px color-mix(in srgb, var(--td-shadow-light) 30%, transparent),
@@ -396,12 +396,59 @@ a.td-react-button:not(.td-react-button--link) { text-decoration: none; }
     inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 26%, transparent),
     0 0 0 1px var(--td-edge);
 }
-.td-react-button.td-primary:not(.td-react-button--outline):not(.td-react-button--ghost):not(.td-react-button--link):active,
-.td-react-button.td-primary:not(.td-react-button--outline):not(.td-react-button--ghost):not(.td-react-button--link)[data-state="active"] {
+.td-react-button.td-primary:not(.td-react-button--outline):not(.td-react-button--ghost):not(.td-react-button--link):not(.td-react-button--secondary):active,
+.td-react-button.td-primary:not(.td-react-button--outline):not(.td-react-button--ghost):not(.td-react-button--link):not(.td-react-button--secondary)[data-state="active"] {
   box-shadow:
     0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
     0 0 0 rgb(from var(--td-shadow-light) r g b / 0),
     inset 3px 3px 7px color-mix(in srgb, var(--td-shadow-dark) 58%, transparent),
     inset -2px -2px 5px color-mix(in srgb, var(--td-shadow-light) 34%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+
+/* ── Secondary — the same material, one step less proud ───────────────
+   `secondary` used to emit the same classes as `primary` and take the same
+   ladder, so two buttons meant to differ in weight rendered identically and a
+   caller could not build a hierarchy without reaching for `filled` on one of
+   them — which spends the system's loudest colour on what was only supposed to
+   be the more important of two quiet controls.
+
+   The lamp was the only thing separating them, and a lamp is a STATE report,
+   not an emphasis. So the difference is where the system already puts
+   difference: depth. Primary rises 12px off the page; this rises 7. Same five
+   slots in the same order and the same rest -> hover -> press direction
+   ([[L18]], [[L20]]) — a shallower object, not a different vocabulary. The
+   label holds full ink in both, because dimming it would say "disabled".
+
+   It is NOT `outline` or `ghost`. Those drop the housing to a ring and to
+   nothing; this keeps the plate and lowers it. Four rungs, in order:
+   filled, primary, secondary, outline, ghost, link.
+
+   Written at (0,5,0) to tie with the primary ladder above, which excludes
+   `--secondary` by hand — a bare (0,3,0) modifier would lose to it. */
+.td-react-button.td-primary.td-react-button--secondary:not(.td-react-button--outline):not(.td-react-button--ghost) {
+  box-shadow:
+    2px 2px 7px color-mix(in srgb, var(--td-shadow-dark) 50%, transparent),
+    -2px -2px 6px color-mix(in srgb, var(--td-shadow-light) 44%, transparent),
+    inset 0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+}
+.td-react-button.td-primary.td-react-button--secondary:not(.td-react-button--outline):not(.td-react-button--ghost):hover,
+.td-react-button.td-primary.td-react-button--secondary:not(.td-react-button--outline):not(.td-react-button--ghost)[data-state="hover"] {
+  box-shadow:
+    1px 1px 3px color-mix(in srgb, var(--td-shadow-dark) 26%, transparent),
+    -1px -1px 3px color-mix(in srgb, var(--td-shadow-light) 24%, transparent),
+    inset 1px 1px 3px color-mix(in srgb, var(--td-shadow-dark) 26%, transparent),
+    inset -0.5px -0.5px 1.5px color-mix(in srgb, var(--td-shadow-light) 20%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+.td-react-button.td-primary.td-react-button--secondary:not(.td-react-button--outline):not(.td-react-button--ghost):active,
+.td-react-button.td-primary.td-react-button--secondary:not(.td-react-button--outline):not(.td-react-button--ghost)[data-state="active"] {
+  box-shadow:
+    0 0 0 rgb(from var(--td-shadow-dark) r g b / 0),
+    0 0 0 rgb(from var(--td-shadow-light) r g b / 0),
+    inset 2px 2px 5px color-mix(in srgb, var(--td-shadow-dark) 46%, transparent),
+    inset -1.5px -1.5px 4px color-mix(in srgb, var(--td-shadow-light) 28%, transparent),
     0 0 0 1px var(--td-edge);
 }

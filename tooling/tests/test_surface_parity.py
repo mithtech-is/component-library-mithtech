@@ -43,7 +43,11 @@ ITEM_TO_MODULE = {
 # all ride. It is a page about a technique, not a component to install.
 # `overlays` is the same shape: the containing-block rule every scrim, sheet and
 # popover in the library obeys, written once instead of on seven pages.
-DOC_ONLY = {"forms", "feedback", "ordered-states", "lamp", "overlays"}
+# `scroll-regions` is the third: why a scroll region inside a fixed-height panel
+# can stop scrolling, and the `td-scroll-fill` class that fixes it. The shell it
+# is about is spliced by the vanilla runtime and is a core stylesheet rule, so
+# there is nothing to install.
+DOC_ONLY = {"forms", "feedback", "ordered-states", "lamp", "overlays", "scroll-regions"}
 
 # `tokens` ships a stylesheet, not a component.
 STYLE_ONLY = {"tokens"}
@@ -60,7 +64,7 @@ ICON_MODULES = {"icons", "td-icons", "brands", "td-brands"}
 # Components with no props of their own — they pass native DOM attributes
 # through and nothing else. An empty props table is correct for these, and the
 # docs say so in words rather than rendering a blank table.
-NO_OWN_PROPS = {"table", "lamp", "overlays"}
+NO_OWN_PROPS = {"table", "lamp", "overlays", "scroll-regions"}
 
 # Classes a component emits purely so a consumer can target them — a router
 # link, a mega-menu trigger. They carry no rule on purpose, and are listed here

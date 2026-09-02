@@ -35,6 +35,27 @@ describe("Button", () => {
     expect(screen.getByRole("button", { name: "Save" })).toHaveClass("td-coloured");
   });
 
+  it("draws `secondary` as a shallower housing, not as a second `primary`", () => {
+    /* Reported by a consumer: `variant="secondary"` emitted the same classes as
+       `primary`, so two buttons meant to differ in weight rendered identically
+       and the only way to build a hierarchy was to reach for `filled` — the
+       system's loudest colour — on the more important of two quiet controls.
+
+       The difference goes where this system puts every other difference:
+       depth. `secondary` keeps the plate and lowers it, which is what makes it
+       a rung between `primary` and `outline` rather than a synonym for either.
+       The class is the contract; `depth.test.tsx` holds the ladder itself. */
+    const { rerender } = render(<Button variant="secondary">Cancel</Button>);
+    const button = () => screen.getByRole("button", { name: "Cancel" });
+    expect(button()).toHaveClass("td-primary", "td-react-button--secondary");
+    // The lamp is a state report, not an emphasis — it is not what separates
+    // these two, and it never was.
+    expect(button().querySelector(".td-lamp")).toBeNull();
+
+    rerender(<Button variant="primary">Cancel</Button>);
+    expect(button()).not.toHaveClass("td-react-button--secondary");
+  });
+
   it("carries the lamp on `primary` and `filled`, and nowhere else by default", () => {
     const { container, rerender } = render(<Button variant="primary" dot={false}>Save</Button>);
     expect(container.querySelector(".td-lamp")).toBeNull();

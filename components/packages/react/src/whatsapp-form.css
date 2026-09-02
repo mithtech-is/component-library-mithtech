@@ -9,36 +9,37 @@
 
 .td-react-wa-form {
   display: grid;
-  gap: var(--td-sp-7);
+  gap: var(--td-sp-6);
   min-width: 0;
 }
 
 /* Two to a line where the pair is genuinely one thought — who you are and how
-   to reach you. Collapses on a narrow panel rather than squeezing, because a
-   phone field at half a phone's width is a field nobody can read back. */
+   to reach you, what it is about and where to reply. Collapses on a narrow
+   panel rather than squeezing, because a phone field at half a phone's width
+   is a field nobody can read back. */
 .td-react-wa-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--td-sp-7);
+  gap: var(--td-sp-6);
   min-width: 0;
 }
 @media (max-width: 520px) {
   .td-react-wa-row { grid-template-columns: 1fr; }
 }
 
-/* The optional half, as a carved well.
+/* The optional well, as a carved recess.
 
    It replaces a hairline rule and a grey sentence. Eight fields at one weight
    read as a wall; four of them sitting IN a recess read as one thing the
-   reader may skip, which is what depth is for in this system ([[L03]]). The
-   legend rides the top edge of the well so the panel names itself instead of
-   needing a caption above it. */
+   reader may skip, which is what depth is for in this system. The well starts
+   collapsed behind its own summary line — the fields are genuinely optional,
+   and showing them by default pushes the form past the viewport. */
 .td-react-wa-optional {
   position: relative;
   display: grid;
-  gap: var(--td-sp-7);
-  margin: var(--td-sp-3) 0 0;
-  padding: var(--td-sp-8) var(--td-sp-7) var(--td-sp-7);
+  gap: var(--td-sp-6);
+  margin: var(--td-sp-2) 0 0;
+  padding: var(--td-sp-5) var(--td-sp-6) var(--td-sp-6);
   border: 0;
   border-radius: var(--td-radius-5);
   min-width: 0;
@@ -48,18 +49,57 @@
     inset -1px -1px 3px color-mix(in srgb, var(--td-shadow-light) 46%, transparent);
 }
 
-/* A real `legend`, so the group is named for a screen reader too — taken out
-   of the fieldset's own layout and placed on the well's top edge. */
-.td-react-wa-optional-legend {
-  float: none;
+/* The toggle that opens/closes the optional well. A button inside the
+   fieldset, positioned as the first line. The label is the eyebrow treatment
+   the rest of the system uses for section headings. */
+.td-react-wa-optional-toggle {
+  appearance: none;
+  background: none;
+  border: 0;
   padding: 0;
-  margin: 0 0 var(--td-sp-2);
+  margin: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--td-sp-3);
+  cursor: pointer;
+  text-align: start;
+}
+.td-react-wa-optional-toggle:focus-visible {
+  outline: 1.5px solid var(--td-accent);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.td-react-wa-optional-label {
   font-family: var(--td-font-mono);
   font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
+  color: var(--td-ink-2);
+  flex-shrink: 0;
+}
+
+.td-react-wa-optional-hint {
+  font-family: var(--td-font-ui);
+  font-size: 0.68rem;
   color: var(--td-ink-3);
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.td-react-wa-optional-chevron {
+  flex-shrink: 0;
+  width: 7px;
+  height: 7px;
+  border-right: 1.6px solid var(--td-ink-3);
+  border-bottom: 1.6px solid var(--td-ink-3);
+  transform: rotate(-45deg);
+  transition: transform var(--td-t-fast) var(--td-ease);
+}
+.td-react-wa-optional--open .td-react-wa-optional-chevron {
+  transform: rotate(45deg);
 }
 
 /* Fine print, and it should read as fine print: it is a statement about what

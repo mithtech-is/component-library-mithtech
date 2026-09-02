@@ -94,11 +94,21 @@
 /* A well already IS the housing. Anything that carries its own plate — the
    table scroll container, a bento panel — drops it on the way in, or the frame
    reads as a raised box sitting in a trough. Chrome is raised, data is
-   recessed; nesting must not invert that. */
-.td-react-frame-well .td-table-wrap,
-.td-react-frame-well .td-panel,
-.td-react-frame-well .td-chart-card,
-.td-react-frame-well .td-react-map {
+   recessed; nesting must not invert that.
+
+   `td-floating` is the way out, and it is not a convenience.
+
+   The rule above is right for a plate the well HOUSES — laid out in its flow,
+   with the well's ground behind it. It is wrong for one that floats OVER the
+   well: a reading panel positioned over a pannable canvas is not being housed
+   by the well, it is covering it, and stripping its background runs the canvas
+   straight through its text. The first consumer to build one lost the panel
+   entirely and rebuilt the column, the gap and the padding by hand — and it
+   only looked survivable while a dark canvas happened to sit behind it.
+
+   CSS cannot tell the two apart: `position` is not something a selector can
+   ask about. So the floating one says so. */
+.td-react-frame-well :is(.td-table-wrap, .td-panel, .td-chart-card, .td-react-map):not(.td-floating) {
   background: transparent;
   box-shadow: none;
   border-radius: 0;

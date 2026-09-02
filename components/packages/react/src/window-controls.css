@@ -1,0 +1,110 @@
+/* WindowControls — the three traffic lights.
+
+   Nothing in `packages/core` draws these, so unlike most stylesheets in this
+   package this one is the whole component rather than the deltas over a base
+   recipe. The three colours are the platform's own literals, not tokens: see
+   the component's doc comment for why they must not follow the brand. */
+
+.td-react-windowcontrols {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--td-windowcontrols-gap, 8px);
+  flex: 0 0 auto;
+}
+.td-react-windowcontrols--sm { --td-windowcontrols-size: 10px; --td-windowcontrols-gap: 6px; }
+.td-react-windowcontrols--md { --td-windowcontrols-size: 12px; --td-windowcontrols-gap: 8px; }
+
+/* The disc.
+
+   `appearance: none` and an explicit `padding: 0` because a 12px control is
+   entirely inside the UA's own default padding — without them the row is
+   three 30px buttons with a dot somewhere inside each.
+
+   The rim is the same `inset 0 0 0 0.5px rgb(0 0 0 / 0.12)` macOS draws: a
+   half-pixel darkening of the disc's own edge, not a border. A border would
+   add to the box and the three discs would stop being 12px. */
+.td-react-windowcontrols-dot {
+  appearance: none;
+  border: 0;
+  padding: 0;
+  width: var(--td-windowcontrols-size, 12px);
+  height: var(--td-windowcontrols-size, 12px);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  background: var(--td-windowcontrols-fill);
+  /* Two slots at every rung, the unused one at zero alpha in the shadow's
+     own colour: a shadow list only interpolates against a list of the same
+     length, so a one-slot rest would snap to the pressed state instead of
+     sinking into it ([[L18]], [[L20]]). */
+  box-shadow: inset 0 0 0 0.5px rgb(0 0 0 / 0.12), inset 0 0 0 rgb(0 0 0 / 0);
+  transition: background var(--td-t-base) var(--td-ease), box-shadow var(--td-t-base) var(--td-ease);
+}
+.td-react-windowcontrols-dot--close { --td-windowcontrols-fill: #FF5F57; }
+.td-react-windowcontrols-dot--minimise { --td-windowcontrols-fill: #FEBC2E; }
+.td-react-windowcontrols-dot--maximise { --td-windowcontrols-fill: #28C840; }
+
+/* Pressing sinks the disc rather than moving it: a 12px control has nowhere to
+   travel, and a 1px nudge at this size reads as the row jittering. */
+.td-react-windowcontrols-dot:active {
+  box-shadow: inset 0 0 0 0.5px rgb(0 0 0 / 0.12), inset 0 1px 2px rgb(0 0 0 / 0.28);
+}
+.td-react-windowcontrols-dot:focus-visible { outline: 2px solid var(--td-accent); outline-offset: 2px; }
+
+/* An action that was not given a handler. Drained, not removed — the cluster's
+   silhouette is what people recognise, and a two-disc row reflows the title
+   beside it. */
+.td-react-windowcontrols-dot:disabled {
+  --td-windowcontrols-fill: color-mix(in srgb, var(--td-ink-3) 26%, transparent);
+  cursor: default;
+}
+
+/* The unfocused window: the same three shapes, drained of colour. The
+   attribute sits on the cluster because focus belongs to the WINDOW, not to
+   any one of its actions. */
+.td-react-windowcontrols[data-focused="false"] .td-react-windowcontrols-dot {
+  --td-windowcontrols-fill: color-mix(in srgb, var(--td-ink-3) 26%, transparent);
+}
+
+/* ── The marks ─────────────────────────────────────────────────────────
+   Hidden until the CLUSTER is hovered or holds focus, not the disc under the
+   pointer: reaching for one light lights all three, so the reader can see what
+   they are aiming at before they commit. That is the platform's behaviour and
+   it is the reason the glyphs are legible at all — a permanent 6px mark on a
+   saturated disc is noise at rest.
+
+   `opacity` rather than `display`, so the mark fades in and so the glyph's box
+   never changes the disc's size. Dark ink at 62% rather than black: on the
+   amber disc a solid black bar reads as a hole. */
+.td-react-windowcontrols-mark {
+  display: grid;
+  place-items: center;
+  line-height: 0;
+  font-size: calc(var(--td-windowcontrols-size, 12px) * 0.52);
+  color: rgb(0 0 0 / 0.62);
+  opacity: 0;
+  transition: opacity var(--td-t-base) var(--td-ease);
+}
+.td-react-windowcontrols:hover .td-react-windowcontrols-mark,
+.td-react-windowcontrols:focus-within .td-react-windowcontrols-mark { opacity: 1; }
+/* A disabled action has no mark to show — there is nothing to aim at. */
+.td-react-windowcontrols-dot:disabled .td-react-windowcontrols-mark { opacity: 0; }
+
+/* The unfocused cluster keeps its marks on hover, but they sit on grey now, so
+   the ink lightens to stay a mark rather than becoming the loudest thing in an
+   inactive window. */
+.td-react-windowcontrols[data-focused="false"] .td-react-windowcontrols-mark { color: rgb(0 0 0 / 0.42); }
+
+/* Forced colours override every fill on the page, so the three discs arrive as
+   one colour and the mark becomes the only thing telling close from minimise.
+   Draw them permanently there. */
+@media (forced-colors: active) {
+  .td-react-windowcontrols-mark { opacity: 1; color: CanvasText; }
+  .td-react-windowcontrols-dot { box-shadow: none; border: 1px solid CanvasText; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .td-react-windowcontrols-dot,
+  .td-react-windowcontrols-mark { transition: none; }
+}

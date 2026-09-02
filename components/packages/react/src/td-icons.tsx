@@ -85,6 +85,17 @@ const CANCEL = "M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7
 // construction, and a stroke cannot carry the lamp's glow.
 const CLOSE = "M58.7,225.6 30.4,197.3 99.7,128 30.4,58.7 58.7,30.4 128,99.7 197.3,30.4 225.6,58.7 156.3,128 225.6,197.3 197.3,225.6 128,156.3Z";
 
+// The bar inside a window's minimise disc. Phosphor's `Minus` at `fill` is a
+// square plate with the bar knocked out of it, and at the 6px a traffic light
+// draws its mark that reads as a filled square, not a dash.
+const MINUS_BAR = "M44,112H212a16,16,0,0,1,0,32H44a16,16,0,0,1,0-32Z";
+
+// The zoom mark: two corner triangles pointing away from each other, which is
+// what macOS draws in the green disc. Two subpaths in one fill — the hypotenuse
+// of each faces the centre, so the pair reads as an arrow head in each corner
+// rather than as a bowtie.
+const EXPAND_CORNERS = "M36,36H132L36,132ZM220,220H124L220,124Z";
+
 const WHATSAPP = "M12,2 C6.47715,2 2,6.47715 2,12 C2,13.8896 2.52505,15.6594 3.43756,17.1683 L2.54581,20.2002 C2.32023,20.9672 3.03284,21.6798 3.79975,21.4542 L6.83171,20.5624 C8.34058,21.475 10.1104,22 12,22 C17.5228,22 22,17.5228 22,12 C22,6.47715 17.5228,2 12,2 Z M9.73821,14.2627 C11.7607,16.2852 13.692,16.5518 14.3739,16.5769 C15.4111,16.6151 16.421,15.823 16.8147,14.9042 C16.9112,14.6792 16.8871,14.4085 16.7255,14.2014 C16.1782,13.5005 15.4373,12.9983 14.7134,12.4984 C14.4006,12.282 13.9705,12.349 13.7401,12.6555 L13.1394,13.5706 C13.0727,13.6721 12.9402,13.707 12.8348,13.6467 C12.4283,13.4143 11.8356,13.018 11.4092,12.5916 C10.9833,12.1657 10.6111,11.5998 10.4022,11.2195 C10.3473,11.1195 10.3777,10.996 10.4692,10.928 L11.3927,10.2422 C11.6681,10.0038 11.7165,9.59887 11.5138,9.30228 C11.065,8.64569 10.5422,7.8112 9.7855,7.25926 C9.57883,7.1085 9.3174,7.09158 9.10155,7.18408 C8.1817,7.5783 7.38574,8.58789 7.42398,9.62695 C7.44908,10.3089 7.71572,12.2402 9.73821,14.2627 Z";
 
 /** The accept mark. A bare fat tick — Phosphor's circled check read as a badge. */
@@ -114,6 +125,16 @@ export function TdCancel(props: TdIconProps) {
  */
 export function TdClose(props: TdIconProps) {
   return <TdGlyph viewBox="0 0 256 256" d={CLOSE} {...props} />;
+}
+
+/** The minimise bar, for a window's amber disc. */
+export function TdMinus(props: TdIconProps) {
+  return <TdGlyph viewBox="0 0 256 256" d={MINUS_BAR} {...props} />;
+}
+
+/** The zoom mark, for a window's green disc: a triangle in each far corner. */
+export function TdExpandCorners(props: TdIconProps) {
+  return <TdGlyph viewBox="0 0 256 256" d={EXPAND_CORNERS} {...props} />;
 }
 
 /** WhatsApp. The handset is knocked out of the bubble, so the fill rule matters. */

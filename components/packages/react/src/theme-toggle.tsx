@@ -1,6 +1,6 @@
 "use client";
 
-import { forwardRef, useCallback, useEffect, useState, type ButtonHTMLAttributes } from "react";
+import { forwardRef, useCallback, useEffect, useRef, useState, type ButtonHTMLAttributes } from "react";
 import { cx } from "./utils";
 import { LAMP_WEIGHT, MoonIcon, SunIcon } from "./icons";
 import "./theme-toggle.css";
@@ -78,17 +78,52 @@ export const ThemeToggle = forwardRef<HTMLButtonElement, ThemeToggleProps>(funct
     return () => observer.disconnect();
   }, [storageKey]);
 
-  const toggle = useCallback(() => {
-    const next: Theme = (theme ?? resolveTheme()) === "dark" ? "light" : "dark";
+  const apply = useCallback((next: Theme) => {
     document.documentElement.setAttribute("data-theme", next);
-    setTheme(next);
     try {
       if (storageKey) window.localStorage.setItem(storageKey, next);
     } catch {
       // As above — the toggle still works, the choice just will not survive.
     }
+  }, [storageKey]);
+
+  /* The pending re-assertion, cleared on unmount so a toggle pressed on its way
+     off the page does not write the theme after it has gone. */
+  const settle = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => { if (settle.current) clearTimeout(settle.current); }, []);
+
+  const toggle = useCallback(() => {
+    const next: Theme = (theme ?? resolveTheme()) === "dark" ? "light" : "dark";
+    apply(next);
+    setTheme(next);
+
+    /* ── The write is an ASSERTION, not a flip ────────────────────────
+       A page can carry a vanilla runtime that binds every
+       `button:has(.td-theme-icon)` and toggles the theme itself — the old
+       design system's `tonaldepth.js` does exactly that, and this component
+       renders exactly that markup. Both handlers then fire on one press: this
+       one writes the theme the reader asked for, the delegated one flips
+       whatever it finds. The theme lands back where it started while storage
+       records the new value, so the button appears dead and the NEXT reload
+       jumps to the other theme. Dark to dark, key says light.
+
+       So the intent is re-asserted once the click has finished being handled.
+       If nothing else touched the attribute this reads it, matches, and does
+       nothing; if something flipped it back, the reader's choice wins.
+
+       A task, not a microtask, and that distinction is the whole fix: the HTML
+       spec runs a microtask checkpoint whenever the JS stack empties, which
+       happens BETWEEN two listeners on the same event. A microtask would
+       therefore land before a runtime delegated at the document and be flipped
+       straight back — fixing nothing while looking like it had. */
+    if (settle.current) clearTimeout(settle.current);
+    settle.current = setTimeout(() => {
+      settle.current = null;
+      if (document.documentElement.getAttribute("data-theme") !== next) apply(next);
+    }, 0);
+
     onThemeChange?.(next);
-  }, [theme, storageKey, onThemeChange]);
+  }, [theme, apply, onThemeChange]);
 
   const isDark = theme === "dark";
   return (
@@ -97,6 +132,14 @@ export const ThemeToggle = forwardRef<HTMLButtonElement, ThemeToggleProps>(funct
       ref={ref}
       type="button"
       onClick={toggle}
+      /* The exemption marker. A vanilla runtime that scans the page for theme
+         buttons should skip anything carrying it: this element already owns
+         its behaviour, and a second handler on it is a double-toggle rather
+         than a second opinion. Stamped whether or not a runtime is present —
+         the component cannot know, and an attribute nobody reads costs
+         nothing. The `setTimeout` above is what handles a runtime that does
+         not read it yet. */
+      data-td-bound="theme"
       aria-pressed={isDark}
       aria-label={props["aria-label"] ?? labels[isDark ? "light" : "dark"]}
       className={cx("td-iconbtn", "td-react-theme-toggle", showLabel && "td-react-theme-toggle--text", className)}

@@ -157,6 +157,33 @@ describe("the filament runs the sideways tab's ladder, not the dot lamp's", () =
   });
 });
 
+describe("the well flattens what it houses, and only that", () => {
+  it("lets a plate that FLOATS over the well keep its own housing", () => {
+    /* The well strips the background, shadow and radius off anything carrying
+       its own plate, because chrome is raised and data is recessed and nesting
+       must not invert that ([[L32]]). Right for a plate the well HOUSES.
+
+       Wrong for one that floats OVER it. A consumer's reading panel was
+       absolutely positioned above a pannable canvas inside a frame: the rule
+       stripped its background and the map ran straight through its text, and
+       it only looked survivable while a dark canvas happened to sit behind it.
+       They dropped `td-panel` entirely and rebuilt the column, gap and padding
+       by hand.
+
+       CSS cannot tell housed from floating — `position` is not something a
+       selector can ask about — so the floating one says so, and the rule has
+       to exempt it in BOTH distributions. */
+    for (const { label, css } of copies("frame.css")) {
+      const selector = [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)]
+        .map(match => match[1].trim().replace(/\s+/g, " "))
+        .find(one => /frame-well .*:is\(/.test(one) && /td-panel/.test(one));
+      expect(selector, `${label}: the well does not flatten nested plates at all`).toBeTruthy();
+      expect(selector, `${label}: a floating plate cannot opt out of the flattening`)
+        .toMatch(/:not\(\.td-floating\)/);
+    }
+  });
+});
+
 describe("Frame", () => {
   it("renders the element it is asked for, so a figure stays a figure", () => {
     const { container } = render(<Frame as="figure" title="Days to collect">plot</Frame>);

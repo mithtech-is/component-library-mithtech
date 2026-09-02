@@ -109,3 +109,16 @@
   color: var(--td-ink);
   box-shadow: var(--td-row-selected);
 }
+
+/* ── the small field ───────────────────────────────────────────────────
+   `Button size="sm"` is 34px tall at 12px of label with a 10px radius, and
+   this is those three numbers. A filter row is the place both controls
+   actually meet — a select, a search field and a couple of buttons on one
+   line — and until now the only select available there was the 42px one, so
+   the row read as two rows.
+
+   The chevron moves in with the padding rather than staying at 12px: an
+   inset that is right on a 42px field crowds a 34px one. */
+.td-select-wrap.td-registry-select--sm { min-height: 34px; min-width: 140px; border-radius: 10px; }
+.td-select-wrap.td-registry-select--sm .td-select { font-size: 12px; padding: 6px 30px 6px 12px; }
+.td-select-wrap.td-registry-select--sm .td-select-chevron { right: 10px; width: 11px; height: 11px; }

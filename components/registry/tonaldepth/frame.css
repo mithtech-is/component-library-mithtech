@@ -92,11 +92,16 @@
 /* Anything that carries its own plate — a table's scroll container, a bento
    panel, a chart card — drops it on the way into the well, or the frame reads
    as a raised box sitting in a trough. Chrome is raised, data is recessed;
-   nesting must not invert that ([[L32]]). */
-.td-registry-frame-well .td-table-wrap,
-.td-registry-frame-well .td-panel,
-.td-registry-frame-well .td-chart-card,
-.td-registry-frame-well .td-registry-map {
+   nesting must not invert that ([[L32]]).
+
+   `td-floating` is the way out, and it is not a convenience. The rule is right
+   for a plate the well HOUSES, in its flow, with the well's ground behind it.
+   It is wrong for one that floats OVER the well — a reading panel positioned
+   over a pannable canvas is covering the well, not sitting in it, and
+   stripping its background runs the canvas straight through its text. CSS
+   cannot tell the two apart, because `position` is not something a selector
+   can ask about. So the floating one says so. */
+.td-registry-frame-well :is(.td-table-wrap, .td-panel, .td-chart-card, .td-registry-map):not(.td-floating) {
   background: transparent;
   box-shadow: none;
   border-radius: 0;

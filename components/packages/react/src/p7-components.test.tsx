@@ -48,6 +48,26 @@ describe("Select", () => {
     render(<Select options={CITIES} placeholder="Choose" aria-label="City" />);
     expect(screen.getByRole("option", { name: "Choose" })).toBeDisabled();
   });
+
+  it("has the small size a filter row needs beside a small button", () => {
+    /* A filter row is where a select and a button actually meet, and the only
+       field on offer was the 37px one — so a row mixing it with
+       `Button size="sm"` sat them 3px apart and read as two rows. `md` keeps
+       that 37px rather than being raised to Button's 42px, which would move
+       every Select already shipped.
+
+       `size` also shadows the native attribute, which on a `<select>` means
+       "show this many rows" and turns the control into a list box. Nothing
+       calling this component has ever wanted that, and the housing cannot
+       draw it. */
+    const { rerender } = render(<Select options={CITIES} aria-label="City" />);
+    const wrap = () => screen.getByRole("combobox", { name: "City" }).closest(".td-select-wrap");
+    expect(wrap()).not.toHaveClass("td-react-select--sm");
+    rerender(<Select options={CITIES} aria-label="City" size="sm" />);
+    expect(wrap()).toHaveClass("td-react-select--sm");
+    // Shadowed, not forwarded: a number on the DOM node would be the list box.
+    expect(screen.getByRole("combobox", { name: "City" })).not.toHaveAttribute("size");
+  });
 });
 
 /* ── Combobox, and the MultiSelect collapse ───────────────────────────── */

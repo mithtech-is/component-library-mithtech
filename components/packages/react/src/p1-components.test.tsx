@@ -11,7 +11,7 @@ import {
 } from "./index";
 import { Badge, IconButton, ThemeToggle } from "./index";
 import { FilamentButton, FooterBottom, FooterColumn, SearchBar, SideTabs, SiteNavigation, SplitButton } from "./index";
-import { AcceptIcon, CancelIcon, CloseIcon, StarIcon, SuccessIcon, WhatsAppIcon, LAMP_WEIGHT, TD_ICON_ROLES } from "./index";
+import { AcceptIcon, CancelIcon, CloseIcon, StarIcon, SuccessIcon, WhatsAppIcon, WindowMinimiseIcon, WindowZoomIcon, LAMP_WEIGHT, TD_ICON_ROLES } from "./index";
 
 const SRC = dirname(fileURLToPath(import.meta.url));
 
@@ -42,6 +42,31 @@ describe("overlays", () => {
   it("connects tooltip description", () => {
     render(<Tooltip content="Helpful detail"><Button>Help</Button></Tooltip>);
     expect(screen.getByRole("button", { name: "Help" })).toHaveAccessibleDescription("Helpful detail");
+  });
+
+  it("describes the trigger without joining its accessible NAME", () => {
+    /* Reported by a consumer as the tooltip text being concatenated onto the
+       trigger's name. It is not, and the reason is structural rather than
+       lucky: the `role="tooltip"` span is a SIBLING of the trigger inside the
+       wrapper, reached only by `aria-describedby`. Were it ever moved inside
+       the trigger — the obvious "simplification" — the name would become
+       "Export Downloads a CSV" and every button query in every consumer's
+       tests would start matching on prose. */
+    render(<Tooltip content="Downloads a CSV"><Button>Export</Button></Tooltip>);
+    const trigger = screen.getByRole("button", { name: "Export" });
+    expect(trigger).toHaveAccessibleName("Export");
+    expect(trigger).toHaveAccessibleDescription("Downloads a CSV");
+    expect(trigger.querySelector('[role="tooltip"]')).toBeNull();
+  });
+
+  it("widens the dialog on request, and holds the default otherwise", () => {
+    /* A settings dialog listing five zones and their toggles is a layout, and
+       at the single 560px `.td-modal` ships every row wrapped to three lines.
+       The consumer that hit it overrode `.td-modal` at the call site. */
+    const { rerender } = render(<Dialog open onOpenChange={() => {}} title="Settings">content</Dialog>);
+    expect(screen.getByRole("dialog", { name: "Settings" })).toHaveClass("td-react-dialog--md");
+    rerender(<Dialog open onOpenChange={() => {}} title="Settings" size="lg">content</Dialog>);
+    expect(screen.getByRole("dialog", { name: "Settings" })).toHaveClass("td-react-dialog--lg");
   });
 
   it("closes dialog on Escape and restores trigger focus", async () => {
@@ -87,6 +112,20 @@ describe("overlays", () => {
     render(<Dialog open onOpenChange={() => {}} title="Enquiry"><input aria-label="Name" /></Dialog>);
     // Dismiss is always reachable; the first question should not sit behind it.
     expect(screen.getByRole("textbox", { name: "Name" })).toHaveFocus();
+  });
+
+  it("locks body scroll while open and restores it on close", () => {
+    function Example() { const [open, setOpen] = useState(false); return <><Button onClick={() => setOpen(true)}>Open</Button><Dialog open={open} onOpenChange={setOpen} title="Lock test">content</Dialog></>; }
+    const { rerender } = render(<Example />);
+    expect(document.body.style.overflow).toBe("");
+    rerender(<Dialog open onOpenChange={() => {}} title="Lock test">content</Dialog>);
+    expect(document.body.style.overflow).toBe("hidden");
+  });
+
+  it("portals to document.body so it escapes parent stacking contexts", () => {
+    render(<div style={{ position: "relative", zIndex: 1 }}><Dialog open onOpenChange={() => {}} title="Portal test">content</Dialog></div>);
+    const dialog = screen.getByRole("dialog", { name: "Portal test" });
+    expect(dialog.closest("body > .td-overlay-backdrop") || dialog.parentElement?.parentElement === document.body).toBeTruthy();
   });
 
   it("navigates dropdown items and selects a value", async () => {
@@ -307,7 +346,7 @@ describe("the icon set", () => {
     [...(svg?.querySelectorAll("path") ?? [])].map(path => path.getAttribute("d")).join("|");
 
   it("draws the TD glyphs with no colour of their own", () => {
-    render(<span data-testid="td"><AcceptIcon weight={LAMP_WEIGHT} /><CancelIcon weight={LAMP_WEIGHT} /><CloseIcon weight={LAMP_WEIGHT} /><StarIcon weight={LAMP_WEIGHT} /><WhatsAppIcon weight={LAMP_WEIGHT} /></span>);
+    render(<span data-testid="td"><AcceptIcon weight={LAMP_WEIGHT} /><CancelIcon weight={LAMP_WEIGHT} /><CloseIcon weight={LAMP_WEIGHT} /><StarIcon weight={LAMP_WEIGHT} /><WhatsAppIcon weight={LAMP_WEIGHT} /><WindowMinimiseIcon weight={LAMP_WEIGHT} /><WindowZoomIcon weight={LAMP_WEIGHT} /></span>);
     const glyphs = [...screen.getByTestId("td").querySelectorAll("svg")];
     expect(glyphs).toHaveLength(TD_ICON_ROLES.length);
     for (const glyph of glyphs) {
@@ -373,6 +412,44 @@ describe("theme toggle", () => {
     const button = screen.getByRole("button");
     expect(button).not.toHaveClass("td-react-theme-toggle--text");
     expect(button.querySelector(".td-react-theme-toggle-label")).toBeNull();
+  });
+
+  it("wins against a page runtime that toggles the theme behind it", async () => {
+    /* The exact shape a consumer reported. A vanilla runtime left over from the
+       old design system binds every `button:has(.td-theme-icon)` at the
+       document and flips the theme itself; this component renders exactly that
+       markup. Both handlers fire on one press — this one writes the theme the
+       reader asked for, the delegated one flips whatever it finds — and the
+       page lands back where it started with storage recording the new value.
+       Dark to dark, key says light.
+
+       The rogue listener is on `document`, which is what makes it land AFTER
+       React's own: React delegates at the root container, and the document is
+       further up the bubble path. A microtask re-assertion would not have
+       fixed it — the spec runs a microtask checkpoint between two listeners on
+       one event — which is why the component settles on a task instead. */
+    const user = userEvent.setup();
+    document.documentElement.setAttribute("data-theme", "light");
+    const rogue = () => {
+      const current = document.documentElement.getAttribute("data-theme");
+      document.documentElement.setAttribute("data-theme", current === "dark" ? "light" : "dark");
+    };
+    document.addEventListener("click", rogue);
+    try {
+      render(<ThemeToggle storageKey={null} />);
+      const button = screen.getByRole("button");
+      // The marker a runtime should skip on. It cannot help a runtime that
+      // does not read it yet, which is the case this test covers.
+      expect(button).toHaveAttribute("data-td-bound", "theme");
+      await user.click(button);
+      await waitFor(() =>
+        expect(document.documentElement.getAttribute("data-theme")).toBe("dark"));
+      await user.click(button);
+      await waitFor(() =>
+        expect(document.documentElement.getAttribute("data-theme")).toBe("light"));
+    } finally {
+      document.removeEventListener("click", rogue);
+    }
   });
 });
 

@@ -194,6 +194,62 @@ class CoreFoundationTests(unittest.TestCase):
         for selector in (".td-root", ".td-primary", ".td-cta", ".td-panel", ".td-table"):
             self.assertIn(selector, css)
 
+    def test_a_constrained_scroll_region_can_be_told_to_fill_its_housing(self):
+        """A scroll region that cannot scroll, and the opt-in that fixes it.
+
+        `.td-scrollshell` is spliced between a scroll host and its parent by
+        the vanilla runtime, and `max-height: 100%` is the only constraint it
+        carries. A percentage against an auto-height ancestor is no constraint
+        at all, so one plain wrapper between a fixed-height housing and the
+        host — a body div inside a panel, the ordinary thing to write — leaves
+        the shell sizing to its content. Measured in Chrome at a 260px
+        housing: a 754px shell clipping 516px of body, `scrolls: false`. A
+        consumer hit the same shape at 1499px inside a 596px panel and lost
+        seven of twelve sections with no scrollbar to say so, because this
+        system hides native scrollbars everywhere.
+
+        The obvious fix is the wrong one, which is why this test names it:
+        `flex: 1 1 0` on the shell itself COLLAPSES the host to zero height in
+        an auto-height column, which is what the mega panel stacks into below
+        900px. So the fill is opt-in, carried by the housing, and it has to
+        reach every box between the housing and the shell — fixing only the
+        shell's direct parent still collapsed a two-wrapper chain.
+        """
+        css = (ROOT / "components/packages/core/dist/compat.css").read_text(encoding="utf-8")
+        shell = re.search(r"\n\.td-scrollshell \{(.*?)\}", css, re.S)
+        self.assertIsNotNone(shell, ".td-scrollshell is not declared")
+        self.assertNotIn("flex: 1 1 0", shell.group(1),
+                         "the shell grows by default — this collapses the host in an auto-height column")
+
+        self.assertRegex(css, r"\.td-scroll-fill \{[^}]*flex-direction: column",
+                         "the housing opt-in does not make itself a column")
+        chain = re.search(r"\.td-scroll-fill :has\(\.td-scrollshell\) \{(.*?)\}", css, re.S)
+        self.assertIsNotNone(chain, "the opt-in reaches only the shell, not the boxes above it")
+        for declaration in ("min-height: 0", "flex: 1 1 0"):
+            self.assertIn(declaration, chain.group(1))
+        self.assertRegex(css, r"\.td-scroll-fill \.td-scrollshell \{[^}]*flex: 1 1 0")
+
+    def test_the_display_face_has_a_size_at_its_own_floor(self):
+        """20px is Anton's floor, and until now nothing sat on it.
+
+        The ramp hands h4-h6 to `--td-font-ui` because the display face closes
+        up below 20px. Correct, and it left no way to set a small title IN the
+        display face — so `.td-empty-title` and `.td-celebrate-title` each
+        hand-authored one, and a consumer then wrote a third copy into a
+        stylesheet whose own rule forbids authoring a font-family.
+
+        The class must sit exactly on the floor: below it the ramp is right
+        that this face should not be used at all.
+        """
+        css = (ROOT / "components/packages/core/dist/compat.css").read_text(encoding="utf-8")
+        rule = re.search(r"\.td-display-sm \{(.*?)\}", css, re.S)
+        self.assertIsNotNone(rule, ".td-display-sm is not declared")
+        body = rule.group(1)
+        self.assertIn("font-family: var(--td-font-display)", body)
+        self.assertIn("font-size: 20px", body,
+                      "the small display size is not at Anton's 20px floor")
+        self.assertIn("text-transform: uppercase", body)
+
     def test_dashboard_fixture_consumes_package_css(self):
         fixture = (ROOT / "static/examples/html-dashboard/index.html").read_text(encoding="utf-8")
         self.assertIn('../../../components/packages/core/dist/index.css', fixture)
