@@ -51,6 +51,9 @@ const TABLES = {
   "mega-grid": ["mega-menu", "MegaGridProps", "MegaGrid"],
   "mega-columns": ["mega-menu", "MegaColumnsProps", "MegaColumns"],
   "site-navigation": ["site-navigation", "SiteNavigationProps", "SiteNavigation"],
+  "nav-drawer": ["site-navigation", "NavDrawerProps", "NavDrawer"],
+  "bottom-nav": ["bottom-nav", "BottomNavProps", "BottomNav"],
+  "window-controls": ["window-controls", "WindowControlsProps", "WindowControls"],
   "footer": ["footer", "FooterProps", "Footer"],
   // IconButtonProps is an intersection (button + anchor attributes), so the
   // table is cut from the component's own props rather than the DOM passthrough.

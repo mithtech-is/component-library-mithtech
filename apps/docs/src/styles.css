@@ -1038,3 +1038,31 @@ main { min-width: 0; overflow-x: clip; overflow-y: visible; }
    leaks in. Scoped to the demo so it cannot escape into a real control. */
 .lampdemo-chip--trap { background: var(--td-raise-fill); box-shadow: var(--td-btn-rest); }
 .lampdemo-chip--trap .lampdemo-mark { color: color-mix(in srgb, var(--td-lamp-glow) var(--td-lamp-held-mix), var(--td-lamp-unlit)); }
+
+/* ── the WhatsApp form builder ─────────────────────────────────────────
+   A grid of the eight built-in questions and what each is set to, plus the
+   list of questions the reader has added. Its controls are the docs' own
+   `.playground` ones; only the two layouts are new. */
+.wa-build-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--td-sp-5);
+}
+.wa-build-field { display: grid; gap: var(--td-sp-2); min-width: 0; }
+.wa-build-field > span {
+  font-family: var(--td-font-mono);
+  font-size: 0.66rem;
+  color: var(--td-ink-3);
+}
+.wa-build-custom { display: grid; gap: var(--td-sp-5); }
+.wa-build-list { display: grid; gap: var(--td-sp-3); margin: 0; padding: 0; list-style: none; }
+.wa-build-list li {
+  display: flex;
+  align-items: center;
+  gap: var(--td-sp-5);
+  flex-wrap: wrap;
+  padding: var(--td-sp-4) var(--td-sp-5);
+  border-radius: var(--td-radius-4);
+  background: color-mix(in srgb, var(--td-surface) 94%, black);
+}
+.wa-build-list li .hint { margin-inline-end: auto; }

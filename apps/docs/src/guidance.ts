@@ -305,6 +305,28 @@ export const GUIDANCE = {
       { instead: "overlays", because: "The question is about the sheet's scrim rather than the bar. That page carries the containing-block rule this component's scrim was on the wrong side of for a release." },
     ],
   },
+  "nav-drawer": {
+    aliases: ["mobile menu", "hamburger menu", "burger menu", "drawer", "off-canvas nav", "side sheet", "mobile nav", "accordion menu"],
+    useCases: ["navigation on a phone", "menu behind a hamburger", "the site header at 400px", "sections that open in place inside a menu"],
+    whenToUse: "The small-screen half of the site header. It takes the SAME `items` array the bar takes, so the navigation is declared once and both breakpoints follow.",
+    whenNotToUse: [
+      { instead: "site-navigation", because: "You want the bar itself. This is what its `onMenuOpen` opens, and it renders the bar's own items — the two are one navigation." },
+      { instead: "dialog", because: "The overlay holds a form or a decision rather than navigation. A drawer of links is not a modal task." },
+      { instead: "application-shell", because: "The page is inside a signed-in product, where the small form of navigation is that shell's own sidebar." },
+      { instead: "faq", because: "You want a list of questions on a page. The drawer's disclosures ARE that component, at a different measure." },
+    ],
+  },
+  "bottom-nav": {
+    aliases: ["tab bar", "bottom bar", "mobile tab bar", "app bar", "navigation bar", "thumb nav", "bottom navigation"],
+    useCases: ["navigation at the bottom of a phone screen", "four sections a person moves between all day", "a tab bar for an app", "somewhere to put the destinations that did not fit"],
+    whenToUse: "An app or product with a handful of sections a person moves between constantly, on a screen held in one hand. The bar is always present; More holds the rest.",
+    whenNotToUse: [
+      { instead: "nav-drawer", because: "The navigation is a DIRECTORY rather than a handful of shortcuts. A deep marketing IA belongs behind a burger, not spread across a five-slot bar." },
+      { instead: "site-navigation", because: "This is a public marketing page, where navigation lives at the top with mega panels under it." },
+      { instead: "application-shell", because: "The product is being used on a desktop, where navigation is a sidebar and the bottom of the screen is nowhere near the pointer." },
+      { instead: "tabs", because: "The entries switch a panel in place rather than navigating. Tabs own a value; this owns a destination." },
+    ],
+  },
   "footer": {
     aliases: ["site footer", "page foot", "bottom nav"],
     useCases: ["site footer", "link columns at the bottom", "contact details and social links"],
@@ -877,6 +899,32 @@ export const GUIDANCE = {
       { name: "hover", when: "Dim light. The filament has started to warm and is well short of its colour." },
       { name: "held", when: "The standing lit state — pressed, expanded, selected, current. Brighter than hover, deliberately short of the press. It survives the pointer leaving." },
       { name: "press", when: "The maximum, and the only rung that reaches `--td-lamp-glow` exactly." },
+    ],
+  },
+  "scroll-regions": {
+    aliases: ["scrollshell", "td-scrollshell", "scroll host", "scroll buttons", "scroll region not scrolling", "content cut off", "overflow hidden clipping", "panel clips its content", "no scrollbar", "flex min-height auto", "max-height 100%"],
+    useCases: ["fix a scroll region that will not scroll", "work out why a panel is clipping its content", "make a body scroll inside a fixed-height panel", "understand where the scroll buttons come from"],
+    whenToUse: "Read this the moment a fixed-height panel is cutting its content off with no scrollbar to say so. It is the one defect in this system that renders as finished work.",
+    whenNotToUse: [
+      { instead: "overlays", because: "The surface is not being clipped, it is being painted in the wrong place. That page is the containing-block rule." },
+      { instead: "dialog", because: "You want a panel that scrolls its own body — the dialog already does, with its head and actions pinned." },
+      { instead: "frame", because: "You want the housing rather than the scrolling. A frame's well holds a scroll region; it is not one." },
+    ],
+  },
+  "window-controls": {
+    aliases: ["traffic lights", "traffic light buttons", "close minimise maximise", "window buttons", "titlebar buttons", "macOS dots", "red yellow green dots", "window chrome", "fullscreen button", "maximise button"],
+    useCases: ["close, minimise and maximise a panel", "draw a window's title bar", "make a canvas go fullscreen", "show a fake application window in a specimen", "put the three coloured dots on a card"],
+    whenToUse: "A surface that behaves like a window — a floating panel, an embedded app frame, a canvas the reader can expand. The three actions are the platform's, in the platform's order, so nobody has to learn them.",
+    whenNotToUse: [
+      { instead: "terminal", because: "The dots are decoration on a transcript rather than actions. That component draws its own, and they are deliberately not buttons." },
+      { instead: "icon-button", because: "You want ONE action — expand, or dismiss. The library ships `MaximizeIcon` and `MinimizeIcon` for exactly that; three lights for one action is theatre." },
+      { instead: "dialog", because: "The panel is modal. A dialog's dismiss is its close button, and a modal has nothing to minimise itself into." },
+      { instead: "alert", because: "The only action is dismissal of a message. An alert's close is part of the message, not window chrome." },
+    ],
+    variants: [
+      { name: "focused", when: "The default. The three carry the platform's own red, amber and green." },
+      { name: "unfocused", when: "`focused={false}`. The same three shapes in the same three places, drained to grey — the window has stopped being the one you are working in, and the actions have not gone away." },
+      { name: "disabled", when: "An action given no handler. Greyed and unpressable rather than removed, so the cluster's silhouette never reflows the title beside it." },
     ],
   },
   "overlays": {

@@ -305,6 +305,11 @@
       "closeLabel",
       "string",
       "\"Close dialog\""
+    ],
+    [
+      "size",
+      "DialogSize",
+      "\"md\""
     ]
   ],
   "dropdown-menu": [
@@ -589,9 +594,175 @@
       "\"Close menu\""
     ],
     [
+      "onMenuOpen",
+      "() => void",
+      "—"
+    ],
+    [
+      "menuLabel",
+      "string",
+      "\"Open navigation menu\""
+    ],
+    [
       "children",
       "ReactNode",
       "—"
+    ]
+  ],
+  "nav-drawer": [
+    [
+      "open",
+      "boolean",
+      "required"
+    ],
+    [
+      "onOpenChange",
+      "(open: boolean) => void",
+      "required"
+    ],
+    [
+      "items",
+      "SiteNavigationItem[]",
+      "required"
+    ],
+    [
+      "title",
+      "ReactNode",
+      "\"Menu\""
+    ],
+    [
+      "closeLabel",
+      "string",
+      "\"Close menu\""
+    ],
+    [
+      "label",
+      "string",
+      "\"Site navigation\""
+    ],
+    [
+      "header",
+      "ReactNode",
+      "—"
+    ],
+    [
+      "footer",
+      "ReactNode",
+      "—"
+    ],
+    [
+      "renderLink",
+      "SiteNavigationLinkRenderer",
+      "—"
+    ],
+    [
+      "single",
+      "boolean",
+      "true"
+    ],
+    [
+      "defaultOpen",
+      "string[]",
+      "[]"
+    ]
+  ],
+  "bottom-nav": [
+    [
+      "items",
+      "BottomNavItem[]",
+      "required"
+    ],
+    [
+      "max",
+      "number",
+      "4"
+    ],
+    [
+      "label",
+      "string",
+      "\"Primary\""
+    ],
+    [
+      "moreLabel",
+      "string",
+      "\"More\""
+    ],
+    [
+      "moreTitle",
+      "ReactNode",
+      "\"Everything else\""
+    ],
+    [
+      "closeLabel",
+      "string",
+      "\"Close menu\""
+    ],
+    [
+      "children",
+      "ReactNode",
+      "—"
+    ],
+    [
+      "expanded",
+      "boolean",
+      "—"
+    ],
+    [
+      "defaultExpanded",
+      "boolean",
+      "false"
+    ],
+    [
+      "onExpandedChange",
+      "(expanded: boolean) => void",
+      "—"
+    ],
+    [
+      "placement",
+      "\"fixed\" | \"inline\"",
+      "\"fixed\""
+    ],
+    [
+      "renderLink",
+      "(props: { className: string; href: string; children: ReactNode }) => ReactNode",
+      "—"
+    ]
+  ],
+  "window-controls": [
+    [
+      "onClose",
+      "() => void",
+      "—"
+    ],
+    [
+      "onMinimise",
+      "() => void",
+      "—"
+    ],
+    [
+      "onMaximise",
+      "() => void",
+      "—"
+    ],
+    [
+      "focused",
+      "boolean",
+      "true"
+    ],
+    [
+      "size",
+      "WindowControlsSize",
+      "\"md\""
+    ],
+    [
+      "labels",
+      "WindowControlsLabels",
+      "DEFAULT_LABELS"
+    ],
+    [
+      "label",
+      "string",
+      "\"Window controls\""
     ]
   ],
   "footer": [
@@ -1769,6 +1940,11 @@
       "containerClassName",
       "string",
       "—"
+    ],
+    [
+      "size",
+      "SelectSize",
+      "\"md\""
     ]
   ],
   "combobox": [
@@ -2825,9 +3001,14 @@
       "\"WhatsApp us\""
     ],
     [
+      "variant",
+      "WhatsAppFormVariant",
+      "\"enquiry\""
+    ],
+    [
       "title",
       "ReactNode",
-      "\"Message us on WhatsApp\""
+      "—"
     ],
     [
       "description",
@@ -2837,7 +3018,12 @@
     [
       "submitLabel",
       "ReactNode",
-      "\"Open WhatsApp\""
+      "—"
+    ],
+    [
+      "extraFields",
+      "WhatsAppCustomField[]",
+      "—"
     ],
     [
       "services",
