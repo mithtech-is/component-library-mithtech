@@ -69,8 +69,13 @@ NO_OWN_PROPS = {"table", "lamp", "overlays", "scroll-regions"}
 # Classes a component emits purely so a consumer can target them — a router
 # link, a mega-menu trigger. They carry no rule on purpose, and are listed here
 # rather than given an empty one so the intent is written down.
+# `td-floating` is the one a plate wears to tell a Frame's well NOT to flatten
+# it. The rule that reads it lives in frame.css, as a `:not()` — so the class
+# genuinely styles nothing itself, and an empty rule would only invite someone
+# to fill it in.
 MARKER_CLASSES = {"td-react-sitenav-link", "td-react-sitenav-trigger",
-                  "td-registry-sitenav-link", "td-registry-sitenav-trigger"}
+                  "td-registry-sitenav-link", "td-registry-sitenav-trigger",
+                  "td-floating"}
 
 
 def registry_items() -> list[dict]:

@@ -53,7 +53,13 @@ const TABLES = {
   "site-navigation": ["site-navigation", "SiteNavigationProps", "SiteNavigation"],
   "nav-drawer": ["site-navigation", "NavDrawerProps", "NavDrawer"],
   "bottom-nav": ["bottom-nav", "BottomNavProps", "BottomNav"],
+  "divider": ["divider", "DividerProps", "Divider"],
+  "skeleton": ["skeleton", "SkeletonProps", "Skeleton"],
+  "avatar": ["avatar", "AvatarProps", "Avatar"],
   "window-controls": ["window-controls", "WindowControlsProps", "WindowControls"],
+  "canvas": ["canvas", "CanvasProps", "Canvas"],
+  "canvas-panel": ["canvas-panel", "CanvasPanelProps", "CanvasPanel"],
+  "canvas-node": ["canvas-node", "CanvasNodeProps", "CanvasNode"],
   "footer": ["footer", "FooterProps", "Footer"],
   // IconButtonProps is an intersection (button + anchor attributes), so the
   // table is cut from the component's own props rather than the DOM passthrough.

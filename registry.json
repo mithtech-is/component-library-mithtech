@@ -4,6 +4,24 @@
   "homepage": "http://127.0.0.1:4176",
   "items": [
     {
+      "name": "address-field",
+      "type": "registry:ui",
+      "title": "TonalDepth AddressField",
+      "description": "A postal address in the order each line narrows the next.",
+      "registryDependencies": [
+        "@tonaldepth/tokens",
+        "@tonaldepth/combobox",
+        "@tonaldepth/input"
+      ],
+      "files": [
+        {
+          "path": "components/registry/tonaldepth/address-field.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-address-field.tsx"
+        }
+      ]
+    },
+    {
       "name": "alert",
       "type": "registry:ui",
       "title": "TonalDepth Alert",
@@ -50,9 +68,22 @@
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-article-card.tsx"
         }
+      ]
+    },
+    {
+      "name": "avatar",
+      "type": "registry:ui",
+      "title": "TonalDepth Avatar",
+      "description": "A person at the size the row gives them: a photograph in a well, initials derived first-and-last when it is missing, and a presence lamp. AvatarGroup overlaps them so the row reads left to right.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
       ],
-      "dependencies": [
-        "@phosphor-icons/react"
+      "files": [
+        {
+          "path": "components/registry/tonaldepth/avatar.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-avatar.tsx"
+        }
       ]
     },
     {
@@ -85,9 +116,6 @@
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-bottom-nav.tsx"
         }
-      ],
-      "dependencies": [
-        "@phosphor-icons/react"
       ]
     },
     {
@@ -120,9 +148,6 @@
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-button.tsx"
         }
-      ],
-      "dependencies": [
-        "@phosphor-icons/react"
       ]
     },
     {
@@ -155,9 +180,6 @@
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-case-card.tsx"
         }
-      ],
-      "dependencies": [
-        "@phosphor-icons/react"
       ]
     },
     {
@@ -191,9 +213,6 @@
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-chat-launcher.tsx"
         }
-      ],
-      "dependencies": [
-        "@phosphor-icons/react"
       ]
     },
     {
@@ -210,9 +229,22 @@
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-checkbox.tsx"
         }
+      ]
+    },
+    {
+      "name": "checkbox-group",
+      "type": "registry:ui",
+      "title": "TonalDepth CheckboxGroup",
+      "description": "Several checkboxes read as one question, in a fieldset with a legend.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
       ],
-      "dependencies": [
-        "@phosphor-icons/react"
+      "files": [
+        {
+          "path": "components/registry/tonaldepth/checkbox-group.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-checkbox-group.tsx"
+        }
       ]
     },
     {
@@ -230,6 +262,38 @@
           "path": "components/registry/tonaldepth/code-block.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-code-block.tsx"
+        }
+      ]
+    },
+    {
+      "name": "color-picker",
+      "type": "registry:ui",
+      "title": "TonalDepth ColorPicker",
+      "description": "A colour from a curated palette, with the platform picker behind `allowCustom`.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "components/registry/tonaldepth/color-picker.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-color-picker.tsx"
+        }
+      ]
+    },
+    {
+      "name": "combobox",
+      "type": "registry:ui",
+      "title": "TonalDepth Combobox",
+      "description": "A filtered listbox with type-ahead, and the multi-select form on one `multiple` prop.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "components/registry/tonaldepth/combobox.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-combobox.tsx"
         }
       ]
     },
@@ -280,9 +344,6 @@
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-copy-chip.tsx"
         }
-      ],
-      "dependencies": [
-        "@phosphor-icons/react"
       ]
     },
     {
@@ -334,6 +395,54 @@
       ]
     },
     {
+      "name": "date-picker",
+      "type": "registry:ui",
+      "title": "TonalDepth DatePicker",
+      "description": "One day, from a month grid that walks by arrow key and by month on PageUp.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "components/registry/tonaldepth/date-picker.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-date-picker.tsx"
+        }
+      ]
+    },
+    {
+      "name": "date-range-picker",
+      "type": "registry:ui",
+      "title": "TonalDepth DateRangePicker",
+      "description": "A span of days across one calendar, with quick spans for the questions readers actually ask.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "components/registry/tonaldepth/date-range-picker.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-date-range-picker.tsx"
+        }
+      ]
+    },
+    {
+      "name": "date-time-picker",
+      "type": "registry:ui",
+      "title": "TonalDepth DateTimePicker",
+      "description": "A precise instant \u2014 the calendar and the time grid in one popover.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "components/registry/tonaldepth/date-time-picker.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-date-time-picker.tsx"
+        }
+      ]
+    },
+    {
       "name": "dialog",
       "type": "registry:ui",
       "title": "TonalDepth Dialog",
@@ -346,6 +455,22 @@
           "path": "components/registry/tonaldepth/dialog.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-dialog.tsx"
+        }
+      ]
+    },
+    {
+      "name": "divider",
+      "type": "registry:ui",
+      "title": "TonalDepth Divider",
+      "description": "The parting between two things, as a carved seam rather than a drawn line \u2014 the shade cut into the surface and the light catching the lip below. Horizontal, vertical, inset, or with words in it.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "components/registry/tonaldepth/divider.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-divider.tsx"
         }
       ]
     },
@@ -363,9 +488,6 @@
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-dropdown-menu.tsx"
         }
-      ],
-      "dependencies": [
-        "@phosphor-icons/react"
       ]
     },
     {
@@ -382,9 +504,6 @@
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-faq.tsx"
         }
-      ],
-      "dependencies": [
-        "@phosphor-icons/react"
       ]
     },
     {
@@ -443,14 +562,27 @@
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
-      "dependencies": [
-        "@phosphor-icons/react"
-      ],
       "files": [
         {
           "path": "components/registry/tonaldepth/file-tree.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-file-tree.tsx"
+        }
+      ]
+    },
+    {
+      "name": "file-upload",
+      "type": "registry:ui",
+      "title": "TonalDepth FileUpload",
+      "description": "A dropzone with a keyboard path, size limits and a list of what has been picked; `preview` makes it an image upload.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "components/registry/tonaldepth/file-upload.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-file-upload.tsx"
         }
       ]
     },
@@ -597,9 +729,6 @@
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-link-cells.tsx"
         }
-      ],
-      "dependencies": [
-        "@phosphor-icons/react"
       ]
     },
     {
@@ -716,6 +845,56 @@
       ]
     },
     {
+      "name": "nav-drawer",
+      "type": "registry:ui",
+      "title": "TonalDepth NavDrawer",
+      "description": "The navigation's small form: a sheet off the edge holding the SAME `items` array the bar holds, with a disclosure per menu and a row per flat link. Its own focus trap, scroll lock, Escape and dismissal, in React.",
+      "registryDependencies": [
+        "@tonaldepth/tokens",
+        "@tonaldepth/faq"
+      ],
+      "files": [
+        {
+          "path": "components/registry/tonaldepth/nav-drawer.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-nav-drawer.tsx"
+        }
+      ]
+    },
+    {
+      "name": "number-field",
+      "type": "registry:ui",
+      "title": "TonalDepth NumberField",
+      "description": "A number with its two nudge buttons; a prefix or suffix makes it a currency or percent field.",
+      "registryDependencies": [
+        "@tonaldepth/tokens",
+        "@tonaldepth/input"
+      ],
+      "files": [
+        {
+          "path": "components/registry/tonaldepth/number-field.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-number-field.tsx"
+        }
+      ]
+    },
+    {
+      "name": "otp-input",
+      "type": "registry:ui",
+      "title": "TonalDepth OtpInput",
+      "description": "A one-time code, one cell per digit, with paste spread across the cells.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "components/registry/tonaldepth/otp-input.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-otp-input.tsx"
+        }
+      ]
+    },
+    {
       "name": "page-nav",
       "type": "registry:ui",
       "title": "TonalDepth PageNav",
@@ -755,14 +934,29 @@
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
-      "dependencies": [
-        "@phosphor-icons/react"
-      ],
       "files": [
         {
           "path": "components/registry/tonaldepth/pagination.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-pagination.tsx"
+        }
+      ]
+    },
+    {
+      "name": "phone-field",
+      "type": "registry:ui",
+      "title": "TonalDepth PhoneField",
+      "description": "A phone number with a searchable country selector, reported as E.164.",
+      "registryDependencies": [
+        "@tonaldepth/tokens",
+        "@tonaldepth/combobox",
+        "@tonaldepth/input"
+      ],
+      "files": [
+        {
+          "path": "components/registry/tonaldepth/phone-field.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-phone-field.tsx"
         }
       ]
     },
@@ -795,38 +989,6 @@
           "path": "components/registry/tonaldepth/profile-card.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-profile-card.tsx"
-        }
-      ]
-    },
-    {
-      "name": "social-button",
-      "type": "registry:ui",
-      "title": "TonalDepth SocialButton",
-      "description": "A social link as its own logo \u2014 an icon-only control whose housing carries the platform's colour. Eighteen marks built in, from Simple Icons.",
-      "registryDependencies": [
-        "@tonaldepth/tokens"
-      ],
-      "files": [
-        {
-          "path": "components/registry/tonaldepth/social-button.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/tonaldepth-social-button.tsx"
-        }
-      ]
-    },
-    {
-      "name": "whatsapp-form",
-      "type": "registry:ui",
-      "title": "TonalDepth WhatsAppForm",
-      "description": "A WhatsApp enquiry: a button that opens a short form and hands the finished message to WhatsApp, addressed to one number. Nothing is submitted anywhere.",
-      "registryDependencies": [
-        "@tonaldepth/tokens"
-      ],
-      "files": [
-        {
-          "path": "components/registry/tonaldepth/whatsapp-form.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/tonaldepth-whatsapp-form.tsx"
         }
       ]
     },
@@ -895,6 +1057,38 @@
       ]
     },
     {
+      "name": "range-dual",
+      "type": "registry:ui",
+      "title": "TonalDepth RangeDual",
+      "description": "Range's two-thumb form \u2014 a span rather than a point, on two native inputs.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "components/registry/tonaldepth/range-dual.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-range-dual.tsx"
+        }
+      ]
+    },
+    {
+      "name": "rating",
+      "type": "registry:ui",
+      "title": "TonalDepth Rating",
+      "description": "Stars, read or set, with halves when read-only and arrow keys when not.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "components/registry/tonaldepth/rating.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-rating.tsx"
+        }
+      ]
+    },
+    {
       "name": "reading-progress",
       "type": "registry:ui",
       "title": "TonalDepth ReadingProgress",
@@ -940,9 +1134,22 @@
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-search-bar.tsx"
         }
+      ]
+    },
+    {
+      "name": "select",
+      "type": "registry:ui",
+      "title": "TonalDepth Select",
+      "description": "A native select in the system's housing \u2014 the platform picker and its keyboard, with the design system's carve.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
       ],
-      "dependencies": [
-        "@phosphor-icons/react"
+      "files": [
+        {
+          "path": "components/registry/tonaldepth/select.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-select.tsx"
+        }
       ]
     },
     {
@@ -975,25 +1182,37 @@
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-site-navigation.tsx"
         }
-      ],
-      "dependencies": [
-        "@phosphor-icons/react"
       ]
     },
     {
-      "name": "nav-drawer",
+      "name": "skeleton",
       "type": "registry:ui",
-      "title": "TonalDepth NavDrawer",
-      "description": "The navigation's small form: a sheet off the edge holding the SAME `items` array the bar holds, with a disclosure per menu and a row per flat link. Its own focus trap, scroll lock, Escape and dismissal, in React.",
+      "title": "TonalDepth Skeleton",
+      "description": "The shape of content that has not arrived, carved at the depth the real thing will sit at. Reports itself once for the region rather than once per bar.",
       "registryDependencies": [
-        "@tonaldepth/tokens",
-        "@tonaldepth/faq"
+        "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "components/registry/tonaldepth/nav-drawer.tsx",
+          "path": "components/registry/tonaldepth/skeleton.tsx",
           "type": "registry:ui",
-          "target": "components/ui/tonaldepth-nav-drawer.tsx"
+          "target": "components/ui/tonaldepth-skeleton.tsx"
+        }
+      ]
+    },
+    {
+      "name": "social-button",
+      "type": "registry:ui",
+      "title": "TonalDepth SocialButton",
+      "description": "A social link as its own logo \u2014 an icon-only control whose housing carries the platform's colour. Eighteen marks built in, from Simple Icons.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "components/registry/tonaldepth/social-button.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-social-button.tsx"
         }
       ]
     },
@@ -1094,6 +1313,22 @@
       ]
     },
     {
+      "name": "tag-input",
+      "type": "registry:ui",
+      "title": "TonalDepth TagInput",
+      "description": "Free-text tags in a carved well, committed on Enter and taken back on Backspace.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "components/registry/tonaldepth/tag-input.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-tag-input.tsx"
+        }
+      ]
+    },
+    {
       "name": "terminal",
       "type": "registry:ui",
       "title": "TonalDepth Terminal",
@@ -1155,9 +1390,22 @@
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-theme-toggle.tsx"
         }
+      ]
+    },
+    {
+      "name": "time-picker",
+      "type": "registry:ui",
+      "title": "TonalDepth TimePicker",
+      "description": "A time of day from hour and minute grids \u2014 two presses, nothing to scroll.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
       ],
-      "dependencies": [
-        "@phosphor-icons/react"
+      "files": [
+        {
+          "path": "components/registry/tonaldepth/time-picker.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-time-picker.tsx"
+        }
       ]
     },
     {
@@ -1238,281 +1486,18 @@
       ]
     },
     {
-      "name": "select",
+      "name": "whatsapp-form",
       "type": "registry:ui",
-      "title": "TonalDepth Select",
-      "description": "A native select in the system's housing \u2014 the platform picker and its keyboard, with the design system's carve.",
-      "registryDependencies": [
-        "@tonaldepth/tokens"
-      ],
-      "dependencies": [
-        "@phosphor-icons/react"
-      ],
-      "files": [
-        {
-          "path": "components/registry/tonaldepth/select.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/tonaldepth-select.tsx"
-        }
-      ]
-    },
-    {
-      "name": "combobox",
-      "type": "registry:ui",
-      "title": "TonalDepth Combobox",
-      "description": "A filtered listbox with type-ahead, and the multi-select form on one `multiple` prop.",
-      "registryDependencies": [
-        "@tonaldepth/tokens"
-      ],
-      "dependencies": [
-        "@phosphor-icons/react"
-      ],
-      "files": [
-        {
-          "path": "components/registry/tonaldepth/combobox.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/tonaldepth-combobox.tsx"
-        }
-      ]
-    },
-    {
-      "name": "tag-input",
-      "type": "registry:ui",
-      "title": "TonalDepth TagInput",
-      "description": "Free-text tags in a carved well, committed on Enter and taken back on Backspace.",
+      "title": "TonalDepth WhatsAppForm",
+      "description": "A WhatsApp enquiry: a button that opens a short form and hands the finished message to WhatsApp, addressed to one number. Nothing is submitted anywhere.",
       "registryDependencies": [
         "@tonaldepth/tokens"
       ],
       "files": [
         {
-          "path": "components/registry/tonaldepth/tag-input.tsx",
+          "path": "components/registry/tonaldepth/whatsapp-form.tsx",
           "type": "registry:ui",
-          "target": "components/ui/tonaldepth-tag-input.tsx"
-        }
-      ]
-    },
-    {
-      "name": "date-picker",
-      "type": "registry:ui",
-      "title": "TonalDepth DatePicker",
-      "description": "One day, from a month grid that walks by arrow key and by month on PageUp.",
-      "registryDependencies": [
-        "@tonaldepth/tokens"
-      ],
-      "dependencies": [
-        "@phosphor-icons/react"
-      ],
-      "files": [
-        {
-          "path": "components/registry/tonaldepth/date-picker.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/tonaldepth-date-picker.tsx"
-        }
-      ]
-    },
-    {
-      "name": "time-picker",
-      "type": "registry:ui",
-      "title": "TonalDepth TimePicker",
-      "description": "A time of day from hour and minute grids \u2014 two presses, nothing to scroll.",
-      "registryDependencies": [
-        "@tonaldepth/tokens"
-      ],
-      "files": [
-        {
-          "path": "components/registry/tonaldepth/time-picker.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/tonaldepth-time-picker.tsx"
-        }
-      ]
-    },
-    {
-      "name": "date-range-picker",
-      "type": "registry:ui",
-      "title": "TonalDepth DateRangePicker",
-      "description": "A span of days across one calendar, with quick spans for the questions readers actually ask.",
-      "registryDependencies": [
-        "@tonaldepth/tokens"
-      ],
-      "dependencies": [
-        "@phosphor-icons/react"
-      ],
-      "files": [
-        {
-          "path": "components/registry/tonaldepth/date-range-picker.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/tonaldepth-date-range-picker.tsx"
-        }
-      ]
-    },
-    {
-      "name": "date-time-picker",
-      "type": "registry:ui",
-      "title": "TonalDepth DateTimePicker",
-      "description": "A precise instant \u2014 the calendar and the time grid in one popover.",
-      "registryDependencies": [
-        "@tonaldepth/tokens"
-      ],
-      "dependencies": [
-        "@phosphor-icons/react"
-      ],
-      "files": [
-        {
-          "path": "components/registry/tonaldepth/date-time-picker.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/tonaldepth-date-time-picker.tsx"
-        }
-      ]
-    },
-    {
-      "name": "file-upload",
-      "type": "registry:ui",
-      "title": "TonalDepth FileUpload",
-      "description": "A dropzone with a keyboard path, size limits and a list of what has been picked; `preview` makes it an image upload.",
-      "registryDependencies": [
-        "@tonaldepth/tokens"
-      ],
-      "dependencies": [
-        "@phosphor-icons/react"
-      ],
-      "files": [
-        {
-          "path": "components/registry/tonaldepth/file-upload.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/tonaldepth-file-upload.tsx"
-        }
-      ]
-    },
-    {
-      "name": "otp-input",
-      "type": "registry:ui",
-      "title": "TonalDepth OtpInput",
-      "description": "A one-time code, one cell per digit, with paste spread across the cells.",
-      "registryDependencies": [
-        "@tonaldepth/tokens"
-      ],
-      "files": [
-        {
-          "path": "components/registry/tonaldepth/otp-input.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/tonaldepth-otp-input.tsx"
-        }
-      ]
-    },
-    {
-      "name": "rating",
-      "type": "registry:ui",
-      "title": "TonalDepth Rating",
-      "description": "Stars, read or set, with halves when read-only and arrow keys when not.",
-      "registryDependencies": [
-        "@tonaldepth/tokens"
-      ],
-      "files": [
-        {
-          "path": "components/registry/tonaldepth/rating.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/tonaldepth-rating.tsx"
-        }
-      ]
-    },
-    {
-      "name": "color-picker",
-      "type": "registry:ui",
-      "title": "TonalDepth ColorPicker",
-      "description": "A colour from a curated palette, with the platform picker behind `allowCustom`.",
-      "registryDependencies": [
-        "@tonaldepth/tokens"
-      ],
-      "files": [
-        {
-          "path": "components/registry/tonaldepth/color-picker.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/tonaldepth-color-picker.tsx"
-        }
-      ]
-    },
-    {
-      "name": "number-field",
-      "type": "registry:ui",
-      "title": "TonalDepth NumberField",
-      "description": "A number with its two nudge buttons; a prefix or suffix makes it a currency or percent field.",
-      "registryDependencies": [
-        "@tonaldepth/tokens",
-        "@tonaldepth/input"
-      ],
-      "files": [
-        {
-          "path": "components/registry/tonaldepth/number-field.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/tonaldepth-number-field.tsx"
-        }
-      ]
-    },
-    {
-      "name": "phone-field",
-      "type": "registry:ui",
-      "title": "TonalDepth PhoneField",
-      "description": "A phone number with a searchable country selector, reported as E.164.",
-      "registryDependencies": [
-        "@tonaldepth/tokens",
-        "@tonaldepth/combobox",
-        "@tonaldepth/input"
-      ],
-      "files": [
-        {
-          "path": "components/registry/tonaldepth/phone-field.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/tonaldepth-phone-field.tsx"
-        }
-      ]
-    },
-    {
-      "name": "address-field",
-      "type": "registry:ui",
-      "title": "TonalDepth AddressField",
-      "description": "A postal address in the order each line narrows the next.",
-      "registryDependencies": [
-        "@tonaldepth/tokens",
-        "@tonaldepth/combobox",
-        "@tonaldepth/input"
-      ],
-      "files": [
-        {
-          "path": "components/registry/tonaldepth/address-field.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/tonaldepth-address-field.tsx"
-        }
-      ]
-    },
-    {
-      "name": "checkbox-group",
-      "type": "registry:ui",
-      "title": "TonalDepth CheckboxGroup",
-      "description": "Several checkboxes read as one question, in a fieldset with a legend.",
-      "registryDependencies": [
-        "@tonaldepth/tokens"
-      ],
-      "files": [
-        {
-          "path": "components/registry/tonaldepth/checkbox-group.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/tonaldepth-checkbox-group.tsx"
-        }
-      ]
-    },
-    {
-      "name": "range-dual",
-      "type": "registry:ui",
-      "title": "TonalDepth RangeDual",
-      "description": "Range's two-thumb form \u2014 a span rather than a point, on two native inputs.",
-      "registryDependencies": [
-        "@tonaldepth/tokens"
-      ],
-      "files": [
-        {
-          "path": "components/registry/tonaldepth/range-dual.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/tonaldepth-range-dual.tsx"
+          "target": "components/ui/tonaldepth-whatsapp-form.tsx"
         }
       ]
     },
@@ -1529,6 +1514,58 @@
           "path": "components/registry/tonaldepth/window-controls.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-window-controls.tsx"
+        }
+      ]
+    },
+    {
+      "name": "canvas",
+      "type": "registry:ui",
+      "title": "TonalDepth Canvas",
+      "description": "A pannable, zoomable plane and the chrome around it \u2014 the housing for a map the reader drives. One transform, so every child stays an ordinary DOM node; a drag never counts as a click; and the camera comes back through the ref so the page can fly to a node when one is opened.",
+      "registryDependencies": [
+        "@tonaldepth/tokens",
+        "@tonaldepth/icon-button",
+        "@tonaldepth/badge",
+        "@tonaldepth/frame"
+      ],
+      "files": [
+        {
+          "path": "components/registry/tonaldepth/canvas.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-canvas.tsx"
+        }
+      ]
+    },
+    {
+      "name": "canvas-panel",
+      "type": "registry:ui",
+      "title": "TonalDepth CanvasPanel",
+      "description": "The reading panel that explains what the reader just opened on a Canvas: a head that holds its place, a body that really scrolls, and actions pinned to the foot outside it. Floats over the canvas without a Frame's well flattening it.",
+      "registryDependencies": [
+        "@tonaldepth/tokens",
+        "@tonaldepth/icon-button"
+      ],
+      "files": [
+        {
+          "path": "components/registry/tonaldepth/canvas-panel.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-canvas-panel.tsx"
+        }
+      ]
+    },
+    {
+      "name": "canvas-node",
+      "type": "registry:ui",
+      "title": "TonalDepth CanvasNode",
+      "description": "One thing on a Canvas: a card in world space the reader can open. A real button wearing the system's own raised card, with the category edge drawn as a bar rather than an inset shadow \u2014 so the card keeps its depth instead of being flattened by its own accent.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "components/registry/tonaldepth/canvas-node.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-canvas-node.tsx"
         }
       ]
     }

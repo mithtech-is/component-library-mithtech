@@ -1,6 +1,6 @@
 {
   "packages": [
-    "mithtech-bengaluru-tonaldepth-core-0.1.0-alpha.1.tgz",
+    "mithtech-bengaluru-tonaldepth-core-0.1.0-alpha.4.tgz",
     "mithtech-bengaluru-tonaldepth-vue-0.1.0-alpha.0.tgz"
   ],
   "vue_version": "3.5.41",
@@ -8,8 +8,8 @@
   "vite": {
     "status": "verified",
     "dist_files": [
-      "assets/index-Dxeqx1xm.js",
-      "assets/index-V10m5Tha.css",
+      "assets/index-DTOpqwBu.css",
+      "assets/index-xN0N80_K.js",
       "index.html"
     ]
   },
