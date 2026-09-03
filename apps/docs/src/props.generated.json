@@ -723,8 +723,119 @@
       "\"fixed\""
     ],
     [
+      "form",
+      "\"bar\" | \"dial\"",
+      "\"bar\""
+    ],
+    [
+      "dialLabel",
+      "string",
+      "\"Open navigation\""
+    ],
+    [
+      "collapseLabel",
+      "string",
+      "\"Close\""
+    ],
+    [
+      "defaultOpen",
+      "boolean",
+      "false"
+    ],
+    [
       "renderLink",
       "(props: { className: string; href: string; children: ReactNode }) => ReactNode",
+      "—"
+    ]
+  ],
+  "divider": [
+    [
+      "orientation",
+      "DividerOrientation",
+      "\"horizontal\""
+    ],
+    [
+      "weight",
+      "DividerWeight",
+      "\"seam\""
+    ],
+    [
+      "label",
+      "ReactNode",
+      "—"
+    ],
+    [
+      "inset",
+      "boolean",
+      "false"
+    ]
+  ],
+  "skeleton": [
+    [
+      "shape",
+      "SkeletonShape",
+      "\"text\""
+    ],
+    [
+      "lines",
+      "number",
+      "3"
+    ],
+    [
+      "width",
+      "number | string",
+      "—"
+    ],
+    [
+      "height",
+      "number | string",
+      "—"
+    ],
+    [
+      "animated",
+      "boolean",
+      "true"
+    ],
+    [
+      "label",
+      "string",
+      "\"Loading\""
+    ]
+  ],
+  "avatar": [
+    [
+      "src",
+      "string",
+      "—"
+    ],
+    [
+      "name",
+      "string",
+      "required"
+    ],
+    [
+      "initials",
+      "string",
+      "—"
+    ],
+    [
+      "size",
+      "AvatarSize",
+      "\"md\""
+    ],
+    [
+      "presence",
+      "AvatarPresence",
+      "—"
+    ],
+    [
+      "icon",
+      "ReactNode",
+      "—"
+    ],
+    [
+      "imgProps",
+      "ImgHTMLAttributes<HTMLImageElement>",
       "—"
     ]
   ],
@@ -763,6 +874,267 @@
       "label",
       "string",
       "\"Window controls\""
+    ]
+  ],
+  "canvas": [
+    [
+      "label",
+      "string",
+      "required"
+    ],
+    [
+      "world",
+      "CanvasBox",
+      "—"
+    ],
+    [
+      "min",
+      "number",
+      "0.12"
+    ],
+    [
+      "max",
+      "number",
+      "3"
+    ],
+    [
+      "initialScale",
+      "number",
+      "1"
+    ],
+    [
+      "wheel",
+      "CanvasWheelMode",
+      "\"modifier\""
+    ],
+    [
+      "interactive",
+      "boolean",
+      "true"
+    ],
+    [
+      "padding",
+      "number",
+      "48"
+    ],
+    [
+      "panelInset",
+      "number",
+      "0"
+    ],
+    [
+      "controls",
+      "boolean",
+      "true"
+    ],
+    [
+      "sound",
+      "CanvasSoundControl",
+      "—"
+    ],
+    [
+      "onReset",
+      "() => void",
+      "—"
+    ],
+    [
+      "fullscreenControl",
+      "{ active: boolean; onToggle: () => void }",
+      "—"
+    ],
+    [
+      "hint",
+      "ReactNode",
+      "—"
+    ],
+    [
+      "breadcrumb",
+      "ReactNode",
+      "—"
+    ],
+    [
+      "switcher",
+      "ReactNode",
+      "—"
+    ],
+    [
+      "tools",
+      "ReactNode",
+      "—"
+    ],
+    [
+      "cta",
+      "ReactNode",
+      "—"
+    ],
+    [
+      "panel",
+      "ReactNode",
+      "—"
+    ],
+    [
+      "onEscape",
+      "() => void",
+      "—"
+    ],
+    [
+      "onZoomSettled",
+      "(scale: number) => void",
+      "—"
+    ],
+    [
+      "title",
+      "ReactNode",
+      "—"
+    ],
+    [
+      "eyebrow",
+      "ReactNode",
+      "—"
+    ],
+    [
+      "description",
+      "ReactNode",
+      "—"
+    ],
+    [
+      "footnote",
+      "ReactNode",
+      "—"
+    ],
+    [
+      "actions",
+      "ReactNode",
+      "—"
+    ],
+    [
+      "background",
+      "string",
+      "—"
+    ],
+    [
+      "allowFullscreen",
+      "boolean",
+      "false"
+    ],
+    [
+      "fullscreen",
+      "boolean",
+      "—"
+    ],
+    [
+      "surface",
+      "\"card\" | \"bare\"",
+      "\"card\""
+    ],
+    [
+      "children",
+      "ReactNode",
+      "required"
+    ]
+  ],
+  "canvas-panel": [
+    [
+      "open",
+      "boolean",
+      "required"
+    ],
+    [
+      "onClose",
+      "() => void",
+      "—"
+    ],
+    [
+      "title",
+      "ReactNode",
+      "required"
+    ],
+    [
+      "accent",
+      "string",
+      "—"
+    ],
+    [
+      "actions",
+      "ReactNode",
+      "—"
+    ],
+    [
+      "placement",
+      "\"absolute\" | \"fixed\"",
+      "\"absolute\""
+    ],
+    [
+      "side",
+      "\"right\" | \"left\"",
+      "\"right\""
+    ],
+    [
+      "closeLabel",
+      "string",
+      "\"Close panel\""
+    ],
+    [
+      "contentKey",
+      "string",
+      "—"
+    ],
+    [
+      "children",
+      "ReactNode",
+      "required"
+    ]
+  ],
+  "canvas-node": [
+    [
+      "x",
+      "number",
+      "required"
+    ],
+    [
+      "y",
+      "number",
+      "required"
+    ],
+    [
+      "w",
+      "number",
+      "—"
+    ],
+    [
+      "h",
+      "number",
+      "—"
+    ],
+    [
+      "title",
+      "ReactNode",
+      "required"
+    ],
+    [
+      "sub",
+      "ReactNode",
+      "—"
+    ],
+    [
+      "accent",
+      "string",
+      "—"
+    ],
+    [
+      "selected",
+      "boolean",
+      "—"
+    ],
+    [
+      "dimmed",
+      "boolean",
+      "—"
+    ],
+    [
+      "children",
+      "ReactNode",
+      "—"
     ]
   ],
   "footer": [
@@ -1295,7 +1667,7 @@
     ],
     [
       "ai",
-      "boolean",
+      "boolean | AiHaloProps[\"variant\"]",
       "false"
     ],
     [
@@ -1866,6 +2238,16 @@
       "showBounds",
       "boolean",
       "false"
+    ],
+    [
+      "entry",
+      "boolean",
+      "false"
+    ],
+    [
+      "suffix",
+      "ReactNode",
+      "—"
     ]
   ],
   "range-dual": [
@@ -1980,6 +2362,11 @@
     ],
     [
       "containerClassName",
+      "string",
+      "—"
+    ],
+    [
+      "listClassName",
       "string",
       "—"
     ],
@@ -2591,6 +2978,16 @@
       "className",
       "string",
       "—"
+    ],
+    [
+      "reverseGeocode",
+      "(position: { latitude: number; longitude: number }) => Promise<Partial<AddressValue>>",
+      "—"
+    ],
+    [
+      "locateLabel",
+      "string",
+      "\"Use my location\""
     ]
   ],
   "checkbox-group": [

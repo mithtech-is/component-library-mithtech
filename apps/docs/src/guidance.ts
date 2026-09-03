@@ -327,6 +327,34 @@ export const GUIDANCE = {
       { instead: "tabs", because: "The entries switch a panel in place rather than navigating. Tabs own a value; this owns a destination." },
     ],
   },
+  "divider": {
+    aliases: ["separator", "hr", "rule", "horizontal line", "vertical rule", "spacer line"],
+    useCases: ["separate two groups of content", "a line between list rows", "an OR between two choices", "split a toolbar"],
+    whenToUse: "Two things on one surface need to read as separate without being moved apart.",
+    whenNotToUse: [
+      { instead: "card", because: "The two sides are different objects rather than two parts of one. Give each its own plate instead of drawing a line between them." },
+      { instead: "frame", because: "You want to contain something, not part it." },
+    ],
+  },
+  "skeleton": {
+    aliases: ["loading placeholder", "shimmer", "ghost", "content placeholder", "loading state", "spinner"],
+    useCases: ["show that content is loading", "hold the shape of a card while it fetches", "avoid a layout jump when data arrives"],
+    whenToUse: "Content is coming and you know roughly what shape it will be. Drawing that shape stops the page jumping when it lands.",
+    whenNotToUse: [
+      { instead: "progress", because: "You know how far along it is. A skeleton says 'something is coming'; a bar says 'this much of it has arrived'." },
+      { instead: "page-patterns", because: "Nothing is coming — the list is genuinely empty. That is an empty state, and it needs words." },
+    ],
+  },
+  "avatar": {
+    aliases: ["profile picture", "user photo", "initials", "face pile", "presence", "user icon", "gravatar"],
+    useCases: ["show who wrote something", "a row of people on a project", "the signed-in account in a header", "who is online"],
+    whenToUse: "A person needs to be identifiable at a glance, in a row or beside their words.",
+    whenNotToUse: [
+      { instead: "profile-card", because: "There is room for the name, the role and a way to reach them. This is the mark alone." },
+      { instead: "logo-strip", because: "They are companies rather than people." },
+      { instead: "badge", because: "It is a label about a thing, not a person." },
+    ],
+  },
   "footer": {
     aliases: ["site footer", "page foot", "bottom nav"],
     useCases: ["site footer", "link columns at the bottom", "contact details and social links"],
@@ -909,6 +937,48 @@ export const GUIDANCE = {
       { instead: "overlays", because: "The surface is not being clipped, it is being painted in the wrong place. That page is the containing-block rule." },
       { instead: "dialog", because: "You want a panel that scrolls its own body — the dialog already does, with its head and actions pinned." },
       { instead: "frame", because: "You want the housing rather than the scrolling. A frame's well holds a scroll region; it is not one." },
+    ],
+  },
+  "canvas": {
+    aliases: ["pan zoom", "zoomable", "pannable", "interactive map", "diagram", "scene", "viewport", "camera", "infinite canvas", "iso map", "systems map", "architecture diagram", "drag to pan", "pinch to zoom"],
+    useCases: ["build a map the reader can drive", "show how systems connect", "pan and zoom a diagram", "fly to a node when it is opened", "put an isometric scene on a page", "let a reader explore an estate"],
+    whenToUse: "A picture too big and too connected to be read at one size — an estate of systems, an architecture, an isometric scene. The reader moves through it rather than looking at it.",
+    whenNotToUse: [
+      { instead: "map", because: "The picture is a locator with a handful of pins and nothing to explore. That one is static on purpose: no camera, no gestures, no tile provider." },
+      { instead: "frame", because: "The object is measured rather than driven — a chart, a table, a specimen. A frame houses it; a canvas is for something the reader navigates." },
+      { instead: "iso-stack", because: "You want a few cards seen at an angle, not a plane. That is a deck with a hover, not a scene with a camera." },
+      { instead: "image", because: "A picture that is only big wants zoom, not a camera and four chrome slots. This earns its weight when things ON the plane are openable." },
+    ],
+    variants: [
+      { name: "embedded", when: "The default. A naked wheel scrolls the page and only ⌘/Ctrl+wheel zooms, so the canvas cannot trap a reader scrolling past it." },
+      { name: "fullscreen", when: "The canvas has taken the display: it covers the viewport, locks the page behind it, and should be given `wheel=\"free\"` because there is nothing behind it to scroll." },
+      { name: "housed", when: "`surface=\"bare\"` inside a Frame, whose carved well is the housing already. Turn `controls` off and draw `CanvasControls` in the frame's head." },
+      { name: "static", when: "`interactive={false}` renders the plane with no camera — the phone layout, where a scene is read rather than driven." },
+    ],
+  },
+  "canvas-node": {
+    aliases: ["map node", "map card", "hotspot", "clickable card", "system card", "node", "plate on a map", "openable card"],
+    useCases: ["put a clickable card on a map", "mark a system on a diagram", "make part of a scene openable", "show a thing on the plane the reader can open"],
+    whenToUse: "Anything on a Canvas the reader can open. It is a real button in world space wearing the system's own card.",
+    whenNotToUse: [
+      { instead: "card", because: "The thing is in the page's flow rather than at a coordinate on a plane. This one is positioned in world space and travels with the camera." },
+      { instead: "canvas", because: "You want the plane itself. This is one object standing on it." },
+      { instead: "kpi", because: "The card carries a number rather than a place to go. A node is a destination." },
+    ],
+    variants: [
+      { name: "rest", when: "The card raised off the plane, as any card in the system is." },
+      { name: "selected", when: "The one the reader has opened. Pressed INTO the plane rather than lifted out of it, and `aria-pressed` says so." },
+      { name: "dimmed", when: "Context rather than subject — the siblings of what is open. Quieter, still legible, still clickable, and it comes back on hover." },
+    ],
+  },
+  "canvas-panel": {
+    aliases: ["side panel", "detail panel", "reading panel", "inspector", "drawer over a map", "explanation panel", "slide-in"],
+    useCases: ["explain the thing the reader just opened", "show details beside a map", "put a scrolling explanation over a canvas", "keep actions where the reader can reach them"],
+    whenToUse: "A Canvas whose parts are openable. The panel explains one of them while the map stays live behind it.",
+    whenNotToUse: [
+      { instead: "dialog", because: "The reader has to answer something before carrying on. A dialog is modal and takes the page; this deliberately does not." },
+      { instead: "nav-drawer", because: "The overlay holds navigation rather than an explanation of what is on screen." },
+      { instead: "page-patterns", because: "The detail is a page of its own. A panel is for what can be read without leaving the map." },
     ],
   },
   "window-controls": {
