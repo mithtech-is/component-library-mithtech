@@ -28,8 +28,10 @@
     "registry:generate": "node tooling/registry/generate.mjs",
     "brands:build": "node tooling/brands/build.mjs",
     "docs:props": "node tooling/docs/props.mjs",
-    "generate": "pnpm tokens:build && pnpm tokens:build-native && pnpm brands:build && pnpm registry:generate && pnpm docs:props && pnpm registry:build",
-    "registry:check": "pnpm tokens:check && node tooling/registry/generate.mjs --check && node tooling/registry/css-parity.mjs && node tooling/brands/build.mjs --check"
+    "generate": "pnpm tokens:build && pnpm tokens:build-native && pnpm icons:build && pnpm brands:build && pnpm registry:generate && pnpm docs:props && pnpm registry:build",
+    "registry:check": "pnpm tokens:check && pnpm icons:check && node tooling/registry/generate.mjs --check && node tooling/registry/css-parity.mjs && node tooling/brands/build.mjs --check",
+    "icons:build": "node tooling/icons/build.mjs",
+    "icons:check": "node tooling/icons/build.mjs --check"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "6.9.1",

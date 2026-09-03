@@ -59,7 +59,7 @@ STYLE_ONLY = {"tokens"}
 # through icons.ts. The component rules — no raw `<svg>`, colour-neutral, one
 # registry item each — are about components, and applying them to any of these
 # asset modules would ban the marks from existing.
-ICON_MODULES = {"icons", "td-icons", "brands", "td-brands"}
+ICON_MODULES = {"icons", "td-icons", "fluent-icons", "brands", "td-brands"}
 
 # Components with no props of their own — they pass native DOM attributes
 # through and nothing else. An empty props table is correct for these, and the
@@ -657,15 +657,16 @@ class IconSystemTests(unittest.TestCase):
     def test_the_td_set_is_the_only_place_a_glyph_is_drawn(self):
         """The exemption is glyph-set wide, and this is what holds it there.
 
-        `td-icons.tsx` draws the UI glyphs and `td-brands.tsx` draws the brand
-        marks — drawing is what both are for. Nothing else in the package may,
+        `td-icons.tsx` draws the glyphs the library owns, `fluent-icons.tsx` is
+        generated from vendored Fluent artwork, and `td-brands.tsx` draws the
+        brand marks — drawing is what all three are for. Nothing else may,
         including `icons.ts` / `brands.ts`, which resolve names and do not author
         the artwork.
         """
         drawing = sorted(path.name for path in PACKAGE_SRC.glob("*.ts*")
                          if ".test." not in path.name and "<svg" in code_only(path.read_text(encoding="utf-8")))
-        self.assertEqual(["td-brands.tsx", "td-icons.tsx"], drawing,
-                         f"only the TD glyph sets may draw a glyph; found: {drawing}")
+        self.assertEqual(["fluent-icons.tsx", "td-brands.tsx", "td-icons.tsx"], drawing,
+                         f"only the glyph sets may draw a glyph; found: {drawing}")
 
     def test_no_second_icon_library(self):
         banned = ("lucide", "heroicons", "@fortawesome", "react-icons", "feather-icons")
@@ -725,16 +726,23 @@ class IconPrecedenceTests(unittest.TestCase):
         match = re.search(rf'export \{{([^}}]*)\}} from "{re.escape(source_module)}";', self._icons())
         if not match:
             return {}
-        return {role: local for local, role in re.findall(r"^\s*(\w+)\s+as\s+(\w+),", match.group(1), re.M)}
+        body = match.group(1)
+        aliased = {role: local for local, role in re.findall(r"^\s*(\w+)\s+as\s+(\w+),", body, re.M)}
+        if aliased:
+            return aliased
+        # `./fluent-icons` is generated with one component PER ROLE, so it
+        # re-exports under the role's own name and has no `as` to match.
+        plain = re.findall(r"^\s*(\w+Icon),\s*$", re.sub(r"//[^\n]*", "", body), re.M)
+        return {role: role for role in plain}
 
     def test_no_role_is_claimed_by_both_libraries(self):
-        """A role drawn by TD must not also be taken from Phosphor.
+        """A role drawn by TD must not also be taken from Fluent.
 
         Duplicating one is a compile error in the package, but it reaches the
         registry as a silently ambiguous item — the generator would both paste
         the glyph in and import the Phosphor one over it.
         """
-        both = sorted(set(self._block("./td-icons")) & set(self._block("@phosphor-icons/react")))
+        both = sorted(set(self._block("./td-icons")) & set(self._block("./fluent-icons")))
         self.assertEqual([], both, f"roles exported by both icon libraries: {both}")
 
     def test_the_td_role_list_matches_the_td_export_block(self):
@@ -778,7 +786,7 @@ class IconPrecedenceTests(unittest.TestCase):
         role missing from the page is a glyph nobody can find. Roles are read
         from both export blocks, so one added to either shows up here.
         """
-        roles = set(self._block("./td-icons")) | set(self._block("@phosphor-icons/react"))
+        roles = set(self._block("./td-icons")) | set(self._block("./fluent-icons"))
         previewed = set(re.findall(r'\["(\w+Icon)",', DOCS.read_text(encoding="utf-8")))
         self.assertEqual(set(), roles - previewed, f"roles absent from the docs icon index: {sorted(roles - previewed)}")
         self.assertEqual(set(), previewed - roles, f"docs icon index previews roles icons.ts does not export: {sorted(previewed - roles)}")
