@@ -183,7 +183,8 @@
   .td-registry-canvas-hint { transition: none; }
 }
 
-/* The display control, lit apart from the camera controls beside it.
+/* The display control, lit apart from the camera controls — it now sits in
+   its own corner rather than beside them, so the rule is unscoped.
 
    `glow` already carries its hover and press, but the lamp ladder is OFF at
    rest — so a reader scanning a column of five identical grey glyphs cannot
@@ -192,10 +193,10 @@
    the camera is, and in fullscreen it is the way out, so it carries its
    colour standing still. Still the lamp ([[L15]]) and still the same carved
    housing as its neighbours ([[L11]]) — only the ink differs. */
-.td-registry-canvas-controls .td-registry-canvas-display .td-registry-iconbutton-lamp {
+.td-registry-canvas-display .td-registry-iconbutton-lamp {
   color: color-mix(in srgb, var(--td-accent) 70%, var(--td-ink-3));
 }
 /* Holding the display: full strength, because now it is the way back. */
-.td-registry-canvas-controls .td-registry-canvas-display[aria-pressed="true"] .td-registry-iconbutton-lamp {
+.td-registry-canvas-display[aria-pressed="true"] .td-registry-iconbutton-lamp {
   color: var(--td-accent);
 }

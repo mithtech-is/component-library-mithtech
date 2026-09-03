@@ -354,6 +354,19 @@ describe("Canvas housing", () => {
     expect(screen.getByRole("button", { name: "Leave fullscreen" })).toBeInTheDocument();
   });
 
+  it("keeps the fullscreen toggle out of the camera cluster", async () => {
+    /* The toggle changes what the map is HOUSED in, not where the camera is.
+       Stacked under zoom/fit/mute it read as one more camera control; it lives
+       in its own corner instead. */
+    const user = userEvent.setup();
+    render(<Canvas label="Estate" allowFullscreen world={WORLD}>plane</Canvas>);
+    expect(screen.getByRole("button", { name: "Go fullscreen" }).closest(".td-react-canvas-controls")).toBeNull();
+    await user.click(screen.getByRole("button", { name: "Go fullscreen" }));
+    expect(screen.getByRole("button", { name: "Leave fullscreen" }).closest(".td-react-canvas-controls")).toBeNull();
+    // The camera cluster is still drawn — it simply no longer holds the toggle.
+    expect(document.querySelector(".td-react-canvas-controls")).not.toBeNull();
+  });
+
   it("refits when the display changes, even after the reader has driven the camera", async () => {
     /* The bug this covers: a canvas that went fullscreen kept the transform it
        had in a 600px box and showed the reader one corner of the map blown up

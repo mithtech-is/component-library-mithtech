@@ -694,18 +694,41 @@ export const Canvas = forwardRef<CanvasApi, CanvasProps>(function Canvas(
      canvas draws them itself there. */
   const chromeInside = !housed || isFullscreen;
 
+  /* The display toggle is deliberately kept OUT of the cluster. Entering or
+     leaving fullscreen is not something the reader does to the CAMERA — it
+     changes what the map is housed in — and stacking it under zoom/fit/mute
+     made "leave fullscreen" read as one more zoom control and buried the one
+     button a reader who has taken over the screen most needs to find. It gets
+     its own corner, below. `CanvasControls` still accepts `fullscreen` for a
+     host that wants everything in one head; the built-in chrome keeps the two
+     apart. */
+  const fsControl =
+    fullscreenControl
+    ?? (allowFullscreen ? { active: isFullscreen, onToggle: () => setOwnFullscreen(open => !open) } : undefined);
+
   const cluster = controls ? (
     <CanvasControls
       camera={cameraRef}
       fit={Boolean(world) || Boolean(onReset)}
       onReset={onReset}
       sound={sound}
-      fullscreen={
-        fullscreenControl
-        ?? (allowFullscreen ? { active: isFullscreen, onToggle: () => setOwnFullscreen(open => !open) } : undefined)
-      }
       direction={tools || !chromeInside ? "row" : "column"}
       className={tools || !chromeInside ? undefined : "td-react-canvas-controls--floating"}
+    />
+  ) : null;
+
+  /* Its own affordance in the top-right corner — the conventional home of a
+     fullscreen or exit control, and clear of the camera cluster. Lit with the
+     accent so it reads apart from the neutral camera glyphs, on the same
+     carved housing as everything else ([[L11]], [[L15]]). */
+  const displayToggle = controls && fsControl ? (
+    <IconButton
+      className="td-react-canvas-display"
+      glow="var(--td-accent)"
+      icon={fsControl.active ? <MinimizeIcon weight={LAMP_WEIGHT} /> : <MaximizeIcon weight={LAMP_WEIGHT} />}
+      aria-label={fsControl.active ? CONTROL_LABELS.leaveFullscreen : CONTROL_LABELS.enterFullscreen}
+      aria-pressed={fsControl.active}
+      onClick={fsControl.onToggle}
     />
   ) : null;
 
@@ -755,7 +778,12 @@ export const Canvas = forwardRef<CanvasApi, CanvasProps>(function Canvas(
       {panel}
 
       {breadcrumb ? <div className="td-react-canvas-hud">{breadcrumb}</div> : null}
-      {switcher ? <div className="td-react-canvas-hud td-react-canvas-hud--right">{switcher}</div> : null}
+      {switcher || displayToggle ? (
+        <div className="td-react-canvas-hud td-react-canvas-hud--right">
+          {switcher}
+          {displayToggle}
+        </div>
+      ) : null}
 
       {tools ? (
         <div className="td-react-canvas-toolbar">
