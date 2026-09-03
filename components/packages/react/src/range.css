@@ -115,3 +115,65 @@
 .td-react-range-wrap[data-disabled] .td-dualrange input[type="range"] { cursor: not-allowed; }
 .td-dualrange input[type="range"]:focus-visible::-webkit-slider-thumb { outline: 2px solid var(--td-accent); outline-offset: 2px; }
 .td-dualrange input[type="range"]:focus-visible::-moz-range-thumb { outline: 2px solid var(--td-accent); outline-offset: 2px; }
+
+/* ── typed entry beside the track ──────────────────────────────────────────
+   A slider finds a value by feel; it cannot set a known one. Anybody tuning a
+   number they already have is dragging a thumb a pixel at a time and reading a
+   label back to check — so the label becomes a field.
+
+   The field is a WELL, like every other place a value is entered ([[L12]]),
+   and it sits on the same line as the track rather than under it: the two are
+   one control showing one number, and stacking them reads as two. */
+.td-react-range-wrap--entry {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  column-gap: var(--td-sp-6);
+}
+.td-react-range-wrap--entry .td-react-range-head { grid-column: 1 / -1; }
+.td-react-range-wrap--entry .td-react-range-bounds { grid-column: 1; }
+
+.td-react-range-entry {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 2px;
+  padding: var(--td-sp-3) var(--td-sp-5);
+  border-radius: var(--td-radius-4);
+  background: color-mix(in srgb, var(--td-surface) 88%, black);
+  box-shadow: var(--td-inset-soft);
+}
+.td-react-range-entry:focus-within { box-shadow: var(--td-inset-soft), 0 0 0 1.5px color-mix(in srgb, var(--td-accent) 40%, transparent); }
+
+.td-react-range-number {
+  /* Wide enough for the value, and no wider. `4ch` was a guess and it clipped:
+     a slider stepping in thousandths shows "0.035", which is 5 characters, and
+     the field silently rendered "0.03" — a number field that lies about its
+     own number. `field-sizing` does this properly where it exists; the
+     fallback is a floor generous enough for a signed three-decimal value, and
+     `--td-range-entry-w` is there for a scale neither of those fits. */
+  width: var(--td-range-entry-w, 6ch);
+  field-sizing: content;
+  min-width: var(--td-range-entry-w, 6ch);
+  border: 0;
+  padding: 0;
+  background: none;
+  font-family: var(--td-font-mono);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--td-ink);
+  text-align: end;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+.td-react-range-number:focus { outline: none; }
+/* The spinners are removed on purpose: they are 10px targets that change the
+   value by a step nobody chose, and the slider beside them already does
+   coarse adjustment better than any arrow could. */
+.td-react-range-number::-webkit-outer-spin-button,
+.td-react-range-number::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+.td-react-range-suffix {
+  font-family: var(--td-font-mono);
+  font-size: 0.68rem;
+  color: var(--td-ink-3);
+}
