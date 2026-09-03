@@ -1,0 +1,109 @@
+/* FloatingActionButton — a corner-pinned action, and a speed dial grown out of
+   it.
+
+   The buttons are IconButtons, so the housing, the lamp and the depth ladder
+   are the system's own and nothing here invents a material. The layout is the
+   only thing this file owns: the main button is the anchored box, and the
+   actions are positioned ABSOLUTELY off its edge, so a closed dial reserves no
+   space and a specimen in normal flow does not carry a hole where the actions
+   would open. */
+
+.td-registry-fab {
+  --td-fab-gap: 14px;
+  --td-fab-inset: var(--td-sp-8, 24px);
+  position: relative;
+  display: inline-flex;
+  width: max-content;
+}
+.td-registry-fab[data-pinned] {
+  position: fixed;
+  z-index: var(--td-fab-z, 60);
+}
+
+/* Pinned, per corner. `inset-inline` follows the reading direction, so `end`
+   is the right in English and flips under RTL. */
+.td-registry-fab[data-pinned][data-corner="bottom-end"]   { bottom: var(--td-fab-inset); inset-inline-end: var(--td-fab-inset); }
+.td-registry-fab[data-pinned][data-corner="bottom-start"] { bottom: var(--td-fab-inset); inset-inline-start: var(--td-fab-inset); }
+.td-registry-fab[data-pinned][data-corner="top-end"]      { top: var(--td-fab-inset); inset-inline-end: var(--td-fab-inset); }
+.td-registry-fab[data-pinned][data-corner="top-start"]    { top: var(--td-fab-inset); inset-inline-start: var(--td-fab-inset); }
+
+/* ── The actions, off the main button's edge ─────────────────────────────── */
+.td-registry-fab-actions {
+  position: absolute;
+  display: flex;
+  gap: var(--td-fab-gap);
+  /* Closed: click-through, so a folded dial catches no pointer over the page. */
+  pointer-events: none;
+}
+.td-registry-fab[data-open] .td-registry-fab-actions { pointer-events: auto; }
+
+/* Which edge the block grows from, and its own order. The block is the reverse
+   of the fan so the FIRST action sits nearest the main button. */
+.td-registry-fab[data-expand="up"]    .td-registry-fab-actions { bottom: calc(100% + var(--td-fab-gap)); flex-direction: column-reverse; }
+.td-registry-fab[data-expand="down"]  .td-registry-fab-actions { top: calc(100% + var(--td-fab-gap)); flex-direction: column; }
+.td-registry-fab[data-expand="left"]  .td-registry-fab-actions { right: calc(100% + var(--td-fab-gap)); flex-direction: row-reverse; align-items: center; }
+.td-registry-fab[data-expand="right"] .td-registry-fab-actions { left: calc(100% + var(--td-fab-gap)); flex-direction: row; align-items: center; }
+
+/* Line the block up with the main on the perpendicular axis, per corner. */
+.td-registry-fab[data-corner$="-end"]:is([data-expand="up"], [data-expand="down"]) .td-registry-fab-actions { right: 0; align-items: flex-end; }
+.td-registry-fab[data-corner$="-start"]:is([data-expand="up"], [data-expand="down"]) .td-registry-fab-actions { left: 0; align-items: flex-start; }
+.td-registry-fab[data-corner^="bottom"]:is([data-expand="left"], [data-expand="right"]) .td-registry-fab-actions { bottom: 0; }
+.td-registry-fab[data-corner^="top"]:is([data-expand="left"], [data-expand="right"]) .td-registry-fab-actions { top: 0; }
+
+/* ── An action, and its label ────────────────────────────────────────────── */
+.td-registry-fab-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0;
+  transform: scale(0.35);
+  transition:
+    opacity var(--td-t-base, 0.18s) var(--td-ease, ease),
+    transform var(--td-t-base, 0.18s) var(--td-ease, ease);
+  /* The stagger: each action leaves a beat after the one nearer the main, so
+     the dial unfurls rather than snapping. */
+  transition-delay: calc(var(--td-fab-i, 0) * 34ms);
+}
+.td-registry-fab[data-open] .td-registry-fab-item { opacity: 1; transform: none; }
+
+/* Collapse toward the main button, so the dial folds INTO it rather than
+   shrinking in place. */
+.td-registry-fab[data-expand="up"]    .td-registry-fab-item { transform-origin: center bottom; }
+.td-registry-fab[data-expand="down"]  .td-registry-fab-item { transform-origin: center top; }
+.td-registry-fab[data-expand="left"]  .td-registry-fab-item { transform-origin: right center; }
+.td-registry-fab[data-expand="right"] .td-registry-fab-item { transform-origin: left center; }
+
+/* Label side. Inline on a vertical dial, on the inward side of the icon; above
+   the icon on a horizontal one. */
+.td-registry-fab[data-corner$="-start"]:is([data-expand="up"], [data-expand="down"]) .td-registry-fab-item { flex-direction: row-reverse; }
+.td-registry-fab:is([data-expand="left"], [data-expand="right"]) .td-registry-fab-item { flex-direction: column; }
+
+.td-registry-fab-label {
+  padding: 4px 11px;
+  border-radius: var(--td-radius-3, 8px);
+  background: var(--td-surface);
+  color: var(--td-ink-2);
+  font-size: 0.78rem;
+  font-weight: 550;
+  line-height: 1.3;
+  white-space: nowrap;
+  box-shadow: var(--td-raised);
+}
+
+/* ── The main button ─────────────────────────────────────────────────────── */
+/* Larger than its children — the one raised, sized to a real thumb target —
+   and its plus rotates to a cross when the dial opens. */
+.td-registry-fab-main.td-registry-iconbutton { width: 54px; height: 54px; }
+.td-registry-fab-main .td-registry-iconbutton-lamp > svg {
+  width: 22px;
+  height: 22px;
+  transition: transform var(--td-t-base, 0.18s) var(--td-ease, ease);
+}
+/* Only the default plus rotates. A caller's `openIcon` is a different mark, so
+   the component drops `data-rotate` and the glyph swaps instead of spinning. */
+.td-registry-fab[data-open] .td-registry-fab-main[data-rotate] .td-registry-iconbutton-lamp > svg { transform: rotate(45deg); }
+
+@media (prefers-reduced-motion: reduce) {
+  .td-registry-fab-item,
+  .td-registry-fab-main .td-registry-iconbutton-lamp > svg { transition: none; }
+}

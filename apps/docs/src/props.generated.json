@@ -876,6 +876,83 @@
       "\"Window controls\""
     ]
   ],
+  "fab": [
+    [
+      "icon",
+      "ReactNode",
+      "—"
+    ],
+    [
+      "label",
+      "string",
+      "required"
+    ],
+    [
+      "actions",
+      "FabAction[]",
+      "[]"
+    ],
+    [
+      "onClick",
+      "(event: ReactMouseEvent) => void",
+      "—"
+    ],
+    [
+      "tone",
+      "FabTone",
+      "\"papaya\""
+    ],
+    [
+      "expand",
+      "FabExpand",
+      "—"
+    ],
+    [
+      "corner",
+      "FabCorner",
+      "\"bottom-end\""
+    ],
+    [
+      "open",
+      "boolean",
+      "—"
+    ],
+    [
+      "defaultOpen",
+      "boolean",
+      "false"
+    ],
+    [
+      "onOpenChange",
+      "(open: boolean) => void",
+      "—"
+    ],
+    [
+      "openIcon",
+      "ReactNode",
+      "—"
+    ],
+    [
+      "labels",
+      "boolean",
+      "true"
+    ],
+    [
+      "inset",
+      "number | string",
+      "—"
+    ],
+    [
+      "pinned",
+      "boolean",
+      "true"
+    ],
+    [
+      "closeOnAction",
+      "boolean",
+      "true"
+    ]
+  ],
   "canvas": [
     [
       "label",

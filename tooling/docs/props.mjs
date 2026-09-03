@@ -57,6 +57,7 @@ const TABLES = {
   "skeleton": ["skeleton", "SkeletonProps", "Skeleton"],
   "avatar": ["avatar", "AvatarProps", "Avatar"],
   "window-controls": ["window-controls", "WindowControlsProps", "WindowControls"],
+  "fab": ["fab", "FloatingActionButtonProps", "FloatingActionButton"],
   "canvas": ["canvas", "CanvasProps", "Canvas"],
   "canvas-panel": ["canvas-panel", "CanvasPanelProps", "CanvasPanel"],
   "canvas-node": ["canvas-node", "CanvasNodeProps", "CanvasNode"],

@@ -84,3 +84,5 @@ export * from "./window-controls";
 export * from "./canvas";
 export * from "./canvas-panel";
 export * from "./canvas-node";
+
+export * from "./fab";

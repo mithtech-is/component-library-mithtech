@@ -130,6 +130,7 @@ const ITEMS = {
   "spotlight": { module: "spotlight", symbols: ["Spotlight"] },
   "footer": { module: "footer", symbols: ["Footer", "FooterGrid", "FooterBrand", "FooterColumn", "FooterContact", "FooterSocial", "FooterBottom"] },
   "window-controls": { module: "window-controls", symbols: ["WindowControls"] },
+  "fab": { module: "fab", symbols: ["FloatingActionButton"], needs: [{ item: "icon-button", symbols: ["IconButton"] }] },
   /* The canvas composes the library rather than redrawing it: the control
      cluster is IconButtons carrying the set's own filled glyphs, and the
      gesture hint is a Badge. A registry copy has no package to import them

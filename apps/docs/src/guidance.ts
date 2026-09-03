@@ -71,7 +71,7 @@ export const GUIDANCE = {
     ],
   },
   "icon-button": {
-    aliases: ["fab", "round button", "glyph button"],
+    aliases: ["round button", "glyph button"],
     useCases: ["icon only button", "toolbar button", "button with an icon and a label", "copy or share button"],
     whenToUse: "A control whose icon carries the state — round and wordless in a toolbar, or a pill at CTA height when it has a label.",
     whenNotToUse: [
@@ -83,6 +83,22 @@ export const GUIDANCE = {
       { name: "neutral", when: "A carved housing whose lamp lights green. The default." },
       { name: "papaya / azure / invert", when: "A filled housing, where the button IS the call to action." },
       { name: "*-quiet", when: "A ROW of channels — six filled discs is a wall of fills; six quiet ones read as one material with six lights in it." },
+    ],
+  },
+  "fab": {
+    aliases: ["fab", "speed dial", "floating button", "expanding button", "quick actions", "action menu"],
+    useCases: ["floating action button", "a primary action pinned to a corner", "a speed dial of quick actions", "an expanding button that reveals more actions", "compose or create button"],
+    whenToUse: "The one primary action on a screen — compose, create, add — pinned to a corner where the thumb is, on its own or fanning into a short list of related actions.",
+    whenNotToUse: [
+      { instead: "button", because: "The action belongs in the flow of the page, next to the thing it acts on, rather than floating over everything." },
+      { instead: "chat-launcher", because: "It is specifically a conversation — a support or AI channel — which ships with its own panel, presence lamp and teaser." },
+      { instead: "dropdown-menu", because: "It is a menu opened from a control already in the page, not a primary action pinned to the viewport." },
+      { instead: "bottom-nav", because: "They are the destinations of the app rather than one action — a bar of places, not a button that does a thing." },
+    ],
+    variants: [
+      { name: "papaya", when: "The default. The filled brand housing — the one loud call to action the system allows." },
+      { name: "neutral", when: "The carved surface, for a FAB that should not shout over a busy page." },
+      { name: "a speed dial", when: "Given `actions`, the main button opens a short fan of related actions and folds them back." },
     ],
   },
   "filament-button": {
