@@ -1667,7 +1667,7 @@
     ],
     [
       "ai",
-      "boolean | AiHaloProps[\"variant\"]",
+      "boolean",
       "false"
     ],
     [
