@@ -97,7 +97,12 @@ export const TonalDepthPhoneField = forwardRef<HTMLInputElement, TonalDepthPhone
   const options = useMemo(
     () => countries.map(c => ({
       value: c.iso,
+      // Searchable by NAME — which is what a person types.
       label: `${TonalDepthflagOf(c.iso)}  ${c.name}`,
+      // Chosen state: the flag and the code, nothing else. The country's name
+      // beside a number you are about to type is the one word in the row that
+      // carries no information — you already know which country you picked.
+      display: `${TonalDepthflagOf(c.iso)} +${c.dial}`,
       mark: `+${c.dial}`,
     })),
     [countries],
@@ -116,6 +121,7 @@ export const TonalDepthPhoneField = forwardRef<HTMLInputElement, TonalDepthPhone
         }}
         label={`${label} country`}
         placeholder={`${TonalDepthflagOf(country.iso)} +${country.dial}`}
+        listClassName="td-registry-phone-list"
         disabled={disabled}
       />
       <TonalDepthInput
@@ -131,7 +137,6 @@ export const TonalDepthPhoneField = forwardRef<HTMLInputElement, TonalDepthPhone
         disabled={disabled}
         invalid={invalid}
         aria-label={label}
-        leading={<span className="td-registry-phone-dial">+{country.dial}</span>}
         value={current.national}
         onChange={event => set(TonalDepthcompose(country, event.target.value))}
       />

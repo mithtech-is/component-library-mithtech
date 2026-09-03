@@ -11,9 +11,28 @@
    while a country name nobody needs to read in full took the rest. The
    dial code is already shown in the number's own leading slot, so a
    truncated country label loses nothing. */
-.td-react-phone-combo { flex: 0 1 auto; min-width: 104px; max-width: 168px; }
+/* ── the country selector is small; its list is not ───────────────────────
+   The trigger only ever shows a flag and a dial code — four or five glyphs —
+   so it has no reason to take a third of the row. The LIST is the opposite: it
+   carries 239 country names, and a name clipped to "United K" is a name you
+   cannot scan. So the trigger shrinks to its content and the dropdown breaks
+   out to its own measure, anchored to the trigger's left edge.
+
+   `min-width` rather than `width` on the list, so it can still grow for a long
+   name, and capped against the viewport so it cannot push a narrow screen
+   sideways. */
+.td-react-phone-combo { flex: 0 0 auto; min-width: 0; width: auto; max-width: none; }
+.td-react-phone-combo .td-combobox-input { width: 5.5em; min-width: 0; }
+.td-react-phone-list {
+  min-width: min(320px, calc(100vw - var(--td-sp-11)));
+  width: max-content;
+  max-width: min(380px, calc(100vw - var(--td-sp-11)));
+}
 .td-react-phone-country { font-size: 12.5px; }
 .td-react-phone-number { flex: 1 1 auto; min-width: 132px; }
+/* The dial code no longer rides in the number's leading slot — it lives in the
+   selector, where the thing it qualifies is. */
+.td-react-phone-dial { display: none; }
 
 /* A dial code is a machine value, so it is mono and sits quiet — it labels the
    number rather than competing with it. */

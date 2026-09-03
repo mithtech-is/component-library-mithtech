@@ -102,6 +102,18 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
 export interface ComboboxOption {
   value: string;
   label: string;
+  /**
+   * What the closed field shows once this option is chosen, when that differs
+   * from what you search for.
+   *
+   * `PhoneField` is the case: the list has to be searchable by country NAME,
+   * and the chosen state has to read as a flag and a dial code, because the
+   * name is redundant next to a number you are about to type. Without this the
+   * two are forced to be the same string and one of them is wrong.
+   *
+   * Defaults to `label`, so an option that says nothing behaves as before.
+   */
+  display?: string;
   /** The right-hand mono note — a dial code, a count, a shortcut. */
   mark?: string;
   disabled?: boolean;
@@ -123,6 +135,12 @@ export interface ComboboxProps
   emptyText?: string;
   invalid?: boolean;
   containerClassName?: string;
+  /**
+   * Class on the dropdown itself, for a field whose list wants a different
+   * measure to its trigger — a narrow country selector over a wide list of
+   * country names, say.
+   */
+  listClassName?: string;
   label?: string;
 }
 
@@ -138,7 +156,7 @@ export interface ComboboxProps
 export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(function Combobox(
   {
     options, value, onValueChange, multiple = false, emptyText = "No matches",
-    invalid = false, disabled, placeholder, className, containerClassName, label,
+    invalid = false, disabled, placeholder, className, containerClassName, listClassName, label,
     "aria-invalid": ariaInvalid, id, onKeyDown, ...props
   },
   ref,
@@ -239,7 +257,7 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(function Com
   };
 
   const single = !multiple ? options.find(o => o.value === selected[0]) : undefined;
-  const shown = open || multiple ? query : (query || single?.label || "");
+  const shown = open || multiple ? query : (query || single?.display || single?.label || "");
 
   return (
     <div
@@ -303,7 +321,7 @@ export const Combobox = forwardRef<HTMLInputElement, ComboboxProps>(function Com
         <ChevronDownIcon className="td-select-chevron" weight={LAMP_WEIGHT} aria-hidden="true" />
       </span>
 
-      <div className="td-combobox-list" id={listId} role="listbox" aria-label={label} ref={listRef} aria-multiselectable={multiple || undefined}>
+      <div className={cx("td-combobox-list", listClassName)} id={listId} role="listbox" aria-label={label} ref={listRef} aria-multiselectable={multiple || undefined}>
         {matches.length === 0 ? (
           <div className="td-combobox-empty">{emptyText}</div>
         ) : matches.map((option, index) => (

@@ -1,7 +1,6 @@
 "use client";
 
 import { forwardRef, useCallback, useEffect, useId, useMemo, useRef, useState, type InputHTMLAttributes, type KeyboardEvent, type SVGProps } from "react";
-import { CaretDownIcon as ChevronDownIcon } from "@phosphor-icons/react";
 import "./tonaldepth-combobox.css";
 
 const LAMP_WEIGHT = "fill" as const;
@@ -76,11 +75,69 @@ function TdClose(props: TdIconProps) {
 
 const CloseIcon = TdClose;
 
+/**
+ * Microsoft's Fluent System Icons, filled weight, copied in because a registry
+ * item is one self-contained file. Vendored from `@fluentui/svg-icons` and
+ * stripped to `currentColor`, so the component's lamp ladder moves them.
+ */
+interface FluentIconProps extends SVGProps<SVGSVGElement> {
+  /** Edge length. `1em` so the glyph scales with the type it sits beside. */
+  size?: number | string;
+  /** The fill. `currentColor` so the lamp ramp can move it. */
+  color?: string;
+  /**
+   * Swallowed, not forwarded. Fluent marks are filled by construction, so
+   * there is nothing to switch — but call sites pass `weight={LAMP_WEIGHT}`
+   * and `weight` is not an SVG attribute, so React would put it on the DOM.
+   */
+  weight?: string;
+  /** Flip horizontally, for a mark that points. */
+  mirrored?: boolean;
+}
+
+interface FluentGlyphProps extends FluentIconProps {
+  viewBox: string;
+  d: string;
+}
+
+function FluentGlyph({ viewBox, d, size = "1em", color = "currentColor", weight, mirrored, ...props }: FluentGlyphProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox={viewBox}
+      width={size}
+      height={size}
+      fill={color}
+      transform={mirrored ? "scale(-1, 1)" : undefined}
+      {...props}
+    >
+      <path d={d} />
+    </svg>
+  );
+}
+
+/** `chevron_down_24_filled` */
+function ChevronDownIcon(props: FluentIconProps) {
+  return <FluentGlyph viewBox="0 0 24 24" d="M4.3 8.3a1 1 0 0 1 1.4 0l6.3 6.29 6.3-6.3a1 1 0 1 1 1.4 1.42l-7 7a1 1 0 0 1-1.4 0l-7-7a1 1 0 0 1 0-1.42" {...props} />;
+}
+
 /* ── TonalDepthCombobox ────────────────────────────────────────────────────────── */
 
 export interface TonalDepthComboboxOption {
   value: string;
   label: string;
+  /**
+   * What the closed field shows once this option is chosen, when that differs
+   * from what you search for.
+   *
+   * `PhoneField` is the case: the list has to be searchable by country NAME,
+   * and the chosen state has to read as a flag and a dial code, because the
+   * name is redundant next to a number you are about to type. Without this the
+   * two are forced to be the same string and one of them is wrong.
+   *
+   * Defaults to `label`, so an option that says nothing behaves as before.
+   */
+  display?: string;
   /** The right-hand mono note — a dial code, a count, a shortcut. */
   mark?: string;
   disabled?: boolean;
@@ -102,6 +159,12 @@ export interface TonalDepthComboboxProps
   emptyText?: string;
   invalid?: boolean;
   containerClassName?: string;
+  /**
+   * Class on the dropdown itself, for a field whose list wants a different
+   * measure to its trigger — a narrow country selector over a wide list of
+   * country names, say.
+   */
+  listClassName?: string;
   label?: string;
 }
 
@@ -117,7 +180,7 @@ export interface TonalDepthComboboxProps
 export const TonalDepthCombobox = forwardRef<HTMLInputElement, TonalDepthComboboxProps>(function TonalDepthCombobox(
   {
     options, value, onValueChange, multiple = false, emptyText = "No matches",
-    invalid = false, disabled, placeholder, className, containerClassName, label,
+    invalid = false, disabled, placeholder, className, containerClassName, listClassName, label,
     "aria-invalid": ariaInvalid, id, onKeyDown, ...props
   },
   ref,
@@ -218,7 +281,7 @@ export const TonalDepthCombobox = forwardRef<HTMLInputElement, TonalDepthCombobo
   };
 
   const single = !multiple ? options.find(o => o.value === selected[0]) : undefined;
-  const shown = open || multiple ? query : (query || single?.label || "");
+  const shown = open || multiple ? query : (query || single?.display || single?.label || "");
 
   return (
     <div
@@ -282,7 +345,7 @@ export const TonalDepthCombobox = forwardRef<HTMLInputElement, TonalDepthCombobo
         <ChevronDownIcon className="td-select-chevron" weight={LAMP_WEIGHT} aria-hidden="true" />
       </span>
 
-      <div className="td-combobox-list" id={listId} role="listbox" aria-label={label} ref={listRef} aria-multiselectable={multiple || undefined}>
+      <div className={cx("td-combobox-list", listClassName)} id={listId} role="listbox" aria-label={label} ref={listRef} aria-multiselectable={multiple || undefined}>
         {matches.length === 0 ? (
           <div className="td-combobox-empty">{emptyText}</div>
         ) : matches.map((option, index) => (

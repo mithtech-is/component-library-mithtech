@@ -114,7 +114,12 @@ export const PhoneField = forwardRef<HTMLInputElement, PhoneFieldProps>(function
   const options = useMemo(
     () => countries.map(c => ({
       value: c.iso,
+      // Searchable by NAME — which is what a person types.
       label: `${flagOf(c.iso)}  ${c.name}`,
+      // Chosen state: the flag and the code, nothing else. The country's name
+      // beside a number you are about to type is the one word in the row that
+      // carries no information — you already know which country you picked.
+      display: `${flagOf(c.iso)} +${c.dial}`,
       mark: `+${c.dial}`,
     })),
     [countries],
@@ -133,6 +138,7 @@ export const PhoneField = forwardRef<HTMLInputElement, PhoneFieldProps>(function
         }}
         label={`${label} country`}
         placeholder={`${flagOf(country.iso)} +${country.dial}`}
+        listClassName="td-react-phone-list"
         disabled={disabled}
       />
       <Input
@@ -148,7 +154,6 @@ export const PhoneField = forwardRef<HTMLInputElement, PhoneFieldProps>(function
         disabled={disabled}
         invalid={invalid}
         aria-label={label}
-        leading={<span className="td-react-phone-dial">+{country.dial}</span>}
         value={current.national}
         onChange={event => set(compose(country, event.target.value))}
       />
