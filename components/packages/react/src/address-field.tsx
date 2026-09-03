@@ -12,8 +12,9 @@
  * country changes.
  */
 
-import { forwardRef, useId } from "react";
+import { forwardRef, useId, useState } from "react";
 import { cx } from "./utils";
+import { LocationIcon, LAMP_WEIGHT } from "./icons";
 import { Combobox, type ComboboxOption } from "./select";
 import { Input } from "./input";
 import "./address-field.css";
@@ -44,22 +45,101 @@ export interface AddressFieldProps {
   disabled?: boolean;
   invalid?: boolean;
   className?: string;
+  /**
+   * Turns on **Use my location** — a control that asks the browser where the
+   * reader is and fills the address from it.
+   *
+   * You supply the reverse geocode. The component owns the permission prompt,
+   * the pending state, the failure copy and the merge; it does not own a
+   * service, and that is deliberate: baking one endpoint in would put every
+   * consumer of this library behind one shared rate limit and one privacy
+   * policy that none of them agreed to. OpenStreetMap's Nominatim, which is
+   * the obvious free choice, explicitly requires a per-application User-Agent
+   * and caps usage — terms a component cannot accept on your behalf.
+   *
+   * `reverseGeocode` is given the coordinates and returns whatever it could
+   * resolve; anything it omits is left as the reader typed it. Throwing is
+   * fine — the failure is reported and the fields are untouched.
+   *
+   * See the docs page for a Nominatim adapter you can paste in.
+   */
+  reverseGeocode?: (position: { latitude: number; longitude: number }) => Promise<Partial<AddressValue>>;
+  /** The control's label. */
+  locateLabel?: string;
 }
 
 export const AddressField = forwardRef<HTMLInputElement, AddressFieldProps>(function AddressField(
   {
     value, onValueChange, countries, states, stateLabel = "State",
     postcodeLabel = "Postcode", legend = "Address", disabled, invalid, className,
+    reverseGeocode, locateLabel = "Use my location",
   },
   ref,
 ) {
   const current = value ?? emptyAddress();
   const groupId = useId();
   const patch = (part: Partial<AddressValue>) => onValueChange?.({ ...current, ...part });
+  const [locating, setLocating] = useState(false);
+  const [locateError, setLocateError] = useState<string | null>(null);
+
+  /*
+   * Asked for on PRESS, never on mount.
+   *
+   * `navigator.geolocation` fires the browser's permission prompt the moment
+   * it is called, and a prompt that appears because a form rendered is the
+   * fastest way to have location denied permanently for the origin — after
+   * which this control cannot work for that reader again, on any page.
+   */
+  const locate = () => {
+    if (!reverseGeocode || typeof navigator === "undefined" || !navigator.geolocation) {
+      setLocateError("This browser cannot share a location.");
+      return;
+    }
+    setLocateError(null);
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      async position => {
+        try {
+          const found = await reverseGeocode({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
+          /* Merged over what is there, not swapped for it. A reader who has
+             already typed a flat number keeps it — a geocode resolves a
+             building, and the part inside the building is theirs. */
+          onValueChange?.({ ...current, ...Object.fromEntries(Object.entries(found).filter(([, v]) => v)) });
+        } catch {
+          setLocateError("We could not turn that location into an address.");
+        } finally {
+          setLocating(false);
+        }
+      },
+      error => {
+        setLocating(false);
+        setLocateError(
+          error.code === error.PERMISSION_DENIED
+            ? "Location permission was declined. Type the address instead."
+            : "We could not read your location.",
+        );
+      },
+      { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 },
+    );
+  };
 
   return (
     <fieldset className={cx("td-fieldset", "td-react-address", className)} disabled={disabled}>
       <legend className="td-fieldset-legend" id={groupId}>{legend}</legend>
+      {reverseGeocode ? (
+        <div className="td-react-address-locate">
+          <button type="button" className="td-react-address-locate-btn" onClick={locate} disabled={disabled || locating}>
+            <LocationIcon weight={LAMP_WEIGHT} aria-hidden="true" />
+            {locating ? "Finding you…" : locateLabel}
+          </button>
+          {/* Polite, not assertive: the reader pressed a button and is waiting
+              on it, so this is an answer rather than an interruption. */}
+          <span className="td-react-address-locate-msg" role="status">{locateError}</span>
+        </div>
+      ) : null}
 
       <div className="td-react-address-row">
         <Input
