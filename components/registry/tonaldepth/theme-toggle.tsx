@@ -1,13 +1,63 @@
 "use client";
 
 import { forwardRef, useCallback, useEffect, useRef, useState, type ButtonHTMLAttributes } from "react";
-import { MoonIcon, SunIcon } from "@phosphor-icons/react";
 import "./tonaldepth-theme-toggle.css";
 
 const LAMP_WEIGHT = "fill" as const;
 
 function cx(...values: Array<string | false | null | undefined>): string {
   return values.filter(Boolean).join(" ");
+}
+
+/**
+ * Microsoft's Fluent System Icons, filled weight, copied in because a registry
+ * item is one self-contained file. Vendored from `@fluentui/svg-icons` and
+ * stripped to `currentColor`, so the component's lamp ladder moves them.
+ */
+interface FluentIconProps extends SVGProps<SVGSVGElement> {
+  /** Edge length. `1em` so the glyph scales with the type it sits beside. */
+  size?: number | string;
+  /** The fill. `currentColor` so the lamp ramp can move it. */
+  color?: string;
+  /**
+   * Swallowed, not forwarded. Fluent marks are filled by construction, so
+   * there is nothing to switch — but call sites pass `weight={LAMP_WEIGHT}`
+   * and `weight` is not an SVG attribute, so React would put it on the DOM.
+   */
+  weight?: string;
+  /** Flip horizontally, for a mark that points. */
+  mirrored?: boolean;
+}
+
+interface FluentGlyphProps extends FluentIconProps {
+  viewBox: string;
+  d: string;
+}
+
+function FluentGlyph({ viewBox, d, size = "1em", color = "currentColor", weight, mirrored, ...props }: FluentGlyphProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox={viewBox}
+      width={size}
+      height={size}
+      fill={color}
+      transform={mirrored ? "scale(-1, 1)" : undefined}
+      {...props}
+    >
+      <path d={d} />
+    </svg>
+  );
+}
+
+/** `weather_moon_24_filled` */
+function MoonIcon(props: FluentIconProps) {
+  return <FluentGlyph viewBox="0 0 24 24" d="M20.03 17a10 10 0 0 1-16.9.68.75.75 0 0 1 .36-1.13c3.77-1.35 5.79-2.91 6.96-5.15 1.23-2.35 1.55-4.93.69-8.46A.75.75 0 0 1 11.9 2 10 10 0 0 1 20.03 17" {...props} />;
+}
+
+/** `weather_sunny_24_filled` */
+function SunIcon(props: FluentIconProps) {
+  return <FluentGlyph viewBox="0 0 24 24" d="M12 2c.41 0 .75.34.75.75v1.5a.75.75 0 0 1-1.5 0v-1.5c0-.41.34-.75.75-.75m5 10a5 5 0 1 1-10 0 5 5 0 0 1 10 0m4.25.75a.75.75 0 0 0 0-1.5h-1.5a.75.75 0 0 0 0 1.5zM12 19c.41 0 .75.34.75.75v1.5a.75.75 0 0 1-1.5 0v-1.5c0-.41.34-.75.75-.75m-7.75-6.25a.75.75 0 0 0 0-1.5h-1.5a.75.75 0 0 0 0 1.5zm-.03-8.53c.3-.3.77-.3 1.06 0l1.5 1.5a.75.75 0 0 1-1.06 1.06l-1.5-1.5a.75.75 0 0 1 0-1.06m1.06 15.56a.75.75 0 1 1-1.06-1.06l1.5-1.5a.75.75 0 1 1 1.06 1.06zm14.5-15.56a.75.75 0 0 0-1.06 0l-1.5 1.5a.75.75 0 0 0 1.06 1.06l1.5-1.5c.3-.3.3-.77 0-1.06m-1.06 15.56a.75.75 0 1 0 1.06-1.06l-1.5-1.5a.75.75 0 1 0-1.06 1.06z" {...props} />;
 }
 
 export type TonalDepthTheme = "light" | "dark";
@@ -52,6 +102,7 @@ export const TonalDepthThemeToggle = forwardRef<HTMLButtonElement, TonalDepthThe
     labelText = { light: "Light mode", dark: "Dark mode" },
     onThemeChange,
     className,
+    onClick,
     ...props
   },
   ref,
@@ -136,7 +187,7 @@ export const TonalDepthThemeToggle = forwardRef<HTMLButtonElement, TonalDepthThe
       {...props}
       ref={ref}
       type="button"
-      onClick={toggle}
+      onClick={event => { onClick?.(event); if (!event.defaultPrevented) toggle(); }}
       /* The exemption marker. A vanilla runtime that scans the page for theme
          buttons should skip anything carrying it: this element already owns
          its behaviour, and a second handler on it is a double-toggle rather

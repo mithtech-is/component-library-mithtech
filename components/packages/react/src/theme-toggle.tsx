@@ -47,6 +47,7 @@ export const ThemeToggle = forwardRef<HTMLButtonElement, ThemeToggleProps>(funct
     labelText = { light: "Light mode", dark: "Dark mode" },
     onThemeChange,
     className,
+    onClick,
     ...props
   },
   ref,
@@ -131,7 +132,7 @@ export const ThemeToggle = forwardRef<HTMLButtonElement, ThemeToggleProps>(funct
       {...props}
       ref={ref}
       type="button"
-      onClick={toggle}
+      onClick={event => { onClick?.(event); if (!event.defaultPrevented) toggle(); }}
       /* The exemption marker. A vanilla runtime that scans the page for theme
          buttons should skip anything carrying it: this element already owns
          its behaviour, and a second handler on it is a double-toggle rather

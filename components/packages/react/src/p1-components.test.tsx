@@ -407,6 +407,24 @@ describe("theme toggle", () => {
     expect(button).toHaveAttribute("aria-pressed", "true");
   });
 
+  it("runs a caller's onClick and still flips the theme", async () => {
+    const user = userEvent.setup();
+    document.documentElement.setAttribute("data-theme", "light");
+    const onClick = vi.fn();
+    render(<ThemeToggle storageKey={null} onClick={onClick} />);
+    await user.click(screen.getByRole("button"));
+    expect(onClick).toHaveBeenCalledTimes(1);
+    expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
+  });
+
+  it("lets a caller's onClick take the press with preventDefault", async () => {
+    const user = userEvent.setup();
+    document.documentElement.setAttribute("data-theme", "light");
+    render(<ThemeToggle storageKey={null} onClick={event => event.preventDefault()} />);
+    await user.click(screen.getByRole("button"));
+    expect(document.documentElement.getAttribute("data-theme")).toBe("light");
+  });
+
   it("stays a round icon button when unlabelled", () => {
     render(<ThemeToggle />);
     const button = screen.getByRole("button");
