@@ -53,9 +53,167 @@
    The read-only form keeps `inset` as an opt-in, because a rating being
    REPORTED is not a place to put something and a trough around it would say
    the reader can change it. */
-.td-rating.td-react-rating:has(.td-rating-input) {
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: var(--td-surface);
-  box-shadow: var(--td-inset-soft);
+
+
+/* ── the star is the control; the button is not ────────────────────────────
+   `.td-rating-btn` has no rule in the base layer, so every star was rendering
+   inside the BROWSER's default button chrome: a grey fill, a hairline border
+   and a corner radius, five of them in a row. That is the one thing this
+   system does not do — a boundary is a carved seam, never a drawn box
+   ([[L03]]) — and it turned an elegant strip of stars into a row of little
+   grey rectangles sitting in a trough.
+
+   The button keeps its semantics and loses its skin. The strip's own well is
+   the housing; the star is the mark; the lamp ladder above is the state. There
+   is nothing else for a box to say. */
+.td-rating.td-react-rating .td-rating-btn {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 0;
+  background: none;
+  padding: 0;
+  margin: 0;
+  display: inline-grid;
+  place-items: center;
+  /* A 14px star is a 14px target, which is half the comfortable minimum. The
+     glyph stays 14px and the strike area grows around it. */
+  width: 26px;
+  height: 26px;
+  border-radius: var(--td-radius-3);
+  cursor: pointer;
+  line-height: 0;
+}
+/* The focus ring is the one box allowed, and it is on the star being chosen
+   rather than on the whole strip — arrow keys move between stars, so the ring
+   has to say WHICH. */
+.td-rating.td-react-rating .td-rating-btn:focus-visible {
+  outline: 2px solid var(--td-accent);
+  outline-offset: -2px;
+}
+.td-rating.td-react-rating .td-rating-star { width: 15px; height: 15px; }
+
+/* ── empty is carved; full is filled ───────────────────────────────────────
+   A star you have not given is a star-shaped GROOVE in the surface, and a star
+   you have is that groove filled with the brand. That is the whole reading,
+   and it is why a rating belongs in this system at all: the two states are one
+   shape at two depths rather than two colours of the same sticker.
+
+   A glyph cannot take `box-shadow` — that draws on the element's box, not on
+   the star — so the depth is `drop-shadow`, which traces the alpha edge of the
+   path itself. Two of them make a groove: the fill sits DARKER than the ground
+   (what you see down inside a cut) and a single light hairline rides the lower
+   edge (the lip the light catches on its way past). The system's light comes
+   from the top left, so the lip is below and the shade is above.
+
+   Filled inverts it. The star takes the brand at full strength and throws a
+   soft shade down-right, so it reads as sitting proud of the surface it was
+   cut into — the groove has been filled in, not painted over. */
+.td-rating.td-react-rating {
+  /* Mixed toward the ink rather than toward `--td-shadow-dark`: that token is
+     already only 30% alpha, so mixing a further 46% of it into the surface
+     moved the colour almost nowhere and the empty star came out PALER than the
+     ground — a bump, which is the opposite of the thing being described. The
+     inside of a cut is darker than the surface around it. */
+  --td-rating-groove: color-mix(in srgb, var(--td-ink-3) 58%, var(--td-surface));
+  --td-rating-lip: color-mix(in srgb, var(--td-shadow-light) 90%, transparent);
+  --td-lamp-unlit: var(--td-rating-groove);
+}
+
+/* The carved state, for both forms: the settable star at rest and the
+   read-only star that was never earned. */
+.td-rating.td-react-rating .td-rating-btn,
+.td-rating.td-react-rating .td-rating-star--empty,
+.td-rating.td-react-rating .td-rating-star--half {
+  filter:
+    drop-shadow(0 1px 0 var(--td-rating-lip))
+    drop-shadow(0 -0.5px 0.5px color-mix(in srgb, var(--td-shadow-dark) 40%, transparent));
+}
+
+/* Filled: proud of the surface, with the shade falling away from the light. */
+.td-rating.td-react-rating .td-rating-btn[aria-checked="true"],
+.td-rating.td-react-rating .td-rating-btn[aria-checked="true"] ~ .td-rating-btn,
+.td-rating.td-react-rating .td-rating-stars {
+  filter: drop-shadow(1px 1.5px 1.5px color-mix(in srgb, var(--td-shadow-dark) 55%, transparent));
+}
+/* The half star keeps the carved treatment on its empty base; the clipped
+   overlay is the filled half and takes the proud shade instead. */
+.td-rating.td-react-rating .td-rating-star--half > svg:last-child {
+  filter: drop-shadow(1px 1.5px 1.5px color-mix(in srgb, var(--td-shadow-dark) 55%, transparent));
+}
+
+/* Hover and press deepen the fill rather than only tinting it, so reaching
+   across the strip feels like pressing stars in. */
+.td-rating.td-react-rating .td-rating-btn:hover,
+.td-rating.td-react-rating .td-rating-btn:hover ~ .td-rating-btn,
+.td-rating.td-react-rating .td-rating-btn:active,
+.td-rating.td-react-rating .td-rating-btn:active ~ .td-rating-btn {
+  filter: drop-shadow(1px 1.5px 2px color-mix(in srgb, var(--td-shadow-dark) 60%, transparent));
+}
+
+/* ── one component, one rhythm ─────────────────────────────────────────────
+   The two forms had drifted into looking like different components: 26px
+   targets with wide air between them above, 2px-tight stars below, and the
+   value at 12.5px in one and 17px in the other. The docs page claims they are
+   one component precisely so the star shapes cannot drift — the spacing has to
+   hold that promise too.
+
+   The strip is tight in both. The target stays 26px, so the button keeps its
+   strike area while the STARS sit at the read-only rhythm. */
+.td-rating.td-react-rating { gap: 0; }
+.td-rating.td-react-rating .td-rating-btn { width: 24px; height: 24px; }
+.td-rating.td-react-rating .td-rating-star { width: 16px; height: 16px; }
+
+/* The value and the count are not part of the strip, so they get the air the
+   strip does not. `gap: 0` had jammed "4.0" against the last star. */
+.td-rating.td-react-rating .td-rating-value { margin-inline-start: var(--td-sp-5); font-size: 0.95rem; }
+.td-rating.td-react-rating .td-rating-count { margin-inline-start: var(--td-sp-4); }
+
+/* Hugs its content. In a flex or grid column the pill was stretching the full
+   measure, which turned a rating into a banner. */
+.td-rating.td-react-rating { width: fit-content; max-width: 100%; align-self: start; }
+
+/* ── one groove, not two ───────────────────────────────────────────────────
+   The settable strip used to sit in a pill-shaped trough, on the rule that a
+   field is recessed ([[L12]]). That was right when the stars were flat marks
+   on the surface — the well was the only thing saying the row could be
+   operated. It stopped being right the moment the STARS became the recess: a
+   groove inside a groove is two depths describing one thing, and the eye reads
+   the pill as the control and the stars as decoration inside it, which is
+   backwards.
+
+   The stars carry it now. An empty star is the cut, a filled one is the cut
+   filled in, and the surface around them stays flat. */
+.td-rating.td-react-rating {
+  padding: 0;
+  background: none;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+/* The read-only forms take the same cut. The base layer inks an empty star at
+   50% of `--td-ink-3`, which is a washed grey sitting ON the surface — right
+   for a flat mark, wrong once the star is a recess. */
+.td-rating.td-react-rating .td-rating-star--empty,
+.td-rating.td-react-rating .td-rating-star--half { color: var(--td-rating-groove); }
+
+/* ── the cut has to go DOWN in both themes ─────────────────────────────────
+   A groove is darker than the surface it is cut into, and the two themes reach
+   that from opposite directions. In light, the surface is pale and the cut is
+   the ink showing through. In dark, the surface is already near black and
+   `--td-ink-3` is a LIGHT grey there — mixing toward it produced a pale star
+   sitting on black, which reads as a bump. Dark mixes toward the shadow
+   instead, which is very nearly opaque black at that end of the ramp, so the
+   cut still goes down.
+
+   The lip does correspondingly more work in dark: it is the only edge with any
+   contrast left once the fill has gone to black. */
+:root[data-theme="dark"] .td-rating.td-react-rating {
+  --td-rating-groove: color-mix(in srgb, var(--td-shadow-dark) 72%, var(--td-surface));
+  --td-rating-lip: color-mix(in srgb, var(--td-shadow-light) 100%, transparent);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .td-rating.td-react-rating {
+    --td-rating-groove: color-mix(in srgb, var(--td-shadow-dark) 72%, var(--td-surface));
+    --td-rating-lip: color-mix(in srgb, var(--td-shadow-light) 100%, transparent);
+  }
 }
