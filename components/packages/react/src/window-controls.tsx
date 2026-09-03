@@ -8,9 +8,18 @@ import "./window-controls.css";
 /**
  * How large the discs are drawn.
  *
- * `md` is macOS's own 12px, for a window chrome the reader is meant to reach
- * for. `sm` is 10px, for a specimen or a card-sized frame where a full-size
- * cluster out-shouts the title beside it.
+ * `md` is 14px, for a window chrome the reader is meant to reach for. `sm` is
+ * 11px, for a specimen or a card-sized frame where a full-size cluster
+ * out-shouts the title beside it.
+ *
+ * Both are a step above macOS's own 12px, and the mark inside is 0.64 of the
+ * disc rather than 0.52. The platform can afford a smaller mark because it is
+ * drawn by the compositor at the device's true resolution and its meaning is
+ * already known to everyone using it; a mark in a component library is drawn
+ * at whatever the page's scale happens to be, and it is the only thing telling
+ * the three discs apart for a reader who cannot use the colour. At the old
+ * ratio it came out around 6px, which is below the size a glyph on a 256 grid
+ * keeps its shape at.
  */
 export type WindowControlsSize = "sm" | "md";
 

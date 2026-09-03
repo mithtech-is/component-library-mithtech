@@ -59,13 +59,22 @@ const CLOSE = "M58.7,225.6 30.4,197.3 99.7,128 30.4,58.7 58.7,30.4 128,99.7 197.
 // The bar inside a window's minimise disc. Phosphor's `Minus` at `fill` is a
 // square plate with the bar knocked out of it, and at the 6px a traffic light
 // draws its mark that reads as a filled square, not a dash.
-const MINUS_BAR = "M44,112H212a16,16,0,0,1,0,32H44a16,16,0,0,1,0-32Z";
+/* The minimise dash. Shorter and half again as thick as a typographic minus:
+   this is drawn at roughly 9px inside a 14px disc, and at that size a 32-unit
+   bar on a 256 grid resolves to about one physical pixel — a hairline that
+   disappears against a saturated fill. 44 units reads as a mark. */
+const MINUS_BAR = "M50,106H206a22,22,0,0,1,0,44H50a22,22,0,0,1,0-44Z";
 
 // The zoom mark: two corner triangles pointing away from each other, which is
 // what macOS draws in the green disc. Two subpaths in one fill — the hypotenuse
 // of each faces the centre, so the pair reads as an arrow head in each corner
 // rather than as a bowtie.
-const EXPAND_CORNERS = "M36,36H132L36,132ZM220,220H124L220,124Z";
+//
+// The legs are 116 units of 256 rather than 96. Two small triangles separated
+// by a wide diagonal gutter read as specks at this size; growing them until
+// the gutter is a stroke rather than a void makes the pair read as one
+// diagonal gesture, which is what the mark means.
+const EXPAND_CORNERS = "M30,30H146L30,146ZM226,226H110L226,110Z";
 
 /**
  * The dismiss mark. A bare cross.
@@ -99,9 +108,18 @@ const WindowZoomIcon = TdExpandCorners;
 /**
  * How large the discs are drawn.
  *
- * `md` is macOS's own 12px, for a window chrome the reader is meant to reach
- * for. `sm` is 10px, for a specimen or a card-sized frame where a full-size
- * cluster out-shouts the title beside it.
+ * `md` is 14px, for a window chrome the reader is meant to reach for. `sm` is
+ * 11px, for a specimen or a card-sized frame where a full-size cluster
+ * out-shouts the title beside it.
+ *
+ * Both are a step above macOS's own 12px, and the mark inside is 0.64 of the
+ * disc rather than 0.52. The platform can afford a smaller mark because it is
+ * drawn by the compositor at the device's true resolution and its meaning is
+ * already known to everyone using it; a mark in a component library is drawn
+ * at whatever the page's scale happens to be, and it is the only thing telling
+ * the three discs apart for a reader who cannot use the colour. At the old
+ * ratio it came out around 6px, which is below the size a glyph on a 256 grid
+ * keeps its shape at.
  */
 export type TonalDepthWindowControlsSize = "sm" | "md";
 

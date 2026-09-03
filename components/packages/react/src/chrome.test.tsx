@@ -835,6 +835,40 @@ describe("BottomNav", () => {
     expect(document.documentElement.style.getPropertyValue("--bottom-nav-offset")).toBe("");
   });
 
+  it("can be put away again, and not only with a key", async () => {
+    /*
+     * The dial expanded and there was no way back: the circle goes
+     * `pointer-events: none` once the bar is out, and the bar carried only
+     * destinations and More. Escape worked, which is no answer at all on the
+     * device this form exists for — a phone has no Escape key.
+     */
+    const user = userEvent.setup();
+    render(<BottomNav items={BOTTOM_ITEMS} placement="inline" form="dial" />);
+    const dial = screen.getByRole("button", { name: "Open navigation" });
+    await user.click(dial);
+
+    const collapse = screen.getByRole("button", { name: "Close" });
+    expect(collapse).toBeInTheDocument();
+    await user.click(collapse);
+
+    // Back in the dial, and the focus with it — a control that vanishes under
+    // the caret strands a keyboard on the body.
+    expect(screen.getByRole("navigation", { name: "Primary" })).not.toHaveAttribute("data-open");
+    expect(dial).toHaveFocus();
+  });
+
+  it("spends one of its five slots on that control rather than overflowing", async () => {
+    const user = userEvent.setup();
+    render(<BottomNav items={BOTTOM_ITEMS} placement="inline" form="dial" />);
+    await user.click(screen.getByRole("button", { name: "Open navigation" }));
+    const bar = screen.getByRole("navigation", { name: "Primary" });
+    // Three destinations + Close + More is five. `bar` fits four destinations
+    // in the same room, because it has nothing to put away.
+    expect(within(bar).getAllByRole("link")).toHaveLength(3);
+    expect(within(bar).getByRole("button", { name: "Close" })).toBeInTheDocument();
+    expect(within(bar).getByRole("button", { name: /More/ })).toBeInTheDocument();
+  });
+
   it("routes every destination through renderLink when one is supplied", () => {
     render(
       <BottomNav

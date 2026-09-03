@@ -11,8 +11,8 @@
   gap: var(--td-windowcontrols-gap, 8px);
   flex: 0 0 auto;
 }
-.td-react-windowcontrols--sm { --td-windowcontrols-size: 10px; --td-windowcontrols-gap: 6px; }
-.td-react-windowcontrols--md { --td-windowcontrols-size: 12px; --td-windowcontrols-gap: 8px; }
+.td-react-windowcontrols--sm { --td-windowcontrols-size: 11px; --td-windowcontrols-gap: 7px; }
+.td-react-windowcontrols--md { --td-windowcontrols-size: 14px; --td-windowcontrols-gap: 8px; }
 
 /* The disc.
 
@@ -27,8 +27,8 @@
   appearance: none;
   border: 0;
   padding: 0;
-  width: var(--td-windowcontrols-size, 12px);
-  height: var(--td-windowcontrols-size, 12px);
+  width: var(--td-windowcontrols-size, 14px);
+  height: var(--td-windowcontrols-size, 14px);
   border-radius: 50%;
   display: grid;
   place-items: center;
@@ -81,7 +81,10 @@
   display: grid;
   place-items: center;
   line-height: 0;
-  font-size: calc(var(--td-windowcontrols-size, 12px) * 0.52);
+  /* 0.64 of the disc, not 0.52. The mark is what tells the three apart for
+     anyone who cannot use the colour, and at the old ratio it resolved to
+     about 6px — under the size at which a 256-grid glyph keeps its shape. */
+  font-size: calc(var(--td-windowcontrols-size, 14px) * 0.64);
   color: rgb(0 0 0 / 0.62);
   opacity: 0;
   transition: opacity var(--td-t-base) var(--td-ease);
