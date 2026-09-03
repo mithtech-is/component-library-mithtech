@@ -139,8 +139,10 @@ describe("AiHalo", () => {
     // The angle is a registered property, or the engine steps it instead of
     // sweeping it.
     expect(css).toMatch(/@property --td-ai-angle \{[^}]*syntax: "<angle>"/);
-    // The bead's own rule, not the band both pseudo-elements share.
-    expect(css).toMatch(/\.td-react-aihalo::after \{[^}]*conic-gradient\(\s*from var\(--td-ai-angle\)/);
+    // The bead's own rule, not the band both pseudo-elements share. The angle
+    // may be wrapped in a `calc(... + wobble)` — the registered angle still
+    // drives the conic gradient, which is the mechanism this guards.
+    expect(css).toMatch(/\.td-react-aihalo::after \{[^}]*conic-gradient\(\s*from [^,]*--td-ai-angle/);
     expect(css).toMatch(/\.td-react-aihalo::after \{[^}]*opacity: 0;/);
     // The cast is a LAYER, not a drop-shadow: filters run before masks, so a
     // shadow on the masked ring was clipped by that ring and thrown away.

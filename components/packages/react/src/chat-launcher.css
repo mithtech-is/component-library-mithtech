@@ -226,6 +226,17 @@
   inherits: true;
   initial-value: 0.6;
 }
+/* The wobble clock. A SECOND angle, turning at a rate deliberately unrelated to
+   the lap, that pushes the bead a little ahead and a little behind its mean
+   position. Because its period is not the lap's, the slow and the quick
+   moments precess around the ring rather than recurring at one point — which
+   is what stops the bead from dwelling at the top every lap and reading as a
+   stop. */
+@property --td-ai-wob {
+  syntax: "<angle>";
+  inherits: true;
+  initial-value: 0deg;
+}
 
 .td-react-aihalo {
   /* The numbers this settled on: a hairline band, a soft short glow, and
@@ -309,7 +320,7 @@
      beads out of one gradient. At n = 1 the period is the whole turn and it is
      the single bead it always was. */
   background: repeating-conic-gradient(
-    from var(--td-ai-angle),
+    from calc(var(--td-ai-angle) + var(--td-ai-swing) * 36deg * sin(var(--td-ai-wob))),
     transparent 0turn,
     transparent calc(0.66turn / var(--td-ai-beads, 1)),
     color-mix(in srgb, var(--td-accent) 28%, transparent) calc(0.79turn / var(--td-ai-beads, 1)),
@@ -344,7 +355,7 @@
   inset: calc(var(--td-ai-spread, 5px) * -0.6);
   padding: var(--td-ai-spread, 5px);
   background: repeating-conic-gradient(
-    from var(--td-ai-angle),
+    from calc(var(--td-ai-angle) + var(--td-ai-swing) * 36deg * sin(var(--td-ai-wob))),
     transparent 0turn,
     transparent calc(0.70turn / var(--td-ai-beads, 1)),
     color-mix(in srgb, var(--td-ai-cast-2) 40%, transparent) calc(0.82turn / var(--td-ai-beads, 1)),
@@ -363,16 +374,19 @@
    The animation is on the WRAPPER, so the bead and its cast read the one
    inherited angle. Driving them separately lets them drift apart, and a shadow
    that lags its own light is worse than no shadow. */
-/* The bead never travels at a constant pace, and never stops. `--td-ai-swing`
-   modulates its speed sinusoidally around the ring — slow through the top,
-   quick through the bottom — so it breathes rather than ticks. The variation
-   is baked into the keyframes below, NOT into an easing: `linear` is what
-   keeps the loop seamless, because an easing that slows at both ends of a lap
-   slows to a stop exactly where one lap meets the next. The comment stays
-   above the rule so it still opens with `animation:` on its first line. */
+/* The bead never stops, and never dwells. Two clocks run at once: a constant
+   linear rotation (the base position), and a slower `wobble` at an unrelated
+   period that pushes the bead ahead and behind its mean — see the gradient
+   `from calc(... sin(--td-ai-wob))` above. The sum is a bead that speeds up
+   and slows down as the two clocks drift in and out of phase, so the slow and
+   quick arcs travel around the ring rather than pinning to the top every lap.
+   Both are `linear`, so both loops are seamless. `--td-ai-swing` scales how far
+   the wobble pushes; at 0 the wobble contributes nothing and the pace is flat.
+   Comment above the rule so it still opens with `animation:` on its first line. */
 .td-react-aihalo[data-active="true"]:hover,
 .td-react-aihalo[data-active="true"]:focus-within {
-  animation: td-react-aihalo-travel var(--td-ai-speed, 3.2s) linear infinite;
+  animation: td-react-aihalo-travel var(--td-ai-speed, 3.2s) linear infinite,
+    td-react-aihalo-wobble calc(var(--td-ai-speed, 3.2s) * 0.73) linear infinite;
 }
 .td-react-aihalo[data-active="true"]:hover::after,
 .td-react-aihalo[data-active="true"]:focus-within::after { opacity: 1; }
@@ -381,31 +395,14 @@
 /* Pressed, it runs at double the pace — the control is working, and the light
    says so. Half the duration is exactly twice the pace. */
 .td-react-aihalo[data-active="true"]:active {
-  animation-duration: calc(var(--td-ai-speed, 3.2s) / 2);
+  animation-duration: calc(var(--td-ai-speed, 3.2s) / 2), calc(var(--td-ai-speed, 3.2s) * 0.365);
 }
 
 @keyframes td-react-aihalo-travel {
-  0% { --td-ai-angle: calc((0 - var(--td-ai-swing) / (2 * pi) * sin(0turn)) * 1turn); }
-  5% { --td-ai-angle: calc((0.05 - var(--td-ai-swing) / (2 * pi) * sin(0.05turn)) * 1turn); }
-  10% { --td-ai-angle: calc((0.1 - var(--td-ai-swing) / (2 * pi) * sin(0.1turn)) * 1turn); }
-  15% { --td-ai-angle: calc((0.15 - var(--td-ai-swing) / (2 * pi) * sin(0.15turn)) * 1turn); }
-  20% { --td-ai-angle: calc((0.2 - var(--td-ai-swing) / (2 * pi) * sin(0.2turn)) * 1turn); }
-  25% { --td-ai-angle: calc((0.25 - var(--td-ai-swing) / (2 * pi) * sin(0.25turn)) * 1turn); }
-  30% { --td-ai-angle: calc((0.3 - var(--td-ai-swing) / (2 * pi) * sin(0.3turn)) * 1turn); }
-  35% { --td-ai-angle: calc((0.35 - var(--td-ai-swing) / (2 * pi) * sin(0.35turn)) * 1turn); }
-  40% { --td-ai-angle: calc((0.4 - var(--td-ai-swing) / (2 * pi) * sin(0.4turn)) * 1turn); }
-  45% { --td-ai-angle: calc((0.45 - var(--td-ai-swing) / (2 * pi) * sin(0.45turn)) * 1turn); }
-  50% { --td-ai-angle: calc((0.5 - var(--td-ai-swing) / (2 * pi) * sin(0.5turn)) * 1turn); }
-  55% { --td-ai-angle: calc((0.55 - var(--td-ai-swing) / (2 * pi) * sin(0.55turn)) * 1turn); }
-  60% { --td-ai-angle: calc((0.6 - var(--td-ai-swing) / (2 * pi) * sin(0.6turn)) * 1turn); }
-  65% { --td-ai-angle: calc((0.65 - var(--td-ai-swing) / (2 * pi) * sin(0.65turn)) * 1turn); }
-  70% { --td-ai-angle: calc((0.7 - var(--td-ai-swing) / (2 * pi) * sin(0.7turn)) * 1turn); }
-  75% { --td-ai-angle: calc((0.75 - var(--td-ai-swing) / (2 * pi) * sin(0.75turn)) * 1turn); }
-  80% { --td-ai-angle: calc((0.8 - var(--td-ai-swing) / (2 * pi) * sin(0.8turn)) * 1turn); }
-  85% { --td-ai-angle: calc((0.85 - var(--td-ai-swing) / (2 * pi) * sin(0.85turn)) * 1turn); }
-  90% { --td-ai-angle: calc((0.9 - var(--td-ai-swing) / (2 * pi) * sin(0.9turn)) * 1turn); }
-  95% { --td-ai-angle: calc((0.95 - var(--td-ai-swing) / (2 * pi) * sin(0.95turn)) * 1turn); }
-  100% { --td-ai-angle: calc((1 - var(--td-ai-swing) / (2 * pi) * sin(1turn)) * 1turn); }
+  to { --td-ai-angle: 1turn; }
+}
+@keyframes td-react-aihalo-wobble {
+  to { --td-ai-wob: 1turn; }
 }
 
 @media (max-width: 480px) {
