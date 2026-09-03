@@ -299,3 +299,109 @@ a.td-registry-bottomnav-row { text-decoration: none; color: var(--td-ink); }
   .td-bottomnav-item.td-registry-bottomnav-item,
   .td-registry-bottomnav-row { transition: none; }
 }
+
+/* ── the dial: the bar as an action ────────────────────────────────────────
+   `form="dial"` rests as one circular button and the bar GROWS OUT OF IT.
+
+   The morph is the bar's own box animating — width from the dial's diameter to
+   its full measure, radius from a circle to the pill, and the contents fading
+   in a beat behind. Nothing cross-fades between two elements, because two
+   elements sliding over each other reads as a panel appearing from behind a
+   button; one box changing shape reads as the button BECOMING the bar, which
+   is the thing being described.
+
+   Width is animated rather than `transform: scaleX`, which would stretch the
+   glyphs on the way out and is the usual reason this effect looks cheap. The
+   cost is a layout-animating property, and it is affordable exactly here: one
+   element, one gesture, at the bottom of the screen. */
+.td-registry-bottomnav-root[data-form="dial"] {
+  position: relative;
+  align-items: center;
+  min-height: var(--td-registry-bottomnav-dial-size, 52px);
+}
+
+.td-registry-bottomnav-dial {
+  position: absolute;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: var(--td-registry-bottomnav-dial-size, 52px);
+  height: var(--td-registry-bottomnav-dial-size, 52px);
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--td-ink);
+  background: var(--td-raise-fill);
+  box-shadow: var(--td-raised);
+  transition:
+    opacity var(--td-t-base) var(--td-ease),
+    transform var(--td-t-base) var(--td-ease),
+    box-shadow var(--td-t-base) var(--td-ease);
+}
+.td-registry-bottomnav-dial:active { box-shadow: var(--td-row-press); }
+.td-registry-bottomnav-dial:focus-visible { outline: 2px solid var(--td-accent); outline-offset: 3px; }
+.td-registry-bottomnav-dial-mark { display: grid; place-items: center; font-size: 1.25rem; line-height: 1; }
+
+/* Open: the dial hands its shape to the bar and steps out of the way. It keeps
+   its box so the bar has something to grow FROM, and it stops taking presses
+   so the row underneath is reachable. */
+.td-registry-bottomnav-dial[data-open] {
+  opacity: 0;
+  transform: scale(0.6);
+  pointer-events: none;
+}
+
+/* The bar in dial form: collapsed to the dial's own circle. */
+.td-registry-bottomnav-root[data-form="dial"] .td-bottomnav.td-registry-bottomnav {
+  width: var(--td-registry-bottomnav-dial-size, 52px);
+  min-width: 0;
+  padding: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    width var(--td-t-slow) var(--td-ease),
+    border-radius var(--td-t-slow) var(--td-ease),
+    padding var(--td-t-slow) var(--td-ease),
+    opacity var(--td-t-fast) var(--td-ease);
+}
+.td-registry-bottomnav-root[data-form="dial"] .td-bottomnav.td-registry-bottomnav[data-open] {
+  width: min(var(--td-registry-bottomnav-w, 460px), 100%);
+  padding: 8px;
+  border-radius: 18px;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* The destinations arrive a beat behind the box, so the shape lands first and
+   the contents fill it — rather than a row of icons stretching as it widens. */
+.td-registry-bottomnav-root[data-form="dial"] .td-bottomnav-item.td-registry-bottomnav-item {
+  opacity: 0;
+  transition: opacity var(--td-t-base) var(--td-ease);
+}
+.td-registry-bottomnav-root[data-form="dial"] .td-bottomnav.td-registry-bottomnav[data-open] .td-bottomnav-item.td-registry-bottomnav-item {
+  opacity: 1;
+  transition-delay: 110ms;
+}
+
+/* Reduced motion: the same two states, no morph. The dial still becomes the
+   bar — it just does it instantly, which is the honest reduction. */
+@media (prefers-reduced-motion: reduce) {
+  .td-registry-bottomnav-dial,
+  .td-registry-bottomnav-root[data-form="dial"] .td-bottomnav.td-registry-bottomnav,
+  .td-registry-bottomnav-root[data-form="dial"] .td-bottomnav-item.td-registry-bottomnav-item { transition: none; }
+}
+
+/* The control that puts the bar back in the dial.
+
+   It is a destination-shaped slot rather than a corner affordance, because the
+   bar is a row of equal things and one odd item at the end reads as an error
+   in the row. It takes one of the five slots, which is why `dial` caps its
+   destinations one lower than `bar` does.
+
+   Quieter than a destination at rest — it goes nowhere — and it lights on
+   approach like everything else. */
+.td-registry-bottomnav-collapse .td-registry-bottomnav-icon { color: var(--td-ink-3); }
+.td-registry-bottomnav-collapse:hover .td-registry-bottomnav-icon { color: var(--td-ink); }
+.td-registry-bottomnav-collapse .td-registry-bottomnav-label { color: var(--td-ink-3); }

@@ -60,6 +60,28 @@ export interface BottomNavProps extends Omit<HTMLAttributes<HTMLElement>, "onSel
    */
   placement?: "fixed" | "inline";
   /**
+   * `bar` is the navigation as furniture: always there, always readable.
+   *
+   * `dial` is the navigation as an ACTION. It rests as a single circular
+   * button and the bar grows out of it when pressed — the same width, the same
+   * corner radius, arriving from the circle rather than sliding in behind it.
+   *
+   * Reach for `dial` when the screen is somebody else's — a map, a photograph,
+   * a document being read — and a permanent bar would be spending the bottom
+   * of it on chrome. Reach for `bar` when the destinations are the point,
+   * because a navigation you have to open is a navigation people forget.
+   *
+   * The collapsed circle is a real control with a real name; `dialLabel` is
+   * what it announces.
+   */
+  form?: "bar" | "dial";
+  /** The collapsed dial's accessible name. */
+  dialLabel?: string;
+  /** The control that puts the bar back into the dial. */
+  collapseLabel?: string;
+  /** The dial starts open. Ignored by `bar`, which has no closed state. */
+  defaultOpen?: boolean;
+  /**
    * Hand your router the anchor, for every destination the bar draws. An
    * item's own `renderLink` wins where it has one, so a consumer supplies its
    * router once.
@@ -124,6 +146,10 @@ export const BottomNav = forwardRef<HTMLElement, BottomNavProps>(function Bottom
     defaultExpanded = false,
     onExpandedChange,
     placement = "fixed",
+    form = "bar",
+    dialLabel = "Open navigation",
+    collapseLabel = "Close",
+    defaultOpen = false,
     renderLink,
     className,
     ...props
@@ -131,6 +157,12 @@ export const BottomNav = forwardRef<HTMLElement, BottomNavProps>(function Bottom
   ref,
 ) {
   const base = useId();
+  /* The dial's own open/closed, which is a different question to whether the
+     More sheet is up: a dial can be open with the sheet shut. `bar` has no
+     closed state, so it is always open. */
+  const [dialOpen, setDialOpen] = useState(defaultOpen);
+  const open = form === "bar" || dialOpen;
+  const dialRef = useRef<HTMLButtonElement | null>(null);
   const [uncontrolled, setUncontrolled] = useState(defaultExpanded);
   const isOpen = expanded ?? uncontrolled;
   const barRef = useRef<HTMLElement | null>(null);
@@ -209,12 +241,45 @@ export const BottomNav = forwardRef<HTMLElement, BottomNavProps>(function Bottom
     if (event.target instanceof Element && event.target.closest("a,button")) setOpen(false);
   }, [setOpen]);
 
+  /* Escape closes the dial, and focus goes back to the circle it came out of.
+     A bar that opened on a press has to close on the key that means "undo the
+     thing I just opened", or it is a trap.
+
+     Escape is the keyboard's answer and it is NOT the whole answer: the device
+     this form is for has no Escape key, which is why the bar also carries a
+     visible collapse control and why a press outside it puts the bar away. */
+  useEffect(() => {
+    if (form !== "dial" || !dialOpen) return;
+    const onKey = (event: globalThis.KeyboardEvent) => {
+      if (event.key !== "Escape" || isOpen) return;
+      setDialOpen(false);
+      dialRef.current?.focus();
+    };
+    const onPointerDown = (event: MouseEvent) => {
+      if (isOpen) return;
+      const target = event.target;
+      if (!(target instanceof Node)) return;
+      if (barRef.current?.contains(target) || dialRef.current?.contains(target)) return;
+      setDialOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    document.addEventListener("mousedown", onPointerDown);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("mousedown", onPointerDown);
+    };
+  }, [form, dialOpen, isOpen]);
+
   /* `max` counts DESTINATIONS, and the bar counts SLOTS — More takes one of
      them when there is an overflow. So a bar that fits everything may draw
      five, and a bar that does not draws four and the control. Either way it is
      five slots, which is the ceiling. */
-  const overflowed = items.length > Math.min(max, CEILING);
-  const room = Math.min(max, overflowed ? CEILING - 1 : CEILING);
+  /* `dial` spends one slot on the control that puts the bar away again, so the
+     ceiling is one lower there. A bar you can open and cannot close is not a
+     smaller navigation, it is a navigation with a trapdoor. */
+  const ceiling = form === "dial" ? CEILING - 1 : CEILING;
+  const overflowed = items.length > Math.min(max, ceiling);
+  const room = Math.min(max, overflowed ? ceiling - 1 : ceiling);
   const onBar = items.slice(0, room);
   const rest = items.slice(room);
 
@@ -283,10 +348,28 @@ export const BottomNav = forwardRef<HTMLElement, BottomNavProps>(function Bottom
     <nav
       {...props}
       ref={setBarRef}
+      id={`${base}-bar`}
       aria-label={label}
+      data-form={form}
+      data-open={open ? "" : undefined}
+      /* Hidden from the tree AND from tab order while the dial is shut, so a
+         keyboard does not walk into destinations nobody can see. `inert` is
+         the honest tool; `hidden` would kill the grow animation. */
+      inert={!open || undefined}
       className={cx("td-bottomnav", "td-react-bottomnav", className)}
     >
       {onBar.map(tab)}
+      {form === "dial" ? (
+        <button
+          type="button"
+          className={cx("td-bottomnav-item", "td-react-bottomnav-item", "td-react-bottomnav-collapse")}
+          aria-label={collapseLabel}
+          onClick={() => { setDialOpen(false); setOpen(false); dialRef.current?.focus(); }}
+        >
+          <span className="td-react-bottomnav-icon" aria-hidden="true"><CloseIcon weight={LAMP_WEIGHT} /></span>
+          <span className="td-react-bottomnav-label">{collapseLabel}</span>
+        </button>
+      ) : null}
       {overflowed || children ? (
         <button
           ref={moreRef}
@@ -330,10 +413,42 @@ export const BottomNav = forwardRef<HTMLElement, BottomNavProps>(function Bottom
     </>
   ) : null;
 
+  /* The circle the bar grows out of. It is the SAME box as the bar — same
+     corner radius resolved to a circle, same plate, same shadow — so the two
+     are one object at two sizes rather than a button that reveals a bar. The
+     morph is the bar's own width and radius animating; nothing cross-fades. */
+  const dial = form === "dial" ? (
+    <button
+      ref={dialRef}
+      type="button"
+      className="td-react-bottomnav-dial"
+      aria-label={dialLabel}
+      aria-expanded={dialOpen}
+      aria-controls={`${base}-bar`}
+      data-open={dialOpen ? "" : undefined}
+      onClick={() => {
+        const next = !dialOpen;
+        setDialOpen(next);
+        if (!next) setOpen(false);
+      }}
+    >
+      <span className="td-react-bottomnav-dial-mark" aria-hidden="true">
+        {dialOpen ? <CloseIcon weight={LAMP_WEIGHT} /> : <MoreIcon weight={LAMP_WEIGHT} />}
+      </span>
+    </button>
+  ) : null;
+
+  const cluster = (
+    <>
+      {dial}
+      {bar}
+    </>
+  );
+
   if (placement === "inline") {
     return (
-      <div className="td-react-bottomnav-root" data-placement="inline">
-        {bar}
+      <div className="td-react-bottomnav-root" data-placement="inline" data-form={form}>
+        {cluster}
         {typeof document === "undefined" ? null : createPortal(sheet, document.body)}
       </div>
     );
@@ -347,7 +462,7 @@ export const BottomNav = forwardRef<HTMLElement, BottomNavProps>(function Bottom
   if (typeof document === "undefined") return null;
   return createPortal(
     <>
-      <div className="td-react-bottomnav-root" data-placement="fixed">{bar}</div>
+      <div className="td-react-bottomnav-root" data-placement="fixed" data-form={form}>{cluster}</div>
       {sheet}
     </>,
     document.body,
