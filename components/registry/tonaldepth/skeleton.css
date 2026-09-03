@@ -1,0 +1,69 @@
+/* Skeleton — the shape of content that has not arrived.
+
+   Carved, not painted. A placeholder stands in for content, and content is
+   recessed in this system ([[L32]]), so it is a well at the depth the real
+   thing will occupy. The sweep is light travelling over that groove, not a
+   pale bar sliding along a track — which is why it rides on a gradient of the
+   surface's own highlight rather than on white. */
+
+.td-registry-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--td-sp-5);
+  min-width: 0;
+}
+.td-registry-skeleton[data-shape="block"],
+.td-registry-skeleton[data-shape="circle"] { display: block; }
+
+.td-registry-skeleton-bar {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  border-radius: var(--td-radius-2);
+  background: color-mix(in srgb, var(--td-surface) 94%, black);
+  box-shadow: var(--td-inset-soft);
+}
+
+.td-registry-skeleton[data-shape="text"] .td-registry-skeleton-bar { height: 0.72em; }
+/* Prose ends short of the measure. Every bar full width reads as a table. */
+.td-registry-skeleton[data-shape="text"] .td-registry-skeleton-bar[data-last] { width: 62%; }
+
+.td-registry-skeleton[data-shape="block"] .td-registry-skeleton-bar {
+  height: 100%;
+  min-height: 1em;
+  border-radius: var(--td-radius-6);
+}
+.td-registry-skeleton[data-shape="circle"] .td-registry-skeleton-bar {
+  height: 100%;
+  min-height: 1em;
+  aspect-ratio: 1;
+  border-radius: 50%;
+}
+
+/* The sweep. `transform` on a pseudo-element rather than `background-position`
+   on the bar: the first is composited, the second repaints the element every
+   frame — and a page showing placeholders is already the page with nothing to
+   spare. */
+.td-registry-skeleton[data-animated] .td-registry-skeleton-bar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--td-shadow-light) 55%, transparent) 50%,
+    transparent 100%
+  );
+  transform: translateX(-100%);
+  animation: td-registry-skeleton-sweep 1.4s var(--td-ease) infinite;
+}
+@keyframes td-registry-skeleton-sweep {
+  to { transform: translateX(100%); }
+}
+
+/* A sweep that cannot be turned off is a page that never settles. Reduced
+   motion gets the carved well and nothing moving. */
+@media (prefers-reduced-motion: reduce) {
+  .td-registry-skeleton[data-animated] .td-registry-skeleton-bar::after { animation: none; opacity: 0; }
+}

@@ -1,0 +1,75 @@
+/* Divider — the parting between two things.
+
+   A boundary here is a carved SEAM, never a tinted band ([[L03]]). One
+   `border-bottom` is a line painted on the surface; a seam is the surface
+   parting, and that takes two hairlines — the shade cut in, and the light
+   catching the lip below it. Both are `color-mix` over the shadow tokens, so
+   the pair inverts with the theme instead of needing a dark-mode override. */
+
+.td-registry-divider {
+  --td-divider-shade: color-mix(in srgb, var(--td-shadow-dark) 55%, transparent);
+  --td-divider-lip: color-mix(in srgb, var(--td-shadow-light) 55%, transparent);
+  flex: 0 0 auto;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+/* The hairline is the quieter of the two, for a dense list: a full seam on
+   every row corrugates the plate. Half the shade, and no lip at all — a lip
+   needs room above it to read as light, and a 32px row has none. */
+.td-registry-divider[data-weight="hairline"] {
+  --td-divider-shade: color-mix(in srgb, var(--td-shadow-dark) 34%, transparent);
+  --td-divider-lip: transparent;
+}
+
+.td-registry-divider[data-orientation="horizontal"] {
+  width: 100%;
+  height: 1px;
+  background: var(--td-divider-shade);
+  box-shadow: 0 1px 0 var(--td-divider-lip);
+}
+.td-registry-divider[data-orientation="vertical"] {
+  align-self: stretch;
+  width: 1px;
+  min-height: 1em;
+  background: var(--td-divider-shade);
+  box-shadow: 1px 0 0 var(--td-divider-lip);
+}
+
+/* Pulled in from both ends: a rule spanning a plate divides it into two
+   plates, the same rule inset reads as a groove in one. */
+.td-registry-divider[data-orientation="horizontal"][data-inset] { width: auto; margin-inline: var(--td-sp-7); }
+.td-registry-divider[data-orientation="vertical"][data-inset] { margin-block: var(--td-sp-5); }
+
+/* ── with words in it ──────────────────────────────────────────────────────
+   The label is not sitting on the line: the line stops either side of it. A
+   rule running behind text is the thing that makes a labelled divider look
+   like a mistake, and no amount of background-colour patching fixes it on a
+   surface that is not flat. */
+.td-registry-divider--labelled {
+  display: flex;
+  align-items: center;
+  gap: var(--td-sp-6);
+  width: 100%;
+  height: auto;
+  background: none;
+  box-shadow: none;
+}
+.td-registry-divider--labelled::before,
+.td-registry-divider--labelled::after {
+  content: "";
+  flex: 1 1 auto;
+  height: 1px;
+  background: var(--td-divider-shade);
+  box-shadow: 0 1px 0 var(--td-divider-lip);
+}
+.td-registry-divider-label {
+  flex: 0 0 auto;
+  font-family: var(--td-font-mono);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--td-ink-3);
+}

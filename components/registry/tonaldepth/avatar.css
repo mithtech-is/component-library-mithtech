@@ -1,0 +1,127 @@
+/* Avatar — a person, at the size the row gives them.
+
+   The face is a WELL. A photograph is content and content is recessed
+   ([[L32]]); an avatar raised off the page reads as a button, which it is not
+   unless a consumer wraps it in one. */
+
+.td-registry-avatar {
+  --td-avatar-size: 36px;
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: var(--td-avatar-size);
+  height: var(--td-avatar-size);
+  border-radius: 50%;
+  overflow: visible;
+  background: color-mix(in srgb, var(--td-surface) 94%, black);
+  box-shadow: var(--td-inset-soft);
+  color: var(--td-ink-2);
+  user-select: none;
+}
+
+.td-registry-avatar[data-size="xs"] { --td-avatar-size: 22px; }
+.td-registry-avatar[data-size="sm"] { --td-avatar-size: 28px; }
+.td-registry-avatar[data-size="md"] { --td-avatar-size: 36px; }
+.td-registry-avatar[data-size="lg"] { --td-avatar-size: 52px; }
+
+/* Clipped by its own radius rather than by the housing's `overflow: hidden`:
+   the presence lamp has to sit OUTSIDE the circle, and one `overflow` cannot
+   both clip the photograph and release the lamp. */
+.td-registry-avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+.td-registry-avatar-initials {
+  font-family: var(--td-font-ui);
+  font-size: calc(var(--td-avatar-size) * 0.38);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  color: var(--td-ink-2);
+}
+.td-registry-avatar-icon {
+  display: grid;
+  place-items: center;
+  font-size: calc(var(--td-avatar-size) * 0.46);
+  line-height: 1;
+  color: var(--td-ink-3);
+}
+
+/* Visible to a screen reader, absent from the page. The initials and the glyph
+   are both `aria-hidden`, so without this an avatar announces nothing. */
+.td-registry-avatar-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── presence ──────────────────────────────────────────────────────────────
+   A lamp on the rim, not a dot: a lens seated in a socket cut from the page
+   ground, lit by a named light ([[L15]]). The socket is the ground rather than
+   the avatar's own fill, so the lamp reads as sitting in front of the person
+   rather than on them. */
+.td-registry-avatar-presence {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  place-items: center;
+  width: calc(var(--td-avatar-size) * 0.32);
+  height: calc(var(--td-avatar-size) * 0.32);
+  min-width: 8px;
+  min-height: 8px;
+  border-radius: 50%;
+  background: var(--td-bg);
+  box-shadow: inset 0 1px 2px color-mix(in srgb, var(--td-shadow-dark) 45%, transparent);
+}
+.td-registry-avatar-presence-lamp {
+  width: 62%;
+  height: 62%;
+  border-radius: 50%;
+  background: var(--td-avatar-lamp, var(--td-ink-3));
+  box-shadow: 0 0 var(--td-glow-blur, 6px) var(--td-avatar-lamp, transparent);
+}
+.td-registry-avatar-presence[data-presence="online"] { --td-avatar-lamp: var(--td-green); }
+.td-registry-avatar-presence[data-presence="busy"] { --td-avatar-lamp: var(--td-error); }
+.td-registry-avatar-presence[data-presence="away"] { --td-avatar-lamp: var(--td-warning); }
+/* Offline is unlit — the socket with nothing in it, which is what "not here"
+   looks like. It keeps its shape so the row does not reflow. */
+.td-registry-avatar-presence[data-presence="offline"] { --td-avatar-lamp: var(--td-ink-3); }
+.td-registry-avatar-presence[data-presence="offline"] .td-registry-avatar-presence-lamp { box-shadow: none; opacity: 0.55; }
+
+/* ── the group ─────────────────────────────────────────────────────────────
+   Overlapped, because a row of separated circles is a list. The ring is the
+   page ground rather than a border, so each face reads as being in front of
+   the next rather than outlined. */
+.td-registry-avatargroup {
+  --td-avatar-size: 36px;
+  display: inline-flex;
+  align-items: center;
+}
+.td-registry-avatargroup[data-size="xs"] { --td-avatar-size: 22px; }
+.td-registry-avatargroup[data-size="sm"] { --td-avatar-size: 28px; }
+.td-registry-avatargroup[data-size="md"] { --td-avatar-size: 36px; }
+.td-registry-avatargroup[data-size="lg"] { --td-avatar-size: 52px; }
+
+.td-registry-avatargroup-slot { position: relative; display: inline-flex; }
+.td-registry-avatargroup-slot + .td-registry-avatargroup-slot { margin-inline-start: calc(var(--td-avatar-size) * -0.32); }
+.td-registry-avatargroup-slot .td-registry-avatar {
+  box-shadow: var(--td-inset-soft), 0 0 0 2px var(--td-bg);
+}
+
+/* `+N` is a count, not a person. Same well, no lamp, no name. */
+.td-registry-avatar--more .td-registry-avatar-initials {
+  font-size: calc(var(--td-avatar-size) * 0.32);
+  color: var(--td-ink-3);
+}

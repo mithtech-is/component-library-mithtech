@@ -64,6 +64,9 @@
 @import "./side-tabs.css";
 @import "./site-navigation.css";
 @import "./nav-drawer.css";
+@import "./divider.css";
+@import "./skeleton.css";
+@import "./avatar.css";
 @import "./bottom-nav.css";
 @import "./select.css";
 @import "./tag-input.css";
