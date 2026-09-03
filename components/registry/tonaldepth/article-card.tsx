@@ -1,13 +1,83 @@
 "use client";
 
 import { forwardRef, useEffect, useId, useRef, useState, type HTMLAttributes, type ReactNode } from "react";
-import { CaretLeftIcon as ChevronLeftIcon, CaretRightIcon as ChevronRightIcon, ChartBarIcon as DatasetIcon, CircleIcon as DotIcon, DownloadSimpleIcon as DownloadIcon, CursorClickIcon as InteractiveIcon } from "@phosphor-icons/react";
 import "./tonaldepth-article-card.css";
 
 const LAMP_WEIGHT = "fill" as const;
 
 function cx(...values: Array<string | false | null | undefined>): string {
   return values.filter(Boolean).join(" ");
+}
+
+/**
+ * Microsoft's Fluent System Icons, filled weight, copied in because a registry
+ * item is one self-contained file. Vendored from `@fluentui/svg-icons` and
+ * stripped to `currentColor`, so the component's lamp ladder moves them.
+ */
+interface FluentIconProps extends SVGProps<SVGSVGElement> {
+  /** Edge length. `1em` so the glyph scales with the type it sits beside. */
+  size?: number | string;
+  /** The fill. `currentColor` so the lamp ramp can move it. */
+  color?: string;
+  /**
+   * Swallowed, not forwarded. Fluent marks are filled by construction, so
+   * there is nothing to switch — but call sites pass `weight={LAMP_WEIGHT}`
+   * and `weight` is not an SVG attribute, so React would put it on the DOM.
+   */
+  weight?: string;
+  /** Flip horizontally, for a mark that points. */
+  mirrored?: boolean;
+}
+
+interface FluentGlyphProps extends FluentIconProps {
+  viewBox: string;
+  d: string;
+}
+
+function FluentGlyph({ viewBox, d, size = "1em", color = "currentColor", weight, mirrored, ...props }: FluentGlyphProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox={viewBox}
+      width={size}
+      height={size}
+      fill={color}
+      transform={mirrored ? "scale(-1, 1)" : undefined}
+      {...props}
+    >
+      <path d={d} />
+    </svg>
+  );
+}
+
+/** `chevron_left_24_filled` */
+function ChevronLeftIcon(props: FluentIconProps) {
+  return <FluentGlyph viewBox="0 0 24 24" d="M15.7 4.3a1 1 0 0 1 0 1.4L9.42 12l6.3 6.3a1 1 0 0 1-1.42 1.4l-7-7a1 1 0 0 1 0-1.4l7-7a1 1 0 0 1 1.42 0" {...props} />;
+}
+
+/** `chevron_right_24_filled` */
+function ChevronRightIcon(props: FluentIconProps) {
+  return <FluentGlyph viewBox="0 0 24 24" d="M8.3 4.3a1 1 0 0 0 0 1.4l6.29 6.3-6.3 6.3a1 1 0 1 0 1.42 1.4l7-7a1 1 0 0 0 0-1.4l-7-7a1 1 0 0 0-1.42 0" {...props} />;
+}
+
+/** `data_bar_vertical_24_filled` */
+function DatasetIcon(props: FluentIconProps) {
+  return <FluentGlyph viewBox="0 0 24 24" d="M5.75 3C6.99 3 8 4 8 5.25v13.5a2.25 2.25 0 1 1-4.5 0V5.25C3.5 4 4.5 3 5.75 3m6.5 4c1.24 0 2.25 1 2.25 2.25v9.5a2.25 2.25 0 1 1-4.5 0v-9.5C10 8 11 7 12.25 7m6.5 4c1.24 0 2.25 1 2.25 2.25v5.5a2.25 2.25 0 1 1-4.5 0v-5.5c0-1.24 1-2.25 2.25-2.25" {...props} />;
+}
+
+/** `circle_24_filled` */
+function DotIcon(props: FluentIconProps) {
+  return <FluentGlyph viewBox="0 0 24 24" d="M2 12a10 10 0 1 1 20 0 10 10 0 0 1-20 0" {...props} />;
+}
+
+/** `arrow_download_24_filled` */
+function DownloadIcon(props: FluentIconProps) {
+  return <FluentGlyph viewBox="0 0 24 24" d="M13 3a1 1 0 1 0-2 0v12.09l-3.3-3.3a1 1 0 0 0-1.4 1.42l5 5a1 1 0 0 0 1.4 0l5-5a1 1 0 0 0-1.4-1.42L13 15.1zM5 20a1 1 0 1 0 0 2h14a1 1 0 1 0 0-2z" {...props} />;
+}
+
+/** `cursor_click_24_filled` */
+function InteractiveIcon(props: FluentIconProps) {
+  return <FluentGlyph viewBox="0 0 24 24" d="M9.25 2c.41 0 .75.34.75.75v2.5a.75.75 0 0 1-1.5 0v-2.5c0-.41.34-.75.75-.75M4.47 3.97c.3-.3.77-.3 1.06 0l1.75 1.75a.75.75 0 1 1-1.06 1.06L4.47 5.03a.75.75 0 0 1 0-1.06m9.56 0c.3.3.3.77 0 1.06l-1.75 1.75a.75.75 0 1 1-1.06-1.06l1.75-1.75c.3-.3.77-.3 1.06 0M2.5 8.75c0-.41.34-.75.75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75m6 .74a1.32 1.32 0 0 1 2.18-1l8.46 7.25c.9.78.39 2.27-.8 2.32l-3.85.15c-.41.02-.8.2-1.07.5l-2.62 2.93c-.8.9-2.3.33-2.3-.88z" {...props} />;
 }
 
 export interface TonalDepthArticleCardAuthor {

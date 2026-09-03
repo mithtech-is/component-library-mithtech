@@ -8,17 +8,19 @@
 // as TD glyphs take over roles, because the Phosphor fallback is still a
 // module-scope import of this file.
 /**
- * The system's icon set — TD first, Phosphor for everything else.
+ * The system's icon set — TD first, Fluent for everything else.
  *
  * Every UI icon in TonalDepth comes from here, and no component draws its own
  * `<svg>`. Two libraries feed this module, in a fixed order:
  *
  * 1. **TD** (`./td-icons`) — the library's own glyphs. **It resolves first.**
- * 2. **Phosphor** — the fallback for every role TD does not define, which is
- *    still most of them.
+ * 2. **Fluent** (`./fluent-icons`) — Microsoft's Fluent System Icons at filled
+ *    weight, generated from `tooling/icons/manifest.json` and vendored from
+ *    the CDN at build time. The fallback for every role TD does not define,
+ *    which is still most of them.
  *
  * TD is not a free-for-all second icon set. A role moves to TD only when
- * Phosphor has no glyph for it, or when the one it has reads badly at the size
+ * Fluent has no glyph for it, or when the one it has reads badly at the size
  * the system uses it. Nothing else is added: not Lucide, not Heroicons, not
  * Font Awesome, not an emoji. The only exception is artwork that is not an
  * icon — a company logo, a product mark — which is passed in as a prop by the
@@ -53,43 +55,51 @@
  *
  * ## Adding one
  *
- * Import the component here — from `./td-icons` if TD draws it, from Phosphor
- * otherwise — re-export it under a role name, and use the role name
+ * Add a role to `tooling/icons/manifest.json` and re-run `pnpm icons:build`,
+ * or draw it in `./td-icons` if Fluent has nothing that works — re-export it under a role name, and use the role name
  * everywhere. The indirection is the point: a component says what the icon is
  * *for*, and swapping the glyph is a one-line change in this file rather than
  * a search across the package. A role that moves between the two libraries
  * moves without any component being touched.
  */
 
-export type { IconProps, IconWeight } from "@phosphor-icons/react";
+/* The set's own prop shape, re-exported under the names the library has always
+   used for it. `IconWeight` survives as a type because call sites pass
+   `weight={LAMP_WEIGHT}` and components accept it — the marks here are filled
+   by construction, so it is swallowed rather than honoured. */
+export type { FluentIconProps as IconProps } from "./fluent-icons";
+export type IconWeight = "fill";
 export type { TdIconProps } from "./td-icons";
 
 // ── TD — resolved first ──────────────────────────────────────────────────
-// These three roles are drawn by the library. Everything else falls through
-// to the Phosphor block below.
+// These roles are drawn by the library. Everything else falls through to the
+// Fluent block below.
+//
+// Each was drawn against Phosphor, which this set replaced in
+// `0.1.0-alpha.38`. The REQUIREMENT each one records still holds — it is about
+// what the mark has to do at the size the system draws it, not about who drew
+// the alternative — but whether Fluent now supplies an acceptable equivalent
+// has not been re-checked role by role. That audit is worth doing before
+// drawing an eighth.
 export {
-  // Phosphor's circled check reads as a badge rather than an act of approval,
-  // and it is the same mark as SuccessIcon — an accept button and a success
-  // alert should not be the same glyph.
+  // Must not be the same mark as SuccessIcon: an accept button and a success
+  // alert are different statements. A circled check reads as a badge — a thing
+  // something IS — rather than as an act of approval.
   TdCheckFat as AcceptIcon,
-  // Refusing and dismissing are different acts, and on Phosphor both were
-  // XCircle. TD draws each of them.
+  // Refusing and dismissing are different acts and must not share a glyph.
   TdCancel as CancelIcon,
-  // Phosphor has no bare cross that survives `fill`: its X renders as a filled
-  // square plate with the mark knocked out, and its XCircle is a solid disc
-  // that reads as a hole punched in the surface at the size a dismiss control
-  // uses.
+  // A bare cross. A filled plate with the mark knocked out of it, or a solid
+  // disc, reads as a hole punched in the surface at the size a dismiss control
+  // uses — which is the one move the system forbids.
   TdClose as CloseIcon,
   TdWhatsApp as WhatsAppIcon,
-  // Phosphor's star is an outline at `fill` and pinches at the 14px a rating
-  // uses. Ratings are the only place the system draws one, and it has to be a
-  // solid mark for the half-star clip to read.
+  // Ratings are the only place the system draws a star, and it has to be a
+  // solid mark that holds its points at 14px for the half-star clip to read.
   TdStar as StarIcon,
-  // The two marks a window's traffic lights draw that Phosphor cannot supply:
-  // both of its equivalents (`Minus`, `ArrowsOut`) are stroke-only, and at
-  // `fill` a stroke-only Phosphor glyph is a square plate with the mark knocked
-  // out. At the 6px these are drawn that is a filled square, not a dash. The
-  // close mark is `CloseIcon` above — the same bare cross, at a third the size.
+  // The two marks a window's traffic lights draw. Both are rendered at about
+  // 9px inside a 14px disc, where a thin bar resolves to a hairline and
+  // disappears against a saturated fill — so both are drawn deliberately heavy
+  // for that size. The close mark is `CloseIcon` above, the same bare cross.
   TdMinus as WindowMinimiseIcon,
   TdExpandCorners as WindowZoomIcon,
 } from "./td-icons";
@@ -105,7 +115,7 @@ export {
  */
 export const TD_ICON_ROLES = ["AcceptIcon", "CancelIcon", "CloseIcon", "StarIcon", "WhatsAppIcon", "WindowMinimiseIcon", "WindowZoomIcon"] as const;
 
-// ── Phosphor — the fallback ──────────────────────────────────────────────
+// ── Fluent — the fallback ──────────────────────────────────────────────
 export {
   // ── Actions ────────────────────────────────────────────────────────────
   // Solid by construction, not by weight. Phosphor's `fill` on a stroke-only
@@ -113,94 +123,99 @@ export {
   // knocked out of it — which is why a plain CheckIcon came out as a checkbox.
   // The Circle forms are genuinely solid shapes, so they take the lamp's glow
   // as a solid mark, which is the whole point of the fill rule.
-  TrashIcon as DeleteIcon,
-  PlusIcon as AddIcon,
-  PencilSimpleIcon as EditIcon,
-  DownloadSimpleIcon as DownloadIcon,
-  ArrowRightIcon as ArrowRightIcon,
-  ArrowUpRightIcon as ArrowOutIcon,
-  CaretDownIcon as ChevronDownIcon,
-  CaretRightIcon as ChevronRightIcon,
-  CaretLeftIcon as ChevronLeftIcon,
-  MagnifyingGlassIcon as SearchIcon,
+  DeleteIcon,
+  AddIcon,
+  EditIcon,
+  DownloadIcon,
+  ArrowRightIcon,
+  ArrowOutIcon,
+  ChevronDownIcon,
+  ChevronRightIcon,
+  ChevronLeftIcon,
+  SearchIcon,
   // Two stacked sheets — a shape rather than a stroke, so `fill` renders it as
   // two solid plates rather than knocking the mark out of one.
-  CopyIcon as CopyIcon,
+  CopyIcon,
 
   // ── Selection ──────────────────────────────────────────────────────────
   // The mark inside a checked box, kept on the circled check while accept
   // buttons moved to the TD tick. A checkbox is a state, not an act.
-  CheckCircleIcon as CheckboxMarkIcon,
+  CheckboxMarkIcon,
 
   // ── Channels ───────────────────────────────────────────────────────────
-  PhoneIcon as CallIcon,
-  EnvelopeSimpleIcon as EmailIcon,
-  LinkedinLogoIcon as LinkedInIcon,
-  FacebookLogoIcon as FacebookIcon,
-  InstagramLogoIcon as InstagramIcon,
-  XLogoIcon as XIcon,
-  YoutubeLogoIcon as YouTubeIcon,
+  CallIcon,
+  EmailIcon,
+  LinkedInIcon,
+  FacebookIcon,
+  InstagramIcon,
+  XIcon,
+  YouTubeIcon,
 
   // ── Status ─────────────────────────────────────────────────────────────
-  InfoIcon as InfoIcon,
-  WarningIcon as WarningIcon,
-  WarningCircleIcon as ErrorIcon,
-  CheckCircleIcon as SuccessIcon,
-  CircleIcon as DotIcon,
+  InfoIcon,
+  WarningIcon,
+  ErrorIcon,
+  SuccessIcon,
+  DotIcon,
 
   // ── Theme ──────────────────────────────────────────────────────────────
-  SunIcon as SunIcon,
-  MoonIcon as MoonIcon,
+  SunIcon,
+  MoonIcon,
 
   // ── Generic UI (previews, menus, demos) ────────────────────────────────
-  SquaresFourIcon as SquaresFourIcon,
-  GearIcon as GearIcon,
-  BellIcon as BellIcon,
-  ChatCircleIcon as ChatCircleIcon,
-  CubeIcon as CubeIcon,
-  ListIcon as ListIcon,
+  SquaresFourIcon,
+  GearIcon,
+  BellIcon,
+  ChatCircleIcon,
+  CubeIcon,
+  ListIcon,
   // The overflow role, for what did not fit: a bottom bar's "More", a row's
   // own menu. Three discs at `fill` — a solid mark that glows as a mark, where
   // an ellipsis of outlines would glow as three smudges.
-  DotsThreeIcon as MoreIcon,
-  EnvelopeSimpleIcon as EnvelopeSimpleIcon,
-  PhoneIcon as PhoneIcon,
+  MoreIcon,
+  EnvelopeSimpleIcon,
+  PhoneIcon,
+  // Where a thing is. AddressField's "use my location" control.
+  LocationIcon,
 
   // ── Files and documents ────────────────────────────────────────────────
   // A tree says folder-or-file with its glyph, so the two must read apart at
   // 12px. Phosphor's folder and page are both solid silhouettes at `fill`,
   // which is what the row's ink ladder needs to move them.
-  FolderIcon as FolderIcon,
-  FileIcon as FileIcon,
+  FolderIcon,
+  FileIcon,
 
   // ── Reading ────────────────────────────────────────────────────────────
-  ClockIcon as ReadTimeIcon,
-  CalendarBlankIcon as DateIcon,
+  ReadTimeIcon,
+  DateIcon,
 
   // ── What a piece carries ───────────────────────────────────────────────
   // ArticleCard's "In this piece" chips take their glyph from the asset's
   // kind. `live` and `download` reuse DotIcon and DownloadIcon above — a
   // running tool is a state, and a download is a download — so only the two
   // kinds with nothing to borrow are named here.
-  ChartBarIcon as DatasetIcon,
-  CursorClickIcon as InteractiveIcon,
+  DatasetIcon,
+  InteractiveIcon,
 
   // Canvas controls. A pannable, zoomable map needs zoom, fit and a sound
   // toggle, and every one of those is a lamp — so every one has to be a filled
   // glyph. The outline equivalents render as an empty disc inside IconButton,
   // which is what sent the first consumer back to hand-writing its own button.
-  MagnifyingGlassPlusIcon as ZoomInIcon,
-  MagnifyingGlassMinusIcon as ZoomOutIcon,
+  ZoomInIcon,
+  ZoomOutIcon,
   // Fit-to-bounds, not recentre: the control frames the whole scene. Crosshair
   // reads as "aim at a point", which is a different promise.
-  CornersOutIcon as FitIcon,
-  SpeakerHighIcon as SoundOnIcon,
-  SpeakerSlashIcon as SoundOffIcon,
+  FitIcon,
+  SoundOnIcon,
+  SoundOffIcon,
   // Reset, which is not Fit. `fit` frames whatever is there now; `reset` puts
   // the scene back where it started, including whatever the reader turned off.
   // A canvas usually offers both, and a consumer with only `fit` reached past
   // the set for the second one.
-  ArrowCounterClockwiseIcon as ResetIcon,
+  // Two arrows chasing each other, not one arrow going back. A single
+  // counter-clockwise arrow reads as UNDO — a step reversed — where this is
+  // "put it back the way it was", which is a different act.
+  ResetIcon,
 
   // ── Window actions ─────────────────────────────────────────────────────
   // For a control that goes fullscreen without the traffic lights — a chart
@@ -211,9 +226,9 @@ export {
   // they take the lamp's glow. Phosphor's `Minus` would not: at `fill` it is a
   // square PLATE with the bar knocked out, which is the trap the Actions block
   // above names.
-  ArrowsOutIcon as MaximizeIcon,
-  ArrowsInIcon as MinimizeIcon,
-} from "@phosphor-icons/react";
+  MaximizeIcon,
+  MinimizeIcon,
+} from "./fluent-icons";
 
 /**
  * The weight every icon that acts as a lamp must use.

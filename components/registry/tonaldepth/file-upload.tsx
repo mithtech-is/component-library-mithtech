@@ -1,7 +1,6 @@
 "use client";
 
 import { forwardRef, useEffect, useRef, useState, type DragEvent, type InputHTMLAttributes, type ReactNode, type SVGProps } from "react";
-import { FileIcon } from "@phosphor-icons/react";
 import "./tonaldepth-file-upload.css";
 
 const LAMP_WEIGHT = "fill" as const;
@@ -75,6 +74,52 @@ function TdClose(props: TdIconProps) {
 }
 
 const CloseIcon = TdClose;
+
+/**
+ * Microsoft's Fluent System Icons, filled weight, copied in because a registry
+ * item is one self-contained file. Vendored from `@fluentui/svg-icons` and
+ * stripped to `currentColor`, so the component's lamp ladder moves them.
+ */
+interface FluentIconProps extends SVGProps<SVGSVGElement> {
+  /** Edge length. `1em` so the glyph scales with the type it sits beside. */
+  size?: number | string;
+  /** The fill. `currentColor` so the lamp ramp can move it. */
+  color?: string;
+  /**
+   * Swallowed, not forwarded. Fluent marks are filled by construction, so
+   * there is nothing to switch — but call sites pass `weight={LAMP_WEIGHT}`
+   * and `weight` is not an SVG attribute, so React would put it on the DOM.
+   */
+  weight?: string;
+  /** Flip horizontally, for a mark that points. */
+  mirrored?: boolean;
+}
+
+interface FluentGlyphProps extends FluentIconProps {
+  viewBox: string;
+  d: string;
+}
+
+function FluentGlyph({ viewBox, d, size = "1em", color = "currentColor", weight, mirrored, ...props }: FluentGlyphProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox={viewBox}
+      width={size}
+      height={size}
+      fill={color}
+      transform={mirrored ? "scale(-1, 1)" : undefined}
+      {...props}
+    >
+      <path d={d} />
+    </svg>
+  );
+}
+
+/** `document_24_filled` */
+function FileIcon(props: FluentIconProps) {
+  return <FluentGlyph viewBox="0 0 24 24" d="M12 2v6c0 1.1.9 2 2 2h6v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4c0-1.1.9-2 2-2zm1.5.5V8c0 .28.22.5.5.5h5.5z" {...props} />;
+}
 
 export interface TonalDepthFileUploadProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "type" | "value" | "onChange" | "files" | "title"> {

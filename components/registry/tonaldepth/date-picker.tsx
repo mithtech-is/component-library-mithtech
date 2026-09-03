@@ -1,13 +1,63 @@
 "use client";
 
 import { forwardRef, useEffect, useRef, useState, type ButtonHTMLAttributes, type KeyboardEvent, type ReactNode } from "react";
-import { CaretLeftIcon as ChevronLeftIcon, CaretRightIcon as ChevronRightIcon } from "@phosphor-icons/react";
 import "./tonaldepth-date-picker.css";
 
 const LAMP_WEIGHT = "fill" as const;
 
 function cx(...values: Array<string | false | null | undefined>): string {
   return values.filter(Boolean).join(" ");
+}
+
+/**
+ * Microsoft's Fluent System Icons, filled weight, copied in because a registry
+ * item is one self-contained file. Vendored from `@fluentui/svg-icons` and
+ * stripped to `currentColor`, so the component's lamp ladder moves them.
+ */
+interface FluentIconProps extends SVGProps<SVGSVGElement> {
+  /** Edge length. `1em` so the glyph scales with the type it sits beside. */
+  size?: number | string;
+  /** The fill. `currentColor` so the lamp ramp can move it. */
+  color?: string;
+  /**
+   * Swallowed, not forwarded. Fluent marks are filled by construction, so
+   * there is nothing to switch — but call sites pass `weight={LAMP_WEIGHT}`
+   * and `weight` is not an SVG attribute, so React would put it on the DOM.
+   */
+  weight?: string;
+  /** Flip horizontally, for a mark that points. */
+  mirrored?: boolean;
+}
+
+interface FluentGlyphProps extends FluentIconProps {
+  viewBox: string;
+  d: string;
+}
+
+function FluentGlyph({ viewBox, d, size = "1em", color = "currentColor", weight, mirrored, ...props }: FluentGlyphProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox={viewBox}
+      width={size}
+      height={size}
+      fill={color}
+      transform={mirrored ? "scale(-1, 1)" : undefined}
+      {...props}
+    >
+      <path d={d} />
+    </svg>
+  );
+}
+
+/** `chevron_left_24_filled` */
+function ChevronLeftIcon(props: FluentIconProps) {
+  return <FluentGlyph viewBox="0 0 24 24" d="M15.7 4.3a1 1 0 0 1 0 1.4L9.42 12l6.3 6.3a1 1 0 0 1-1.42 1.4l-7-7a1 1 0 0 1 0-1.4l7-7a1 1 0 0 1 1.42 0" {...props} />;
+}
+
+/** `chevron_right_24_filled` */
+function ChevronRightIcon(props: FluentIconProps) {
+  return <FluentGlyph viewBox="0 0 24 24" d="M8.3 4.3a1 1 0 0 0 0 1.4l6.29 6.3-6.3 6.3a1 1 0 1 0 1.42 1.4l7-7a1 1 0 0 0 0-1.4l-7-7a1 1 0 0 0-1.42 0" {...props} />;
 }
 
 /* ── Date arithmetic, in local civil time ─────────────────────────────── */

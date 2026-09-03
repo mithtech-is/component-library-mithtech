@@ -1,5 +1,4 @@
 import { forwardRef, type AnchorHTMLAttributes, type ButtonHTMLAttributes, type CSSProperties, type DOMAttributes, type ReactNode, type Ref, type SVGProps } from "react";
-import { PhoneIcon as CallIcon, EnvelopeSimpleIcon as EmailIcon } from "@phosphor-icons/react";
 import "./tonaldepth-button.css";
 
 const LAMP_WEIGHT = "fill" as const;
@@ -75,6 +74,57 @@ function TdWhatsApp(props: TdIconProps) {
 const AcceptIcon = TdCheckFat;
 const CancelIcon = TdCancel;
 const WhatsAppIcon = TdWhatsApp;
+
+/**
+ * Microsoft's Fluent System Icons, filled weight, copied in because a registry
+ * item is one self-contained file. Vendored from `@fluentui/svg-icons` and
+ * stripped to `currentColor`, so the component's lamp ladder moves them.
+ */
+interface FluentIconProps extends SVGProps<SVGSVGElement> {
+  /** Edge length. `1em` so the glyph scales with the type it sits beside. */
+  size?: number | string;
+  /** The fill. `currentColor` so the lamp ramp can move it. */
+  color?: string;
+  /**
+   * Swallowed, not forwarded. Fluent marks are filled by construction, so
+   * there is nothing to switch — but call sites pass `weight={LAMP_WEIGHT}`
+   * and `weight` is not an SVG attribute, so React would put it on the DOM.
+   */
+  weight?: string;
+  /** Flip horizontally, for a mark that points. */
+  mirrored?: boolean;
+}
+
+interface FluentGlyphProps extends FluentIconProps {
+  viewBox: string;
+  d: string;
+}
+
+function FluentGlyph({ viewBox, d, size = "1em", color = "currentColor", weight, mirrored, ...props }: FluentGlyphProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox={viewBox}
+      width={size}
+      height={size}
+      fill={color}
+      transform={mirrored ? "scale(-1, 1)" : undefined}
+      {...props}
+    >
+      <path d={d} />
+    </svg>
+  );
+}
+
+/** `call_24_filled` */
+function CallIcon(props: FluentIconProps) {
+  return <FluentGlyph viewBox="0 0 24 24" d="m7.77 2.44 1.08-.35c1-.32 2.09.2 2.52 1.22l.86 2.03c.37.88.16 1.92-.52 2.57l-1.9 1.8a8.68 8.68 0 0 0 3.36 5.77l2.28-.76c.86-.29 1.8.04 2.33.82l1.23 1.8c.62.91.5 2.16-.26 2.93l-.81.82a3 3 0 0 1-3.06.77q-3.8-1.19-7-7.05-3.2-5.88-2.26-9.97a3.3 3.3 0 0 1 2.15-2.4" {...props} />;
+}
+
+/** `mail_24_filled` */
+function EmailIcon(props: FluentIconProps) {
+  return <FluentGlyph viewBox="0 0 24 24" d="M22 8.6v8.15a3.25 3.25 0 0 1-3.07 3.24l-.18.01H5.25a3.25 3.25 0 0 1-3.24-3.07L2 16.75V8.61l9.65 5.05c.22.12.48.12.7 0zM5.25 4h13.5a3.25 3.25 0 0 1 3.23 2.92L12 12.15 2.02 6.92a3.25 3.25 0 0 1 3.04-2.91zh13.5z" {...props} />;
+}
 
 export type TonalDepthButtonVariant =
   // Emphasis. `primary` is the design system's own primary button: the surface

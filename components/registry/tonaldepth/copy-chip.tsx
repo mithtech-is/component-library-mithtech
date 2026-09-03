@@ -1,7 +1,6 @@
 "use client";
 
 import { forwardRef, useCallback, useEffect, useRef, useState, type ButtonHTMLAttributes, type ReactNode, type SVGProps } from "react";
-import { CopyIcon } from "@phosphor-icons/react";
 import "./tonaldepth-copy-chip.css";
 
 const LAMP_WEIGHT = "fill" as const;
@@ -61,6 +60,52 @@ function TdCheckFat(props: TdIconProps) {
 }
 
 const AcceptIcon = TdCheckFat;
+
+/**
+ * Microsoft's Fluent System Icons, filled weight, copied in because a registry
+ * item is one self-contained file. Vendored from `@fluentui/svg-icons` and
+ * stripped to `currentColor`, so the component's lamp ladder moves them.
+ */
+interface FluentIconProps extends SVGProps<SVGSVGElement> {
+  /** Edge length. `1em` so the glyph scales with the type it sits beside. */
+  size?: number | string;
+  /** The fill. `currentColor` so the lamp ramp can move it. */
+  color?: string;
+  /**
+   * Swallowed, not forwarded. Fluent marks are filled by construction, so
+   * there is nothing to switch — but call sites pass `weight={LAMP_WEIGHT}`
+   * and `weight` is not an SVG attribute, so React would put it on the DOM.
+   */
+  weight?: string;
+  /** Flip horizontally, for a mark that points. */
+  mirrored?: boolean;
+}
+
+interface FluentGlyphProps extends FluentIconProps {
+  viewBox: string;
+  d: string;
+}
+
+function FluentGlyph({ viewBox, d, size = "1em", color = "currentColor", weight, mirrored, ...props }: FluentGlyphProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox={viewBox}
+      width={size}
+      height={size}
+      fill={color}
+      transform={mirrored ? "scale(-1, 1)" : undefined}
+      {...props}
+    >
+      <path d={d} />
+    </svg>
+  );
+}
+
+/** `copy_24_filled` */
+function CopyIcon(props: FluentIconProps) {
+  return <FluentGlyph viewBox="0 0 24 24" d="M8.5 13.75c0 2.35 1.9 4.25 4.25 4.25h1.74a3.25 3.25 0 0 1-3.24 3h-5A3.25 3.25 0 0 1 3 17.75v-7.5C3 8.45 4.46 7 6.25 7H8.5zM17.75 3C19.55 3 21 4.46 21 6.25v7.5c0 1.8-1.46 3.25-3.25 3.25h-5a3.25 3.25 0 0 1-3.25-3.25v-7.5C9.5 4.45 10.96 3 12.75 3z" {...props} />;
+}
 
 export interface TonalDepthCopyChipProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "value" | "children"> {
   /** The text put on the clipboard. */

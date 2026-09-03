@@ -19,6 +19,36 @@ import { resolve } from "node:path";
 
 const ROOT = resolve(import.meta.dirname, "../..");
 const SVG_DIR = resolve(import.meta.dirname, "svg");
+const REFRESH = process.argv.includes("--refresh");
+
+/**
+ * Where a mark comes from when it is re-fetched.
+ *
+ * thesvg.org serves its catalogue from a public repository through jsDelivr,
+ * which is what makes it usable as a build-time source: a pinned URL per slug,
+ * no scraping, no API key. Same arrangement as the UI set in tooling/icons —
+ * the CDN is where the artwork COMES FROM, and the vendored copy in `svg/` is
+ * what the build actually reads, so a machine with no network still builds.
+ *
+ * `--refresh` is the only thing that goes to the network. A mark someone hands
+ * us directly is dropped into `svg/` by hand and simply never re-fetched.
+ */
+/* `mono`, not `default`. The default export is full brand artwork — clip
+   paths, gradients, several fills — and every mark in this manifest is `mode:
+   mono`, a single path the component inks through `currentColor`. Fetching the
+   colour version flattened the clipPath rect into the mark and drew Facebook
+   and Instagram as solid black squares. */
+const BRAND_CDN = (slug) => `https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/${slug}/mono.svg`;
+
+async function refreshMark(slug) {
+  const response = await fetch(BRAND_CDN(slug));
+  if (!response.ok) {
+    console.warn(`  ${slug}: thesvg.org returned ${response.status} — keeping the vendored copy`);
+    return;
+  }
+  await writeFile(resolve(SVG_DIR, `${slug}.svg`), await response.text());
+  console.log(`  ${slug}: refreshed`);
+}
 const MANIFEST = resolve(import.meta.dirname, "manifest.json");
 const TARGET = resolve(ROOT, "components/packages/react/src/td-brands.tsx");
 const CHECK = process.argv.includes("--check");
@@ -109,6 +139,7 @@ async function build() {
   const manifest = JSON.parse(await readFile(MANIFEST, "utf8"));
   const marks = [];
   for (const brand of manifest.brands) {
+    if (REFRESH) await refreshMark(brand.slug);
     const svg = await readFile(resolve(SVG_DIR, `${brand.slug}.svg`), "utf8");
     const { viewBox, inner } = parseSvg(svg);
     marks.push(component({ ...brand, viewBox }, neutralise(inner, brand.preserveFills)));

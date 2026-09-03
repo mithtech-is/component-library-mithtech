@@ -1,7 +1,6 @@
 "use client";
 
 import { forwardRef, useCallback, useEffect, useId, useRef, useState, type ButtonHTMLAttributes, type FormEvent, type InputHTMLAttributes, type KeyboardEvent, type ReactNode, type SVGProps } from "react";
-import { MagnifyingGlassIcon as SearchIcon } from "@phosphor-icons/react";
 import "./tonaldepth-search-bar.css";
 
 const LAMP_WEIGHT = "fill" as const;
@@ -75,6 +74,52 @@ function TdClose(props: TdIconProps) {
 }
 
 const CloseIcon = TdClose;
+
+/**
+ * Microsoft's Fluent System Icons, filled weight, copied in because a registry
+ * item is one self-contained file. Vendored from `@fluentui/svg-icons` and
+ * stripped to `currentColor`, so the component's lamp ladder moves them.
+ */
+interface FluentIconProps extends SVGProps<SVGSVGElement> {
+  /** Edge length. `1em` so the glyph scales with the type it sits beside. */
+  size?: number | string;
+  /** The fill. `currentColor` so the lamp ramp can move it. */
+  color?: string;
+  /**
+   * Swallowed, not forwarded. Fluent marks are filled by construction, so
+   * there is nothing to switch — but call sites pass `weight={LAMP_WEIGHT}`
+   * and `weight` is not an SVG attribute, so React would put it on the DOM.
+   */
+  weight?: string;
+  /** Flip horizontally, for a mark that points. */
+  mirrored?: boolean;
+}
+
+interface FluentGlyphProps extends FluentIconProps {
+  viewBox: string;
+  d: string;
+}
+
+function FluentGlyph({ viewBox, d, size = "1em", color = "currentColor", weight, mirrored, ...props }: FluentGlyphProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox={viewBox}
+      width={size}
+      height={size}
+      fill={color}
+      transform={mirrored ? "scale(-1, 1)" : undefined}
+      {...props}
+    >
+      <path d={d} />
+    </svg>
+  );
+}
+
+/** `search_24_filled` */
+function SearchIcon(props: FluentIconProps) {
+  return <FluentGlyph viewBox="0 0 24 24" d="M15.84 17.37a8 8 0 1 1 1.43-1.4l4.43 4.31a1 1 0 1 1-1.4 1.44zM17 11a6 6 0 1 0-12 0 6 6 0 0 0 12 0" {...props} />;
+}
 
 export interface TonalDepthSearchSuggestion {
   id: string;

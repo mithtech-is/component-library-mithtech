@@ -120,6 +120,9 @@ const ITEMS = {
   "file-preview": { module: "file-preview", symbols: ["FilePreview", "FilePreviewList"] },
   "sub-nav": { module: "sub-nav", symbols: ["SubNav"] },
   "bottom-nav": { module: "bottom-nav", symbols: ["BottomNav"] },
+  "divider": { module: "divider", symbols: ["Divider"] },
+  "skeleton": { module: "skeleton", symbols: ["Skeleton"] },
+  "avatar": { module: "avatar", symbols: ["Avatar", "AvatarGroup", "initialsOf"] },
   "page-nav": { module: "page-nav", symbols: ["PageNav"] },
   "chat-launcher": { module: "chat-launcher", symbols: ["ChatLauncher", "AiHalo"] },
   "confirm-button": { module: "confirm-button", symbols: ["ConfirmButton"], needs: [{ item: "button", symbols: ["Button"] }] },
@@ -127,6 +130,13 @@ const ITEMS = {
   "spotlight": { module: "spotlight", symbols: ["Spotlight"] },
   "footer": { module: "footer", symbols: ["Footer", "FooterGrid", "FooterBrand", "FooterColumn", "FooterContact", "FooterSocial", "FooterBottom"] },
   "window-controls": { module: "window-controls", symbols: ["WindowControls"] },
+  /* The canvas composes the library rather than redrawing it: the control
+     cluster is IconButtons carrying the set's own filled glyphs, and the
+     gesture hint is a Badge. A registry copy has no package to import them
+     from, so both come across with it. */
+  "canvas": { module: "canvas", symbols: ["Canvas", "CanvasControls"], needs: [{ item: "icon-button", symbols: ["IconButton"] }, { item: "badge", symbols: ["Badge"] }, { item: "frame", symbols: ["Frame"] }] },
+  "canvas-panel": { module: "canvas-panel", symbols: ["CanvasPanel"], needs: [{ item: "icon-button", symbols: ["IconButton"] }] },
+  "canvas-node": { module: "canvas-node", symbols: ["CanvasNode"] },
 };
 
 /**
@@ -273,6 +283,7 @@ function moduleBody(moduleSource) {
 
 const ICONS_SOURCE = await readFile(resolve(PACKAGE_SRC, "icons.ts"), "utf8");
 const TD_ICONS_SOURCE = await readFile(resolve(PACKAGE_SRC, "td-icons.tsx"), "utf8");
+const FLUENT_ICONS_SOURCE = await readFile(resolve(PACKAGE_SRC, "fluent-icons.tsx"), "utf8");
 const TD_BRANDS_SOURCE = await readFile(resolve(PACKAGE_SRC, "td-brands.tsx"), "utf8");
 
 /**
@@ -293,13 +304,37 @@ function aliasBlock(from) {
   );
 }
 
-/** Role name -> Phosphor export, so the registry can never name a glyph the
- *  package does not. */
-const ICON_ALIASES = aliasBlock("@phosphor-icons/react");
+/**
+ * Roles a block re-exports under their own name, with no `as`.
+ *
+ * `./fluent-icons` is generated with one component PER ROLE, so it needs no
+ * aliasing — which the `as` form above cannot see.
+ */
+function plainBlock(from) {
+  const escaped = from.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const match = ICONS_SOURCE.match(new RegExp(`export \\{([^}]*)\\} from "${escaped}";`));
+  if (!match) return {};
+  const names = match[1]
+    .split("\n")
+    .map(line => line.replace(/\/\/.*$/, "").trim())
+    .flatMap(line => line.split(","))
+    .map(part => part.trim())
+    .filter(part => /^[A-Za-z_$][\w$]*$/.test(part));
+  return Object.fromEntries(names.map(name => [name, name]));
+}
 
-/** Role name -> TD glyph component. These resolve first; anything absent here
- *  falls through to Phosphor. */
+/** Role name -> TD glyph component. These resolve first. */
 const TD_ALIASES = aliasBlock("./td-icons");
+
+/**
+ * Role name -> Fluent glyph component.
+ *
+ * Both sets are now drawn IN THIS REPOSITORY — TD by hand, Fluent generated
+ * from vendored artwork — so a registry item can import neither. Every glyph it
+ * names is pasted into it, the way TD's always were. There is no npm icon
+ * dependency left for a copied item to declare.
+ */
+const FLUENT_ALIASES = plainBlock("./fluent-icons");
 
 /** td-icons.tsx split into top-level declarations, indexed by the names each
  *  one declares — the same shape buildItem walks for a component module. */
@@ -383,6 +418,50 @@ function brandImport(moduleSource, body) {
   return { inline: `${TD_BRAND_BANNER}${declarations}\n\n`, reactSpecifiers: reactImportSpecifiers(TD_BRANDS_SOURCE) };
 }
 
+const FLUENT_ICON_CHUNKS = (() => {
+  // The generated module's own header explains how to add a mark to the
+  // package. A registry item has no package to add one to, so it is dropped
+  // here and replaced by FLUENT_ICON_BANNER on the way out.
+  const body = moduleBody(FLUENT_ICONS_SOURCE)
+    .replace(/^\s*\/\/[^\n]*\n/, "")
+    .replace(/^\s*\/\*\*[\s\S]*?\*\/\s*/, "");
+  const chunks = topLevelChunks(body)
+    .map(text => ({ text, names: declaredNames(text), refs: referencedNames(text) }));
+  const byName = new Map();
+  for (const chunk of chunks) for (const name of chunk.names) byName.set(name, chunk);
+  return { chunks, byName };
+})();
+
+const FLUENT_ICON_BANNER = `/**
+ * Microsoft's Fluent System Icons, filled weight, copied in because a registry
+ * item is one self-contained file. Vendored from \`@fluentui/svg-icons\` and
+ * stripped to \`currentColor\`, so the component's lamp ladder moves them.
+ */
+`;
+
+/**
+ * The Fluent glyphs an item needs, as source to paste into it.
+ *
+ * Same answer as the TD set, for the same reason: the artwork lives in this
+ * repository rather than in a package a consumer could install, so it travels
+ * inside the item. This is why a copied item now declares no icon dependency
+ * at all.
+ */
+function fluentIconSource(roles) {
+  const keep = new Set();
+  const queue = roles.map(role => FLUENT_ALIASES[role]);
+  while (queue.length) {
+    const name = queue.pop();
+    const chunk = FLUENT_ICON_CHUNKS.byName.get(name);
+    if (!chunk || keep.has(chunk)) continue;
+    keep.add(chunk);
+    for (const ref of chunk.refs) if (FLUENT_ICON_CHUNKS.byName.has(ref)) queue.push(ref);
+  }
+  const declarations = FLUENT_ICON_CHUNKS.chunks.filter(chunk => keep.has(chunk))
+    .map(chunk => chunk.text.replace(/^export /gm, "")).join("\n\n");
+  return `${FLUENT_ICON_BANNER}${declarations}\n\n`;
+}
+
 function tdIconSource(roles) {
   const keep = new Set();
   const queue = roles.map(role => TD_ALIASES[role]);
@@ -417,21 +496,29 @@ function iconImport(moduleSource, body) {
     .filter(name => new RegExp(`\\b${name.replace(/^type\s+/, "")}\\b`).test(body));
   if (!wanted.length) return null;
 
-  // LAMP_WEIGHT is a package constant, not a Phosphor export — inline it.
+  // LAMP_WEIGHT is a package constant, not an export of either set — inline it.
   const needsWeight = wanted.includes("LAMP_WEIGHT");
   const roles = wanted.filter(name => name !== "LAMP_WEIGHT");
   const drawnHere = roles.filter(role => role in TD_ALIASES);
-  const aliased = roles.filter(role => !(role in TD_ALIASES)).map(role => {
-    const real = ICON_ALIASES[role];
-    if (!real) throw new Error(`icons.ts exports ${role} but generate.mjs can resolve it to neither a Phosphor export nor a TD glyph`);
-    return real === role ? role : `${real} as ${role}`;
-  });
+  const fromFluent = roles.filter(role => !(role in TD_ALIASES));
+  for (const role of fromFluent) {
+    if (!(role in FLUENT_ALIASES)) {
+      throw new Error(`icons.ts exports ${role} but generate.mjs can resolve it to neither a Fluent mark nor a TD glyph`);
+    }
+  }
+  /* No import line at all any more. Both sets are drawn in this repository, so
+     every glyph an item names is pasted into it — which is what finally makes a
+     copied item dependency-free. It used to declare `@phosphor-icons/react`. */
+  const reactSpecifiers = [
+    ...(drawnHere.length ? reactImportSpecifiers(TD_ICONS_SOURCE) : []),
+    ...(fromFluent.length ? reactImportSpecifiers(FLUENT_ICONS_SOURCE) : []),
+  ];
   return {
-    line: aliased.length ? `import { ${aliased.join(", ")} } from "@phosphor-icons/react";` : null,
+    line: null,
     weight: needsWeight ? 'const LAMP_WEIGHT = "fill" as const;\n\n' : "",
-    inline: drawnHere.length ? tdIconSource(drawnHere) : "",
+    inline: `${drawnHere.length ? tdIconSource(drawnHere) : ""}${fromFluent.length ? fluentIconSource(fromFluent) : ""}`,
     // The glyphs bring their own React types with them.
-    reactSpecifiers: drawnHere.length ? reactImportSpecifiers(TD_ICONS_SOURCE) : [],
+    reactSpecifiers: [...new Set(reactSpecifiers)],
   };
 }
 
@@ -496,11 +583,17 @@ function buildItem(itemName, spec, moduleSource) {
   for (const match of `${inline}${body}`.matchAll(/\b[A-Za-z_$][\w$]*\b/g)) used.add(match[0]);
   const fromReact = reactImportSpecifiers(moduleSource);
   const extraReact = [...(icons?.reactSpecifiers ?? []), ...(brands?.reactSpecifiers ?? [])];
+  /* The name the BODY uses, which is the local one: `type PointerEvent as
+     ReactPointerEvent` is referenced as `ReactPointerEvent`. Matching on the
+     imported name instead dropped every aliased specifier from the copy — and
+     silently, because a specifier that is filtered out leaves no trace. The
+     registry file then referenced a type it had not imported. */
+  const localName = specifier => specifier.replace(/^type\s+/, "").split(/\s+as\s+/).pop();
   const specifiers = [...fromReact, ...extraReact.filter(name => !fromReact.includes(name))]
-    .filter(specifier => used.has(specifier.replace(/^type\s+/, "")));
+    .filter(specifier => used.has(localName(specifier)));
 
   const domSpecifiers = reactDomImportSpecifiers(moduleSource)
-    .filter(specifier => used.has(specifier.replace(/^type\s+/, "")));
+    .filter(specifier => used.has(localName(specifier)));
 
   const head = [];
   if (CLIENT_HOOKS.test(body)) head.push('"use client";', "");
@@ -537,7 +630,7 @@ const modules = (await readdir(PACKAGE_SRC))
   // its sibling — a generated asset module (from tooling/brands), not a
   // component, and shipped via the `./brands` package subpath rather than a
   // registry item.
-  .filter(name => name !== "td-icons" && name !== "td-brands");
+  .filter(name => name !== "td-icons" && name !== "td-brands" && name !== "fluent-icons");
 const orphans = modules.filter(name => !covered.has(name));
 if (orphans.length) {
   console.error(`Package modules with no registry item: ${orphans.join(", ")}`);
