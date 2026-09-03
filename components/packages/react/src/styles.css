@@ -83,6 +83,9 @@
 @import "./toc.css";
 @import "./tooltip.css";
 @import "./window-controls.css";
+@import "./canvas.css";
+@import "./canvas-panel.css";
+@import "./canvas-node.css";
 
 /* Rules below re-declare names the design system already owns. They stay in the
    aggregate stylesheet only: a consumer serving its own `.td-*` layer would get

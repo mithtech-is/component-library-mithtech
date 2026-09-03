@@ -1,0 +1,85 @@
+/* CanvasNode — one thing on the plane.
+
+   Geometry and the button reset only. The surface, the radius and the lift
+   arrive from `.td-card-surface` on the same element, which is the point: a
+   node is the system's own card, standing in world space. */
+
+.td-react-canvas-node {
+  position: absolute;
+  appearance: none;
+  border: 0;
+  margin: 0;
+  padding: var(--td-sp-6) var(--td-sp-7);
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--td-sp-3);
+  /* The card is raised; a node has to sit above the connectors drawn under it
+     without needing a z-index per node. */
+  isolation: isolate;
+}
+
+.td-react-canvas-node:focus-visible { outline: 2px solid var(--td-accent); outline-offset: 3px; }
+
+/* ── The category edge ─────────────────────────────────────────────────
+   A pseudo-element, not `box-shadow: inset`. `box-shadow` is a single
+   property, so an inset edge REPLACES `--td-raised` and the card comes out
+   flat — which is the trade every hand-built node makes without noticing, and
+   the reason a map full of them stops reading as this design system at all.
+   Drawn as a bar instead, the raise survives in every state. */
+.td-react-canvas-node[data-accent]::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 3px;
+  background: var(--td-canvas-node-accent, var(--td-accent));
+  /* Follows the card's own corner, so the bar ends where the plate ends. */
+  border-start-start-radius: inherit;
+  border-end-start-radius: inherit;
+}
+
+.td-react-canvas-node-title {
+  /* `.td-display-sm` carries the face, the size and the case. What is left is
+     how it sits in the card. */
+  display: block;
+}
+
+.td-react-canvas-node-sub {
+  font-family: var(--td-font-sans);
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--td-ink-2);
+}
+
+/* ── The state ladder ──────────────────────────────────────────────────
+   Depth and ink, never a fill: a filled node would spend the one signal this
+   system reserves for category on saying "this one" ([[L11]]). */
+
+/* The one being read. Pressed INTO the plane rather than lifted out of it —
+   the reader has opened it, so it is the thing they are inside. */
+.td-react-canvas-node--selected,
+.td-react-canvas-node[aria-pressed="true"] {
+  box-shadow:
+    inset 2px 2px 6px color-mix(in srgb, var(--td-shadow-dark) 46%, transparent),
+    inset -1.5px -1.5px 4px color-mix(in srgb, var(--td-shadow-light) 30%, transparent),
+    0 0 0 1px var(--td-edge);
+}
+
+/* Context, not noise: the siblings of what is open stay legible and stay
+   clickable, they just stop competing. */
+.td-react-canvas-node[data-dimmed] {
+  opacity: 0.55;
+  filter: saturate(0.7);
+  transition: opacity var(--td-t-base) var(--td-ease), filter var(--td-t-base) var(--td-ease);
+}
+.td-react-canvas-node[data-dimmed]:hover,
+.td-react-canvas-node[data-dimmed]:focus-visible { opacity: 1; filter: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .td-react-canvas-node[data-dimmed] { transition: none; }
+}

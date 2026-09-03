@@ -1,0 +1,113 @@
+/* CanvasPanel — the reading panel that floats over a Canvas.
+
+   Geometry only. The surface, radius and lift come from
+   `.td-card-surface-static` on the same element, and `td-floating` is what
+   keeps them: a Frame's well flattens any plate inside it, which would strip
+   this one and run the map through its text. */
+
+.td-registry-canvas-panel {
+  position: absolute;
+  inset-block: var(--td-sp-6);
+  right: var(--td-sp-6);
+  z-index: 40;
+  width: var(--td-canvas-panel-width, 380px);
+  max-width: calc(100% - var(--td-sp-12));
+  overflow: hidden;
+  /* The column `.td-panel` would have supplied, which this cannot wear — see
+     the component's doc comment. */
+  display: flex;
+  flex-direction: column;
+  gap: var(--td-sp-6);
+  padding: var(--td-sp-8);
+}
+.td-registry-canvas-panel[data-side="left"] { right: auto; left: var(--td-sp-6); }
+
+/* A canvas taller than the screen cannot pin a panel to itself and have it
+   stay in view, so this one pins to the viewport instead. */
+.td-registry-canvas-panel[data-placement="fixed"] {
+  position: fixed;
+  inset-block: 9vh;
+  right: var(--td-sp-8);
+}
+.td-registry-canvas-panel[data-placement="fixed"][data-side="left"] { right: auto; left: var(--td-sp-8); }
+
+/* The head holds its place while the body scrolls. */
+.td-registry-canvas-panel-head {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--td-sp-4);
+}
+
+/* The category hue, on the reading edge. An inset shadow rather than a border,
+   so it adds nothing to the box and cannot move the text beside it; and only
+   when an accent was actually given — an undefined category should draw no
+   edge at all rather than defaulting to one. */
+.td-registry-canvas-panel[style*="--td-canvas-panel-accent"] .td-registry-canvas-panel-head {
+  box-shadow: inset 3px 0 0 var(--td-canvas-panel-accent);
+  padding-left: var(--td-sp-6);
+}
+
+.td-registry-canvas-panel-title {
+  font-family: var(--td-font-ui);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--td-ink);
+  line-height: 1.3;
+}
+
+/* ── The scroll region ─────────────────────────────────────────────────
+   `flex: 1 1 0` and `min-height: 0`, together, and neither is optional. A flex
+   item's automatic minimum size is its CONTENT, so a body left at `min-height:
+   auto` refuses to shrink: it pushes the actions out of the panel, the panel
+   clips them, and the overflow is silent because this system hides native
+   scrollbars. That is the same failure the Scroll regions page records one
+   level up, and it is the reason this component owns the scrolling rather than
+   leaving it to the caller. */
+.td-registry-canvas-panel-body {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: flex;
+  flex-direction: column;
+  gap: var(--td-sp-5);
+}
+
+/* The way out and the way deeper, pinned to the foot outside the scroll. */
+.td-registry-canvas-panel-actions {
+  flex: 0 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--td-sp-4);
+  padding-top: var(--td-sp-6);
+}
+
+/* A reading surface wants a pointer, and the canvas behind it does not get the
+   drag that starts here. */
+.td-registry-canvas-panel { cursor: auto; }
+
+/* Below the breakpoint the canvas is read rather than driven, and a 380px
+   panel over a phone-width map covers the thing it is explaining. The page
+   renders the same content as prose instead. */
+@media (max-width: 1023px) {
+  .td-registry-canvas-panel[data-placement="absolute"] { display: none; }
+}
+
+/* The close button is a panel-head control, not a page control: `.td-glowicon`
+   is 42px, which is the right size floating over a map and too big sitting
+   beside a 15px title. Compounded so it beats the base without depending on
+   which stylesheet a bundler emitted last. */
+.td-glowicon.td-registry-canvas-panel-close { width: 30px; height: 30px; }
+.td-glowicon.td-registry-canvas-panel-close svg { width: 15px; height: 15px; }
+
+/* The base recipe this panel wears, re-declared because a registry consumer
+   installs files rather than a package and has no `tonaldepth-core` to inherit
+   it from. Same values as the design system's own. */
+.td-card-surface-static {
+  background: var(--td-surface);
+  border-radius: 18px;
+  box-shadow: var(--td-raised);
+  min-width: 0;
+}

@@ -1,0 +1,201 @@
+/* Canvas — the pannable, zoomable plane and the chrome around it.
+
+   Nothing in `packages/core` draws a canvas, so this stylesheet is the whole
+   component rather than the usual deltas over a `.td-*` base. Everything here
+   is GEOMETRY: the surface, the radius and the lift arrive from
+   `.td-card-surface-static` on the same element, and every control inside
+   brings its own housing. */
+
+.td-registry-canvas {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  outline: none;
+  /* `svh`, not `vh`: a mobile URL bar collapsing mid-pan resizes the canvas
+     and throws the camera off whatever the reader was reading. No min-height
+     floor, either — a caller setting an explicit height should not also have
+     to unset a minimum it never asked for. */
+  height: var(--td-canvas-height, 76svh);
+  /* The ground defaults to the page's own, so a canvas follows the theme. The
+     system scopes its dark ramp at `:root`, so a section cannot flip the tokens
+     for its own subtree — a canvas that painted its own dark ground would be a
+     second design language living inside the first. `background` overrides it
+     for a map that needs a ground of its own, and a value given there is given
+     for BOTH themes unless it is a token. */
+  background: var(--td-canvas-ground, var(--td-bg));
+  --td-canvas-hud-inset: var(--td-sp-6);
+}
+
+/* A canvas the caller has housed — in a Frame, or on a canvas page — paints
+   nothing: the well is the housing, and painting `--td-bg` over a CARVED well
+   lays an opaque rectangle of the well's own colour across the carve and
+   erases it in both themes.
+
+   `--standalone` is the exception the takeover needs. A fullscreen canvas has
+   no housing left around it, so a transparent one shows the page straight
+   through the map. */
+.td-registry-canvas:not(.td-card-surface-static):not(.td-registry-canvas--standalone) {
+  background: var(--td-canvas-ground, transparent);
+  border-radius: 0;
+}
+.td-registry-canvas--standalone { background: var(--td-canvas-ground, var(--td-bg)); }
+
+/* The head of a housed canvas: the cluster, then whatever else the caller put
+   beside it. */
+.td-registry-canvas-head {
+  display: flex;
+  align-items: center;
+  gap: var(--td-sp-4);
+  flex-wrap: wrap;
+}
+
+/* Taking over the display.
+
+   The canvas covers the viewport itself rather than using the Fullscreen API,
+   because every overlay it opens portals to `document.body` — and a fullscreen
+   ELEMENT that excludes the body leaves those rendering where the screen is
+   not looking. */
+.td-registry-canvas--fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: var(--td-canvas-fullscreen-z, 90);
+  height: 100%;
+  border-radius: 0;
+}
+/* The page behind a taken-over canvas must not scroll under it. */
+:root:has(.td-registry-canvas--fullscreen) { overflow: hidden; }
+
+.td-registry-canvas:focus-visible { outline: 2px solid var(--td-accent); outline-offset: -2px; }
+
+/* ── The camera stack ──────────────────────────────────────────────────
+   The viewport is the clipping window the camera pans inside; the world is the
+   transformed plane the children sit on. The world is absolutely positioned so
+   it has an origin to be transformed about — without it the plane has no
+   coordinate space and the map draws nothing. */
+.td-registry-canvas-viewport {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  /* The camera owns the gesture, so the browser must not also scroll or
+     pinch-zoom the page under it. */
+  touch-action: none;
+}
+.td-registry-canvas-viewport--interactive { cursor: grab; }
+.td-registry-canvas-viewport--interactive:active { cursor: grabbing; }
+
+/* Selection is suppressed for the DURATION OF A DRAG only. Panning across the
+   plane otherwise sweeps a blue selection through every label it crosses; and
+   turning selection off outright would cost the thing that makes a DOM canvas
+   worth having over a bitmap, which is that the text on it is real. */
+.td-registry-canvas-viewport[data-panning] { user-select: none; }
+.td-registry-canvas-viewport[data-panning] * { user-select: none; }
+
+.td-registry-canvas-world {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+  /* The inverse of the camera, clamped, for a label that must hold its size on
+     screen while the object it belongs to scales with the world. Published so
+     a caller writes `font-size: calc(15px * var(--td-canvas-label-k))` rather
+     than reimplementing the inversion per scene. The clamp is what stops a
+     label filling the screen at the far end of the zoom range. */
+  --td-canvas-label-k: clamp(0.55, calc(1 / var(--td-canvas-scale, 1)), 3.4);
+}
+
+/* ── The slots ─────────────────────────────────────────────────────────
+   All four sit above the plane and below a panel. Each is a positioned band
+   rather than a component: what goes in them is the caller's. */
+.td-registry-canvas-hud {
+  position: absolute;
+  top: var(--td-canvas-hud-inset);
+  left: var(--td-canvas-hud-inset);
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: var(--td-sp-4);
+}
+.td-registry-canvas-hud--right { left: auto; right: var(--td-canvas-hud-inset); }
+
+.td-registry-canvas-controls { display: flex; gap: var(--td-sp-3); }
+.td-registry-canvas-controls--column { flex-direction: column; }
+.td-registry-canvas-controls--row { flex-direction: row; align-items: center; }
+
+/* Floating over the plane — the placement when the canvas draws no bar of its
+   own. Right-hand side and clear of the bottom, which is where a reading panel
+   is not: a cluster in the same corner as the panel is a cluster the panel
+   covers. */
+.td-registry-canvas-controls--floating {
+  position: absolute;
+  right: var(--td-canvas-hud-inset);
+  bottom: var(--td-sp-8);
+  z-index: 30;
+}
+
+/* Given a bar, the cluster joins it. One place for everything the reader does
+   to the map, instead of two opposite corners each holding half of it. */
+.td-registry-canvas-toolbar {
+  position: absolute;
+  inset-inline: var(--td-canvas-hud-inset);
+  bottom: var(--td-sp-6);
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--td-sp-6);
+  flex-wrap: wrap;
+}
+
+.td-registry-canvas-cta {
+  position: absolute;
+  inset-inline: 0;
+  bottom: var(--td-sp-10);
+  z-index: 30;
+  display: flex;
+  justify-content: center;
+  /* The band is a positioning device, not a target — it must not swallow a
+     drag that starts over it. The action inside takes its own events back. */
+  pointer-events: none;
+}
+.td-registry-canvas-cta > * { pointer-events: auto; }
+
+/* The gesture teach. It fades rather than unmounting: taking it out of the
+   tree on the first gesture reflows the bottom of the canvas under the
+   reader's hand.
+
+   Pointer-only. It teaches drag and scroll, which is nothing a touch reader
+   needs to be told, and there is no room for it on a phone. */
+.td-registry-canvas-hint {
+  position: absolute;
+  inset-inline: 0;
+  bottom: var(--td-sp-8);
+  z-index: 30;
+  margin-inline: auto;
+  width: fit-content;
+  pointer-events: none;
+  display: none;
+  transition: opacity 700ms var(--td-ease);
+}
+.td-registry-canvas-hint[data-retired] { opacity: 0; }
+@media (min-width: 1024px) { .td-registry-canvas-hint { display: block; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .td-registry-canvas-hint { transition: none; }
+}
+
+/* The display control, lit apart from the camera controls beside it.
+
+   `glow` already carries its hover and press, but the lamp ladder is OFF at
+   rest — so a reader scanning a column of five identical grey glyphs cannot
+   see which one leaves fullscreen without hovering each. This is the one
+   control in the cluster that changes what the map is IN rather than where
+   the camera is, and in fullscreen it is the way out, so it carries its
+   colour standing still. Still the lamp ([[L15]]) and still the same carved
+   housing as its neighbours ([[L11]]) — only the ink differs. */
+.td-registry-canvas-controls .td-registry-canvas-display .td-registry-iconbutton-lamp {
+  color: color-mix(in srgb, var(--td-accent) 70%, var(--td-ink-3));
+}
+/* Holding the display: full strength, because now it is the way back. */
+.td-registry-canvas-controls .td-registry-canvas-display[aria-pressed="true"] .td-registry-iconbutton-lamp {
+  color: var(--td-accent);
+}

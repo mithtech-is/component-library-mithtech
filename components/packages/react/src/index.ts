@@ -81,3 +81,6 @@ export * from "./number-field";
 export * from "./phone-field";
 export * from "./address-field";
 export * from "./window-controls";
+export * from "./canvas";
+export * from "./canvas-panel";
+export * from "./canvas-node";
