@@ -6,6 +6,24 @@ import { cx } from "./utils";
 import { ChatCircleIcon, CloseIcon, LAMP_WEIGHT } from "./icons";
 import "./chat-launcher.css";
 
+/**
+ * One mark the halo can wear. They COMPOSE — pass an array and you get all of
+ * them on one ring, which is the whole reason this is a list rather than a
+ * choice.
+ *
+ * - `bead` — one bright head with a short tail, travelling the ring.
+ * - `aurora` — the whole band lit and circling, dark, throwing colour past its
+ *   own edge.
+ * - `chrome` — the chrome rim: a crisp dark edge that throws nothing and
+ *   disperses into hard spectral bands where it breaks.
+ *
+ * `aurora` and `chrome` both draw the BAND, so asking for both gives you
+ * `chrome` — a rim cannot be simultaneously charcoal-with-a-prism and lit. The
+ * bead composes with either, and on top of `aurora` it is drawn *through* the
+ * band rather than on it.
+ */
+export type AiHaloMark = "bead" | "aurora" | "chrome";
+
 export interface AiHaloProps extends HTMLAttributes<HTMLSpanElement> {
   /** Off stops the shine dead. The ring stays, unlit, so nothing reflows. */
   active?: boolean;
@@ -29,6 +47,77 @@ export interface AiHaloProps extends HTMLAttributes<HTMLSpanElement> {
    * reads as a smear rather than a light travelling an edge.
    */
   radius?: string;
+  /**
+   * Which halo.
+   *
+   * - `bead` — one bright head with a short tail, travelling a dim ring. The
+   *   default, and what shipped: a light going round an edge.
+   * - `aurora` — the whole ring is lit and circling, and the ring itself is
+   *   DARK. The colour does not live in the band; it lives in what the band
+   *   throws. A deep edge with light spilling off it reads as something
+   *   powered rather than something painted, which is the difference between
+   *   an assistant and a decoration.
+   *
+   * - `both` — the band circling AND the bead travelling it. The band says
+   *   *this is an assistant* at rest; the bead says *it is working* when you
+   *   reach for it. Two statements, one ring.
+   * - `chrome` — the **chrome rim**: a crisp dark edge that throws no light at
+   *   all, in which the darkness thins to nothing at two points and the edge
+   *   disperses into hard spectral bands — warm trailing, cool leading, the way
+   *   white light comes apart through a prism. The colour is an artefact of
+   *   the edge, never a fill, which is what keeps a charcoal rim from reading
+   *   as a rainbow border.
+   *
+   * `aurora` and `both` are the louder ones. Reach for any of them on one
+   * control on a page; `chrome` is the one to reach for when the mark should
+   * feel precise rather than powered.
+   */
+  variant?: AiHaloMark | AiHaloMark[] | "both";
+  /**
+   * How much light escapes past the ring.
+   *
+   * - `none` — the ring alone. For a control already sitting in a busy
+   *   surface, where a glow would just be more light in a lit room.
+   * - `soft` — the default for `bead`: enough to read as cast light.
+   * - `strong` — the default for `aurora`: the glow IS the effect, and the
+   *   ring is the thing throwing it.
+   */
+  glow?: "none" | "soft" | "strong";
+  /**
+   * The colours it circles through, as a CSS gradient stop list.
+   *
+   * Defaults to the two the system already owns — azure into papaya — because
+   * a halo that introduces a palette is a halo that stops matching the product
+   * it marks. Pass your own where the mark belongs to a brand rather than to
+   * this system: `"#ff0000, #ff7300, #fffb00, #48ff00, #00ffd5"` and so on.
+   * Whatever you pass is darkened for the band and left saturated for the
+   * glow, so the reading survives colours the system never chose.
+   */
+  hues?: string;
+  /**
+   * `chrome` only: how far the spectrum spreads at each break, as a fraction
+   * of a turn.
+   *
+   * This is the whole character of that variant. Small and the colour is a
+   * glint; large and the bands take real arc, the rim stops being dark, and it
+   * becomes the rainbow border it is built to avoid.
+   */
+  dispersion?: number;
+  /**
+   * Cycles the colour continuously, on top of the circling.
+   *
+   * The band and its cast rotate through the hue wheel, so the ring is never
+   * quite the colour it was a moment ago. It is the one thing that makes a
+   * halo read as *live* rather than as an animated decoration — but it is also
+   * the fastest way to make a page tiring, so it is off by default and belongs
+   * on one control.
+   *
+   * `cycleSpeed` is the seconds for a full turn of the wheel. Slow is the
+   * point: under about 8s it stops looking like light and starts looking like
+   * a novelty.
+   */
+  cycle?: boolean;
+  cycleSpeed?: number;
   children: ReactNode;
 }
 
@@ -51,15 +140,44 @@ export interface AiHaloProps extends HTMLAttributes<HTMLSpanElement> {
  * merely slows is the same shine.
  */
 export const AiHalo = forwardRef<HTMLSpanElement, AiHaloProps>(function AiHalo(
-  { active = true, speed = 3.2, radius = "12px", children, className, style, ...props },
+  { active = true, speed = 3.2, radius = "12px", variant = "bead", glow, hues, dispersion = 0.035, cycle = false, cycleSpeed = 14, children, className, style, ...props },
   ref,
 ) {
+  /* `aurora` is the variant whose whole point is what escapes the ring, so it
+     defaults to the loud cast; `bead` is a light on an edge and defaults to
+     the quiet one. Either can be overridden, including down to nothing. */
+  /* `chrome` throws nothing by definition — a rim that glows is the halo, not
+     the rim — so it defaults to no cast at all. `aurora` is the variant whose
+     whole point is what escapes, so it defaults to the loud one. */
+  /* `both` was the two-mark case before marks composed. Kept as an alias so no
+     existing caller moves, and expanded here rather than in the CSS. */
+  const marks: AiHaloMark[] = variant === "both"
+    ? ["aurora", "bead"]
+    : Array.isArray(variant) ? variant : [variant];
+  const has = (mark: AiHaloMark) => marks.includes(mark);
+
+  /* `chrome` throws nothing by definition — a rim that glows is the halo, not
+     the rim. `aurora` is the variant whose whole point is what escapes. */
+  const cast = glow ?? (has("chrome") ? "none" : has("aurora") ? "strong" : "soft");
   return (
     <span
       {...props}
       ref={ref}
       data-active={active ? "true" : undefined}
-      style={{ ...style, ["--td-ai-speed" as string]: `${speed}s`, ["--td-ai-radius" as string]: radius }}
+      /* A space-separated token list rather than one value, so the stylesheet
+         asks `[data-marks~="aurora"]` and every combination falls out of the
+         same rules instead of needing a selector per pairing. */
+      data-marks={marks.join(" ")}
+      data-glow={cast}
+      data-cycle={cycle ? "true" : undefined}
+      style={{
+        ...style,
+        ["--td-ai-speed" as string]: `${speed}s`,
+        ["--td-ai-radius" as string]: radius,
+        ["--td-ai-cycle" as string]: `${cycleSpeed}s`,
+        ["--td-ai-dispersion" as string]: String(dispersion),
+        ...(hues ? { ["--td-ai-hues" as string]: hues } : null),
+      }}
       className={cx("td-react-aihalo", className)}
     >
       {/* THE CAST, as its own element rather than a `drop-shadow`.
@@ -90,8 +208,15 @@ export interface ChatLauncherProps extends Omit<HTMLAttributes<HTMLDivElement>, 
   presence?: ChatPresence;
   /** What each presence reads as. Announced, not only coloured. */
   presenceLabel?: Record<ChatPresence, string>;
-  /** Marks it as an AI channel: the launcher takes the revolving shine. */
-  ai?: boolean;
+  /**
+   * Marks it as an AI channel: the launcher takes the mark.
+   *
+   * `true` is the revolving shine it has always been. Naming a variant picks
+   * which mark instead — `"chrome"` is the chrome rim, a crisp dark edge that
+   * disperses rather than glowing, which suits a launcher sitting over a busy
+   * page where another glow is one light too many.
+   */
+  ai?: boolean | AiHaloProps["variant"];
   /** Seconds for one revolution of that shine. Only read when `ai` is on. */
   aiSpeed?: number;
   open?: boolean;
@@ -254,7 +379,20 @@ export const ChatLauncher = forwardRef<HTMLDivElement, ChatLauncherProps>(functi
           </button>
         </div>
       ) : null}
-      {ai ? <AiHalo radius="var(--td-radius-pill, 999px)" speed={aiSpeed}>{button}</AiHalo> : button}
+      {/* `true` keeps the shine it has always had; a variant name picks the
+          mark. `chrome` gets the slower turn its rim wants — 3.2s on a
+          dispersing edge reads as a spinner rather than as light. */}
+      {ai
+        ? (
+          <AiHalo
+            radius="var(--td-radius-pill, 999px)"
+            variant={ai === true ? undefined : ai}
+            speed={aiSpeed ?? (ai === "chrome" ? 9 : undefined)}
+          >
+            {button}
+          </AiHalo>
+        )
+        : button}
     </div>
   );
 });

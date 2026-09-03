@@ -220,13 +220,21 @@
 }
 
 .td-registry-aihalo {
-  --td-ai-ring: 2.4px;
+  /* The numbers this settled on: a hairline band, a soft short glow, and
+     nothing standing until somebody reaches for it. */
+  --td-ai-ring: 0.8px;
+  --td-ai-blur: 8px;
+  --td-ai-spread: 5px;
+  --td-ai-rest: 0;
   /* The colours the halo CASTS, as opposed to the ones it is made of: the same
      two hues lifted toward white. A cast is never as saturated as the light
      that threw it — matching the source's saturation reads as a second,
      blurrier ring rather than as the ring's light falling on the page. */
-  --td-ai-cast-1: color-mix(in srgb, var(--td-brand) 62%, white);
-  --td-ai-cast-2: color-mix(in srgb, var(--td-accent) 56%, white);
+  /* Lifted further toward white than the ring they come from. A cast is
+     light landing on the page; matched to the source's saturation it reads as
+     a blurrier copy of the ring instead. */
+  --td-ai-cast-1: color-mix(in srgb, var(--td-brand) 44%, white);
+  --td-ai-cast-2: color-mix(in srgb, var(--td-accent) 38%, white);
   position: relative;
   display: inline-flex;
   isolation: isolate;
@@ -306,15 +314,18 @@
   inset: -2px;
   z-index: -1;
   border-radius: inherit;
-  filter: blur(9px);
+  /* Tight. The glow should sit ON the edge, not wash the surface around it —
+     a wide blur stops reading as light coming off a rim and starts reading as
+     a coloured shadow under the control. */
+  filter: blur(var(--td-ai-blur, 5px));
   opacity: 0;
   pointer-events: none;
   transition: opacity var(--td-t-slow) var(--td-ease);
 }
 .td-registry-aihalo-cast::before {
   /* Wider than the ring it follows, and paler: a cast spreads. */
-  inset: -6px;
-  padding: 9px;
+  inset: calc(var(--td-ai-spread, 5px) * -0.6);
+  padding: var(--td-ai-spread, 5px);
   background: conic-gradient(
     from var(--td-ai-angle),
     transparent 0turn 0.70turn,
@@ -460,4 +471,287 @@
 
 @media (prefers-reduced-motion: reduce) {
   .td-registry-chat-teaser { animation: none; }
+}
+
+/* ── aurora: a dark band throwing light ────────────────────────────────────
+   The `bead` variant is a light travelling an edge — the ring is dim and one
+   bright head moves round it. `aurora` is the other reading, and it is the one
+   the pattern is usually going for: the whole ring circles, the BAND ITSELF is
+   deep, and what you actually see is the colour it spills past its own edge.
+
+   The technique is the same one the CSS everybody copies uses — a saturated
+   blurred copy behind an opaque core, so only the overspill reads — with one
+   change that matters. There, the core is a flat `#111` rectangle drawn on top
+   to hide the middle of the blur. Here the CONTROL is the core: it keeps its
+   own carved surface and its own depth ladder, and the halo sits behind it in
+   the same stacking context. Nothing about the control's material changes
+   ([[L11]]), which is the whole reason this is a halo and not a fill.
+
+   So the band is the hues mixed toward the ink — a deep edge, not a bright one
+   — and the cast is the same hues at full saturation, blurred wider. Dark
+   thing, coloured light. */
+.td-registry-aihalo[data-marks~="aurora"] {
+  /* Thinner than it was. A wide band stops being a rim with light coming
+     off it and becomes a coloured border, which is a different object. */
+  --td-ai-ring: 0.8px;
+  /* The default is the two the system owns. A consumer's `hues` replaces the
+     whole stop list, so a brand ring is possible without this file knowing
+     which brand. */
+  --td-ai-hues: var(--td-accent), var(--td-brand), var(--td-accent);
+}
+
+/* THE BAND. Every stop pulled toward the ink, so the ring reads as a dark edge
+   with colour in it rather than as a stripe of colour. `color-mix` cannot be
+   applied across an arbitrary stop list, so the darkening is a flat ink veil
+   over the gradient — one extra layer, and it survives whatever `hues` holds. */
+.td-registry-aihalo[data-marks~="aurora"]::before {
+  background:
+    linear-gradient(var(--td-ai-veil), var(--td-ai-veil)),
+    conic-gradient(from var(--td-ai-angle), var(--td-ai-hues));
+  --td-ai-veil: color-mix(in srgb, var(--td-ink) var(--td-ai-dark, 0%), transparent);
+  opacity: 1;
+}
+
+/* The bead is drawn only when it is asked for. It used to be hidden BY aurora,
+   which is the same thing right up until the two are asked for together. */
+.td-registry-aihalo:not([data-marks~="bead"])::after { display: none; }
+
+/* THE CAST. The same stops, undarkened and blurred wider: this is the light,
+   and the band above is only the thing it comes off. */
+
+.td-registry-aihalo[data-marks~="aurora"] .td-registry-aihalo-cast::before {
+  background: conic-gradient(from var(--td-ai-angle), var(--td-ai-hues));
+}
+
+/* Aurora turns without being touched — a band that only circles on hover is a
+   band nobody sees circle. The cast still arrives on engagement, so the
+   resting state is a dark ring and the lit state is the glow. */
+.td-registry-aihalo[data-marks~="aurora"][data-active="true"] {
+  animation: td-registry-aihalo-travel var(--td-ai-speed, 3.2s) linear infinite;
+}
+
+/* ── how much escapes ──────────────────────────────────────────────────────
+   `glow` is the with/without axis, and it is separate from the variant on
+   purpose: a control in an already-busy surface wants the mark and not the
+   light, whichever ring it is wearing. */
+.td-registry-aihalo[data-glow="none"] .td-registry-aihalo-cast { display: none; }
+
+.td-registry-aihalo[data-glow="strong"] { --td-ai-blur: 11px; --td-ai-spread: 8px; --td-ai-rest: 0.35; }
+.td-registry-aihalo[data-glow="strong"][data-active="true"]:hover .td-registry-aihalo-cast,
+.td-registry-aihalo[data-glow="strong"][data-active="true"]:focus-within .td-registry-aihalo-cast { opacity: 1; }
+/* Strong keeps a standing glow at rest as well, at a fraction — the control
+   should look powered before anybody reaches for it, which is the entire job
+   of marking something as an assistant. */
+.td-registry-aihalo[data-glow="strong"][data-active="true"] .td-registry-aihalo-cast { opacity: var(--td-ai-rest, 0.45); }
+
+@media (prefers-reduced-motion: reduce) {
+  /* The band stops where it is. It stays dark and stays lit, so the mark
+     survives; only the travelling does not. */
+  .td-registry-aihalo[data-marks~="aurora"][data-active="true"] { animation: none; }
+}
+
+/* ── the halo has to survive both grounds, and they need opposite things ────
+   A cast is light landing on a surface. On a DARK ground that reads as
+   brightening, so the colours are lifted toward white and a thin ring carries
+   a long way. On a LIGHT ground the same pale colours are invisible — pale on
+   pale is nothing — and what reads as light there is SATURATION, not
+   lightness. So the two themes get different casts rather than one compromise
+   that is weak in both.
+
+   The band's ink veil is a dark-mode device for the same reason. It exists to
+   stop a bright ring glaring against near-black; applied on a pale ground it
+   just draws a black outline round the control, which is what it was doing.
+   Light mode veils by 0 and lets the hues be the band. */
+.td-registry-aihalo {
+  /* Full strength on a pale ground. Anything lifted toward white here is
+     invisible — what reads as light on light is SATURATION, not lightness. */
+  --td-ai-cast-1: var(--td-brand);
+  --td-ai-cast-2: var(--td-accent);
+  --td-ai-cast-boost: 1.35;
+}
+:root[data-theme="dark"] .td-registry-aihalo {
+  --td-ai-cast-1: color-mix(in srgb, var(--td-brand) 44%, white);
+  --td-ai-cast-2: color-mix(in srgb, var(--td-accent) 38%, white);
+  --td-ai-dark: 62%;
+  --td-ai-cast-boost: 1;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .td-registry-aihalo {
+    --td-ai-cast-1: color-mix(in srgb, var(--td-brand) 44%, white);
+    --td-ai-cast-2: color-mix(in srgb, var(--td-accent) 38%, white);
+    --td-ai-dark: 62%;
+  }
+}
+
+/* The resting ring is also pale-on-pale in light mode. It carries the mark
+   before anybody touches the control, so it cannot be the weakest thing on
+   the page. */
+:root:not([data-theme="dark"]) .td-registry-aihalo::before { opacity: 0.75; }
+
+/* ── colour that never settles ─────────────────────────────────────────────
+   `cycle` turns the hue wheel under the whole halo, band and cast together, so
+   the ring is never quite the colour it was. Slow on purpose: it is the thing
+   that makes the mark read as live rather than as an animation, and under
+   about 8 seconds it stops looking like light and starts looking like a
+   novelty. */
+@keyframes td-registry-aihalo-hue {
+  to { filter: hue-rotate(360deg); }
+}
+.td-registry-aihalo[data-cycle="true"]::before,
+.td-registry-aihalo[data-cycle="true"]::after,
+.td-registry-aihalo[data-cycle="true"] .td-registry-aihalo-cast::before {
+  animation: td-registry-aihalo-hue var(--td-ai-cycle, 14s) linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .td-registry-aihalo[data-cycle="true"]::before,
+  .td-registry-aihalo[data-cycle="true"]::after,
+  .td-registry-aihalo[data-cycle="true"] .td-registry-aihalo-cast::before { animation: none; }
+}
+
+/* ── the aurora swims, and the bead cuts through it ────────────────────────
+   One conic gradient turning at one rate is a ring rotating — even and
+   mechanical, and it reads as a loading spinner. What makes an aurora an
+   aurora is that the colour does not travel as a body: two fronts drift at
+   different speeds and cross, and the light gathers and thins where they meet.
+
+   So the band is TWO gradients, the second turning against the first at a
+   fraction of the rate. `--td-ai-angle` is a registered angle, so the second
+   is `calc()` off the same clock and the pair can never fall out of step. The
+   crossing is what waves; nothing is animating a wave shape.
+
+   `--td-ai-wave` is the counter-rate. 0 stops the second front dead and the
+   band goes back to a plain rotation, which is the honest off switch. */
+.td-registry-aihalo[data-marks~="aurora"]::before {
+  background:
+    linear-gradient(var(--td-ai-veil), var(--td-ai-veil)),
+    conic-gradient(from calc(var(--td-ai-angle) * var(--td-ai-wave, -0.62)), var(--td-ai-hues)),
+    conic-gradient(from var(--td-ai-angle), var(--td-ai-hues));
+  background-blend-mode: normal, screen, normal;
+}
+.td-registry-aihalo[data-marks~="aurora"] .td-registry-aihalo-cast::before {
+  background:
+    conic-gradient(from calc(var(--td-ai-angle) * var(--td-ai-wave, -0.62)), var(--td-ai-hues)),
+    conic-gradient(from var(--td-ai-angle), var(--td-ai-hues));
+  background-blend-mode: screen, normal;
+  filter: saturate(var(--td-ai-cast-boost, 1));
+}
+
+/* THE CUT. On `both`, the bead is no longer a light drawn ON the band — it is
+   drawn THROUGH it. `plus-lighter` adds the bead's value to whatever the band
+   already has, so where the head passes the aurora goes white-hot and the tail
+   leaves it as it was. That is what reads as cutting: the band is not covered,
+   it is briefly overexposed.
+
+   Only on `both`. On its own the bead has nothing to cut through, and the
+   blend against the page would just make it milky. */
+.td-registry-aihalo[data-marks~="aurora"][data-marks~="bead"]::after {
+  mix-blend-mode: plus-lighter;
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Both fronts stop. The crossing they were making stays on screen, so the
+     band keeps the uneven colour that made it an aurora. */
+  .td-registry-aihalo[data-marks~="aurora"]::before { animation: none; }
+}
+
+/* ── chrome: a rim that splits instead of glowing ──────────────────────────
+   The opposite reading to every other variant here. `bead` and `aurora` are
+   light — something travelling an edge and casting colour onto the page. This
+   is a crisp charcoal RIM that casts nothing: its darkness thins to nothing at
+   two points, and at those breaks the edge comes apart into hard spectral
+   bands, warm trailing and cool leading, the way white light disperses through
+   a prism.
+
+   It works only because the colour stays an ARTEFACT of the edge. Every band
+   is a hard stop against dark or against nothing — there is no soft coloured
+   region in the ring anywhere. Every stop is doubled so nothing interpolates:
+   a gradient blending red into yellow paints orange across the arc between
+   them, and orange over real arc is a rainbow border, which is the one thing
+   this is built not to be.
+
+   Warm trails, cool leads. That is the order a prism puts them in, and having
+   it backwards is what makes a fake dispersion look fake. */
+.td-registry-aihalo[data-marks~="chrome"] {
+  --td-ai-ring: 1.5px;
+  /* Not pure black: an edge at #000 on a light ground reads as a hole cut in
+     the page rather than as a rim catching light. */
+  --td-rim-ink: #16181b;
+  --td-rim-grey: #8d939a;
+  --td-rim-red: #ff2d00;
+  --td-rim-amber: #ff8a00;
+  --td-rim-yellow: #ffd400;
+  --td-rim-cyan: #00e0ff;
+  --td-rim-blue: #0057ff;
+}
+
+.td-registry-aihalo[data-marks~="chrome"]::before {
+  opacity: 1;
+  background: conic-gradient(
+    from var(--td-ai-angle),
+    var(--td-rim-grey) 0turn,
+    var(--td-rim-ink) 0.14turn,
+    var(--td-rim-ink) calc(0.25turn - var(--td-ai-dispersion, 0.035) * 1turn),
+    var(--td-rim-red) calc(0.25turn - var(--td-ai-dispersion, 0.035) * 1turn),
+    var(--td-rim-red) calc(0.25turn - var(--td-ai-dispersion, 0.035) * 0.66turn),
+    var(--td-rim-amber) calc(0.25turn - var(--td-ai-dispersion, 0.035) * 0.66turn),
+    var(--td-rim-amber) calc(0.25turn - var(--td-ai-dispersion, 0.035) * 0.33turn),
+    var(--td-rim-yellow) calc(0.25turn - var(--td-ai-dispersion, 0.035) * 0.33turn),
+    var(--td-rim-yellow) 0.25turn,
+    transparent 0.25turn,
+    transparent calc(0.25turn + var(--td-ai-dispersion, 0.035) * 0.5turn),
+    var(--td-rim-cyan) calc(0.25turn + var(--td-ai-dispersion, 0.035) * 0.5turn),
+    var(--td-rim-cyan) calc(0.25turn + var(--td-ai-dispersion, 0.035) * 0.9turn),
+    var(--td-rim-blue) calc(0.25turn + var(--td-ai-dispersion, 0.035) * 0.9turn),
+    var(--td-rim-blue) calc(0.25turn + var(--td-ai-dispersion, 0.035) * 1.3turn),
+    var(--td-rim-ink) calc(0.25turn + var(--td-ai-dispersion, 0.035) * 1.3turn),
+    var(--td-rim-ink) 0.6turn,
+    var(--td-rim-grey) 0.68turn,
+    var(--td-rim-ink) 0.74turn,
+    var(--td-rim-ink) calc(0.88turn - var(--td-ai-dispersion, 0.035) * 1turn),
+    var(--td-rim-red) calc(0.88turn - var(--td-ai-dispersion, 0.035) * 1turn),
+    var(--td-rim-red) calc(0.88turn - var(--td-ai-dispersion, 0.035) * 0.5turn),
+    var(--td-rim-yellow) calc(0.88turn - var(--td-ai-dispersion, 0.035) * 0.5turn),
+    var(--td-rim-yellow) 0.88turn,
+    transparent 0.88turn,
+    transparent calc(0.88turn + var(--td-ai-dispersion, 0.035) * 0.8turn),
+    var(--td-rim-cyan) calc(0.88turn + var(--td-ai-dispersion, 0.035) * 0.8turn),
+    var(--td-rim-cyan) calc(0.88turn + var(--td-ai-dispersion, 0.035) * 1.2turn),
+    var(--td-rim-ink) calc(0.88turn + var(--td-ai-dispersion, 0.035) * 1.2turn),
+    var(--td-rim-grey) 1turn
+  );
+}
+
+/* No bead and no cast. A rim that also throws light is the halo. */
+.td-registry-aihalo[data-marks~="chrome"]::after { display: none; }
+.td-registry-aihalo[data-marks~="chrome"] .td-registry-aihalo-cast { display: none; }
+
+/* It turns on its own, slowly. The mark is the point of the control, and one
+   that only appears on hover marks nothing to a reader who never hovers. */
+.td-registry-aihalo[data-marks~="chrome"][data-active="true"] {
+  animation: td-registry-aihalo-travel var(--td-ai-speed, 9s) linear infinite;
+}
+
+/* Dark mode inverts which end of the ramp is the edge: a charcoal rim on a
+   near-black ground is invisible, so the ink becomes a light graphite and the
+   pale stop carries most of the ring. The spectrum is untouched — it is the
+   same light either way. */
+:root[data-theme="dark"] .td-registry-aihalo[data-marks~="chrome"] {
+  --td-rim-ink: #6b7075;
+  --td-rim-grey: #cfd4d9;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .td-registry-aihalo[data-marks~="chrome"] {
+    --td-rim-ink: #6b7075;
+    --td-rim-grey: #cfd4d9;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Stopped where the spectrum is on screen rather than hidden, so what
+     remains still marks the control. */
+  .td-registry-aihalo[data-marks~="chrome"][data-active="true"] {
+    animation: none;
+    --td-ai-angle: 0.62turn;
+  }
 }
