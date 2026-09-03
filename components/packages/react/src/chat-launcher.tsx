@@ -38,18 +38,16 @@ export interface AiHaloProps extends HTMLAttributes<HTMLSpanElement> {
    */
   beads?: number;
   /**
-   * The easing of ONE revolution — so the bead's speed around the ring is not
-   * constant.
+   * How much the bead's pace swings around the ring — 0 to about 0.95.
    *
-   * `linear` (the default) travels evenly. `ease-in-out` is slow and smooth at
-   * the start and end of each turn and quick through the middle, and because a
-   * turn ends where the next begins the two slow moments meet and the loop has
-   * no seam. Any CSS `<easing-function>` works — a `cubic-bezier(...)` to place
-   * the fast and slow arcs exactly, or `steps(n)` for a tick round the ring.
-   *
-   * Also `--td-ai-ease`, for a halo that is not yours to pass a prop to.
+   * `0` is a constant glide. Higher makes the bead breathe: slow through the
+   * top of the ring, quick through the bottom, and back — while it never stops
+   * and the loop never breaks, because the speed varies smoothly and matches
+   * itself where one lap meets the next. This is why it is a swing amount and
+   * not a CSS easing: an ease that slows at both ends of a lap slows to a STOP
+   * at the seam. The default, 0.6, is a gentle breathe. Also `--td-ai-swing`.
    */
-  ease?: string;
+  swing?: number;
   /**
    * How much light the bead casts past the ring.
    *
@@ -82,7 +80,7 @@ export interface AiHaloProps extends HTMLAttributes<HTMLSpanElement> {
  * merely slows is the same shine.
  */
 export const AiHalo = forwardRef<HTMLSpanElement, AiHaloProps>(function AiHalo(
-  { active = true, speed = 3.2, radius = "12px", beads = 1, ease, glow = "soft", children, className, style, ...props },
+  { active = true, speed = 3.2, radius = "12px", beads = 1, swing = 0.6, glow = "soft", children, className, style, ...props },
   ref,
 ) {
   return (
@@ -99,7 +97,10 @@ export const AiHalo = forwardRef<HTMLSpanElement, AiHaloProps>(function AiHalo(
            a fraction paints a broken bead at the seam and a zero divides by
            nothing — rounded and floored at 1. */
         ["--td-ai-beads" as string]: String(Math.max(1, Math.round(beads))),
-        ...(ease ? { ["--td-ai-ease" as string]: ease } : null),
+        /* Clamped below 1: at 1 the bead's slow point reaches zero speed and
+           it would momentarily stop at the seam, which is the one thing the
+           swing exists to avoid. */
+        ["--td-ai-swing" as string]: String(Math.min(0.95, Math.max(0, swing))),
       }}
       className={cx("td-react-aihalo", className)}
     >
