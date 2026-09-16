@@ -3,6 +3,17 @@ export * from "./icons";
 // Brand & company logos — the colour-preserving sibling of the icon set.
 export * from "./brands";
 export { Badge, type BadgeProps, type BadgeVariant } from "./badge";
+export { Chip, type ChipProps } from "./chip";
+export { Spinner, type SpinnerProps } from "./spinner";
+export { Segmented, type SegmentedProps, type SegmentedOption } from "./segmented";
+export { Ring, type RingProps, type RingTone } from "./ring";
+export { Popover, type PopoverProps } from "./popover";
+export { Gauge, type GaugeProps, type GaugeLoad } from "./gauge";
+export { UptimeBars, type UptimeBarsProps, type UptimeRow, type UptimeBar, type UptimeState } from "./uptime";
+export { UndoBar, type UndoBarProps } from "./undobar";
+export { InlineEdit, type InlineEditProps } from "./inline-edit";
+export { Carousel, CarouselCard, type CarouselProps, type CarouselCardProps, type CarouselCardTone } from "./carousel";
+export { Drawer, type DrawerProps, type DrawerSide } from "./drawer";
 export { Button, type ButtonProps, type ButtonSize, type ButtonVariant } from "./button";
 export { IconButton, type IconButtonProps, type IconButtonTone } from "./icon-button";
 export { Card, CardContent, CardHeader, CardTitle, type CardDepth, type CardProps } from "./card";

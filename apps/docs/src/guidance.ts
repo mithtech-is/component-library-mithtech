@@ -590,12 +590,120 @@ export const GUIDANCE = {
     whenToUse: "A display heading where the block should read as a rectangle — the treatment the design system is named for.",
   },
   "badge": {
-    aliases: ["pill", "tag", "label", "chip", "status pill", "status dot", "pill with a dot", "category dot", "eyebrow pill"],
+    aliases: ["pill", "tag", "label", "status pill", "status dot", "pill with a dot", "category dot", "eyebrow pill"],
     useCases: ["show a status", "label a category", "count in a corner", "tag", "pill with a coloured dot before the label", "status indicator next to a label"],
     whenToUse: "A short label carrying a status or a category, with an optional lit dot before it.",
     whenNotToUse: [
       { instead: "alert", because: "There is something to explain. A badge has room for a word." },
       { instead: "lamp", because: "You want the state indicator on its own, or the technique behind it. A badge is the pill the dot sits in." },
+      { instead: "chip", because: "The reader can take it off, or it is one of a set of applied filter values. A badge states a status; a chip is a value that can be removed." },
+    ],
+  },
+  "chip": {
+    aliases: ["chip", "filter chip", "filter tag", "removable tag", "token", "pill you can remove", "applied filter"],
+    useCases: ["show an applied filter", "removable tag on a card", "a value the reader can take off", "the filters currently in effect", "dismissable pill", "tokens in an intent picker"],
+    whenToUse: "One applied value the reader is shown — with an × to take it off when it can be retracted.",
+    whenNotToUse: [
+      { instead: "filter-bar", because: "You are rendering the SET of choices to pick from, with counts. Chip is a single token you place yourself — what was chosen, not the choosing." },
+      { instead: "badge", because: "The pill states a status or category and cannot be removed. A chip is a value the reader can take off." },
+    ],
+  },
+  "spinner": {
+    aliases: ["spinner", "loader", "loading indicator", "busy indicator", "activity indicator", "throbber"],
+    useCases: ["show something is loading", "indicate a wait with no percentage", "busy state on a button or a panel", "inline loading next to a label"],
+    whenToUse: "An indeterminate wait — something is working and there is no figure to show for it.",
+    whenNotToUse: [
+      { instead: "progress", because: "A determinate figure exists — a percentage, a count. A bar says 'this far'; a spinner only says 'working'." },
+      { instead: "ring", because: "You want that determinate figure drawn as a circle rather than a bar. Still a number; a spinner is not." },
+      { instead: "skeleton", because: "The shape of what is loading is known. A skeleton stands in for the content; a spinner is for a wait with no shape to show." },
+    ],
+  },
+  "segmented": {
+    aliases: ["segmented control", "segmented buttons", "toggle group", "button group", "single-select toggle", "ios segmented control", "view switcher"],
+    useCases: ["pick one of a few views", "day/week/month toggle", "sort order switch", "a compact one-of-N choice", "switch a small set of modes"],
+    whenToUse: "One choice from a small set of peers, shown all at once in a single inline control.",
+    whenNotToUse: [
+      { instead: "tabs", because: "The choice switches a PANEL of content below it. Tabs own that relationship; a segmented control only reports a value." },
+      { instead: "radio-group", because: "There are many options, or they read as a vertical list with descriptions. A segmented control is three or four short peers side by side." },
+      { instead: "filter-bar", because: "The reader can pick several, or is filtering a result set. A segmented control is single-select." },
+      { instead: "theme-toggle", because: "It is specifically the light/dark switch, which ships already wired." },
+    ],
+  },
+  "ring": {
+    aliases: ["circular progress", "progress ring", "radial progress", "donut progress", "percentage ring", "completion ring"],
+    useCases: ["show a percentage as a circle", "quota or usage ring", "goal completion", "compact progress in a KPI tile", "disk or storage used"],
+    whenToUse: "A determinate 0–100% figure where a compact circle reads better than a bar.",
+    whenNotToUse: [
+      { instead: "progress", because: "You want the same figure as a horizontal bar — in a row, a form, a list where a circle would not line up." },
+      { instead: "spinner", because: "There is no figure — it is an indeterminate wait. A ring shows how far; a spinner only that something is working." },
+      { instead: "gauge", because: "The value sits in a range with a scale you want shown — an open arc with a needle, not a closed 0–100% ring." },
+    ],
+  },
+  "popover": {
+    aliases: ["popover", "popout", "floating panel", "anchored panel", "click tooltip", "info bubble", "details panel"],
+    useCases: ["show extra detail on click", "a small panel anchored to a button", "inline form or filters in a popout", "explain something with interactive content", "click to reveal a panel"],
+    whenToUse: "A panel of free-form content opened deliberately by clicking a control, anchored beside it.",
+    whenNotToUse: [
+      { instead: "tooltip", because: "The hint appears on hover to explain a control, holds no controls, and takes no focus. A popover is opened on purpose and can contain interactive content." },
+      { instead: "dropdown-menu", because: "The panel is a list of commands the reader picks ONE of. A popover holds free-form content, not menu items." },
+      { instead: "dialog", because: "The task must seize the whole page and block everything behind it. A popover is non-modal — the page stays live." },
+    ],
+  },
+  "gauge": {
+    aliases: ["load meter", "level meter", "utilization bars", "capacity meter", "signal bars", "resource gauge", "meter"],
+    useCases: ["show CPU or memory load", "disk or capacity used", "utilisation at a glance", "a level where the colour says comfortable or not", "resource headroom"],
+    whenToUse: "A level read against a comfortable/warning/critical band — where the colour, not just the number, is the point.",
+    whenNotToUse: [
+      { instead: "ring", because: "You want the plain 0–100% figure as a circle, with no comfortable-or-not band. A gauge's colour carries a judgement a ring does not." },
+      { instead: "progress", because: "It is task completion moving toward done, not a live level in a range. Progress fills once; a gauge reads a value that goes up and down." },
+      { instead: "kpi", because: "It is a reported number with a label and trend, not a level on a scale. A gauge is the meter; a KPI tile is the figure." },
+    ],
+  },
+  "uptime": {
+    aliases: ["uptime bars", "status page", "incident history", "availability strip", "status timeline", "uptime chart", "service status"],
+    useCases: ["show a status page", "uptime history per service", "availability over the last N days", "where an outage fell", "incident timeline"],
+    whenToUse: "A history of availability — one bar per interval per service, with the period's figure.",
+    whenNotToUse: [
+      { instead: "gauge", because: "You want the current live level, not a history. A gauge is one reading now; uptime is many intervals over time." },
+      { instead: "timeline", because: "The events are discrete milestones with detail, not a dense fixed-width strip of equal intervals. Uptime is a sparkline of status." },
+    ],
+  },
+  "undobar": {
+    aliases: ["undo", "undo toast", "undo snackbar", "reversible action", "undo delete", "act then undo"],
+    useCases: ["offer undo after a delete", "reverse an action without a confirm dialog", "archive with a way back", "act now, undo within a few seconds"],
+    whenToUse: "A destructive-but-reversible action you did immediately — offer a few seconds to take it back before it commits.",
+    whenNotToUse: [
+      { instead: "dialog", because: "The action is not reversible, or the cost of getting it wrong is too high to act first. Then you block and ask before doing it." },
+      { instead: "toast", because: "There is nothing to undo — you are only announcing that something happened. A toast auto-dismisses and carries no action or timer." },
+    ],
+  },
+  "inline-edit": {
+    aliases: ["inline edit", "click to edit", "editable text", "edit in place", "editable field", "rename in place"],
+    useCases: ["edit a value in place", "rename without a form", "a detail that is usually shown and occasionally changed", "click a field to change it", "editable table cell"],
+    whenToUse: "A value that is mostly read and occasionally edited — click it, change it, click away.",
+    whenNotToUse: [
+      { instead: "input", because: "The reader is expected to fill it. A field they will type into belongs in a FormField as a visible box, not disguised as text." },
+      { instead: "segmented", because: "The value is one of a fixed set, not free text. Show the choices rather than a field." },
+      { instead: "select", because: "There is a list to choose from. InlineEdit takes free text." },
+    ],
+  },
+  "carousel": {
+    aliases: ["carousel", "slider", "card slider", "scroller", "horizontal scroll", "swiper", "shelf", "snap scroll"],
+    useCases: ["scroll a row of cards", "a shelf of recent work", "related reading strip", "too many cards to stack", "horizontally scrollable cards"],
+    whenToUse: "A row of cards too many to stack, scrolled sideways with snap — every card present and reachable.",
+    whenNotToUse: [
+      { instead: "tabs", because: "You want one thing at a time with the rest hidden. A carousel keeps every card present; tabs switch a single panel." },
+      { instead: "feature-card", because: "The cards fit on the page as a grid. Reach for a carousel only when there are too many to stack — a strip you scroll, not a wall you read." },
+    ],
+  },
+  "drawer": {
+    aliases: ["drawer", "side sheet", "sidebar panel", "side panel", "slide-over", "off-canvas", "sheet", "detail panel"],
+    useCases: ["a settings panel that slides in", "a record's detail beside the list", "a filter panel from the edge", "a form too long for a dialog", "a runbook opened to the side"],
+    whenToUse: "A longer task or detail that slides in from the edge and stays anchored to the side while it is open.",
+    whenNotToUse: [
+      { instead: "dialog", because: "It is a short, self-contained task — a question, a confirm, a small form — that belongs in a centred box, not an edge panel." },
+      { instead: "popover", because: "It is small, anchored to its trigger, and the page should stay live behind it. A drawer takes the page with a scrim." },
+      { instead: "nav-drawer", because: "It is specifically the mobile navigation menu of links, which ships wired for that." },
     ],
   },
 

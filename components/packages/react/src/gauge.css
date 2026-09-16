@@ -1,0 +1,8 @@
+/* Gauge — a compact load meter.
+
+   The strip, the bars and the band colours (low green, med accent, high brand)
+   live in the base `.td-gauge*` in tonaldepth-core ([[L16]]). The per-bar height
+   is set inline by the component, scaled from the reading. Nothing else is owed
+   here — the band is a category carried by one colour across every bar, and the
+   value is carried by height and by the number, so there is no per-tone rule to
+   add. */

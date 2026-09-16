@@ -1,0 +1,15 @@
+/* Chip — a filter token.
+
+   The whole recipe — the quiet pill, its hover/press well, the raised × cap and
+   the way it sinks when pressed — lives in the base `.td-chip` / `.td-chip-x` in
+   tonaldepth-core ([[L16]]). This file adds only what the base cannot know about
+   its parent.
+
+   Like `.td-badge`, a chip is `inline-flex`, and CSS blockifies an inline-level
+   box to `flex` the moment it becomes a grid or flex item — which then fills its
+   whole track. A row of applied filters is exactly a flex/grid context, so pin a
+   definite size and the stretch cannot apply. */
+.td-react-chip {
+  width: fit-content;
+  max-width: 100%;
+}

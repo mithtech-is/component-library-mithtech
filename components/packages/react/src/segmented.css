@@ -1,0 +1,9 @@
+/* Segmented — a single-select inline control.
+
+   The recessed well, the quiet segments and the selected segment's brand wash
+   live in the base `.td-segmented` in tonaldepth-core ([[L16]]). This file adds
+   the disabled state the base does not carry. */
+.td-react-segmented button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

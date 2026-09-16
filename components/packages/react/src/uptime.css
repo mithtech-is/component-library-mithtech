@@ -1,0 +1,6 @@
+/* UptimeBars — a status-page uptime strip.
+
+   The grid, the bars and the state colours (up green, warn papaya, down deep)
+   live in the base `.td-uptime*` in tonaldepth-core ([[L16]]). Nothing is owed
+   here — state is a category carried by one colour per interval, set from the
+   data by the component. */

@@ -1,0 +1,30 @@
+/* TonalDepth Gauge — self-contained. Requires @tonaldepth/tokens.
+
+   A registry consumer has no tonaldepth-core, so the base `.td-gauge*` recipe is
+   re-declared in full here. Per-bar height is set inline by the component. */
+
+.td-gauge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 6px;
+  min-width: 90px;
+}
+.td-gauge-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 60px;
+}
+.td-gauge-bar {
+  width: 6px;
+  background: var(--td-ink-3);
+  border-radius: 2px;
+  transition: height 200ms var(--td-ease), background var(--td-t-base) var(--td-ease);
+}
+.td-gauge-label { font-family: var(--td-font-mono); font-size: 10px; font-weight: 700; color: var(--td-ink-2); letter-spacing: 0.06em; text-transform: uppercase; }
+.td-gauge-value { font-family: var(--td-font-ui); font-size: 18px; color: var(--td-ink); line-height: 1; }
+.td-gauge[data-load="high"] .td-gauge-bar { background: var(--td-brand); }
+.td-gauge[data-load="med"] .td-gauge-bar { background: var(--td-accent); }
+.td-gauge[data-load="low"] .td-gauge-bar { background: var(--td-green); }

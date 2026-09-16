@@ -1,0 +1,41 @@
+/* TonalDepth Segmented — self-contained. Requires @tonaldepth/tokens.
+
+   A registry consumer has no tonaldepth-core, so the base `.td-segmented` recipe
+   is re-declared in full here. */
+
+.td-segmented {
+  display: inline-flex;
+  background: var(--td-surface);
+  border-radius: 12px;
+  padding: 4px;
+  gap: 2px;
+  box-shadow: var(--td-inset-soft);
+  font-family: var(--td-font-ui);
+}
+.td-segmented button {
+  appearance: none;
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 6px 13px;
+  border-radius: 9px;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--td-ink-2);
+  cursor: pointer;
+  transition: background 180ms var(--td-ease), color 180ms var(--td-ease), box-shadow 180ms var(--td-ease), border-color 180ms var(--td-ease);
+}
+.td-segmented button:hover { color: var(--td-ink); }
+.td-segmented button[aria-pressed="true"] {
+  background: color-mix(in srgb, var(--td-brand) 22%, var(--td-surface));
+  color: var(--td-brand);
+  border: 1px solid color-mix(in srgb, var(--td-brand) 45%, transparent);
+  box-shadow: none;
+}
+.td-segmented button:focus-visible { outline: 2px solid var(--td-brand); outline-offset: 2px; }
+
+/* The disabled state the base does not carry. */
+.td-registry-segmented button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

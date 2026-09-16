@@ -1,0 +1,63 @@
+/* TonalDepth Chip — self-contained. Requires @tonaldepth/tokens.
+
+   A registry consumer installs files, not a package, so it has no
+   tonaldepth-core — the base `.td-chip` / `.td-chip-x` recipe is re-declared in
+   full here. */
+
+.td-chip {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--td-font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--td-ink-2);
+  padding: 5px 8px 5px 10px;
+  border-radius: 999px;
+  /* Flat and quiet at rest — a filter row is a list of options, not a
+     row of buttons. Depth appears only on interaction; the pressed well
+     is what marks a filter as active. */
+  background: transparent;
+  box-shadow: none;
+  transition: box-shadow 180ms var(--td-ease), background 180ms var(--td-ease), color 140ms var(--td-ease);
+}
+.td-chip:hover { color: var(--td-ink); background: var(--td-surface); box-shadow: inset 1px 1px 3px color-mix(in srgb, var(--td-shadow-dark) 30%, transparent), inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 35%, transparent); }
+.td-chip:active { background: var(--td-surface); box-shadow: inset 2px 2px 5px color-mix(in srgb, var(--td-shadow-dark) 52%, transparent), inset -1.5px -1.5px 3px color-mix(in srgb, var(--td-shadow-light) 38%, transparent); }
+.td-chip-x {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  appearance: none;
+  border: none;
+  cursor: pointer;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: var(--td-ink-2);
+  /* Neomorphic dot — a tiny raised cap the glyph sits centred in;
+     pressing sinks it into the chip. */
+  background: var(--td-raise-fill);
+  box-shadow:
+    1px 1px 2.5px color-mix(in srgb, var(--td-shadow-dark) 40%, transparent),
+    -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 75%, transparent),
+    inset 0 1px 0 var(--td-shadow-veil),
+    0 0 0 1px var(--td-edge);
+  transition: color 150ms var(--td-ease), box-shadow 150ms var(--td-ease), background 150ms var(--td-ease);
+}
+.td-chip-x:hover { color: var(--td-brand-text); }
+.td-chip-x:active {
+  background: var(--td-surface);
+  box-shadow:
+    inset 1px 1px 2.5px color-mix(in srgb, var(--td-shadow-dark) 45%, transparent),
+    inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 40%, transparent);
+}
+.td-chip-x svg { width: 8px; height: 8px; display: block; }
+
+/* A chip sizes to its content in every parent — see the package stylesheet. */
+.td-registry-chip {
+  width: fit-content;
+  max-width: 100%;
+}

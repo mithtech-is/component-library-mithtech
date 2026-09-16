@@ -1,0 +1,9 @@
+/* Ring — a determinate circular meter.
+
+   The ring, the fill arc's dash math and the centred value live in the base
+   `.td-ring` in tonaldepth-core ([[L16]]); the base fill is brand. This file adds
+   only the other tones, so category can ride the arc without re-declaring the
+   geometry. */
+.td-react-ring[data-tone="accent"] .td-ring-fill { stroke: var(--td-accent); }
+.td-react-ring[data-tone="green"] .td-ring-fill { stroke: var(--td-green); }
+.td-react-ring[data-tone="error"] .td-ring-fill { stroke: var(--td-error); }

@@ -1,0 +1,54 @@
+/* TonalDepth Popover — self-contained. Requires @tonaldepth/tokens.
+
+   A registry consumer has no tonaldepth-core, so the base `.td-popover*` recipe
+   and its fade keyframe are re-declared in full here. */
+
+@keyframes td-overlay-fade { from { opacity: 0; } to { opacity: 1; } }
+
+.td-popover-wrap { position: relative; display: inline-block; }
+.td-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  background: var(--td-surface);
+  border: 1px solid var(--td-btn-border-rest);
+  border-radius: 12px;
+  box-shadow: var(--td-raised);
+  padding: 12px 14px;
+  width: 240px;
+  display: none;
+  z-index: 50;
+  font-family: var(--td-font-sans);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--td-ink);
+  animation: td-overlay-fade 160ms var(--td-ease) both;
+}
+.td-popover-wrap[data-state="open"] .td-popover { display: block; }
+.td-popover-title { font-family: var(--td-font-ui); font-size: 13px; font-weight: 600; margin: 0 0 4px; color: var(--td-ink); }
+
+/* The trigger the base does not carry. */
+.td-registry-popover-trigger {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font: inherit;
+  font-family: var(--td-font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--td-ink);
+  background: var(--td-surface);
+  border: 1px solid var(--td-btn-border-rest);
+  border-radius: 10px;
+  padding: 7px 12px;
+  cursor: pointer;
+  box-shadow: var(--td-btn-rest);
+  transition: box-shadow 160ms var(--td-ease), color 160ms var(--td-ease);
+}
+.td-registry-popover-trigger:hover { color: var(--td-brand-text); }
+.td-registry-popover-trigger:active { box-shadow: var(--td-btn-press); }
+.td-registry-popover-trigger:focus-visible { outline: 2px solid var(--td-brand); outline-offset: 2px; }
+
+/* The panel takes focus programmatically on open; do not paint a ring for it. */
+.td-registry-popover:focus { outline: none; }

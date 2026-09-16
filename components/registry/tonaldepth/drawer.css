@@ -1,0 +1,65 @@
+/* TonalDepth Drawer — self-contained. Requires @tonaldepth/tokens.
+
+   A registry consumer has no tonaldepth-core, so the scrim, the panel, the modal
+   shell it reuses, the close button and the slide keyframes are re-declared in
+   full here. */
+
+@keyframes td-overlay-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes td-drawer-slide { from { transform: translateX(100%); } to { transform: none; } }
+@keyframes td-drawer-slide-left { from { transform: translateX(-100%); } to { transform: none; } }
+
+.td-overlay-backdrop {
+  position: fixed;
+  inset: 0;
+  background: color-mix(in srgb, #000 50%, transparent);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  animation: td-overlay-fade 200ms var(--td-ease) both;
+}
+.td-overlay-backdrop[data-state="open"] { display: flex; }
+
+.td-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(380px, 100vw);
+  background: var(--td-surface);
+  box-shadow: var(--td-raised);
+  z-index: 200;
+  display: none;
+  flex-direction: column;
+  padding: 24px;
+  gap: 14px;
+  animation: td-drawer-slide 260ms var(--td-ease) both;
+}
+.td-drawer[data-state="open"] { display: flex; }
+
+/* The left-hand side the base does not carry. */
+.td-registry-drawer[data-side="left"] {
+  right: auto;
+  left: 0;
+  animation-name: td-drawer-slide-left;
+}
+
+/* The modal shell this panel reuses. */
+.td-modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.td-modal-title { font-family: var(--td-font-ui); font-size: 18px; font-weight: 600; color: var(--td-ink); margin: 0; }
+.td-modal-desc { font-family: var(--td-font-sans); font-size: 13px; line-height: 1.55; color: var(--td-ink-2); margin: 0; }
+.td-modal-actions { position: sticky; display: flex; gap: 8px; justify-content: flex-end; margin-top: 6px; }
+
+.td-alert-close {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  color: var(--td-ink-2);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+.td-alert-close:hover { color: var(--td-ink); background: color-mix(in srgb, var(--td-surface) 92%, black); }

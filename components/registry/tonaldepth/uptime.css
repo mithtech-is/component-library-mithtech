@@ -1,0 +1,31 @@
+/* TonalDepth UptimeBars — self-contained. Requires @tonaldepth/tokens.
+
+   A registry consumer has no tonaldepth-core, so the base `.td-uptime*` recipe is
+   re-declared in full here. */
+
+.td-uptime {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: var(--td-font-ui);
+  font-size: 12px;
+}
+.td-uptime-row {
+  display: grid;
+  grid-template-columns: 100px 1fr 56px;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 0;
+}
+.td-uptime-name { color: var(--td-ink); font-weight: 600; }
+.td-uptime-bars { display: flex; gap: 1.5px; min-width: 0; }
+.td-uptime-bar {
+  flex: 1;
+  height: 18px;
+  border-radius: 2px;
+  background: var(--td-green);
+  transition: background var(--td-t-base) var(--td-ease);
+}
+.td-uptime-bar[data-state="warn"] { background: var(--td-brand); }
+.td-uptime-bar[data-state="down"] { background: var(--td-brand-deep); }
+.td-uptime-pct { font-family: var(--td-font-mono); font-size: 11px; color: var(--td-ink-2); text-align: right; font-weight: 600; }

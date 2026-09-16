@@ -1,0 +1,31 @@
+/* Popover — a click-triggered panel anchored to its trigger.
+
+   The wrap, the anchored panel, its fade-in and its title live in the base
+   `.td-popover*` in tonaldepth-core ([[L16]]). This file styles the trigger the
+   base does not carry, and stops the programmatically-focused panel from drawing
+   a focus ring it did not earn. */
+.td-react-popover-trigger {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font: inherit;
+  font-family: var(--td-font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--td-ink);
+  background: var(--td-surface);
+  border: 1px solid var(--td-btn-border-rest);
+  border-radius: 10px;
+  padding: 7px 12px;
+  cursor: pointer;
+  box-shadow: var(--td-btn-rest);
+  transition: box-shadow 160ms var(--td-ease), color 160ms var(--td-ease);
+}
+.td-react-popover-trigger:hover { color: var(--td-brand-text); }
+.td-react-popover-trigger:active { box-shadow: var(--td-btn-press); }
+.td-react-popover-trigger:focus-visible { outline: 2px solid var(--td-brand); outline-offset: 2px; }
+
+/* The panel takes focus programmatically on open; it should not paint a ring
+   for a focus the reader did not move there themselves. */
+.td-react-popover:focus { outline: none; }

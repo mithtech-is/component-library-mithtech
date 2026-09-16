@@ -1,0 +1,15 @@
+/* UndoBar — reversal instead of a confirmation modal.
+
+   The raised bar, the timer hairline and the undo control live in the base
+   `.td-undobar*` in tonaldepth-core ([[L16]]). The countdown ANIMATION is not in
+   core — it belongs to this component — so it is declared here: the hairline
+   drains from full to empty over the bar's duration. The commit itself is driven
+   by a timer in JS, not by this animation, so it still fires when a reader has
+   asked for no motion. */
+@keyframes td-undodrain { from { width: 100%; } to { width: 0; } }
+.td-react-undobar .td-undobar-timer {
+  animation: td-undodrain var(--td-undobar-duration, 6s) linear forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .td-react-undobar .td-undobar-timer { animation: none; }
+}

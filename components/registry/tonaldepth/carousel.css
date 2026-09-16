@@ -1,0 +1,68 @@
+/* TonalDepth Carousel — self-contained. Requires @tonaldepth/tokens.
+
+   A registry consumer has no tonaldepth-core, so the base `.td-carousel*` recipe
+   is re-declared in full here. */
+
+.td-carousel {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: 6px 4px 14px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+.td-carousel-card {
+  flex: 0 0 240px;
+  scroll-snap-align: start;
+  border-radius: 16px;
+  background: var(--td-surface);
+  border: 1px solid var(--td-btn-border-rest);
+  box-shadow: var(--td-btn-rest);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 160px;
+  transition: box-shadow var(--td-t-base) var(--td-ease), transform var(--td-t-base) var(--td-ease);
+}
+.td-carousel-card:hover {
+  box-shadow: var(--td-btn-hover);
+  transform: translateY(-2px);
+}
+.td-carousel-card-eyebrow {
+  font-family: var(--td-font-mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--td-brand-text);
+}
+.td-carousel-card-title {
+  font-family: var(--td-font-display);
+  font-size: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.005em;
+  line-height: 1;
+  color: var(--td-ink);
+}
+.td-carousel-card-text { font-size: 12.5px; color: var(--td-ink-2); line-height: 1.55; flex: 1; }
+.td-carousel-card-cta { font-size: 12px; font-weight: 700; color: var(--td-brand-text); display: inline-flex; align-items: center; gap: 4px; }
+.td-carousel-hint {
+  font-family: var(--td-font-mono);
+  font-size: 10px;
+  color: var(--td-ink-3);
+  letter-spacing: 0.04em;
+  margin-top: 2px;
+}
+
+/* The column wrap that keeps the hint under the strip, and the eyebrow tones. */
+.td-registry-carousel-wrap {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  max-width: 100%;
+}
+.td-registry-carousel-card[data-tone="accent"] .td-carousel-card-eyebrow { color: var(--td-accent-text); }
+.td-registry-carousel-card[data-tone="green"] .td-carousel-card-eyebrow { color: var(--td-green-text); }

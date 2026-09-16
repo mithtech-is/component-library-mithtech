@@ -1,0 +1,17 @@
+# Normalize line endings to LF so a Windows checkout of this Mac-authored repo
+# does not rewrite whole files on the first edit, and so tooling that byte-compares
+# generated output (e.g. tooling/tests/test_native_tokens.py) is not tripped by CRLF.
+* text=auto eol=lf
+
+# Binary assets — never touch these.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.pdf binary

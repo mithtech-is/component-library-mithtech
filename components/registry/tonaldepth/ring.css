@@ -1,0 +1,37 @@
+/* TonalDepth Ring — self-contained. Requires @tonaldepth/tokens.
+
+   A registry consumer has no tonaldepth-core, so the base `.td-ring` recipe is
+   re-declared in full here. */
+
+.td-ring {
+  position: relative;
+  width: var(--size, 72px);
+  height: var(--size, 72px);
+}
+.td-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.td-ring-track { stroke: color-mix(in srgb, var(--td-ink-2) 12%, transparent); fill: none; stroke-width: 6; }
+.td-ring-fill {
+  stroke: var(--td-brand);
+  fill: none;
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-dasharray: var(--circ, 200);
+  stroke-dashoffset: calc(var(--circ, 200) - var(--circ, 200) * var(--pct, 0));
+  transition: stroke-dashoffset 600ms cubic-bezier(0.2, 0.75, 0.2, 1);
+}
+.td-ring-value {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--td-font-ui);
+  font-size: calc(var(--size, 72px) * 0.28);
+  font-weight: 600;
+  color: var(--td-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Category can ride the arc — the other tones over the brand default. */
+.td-registry-ring[data-tone="accent"] .td-ring-fill { stroke: var(--td-accent); }
+.td-registry-ring[data-tone="green"] .td-ring-fill { stroke: var(--td-green); }
+.td-registry-ring[data-tone="error"] .td-ring-fill { stroke: var(--td-error); }

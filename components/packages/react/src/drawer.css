@@ -1,0 +1,15 @@
+/* Drawer — a modal side sheet.
+
+   The panel and its slide-in are the base `.td-drawer` in tonaldepth-core; the
+   scrim is the shared `.td-overlay-backdrop`, and the header, title, description
+   and action row are the Dialog's `.td-modal-*` shell ([[L16]]). The base drawer
+   enters from the RIGHT; this file adds the left-hand side it does not carry. */
+.td-react-drawer[data-side="left"] {
+  right: auto;
+  left: 0;
+  animation-name: td-drawer-slide-left;
+}
+@keyframes td-drawer-slide-left {
+  from { transform: translateX(-100%); }
+  to { transform: none; }
+}

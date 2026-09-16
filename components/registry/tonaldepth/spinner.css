@@ -1,0 +1,22 @@
+/* TonalDepth Spinner — self-contained. Requires @tonaldepth/tokens.
+
+   A registry consumer has no tonaldepth-core, so the base `.td-spinner` recipe
+   and its keyframe are re-declared in full here. */
+
+@keyframes td-spin { to { transform: rotate(360deg); } }
+
+.td-spinner {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid color-mix(in srgb, var(--td-ink-2) 30%, transparent);
+  border-top-color: var(--td-brand);
+  animation: td-spin 0.8s linear infinite;
+  display: inline-block;
+}
+
+/* A reader who has asked for less motion still needs to know something is
+   working, so the spin slows rather than stops. */
+@media (prefers-reduced-motion: reduce) {
+  .td-registry-spinner { animation-duration: 1.8s; }
+}

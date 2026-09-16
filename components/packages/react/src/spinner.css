@@ -1,0 +1,10 @@
+/* Spinner — a busy indicator.
+
+   The ring, the papaya arc that reads as the moving light, and the spin live in
+   the base `.td-spinner` in tonaldepth-core ([[L16]]); size and thickness are set
+   per-instance by the component. This file adds only the reduced-motion
+   accommodation the base does not carry: a reader who has asked for less motion
+   still needs to know something is working, so the spin slows rather than stops. */
+@media (prefers-reduced-motion: reduce) {
+  .td-react-spinner { animation-duration: 1.8s; }
+}

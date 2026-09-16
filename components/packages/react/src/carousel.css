@@ -1,0 +1,13 @@
+/* Carousel — a horizontal scroll-snap region.
+
+   The scroll strip, the snap, the card and the hint live in the base
+   `.td-carousel*` in tonaldepth-core ([[L16]]). This file adds the column wrap
+   that keeps the hint under the strip, and the eyebrow tones the card takes. */
+.td-react-carousel-wrap {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  max-width: 100%;
+}
+.td-react-carousel-card[data-tone="accent"] .td-carousel-card-eyebrow { color: var(--td-accent-text); }
+.td-react-carousel-card[data-tone="green"] .td-carousel-card-eyebrow { color: var(--td-green-text); }

@@ -39,7 +39,7 @@
     },
     {
       "name": "application-shell",
-      "type": "registry:ui",
+      "type": "registry:block",
       "title": "TonalDepth ApplicationShell",
       "description": "A typed TonalDepth application shell with grouped sidebar navigation, identity slot, main header, and content area.",
       "registryDependencies": [
@@ -99,6 +99,182 @@
           "path": "components/registry/tonaldepth/badge.tsx",
           "type": "registry:ui",
           "target": "components/ui/tonaldepth-badge.tsx"
+        }
+      ]
+    },
+    {
+      "name": "chip",
+      "type": "registry:ui",
+      "title": "TonalDepth Chip",
+      "description": "A filter token — one applied value the reader can see and, when it can be retracted, remove with a raised × cap. The applied-filter counterpart to FilterBar's picker.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "components/registry/tonaldepth/chip.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-chip.tsx"
+        }
+      ]
+    },
+    {
+      "name": "spinner",
+      "type": "registry:ui",
+      "title": "TonalDepth Spinner",
+      "description": "An indeterminate busy indicator — a ring with a papaya arc that turns while something loads and no progress figure exists to show. Sized and labelled per instance.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "components/registry/tonaldepth/spinner.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-spinner.tsx"
+        }
+      ]
+    },
+    {
+      "name": "segmented",
+      "type": "registry:ui",
+      "title": "TonalDepth Segmented",
+      "description": "A single-select inline control — one choice from a small set of peers shown at once, the selected segment pressed into a recessed well. Day/week/month, sort order, light/dark/system.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "components/registry/tonaldepth/segmented.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-segmented.tsx"
+        }
+      ]
+    },
+    {
+      "name": "ring",
+      "type": "registry:ui",
+      "title": "TonalDepth Ring",
+      "description": "A determinate circular meter — the round sibling of Progress, with the papaya fill travelling the edge as light rather than a wedge of colour. Tones, sizing, and centred value.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "components/registry/tonaldepth/ring.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-ring.tsx"
+        }
+      ]
+    },
+    {
+      "name": "popover",
+      "type": "registry:ui",
+      "title": "TonalDepth Popover",
+      "description": "A click-triggered, non-modal panel of arbitrary content anchored to its trigger — toggles, closes on Escape and outside-click, manages focus, and carries role=dialog.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "components/registry/tonaldepth/popover.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-popover.tsx"
+        }
+      ]
+    },
+    {
+      "name": "gauge",
+      "type": "registry:ui",
+      "title": "TonalDepth Gauge",
+      "description": "A compact load meter — a strip of bars that rises with a value, coloured by band (low green, med accent, high brand), read against a label and a percentage.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "components/registry/tonaldepth/gauge.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-gauge.tsx"
+        }
+      ]
+    },
+    {
+      "name": "uptime",
+      "type": "registry:ui",
+      "title": "TonalDepth UptimeBars",
+      "description": "A status-page uptime strip — one row per service, a bar per interval coloured by state (up green, warn papaya, down deep), and the period's figure at the end.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "components/registry/tonaldepth/uptime.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-uptime.tsx"
+        }
+      ]
+    },
+    {
+      "name": "undobar",
+      "type": "registry:ui",
+      "title": "TonalDepth UndoBar",
+      "description": "The reversible-action bar — act first, then offer a way back. A papaya hairline drains and the action commits when it empties; Undo puts it back. No confirmation modal.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "components/registry/tonaldepth/undobar.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-undobar.tsx"
+        }
+      ]
+    },
+    {
+      "name": "inline-edit",
+      "type": "registry:ui",
+      "title": "TonalDepth InlineEdit",
+      "description": "A value that turns into a field when clicked and back when you leave — edit a read-mostly detail in place. Commits on Enter or blur, discards on Escape.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "components/registry/tonaldepth/inline-edit.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-inline-edit.tsx"
+        }
+      ]
+    },
+    {
+      "name": "carousel",
+      "type": "registry:ui",
+      "title": "TonalDepth Carousel",
+      "description": "A horizontal scroll-snap strip of cards — a focusable region with a name, no prev/next to reimplement. Ships CarouselCard (eyebrow, title, body, CTA, tone).",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "components/registry/tonaldepth/carousel.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-carousel.tsx"
+        }
+      ]
+    },
+    {
+      "name": "drawer",
+      "type": "registry:ui",
+      "title": "TonalDepth Drawer",
+      "description": "A modal panel that slides in from the edge — scrim, trapped focus, Escape and scrim-click to close, body scroll locked, portalled to the body. Left or right side.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "components/registry/tonaldepth/drawer.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-drawer.tsx"
         }
       ]
     },
@@ -201,7 +377,7 @@
     },
     {
       "name": "chat-launcher",
-      "type": "registry:ui",
+      "type": "registry:block",
       "title": "TonalDepth ChatLauncher",
       "description": "A typed TonalDepth floating chat launcher and panel, with a presence lamp and an optional revolving AI halo. Not a dialog: the page stays usable.",
       "registryDependencies": [
@@ -299,7 +475,7 @@
     },
     {
       "name": "comparison-table",
-      "type": "registry:ui",
+      "type": "registry:block",
       "title": "TonalDepth ComparisonTable",
       "description": "A typed TonalDepth comparison table: criteria down, options across, booleans as marks with a text equivalent, and the argued-for column set as the ladder's selected step.",
       "registryDependencies": [
@@ -364,7 +540,7 @@
     },
     {
       "name": "cta-banner",
-      "type": "registry:ui",
+      "type": "registry:block",
       "title": "TonalDepth CtaBanner",
       "description": "A typed TonalDepth closing call to action. It carries weight through depth and scale rather than a brand fill, and takes library Buttons in its actions slot.",
       "registryDependencies": [
@@ -604,7 +780,7 @@
     },
     {
       "name": "footer",
-      "type": "registry:ui",
+      "type": "registry:block",
       "title": "TonalDepth Footer",
       "description": "The site footer, composed from a brand band, link columns, a contact well and a bottom rule. Server-renderable, so the whole link inventory stays in the crawled HTML.",
       "registryDependencies": [
@@ -733,7 +909,7 @@
     },
     {
       "name": "logo-strip",
-      "type": "registry:ui",
+      "type": "registry:block",
       "title": "TonalDepth LogoStrip",
       "description": "A typed TonalDepth wall of real client artwork — monochrome at rest, full colour on hover, with each mark's name carried as its alternative text.",
       "registryDependencies": [
@@ -765,7 +941,7 @@
     },
     {
       "name": "mega-cascade",
-      "type": "registry:ui",
+      "type": "registry:block",
       "title": "TonalDepth MegaCascade",
       "description": "A typed TonalDepth three-level cascading mega panel — categories, subcategories, items — each column a well, with roving-tabindex rails. `megaCascadeSections` flattens the same groups for a NavDrawer.",
       "registryDependencies": [
@@ -781,7 +957,7 @@
     },
     {
       "name": "mega-columns",
-      "type": "registry:ui",
+      "type": "registry:block",
       "title": "TonalDepth MegaColumns",
       "description": "A typed TonalDepth wide mega panel: a feature panel that makes the case beside titled columns of destinations, with a footer rail.",
       "registryDependencies": [
@@ -797,7 +973,7 @@
     },
     {
       "name": "mega-grid",
-      "type": "registry:ui",
+      "type": "registry:block",
       "title": "TonalDepth MegaGrid",
       "description": "A typed TonalDepth mega panel of cards, housed in a well rather than sitting on the sheet, plus the footer action rail.",
       "registryDependencies": [
@@ -813,7 +989,7 @@
     },
     {
       "name": "mega-tabs",
-      "type": "registry:ui",
+      "type": "registry:block",
       "title": "TonalDepth MegaTabs",
       "description": "A typed TonalDepth two-column mega panel: a rail of options on the left, one pane on the right.",
       "registryDependencies": [
@@ -912,7 +1088,7 @@
     },
     {
       "name": "page-patterns",
-      "type": "registry:ui",
+      "type": "registry:block",
       "title": "TonalDepth PagePatterns",
       "description": "Typed TonalDepth page compositions: DashboardPage, DashboardPanel, DataManagementPage, PageState.",
       "registryDependencies": [
@@ -962,7 +1138,7 @@
     },
     {
       "name": "pricing-table",
-      "type": "registry:ui",
+      "type": "registry:block",
       "title": "TonalDepth PricingTable",
       "description": "A typed TonalDepth plan grid — a price, what it includes, and the way to take it. The featured plan is reported by depth and papaya ink, never by a fill.",
       "registryDependencies": [
@@ -1170,7 +1346,7 @@
     },
     {
       "name": "site-navigation",
-      "type": "registry:ui",
+      "type": "registry:block",
       "title": "TonalDepth SiteNavigation",
       "description": "The marketing site navigation — a raised pill that sticks flush, retracts on the way down and returns on the way up, with mega panels held at one size whatever they hold. Draws its own burger below 900px; `nav-drawer` is what that burger opens. Publishes `--nav-offset` for in-page sticky toolbars.",
       "registryDependencies": [
@@ -1346,7 +1522,7 @@
     },
     {
       "name": "testimonial",
-      "type": "registry:ui",
+      "type": "registry:block",
       "title": "TonalDepth Testimonial",
       "description": "A typed TonalDepth quotation with its attribution. Not ProfileCard: the subject is the claim, and the person is the evidence for it.",
       "registryDependencies": [
@@ -1487,7 +1663,7 @@
     },
     {
       "name": "whatsapp-form",
-      "type": "registry:ui",
+      "type": "registry:block",
       "title": "TonalDepth WhatsAppForm",
       "description": "A WhatsApp enquiry: a button that opens a short form and hands the finished message to WhatsApp, addressed to one number. Nothing is submitted anywhere.",
       "registryDependencies": [
