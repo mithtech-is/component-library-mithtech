@@ -1,6 +1,6 @@
 {
   "name": "@mithtech-bengaluru/tonaldepth-core",
-  "version": "0.1.0-alpha.4",
+  "version": "0.1.0-alpha.5",
   "description": "TonalDepth platform-neutral web tokens and 1.x compatibility CSS",
   "license": "UNLICENSED",
   "sideEffects": [
