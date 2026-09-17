@@ -30,6 +30,20 @@ export interface TonalDepthLogoStripProps extends HTMLAttributes<HTMLElement> {
   speed?: number;
   /** Run the marks right to left instead of left to right. */
   reverse?: boolean;
+  /**
+   * Show the marks in their own colour instead of flattening them to the page's
+   * ink.
+   *
+   * The default wall greyscales every mark to one silhouette so a row of client
+   * logos reads as one material and a dark logo does not vanish on a dark page.
+   * That is right for a *client* wall — third-party proof, where uniformity is
+   * the point. It is wrong for a wall of *product* logos the reader is meant to
+   * recognise one by one (the stack you implement, the integrations you bind):
+   * flattened, a blue app icon and a magenta one become the same grey box. Turn
+   * this on there — the artwork shows as drawn, and it is on the caller to pass
+   * marks that hold up on the page's ground.
+   */
+  plain?: boolean;
   renderLink?: (props: { className: string; href: string; children: ReactNode }) => ReactNode;
 }
 
@@ -65,7 +79,7 @@ export interface TonalDepthLogoStripProps extends HTMLAttributes<HTMLElement> {
  *   clicked, with which half depending on where the loop had got to.
  */
 export const TonalDepthLogoStrip = forwardRef<HTMLElement, TonalDepthLogoStripProps>(function TonalDepthLogoStrip(
-  { items, label, scroll = false, speed = 32, reverse = false, renderLink, className, style, ...props },
+  { items, label, scroll = false, speed = 32, reverse = false, plain = false, renderLink, className, style, ...props },
   ref,
 ) {
   /*
@@ -110,7 +124,7 @@ export const TonalDepthLogoStrip = forwardRef<HTMLElement, TonalDepthLogoStripPr
 
   if (!scroll) {
     return (
-      <section {...props} ref={ref} style={style} className={cx("td-logos", "td-registry-logos", className)}>
+      <section {...props} ref={ref} style={style} className={cx("td-logos", "td-registry-logos", plain && "td-registry-logos--plain", className)}>
         {heading}
         {items.map((item, i) => renderItem(item, i))}
       </section>
@@ -123,7 +137,7 @@ export const TonalDepthLogoStrip = forwardRef<HTMLElement, TonalDepthLogoStripPr
       ref={ref}
       style={{ ...style, ["--td-logos-speed" as string]: `${speed}s` }}
       data-reverse={reverse ? "true" : undefined}
-      className={cx("td-logos", "td-registry-logos", "td-registry-logos--scroll", className)}
+      className={cx("td-logos", "td-registry-logos", "td-registry-logos--scroll", plain && "td-registry-logos--plain", className)}
     >
       {heading}
       <div className="td-registry-logos-viewport">

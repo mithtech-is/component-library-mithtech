@@ -85,6 +85,17 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) .td-react-logos-art { filter: brightness(0) invert(1) opacity(0.62); }
 }
+
+/* `plain` — the marks keep their own colour, in every theme. The flatten is a
+   silhouette that makes a wall of product logos read as identical grey boxes;
+   here the artwork shows as drawn. Scoped over the dark rules so it wins in
+   both themes. */
+.td-react-logos--plain .td-react-logos-art { filter: none; opacity: 1; }
+[data-theme="dark"] .td-react-logos--plain .td-react-logos-art { filter: none; opacity: 1; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .td-react-logos--plain .td-react-logos-art { filter: none; opacity: 1; }
+}
+
 /* THE LIT STATE.
 
    The mark comes back to its real colours and steps forward. That is the whole

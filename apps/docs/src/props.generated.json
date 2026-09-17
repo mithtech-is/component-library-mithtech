@@ -3491,6 +3491,11 @@
       "false"
     ],
     [
+      "plain",
+      "boolean",
+      "false"
+    ],
+    [
       "renderLink",
       "(props: { className: string; href: string; children: ReactNode }) => ReactNode",
       "—"
