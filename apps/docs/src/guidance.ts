@@ -618,6 +618,17 @@ export const GUIDANCE = {
       { instead: "badge", because: "The pill states a status or category and does not go anywhere. A LinkChip navigates." },
     ],
   },
+  "choice-chips": {
+    aliases: ["choice chips", "toggle chips", "chip group", "filter chips", "multi-select chips", "single select chips", "pill toggles", "option chips", "segmented chips"],
+    useCases: ["pick one intent from a list of chips", "let the reader choose several modules", "a wrapping row of toggle-able options", "a chip-shaped multiple choice", "single or multi select shown as pills"],
+    whenToUse: "A row of toggle chips the reader chooses from — one by default, a set with `multiple`. The plain-input counterpart to a filter picker.",
+    whenNotToUse: [
+      { instead: "segmented", because: "There are only three or four short peers that fit one recessed housing (day/week/month). ChoiceChips is a wrapping row for many, or long, options." },
+      { instead: "filter-bar", because: "You are filtering a result set and want counts and a clear-all. ChoiceChips is a plain input with no result set implied." },
+      { instead: "chip", because: "The pill is a static value the reader is shown, not one they toggle. Chip is a token; these chips are chosen." },
+      { instead: "checkbox-group", because: "The design shows stacked checkboxes with descriptions, not a row of pills. Same multi-select job, different shape." },
+    ],
+  },
   "spinner": {
     aliases: ["spinner", "loader", "loading indicator", "busy indicator", "activity indicator", "throbber"],
     useCases: ["show something is loading", "indicate a wait with no percentage", "busy state on a button or a panel", "inline loading next to a label"],

@@ -1,0 +1,55 @@
+/* TonalDepth ChoiceChips — self-contained. Requires @tonaldepth/tokens.
+
+   A registry consumer installs files, not a package, so it has no
+   tonaldepth-core — the base `.td-chip` pill, its pressed `[aria-pressed]`
+   states, and `.td-chip-count` are re-declared in full here. A selected chip
+   sinks into its well; `[data-color="accent"]` lights it accent instead of
+   brand. */
+
+.td-chip {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--td-font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--td-ink-2);
+  padding: 5px 8px 5px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  background: transparent;
+  box-shadow: none;
+  transition: box-shadow 180ms var(--td-ease), background 180ms var(--td-ease), color 140ms var(--td-ease);
+}
+.td-chip:hover { color: var(--td-ink); background: var(--td-surface); box-shadow: inset 1px 1px 3px color-mix(in srgb, var(--td-shadow-dark) 30%, transparent), inset -1px -1px 2px color-mix(in srgb, var(--td-shadow-light) 35%, transparent); }
+.td-chip:active { background: var(--td-surface); box-shadow: inset 2px 2px 5px color-mix(in srgb, var(--td-shadow-dark) 52%, transparent), inset -1.5px -1.5px 3px color-mix(in srgb, var(--td-shadow-light) 38%, transparent); }
+
+/* Selected — the choice pressed into the well. */
+.td-chip[aria-pressed="true"] {
+  color: var(--td-brand-text);
+  background: var(--td-surface);
+  box-shadow: inset 1.5px 1.5px 4px color-mix(in srgb, var(--td-shadow-dark) 42%, transparent),
+              inset -1px -1px 2.5px color-mix(in srgb, var(--td-shadow-light) 40%, transparent);
+}
+.td-chip[aria-pressed="true"][data-color="accent"] {
+  color: var(--td-accent-text);
+  box-shadow: inset 1.5px 1.5px 4px color-mix(in srgb, var(--td-shadow-dark) 46%, transparent),
+              inset -1px -1px 3px color-mix(in srgb, var(--td-shadow-light) 36%, transparent);
+}
+
+.td-chip-count { font-family: var(--td-font-mono); font-size: 10.5px; opacity: 0.7; }
+
+/* The group: a wrapping row of chips sized to their content. */
+.td-registry-choicechips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.td-registry-choicechips > .td-chip:focus-visible {
+  outline: 2px solid var(--td-accent);
+  outline-offset: 2px;
+}

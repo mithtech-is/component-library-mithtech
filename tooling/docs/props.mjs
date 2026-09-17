@@ -30,6 +30,7 @@ const TABLES = {
   "badge": ["badge", "BadgeProps", "Badge"],
   "chip": ["chip", "ChipProps", "Chip"],
   "linkchip": ["linkchip", "LinkChipProps", "LinkChip"],
+  "choice-chips": ["choice-chips", "ChoiceChipsProps", "ChoiceChips"],
   "spinner": ["spinner", "SpinnerProps", "Spinner"],
   "segmented": ["segmented", "SegmentedProps", "Segmented"],
   "ring": ["ring", "RingProps", "Ring"],

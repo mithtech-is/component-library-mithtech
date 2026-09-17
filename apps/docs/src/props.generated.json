@@ -92,6 +92,48 @@
       "—"
     ]
   ],
+  "choice-chips": [
+    [
+      "options",
+      "ChoiceOption[]",
+      "required"
+    ],
+    [
+      "label",
+      "string",
+      "{label}"
+    ],
+    [
+      "color",
+      "\"brand\" | \"accent\"",
+      "{on ? color : undefined}"
+    ],
+    [
+      "multiple",
+      "boolean",
+      "—"
+    ],
+    [
+      "value",
+      "string | string[] | null",
+      "—"
+    ],
+    [
+      "defaultValue",
+      "string | string[] | null",
+      "—"
+    ],
+    [
+      "onValueChange",
+      "(value: string | string[] | null) => void",
+      "—"
+    ],
+    [
+      "deselectable",
+      "boolean",
+      "—"
+    ]
+  ],
   "spinner": [
     [
       "size",

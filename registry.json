@@ -135,6 +135,22 @@
       ]
     },
     {
+      "name": "choice-chips",
+      "type": "registry:ui",
+      "title": "TonalDepth ChoiceChips",
+      "description": "A row of toggle chips the reader chooses from — single-select or, with `multiple`, a set. A plain choice input on the base chip pill, distinct from FilterBar's filter picker.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "components/registry/tonaldepth/choice-chips.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-choice-chips.tsx"
+        }
+      ]
+    },
+    {
       "name": "spinner",
       "type": "registry:ui",
       "title": "TonalDepth Spinner",
