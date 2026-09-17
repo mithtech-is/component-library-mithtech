@@ -11,10 +11,17 @@ export interface TabsProps extends HTMLAttributes<HTMLDivElement> {
   defaultValue?: string;
   onValueChange?: (value: string) => void;
   label?: string;
+  /**
+   * `vertical` stands the tablist beside its panel — a rail on the left, the
+   * content on the right — for a long list of tabs, or tabs whose labels are too
+   * wide to sit in one horizontal row. `horizontal` (the default) keeps the
+   * tablist above the panel. The arrow keys already walk either axis.
+   */
+  orientation?: "horizontal" | "vertical";
 }
 
 export const Tabs = forwardRef<HTMLDivElement, TabsProps>(function Tabs(
-  { items, value, defaultValue, onValueChange, label = "Tabs", className, ...props }, ref,
+  { items, value, defaultValue, onValueChange, label = "Tabs", orientation = "horizontal", className, ...props }, ref,
 ) {
   const id = useId();
   const first = items.find(item => !item.disabled)?.value ?? "";
@@ -36,8 +43,8 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(function Tabs(
   };
   const active = items.find(item => item.value === selected) ?? items[0];
   return (
-    <div {...props} ref={ref} className={cx("td-tabs", className)}>
-      <div role="tablist" aria-label={label} className="td-tablist" onKeyDown={onKeyDown}>
+    <div {...props} ref={ref} data-orientation={orientation} className={cx("td-tabs", "td-react-tabs", className)}>
+      <div role="tablist" aria-label={label} aria-orientation={orientation} className="td-tablist" onKeyDown={onKeyDown}>
         {items.map(item => <button key={item.value} id={`${id}-tab-${item.value}`} type="button" role="tab" disabled={item.disabled} aria-selected={item.value === selected} aria-controls={`${id}-panel-${item.value}`} tabIndex={item.value === selected ? 0 : -1} className="td-tab td-react-tab" onClick={() => select(item.value)}>{item.label}</button>)}
       </div>
       {active ? <div id={`${id}-panel-${active.value}`} role="tabpanel" aria-labelledby={`${id}-tab-${active.value}`} tabIndex={0} className="td-tabpanel">{active.content}</div> : null}

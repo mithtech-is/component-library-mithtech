@@ -550,6 +550,11 @@
       "label",
       "string",
       "\"Tabs\""
+    ],
+    [
+      "orientation",
+      "\"horizontal\" | \"vertical\"",
+      "\"horizontal\""
     ]
   ],
   "kpi": [

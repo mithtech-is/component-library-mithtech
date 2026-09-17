@@ -70,3 +70,21 @@
     inset 0 1px 0 var(--td-shadow-veil),
     0 0 0 1px var(--td-edge);
 }
+
+/* Vertical — the tablist stands beside the panel as a rail. Layout only; the
+   arrow keys already walk the list on either axis. */
+.td-registry-tabs[data-orientation="vertical"] {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 16px;
+}
+.td-registry-tabs[data-orientation="vertical"] > .td-tablist {
+  flex: 0 0 auto;
+  flex-direction: column;
+  align-items: stretch;
+  overflow-x: visible;
+}
+.td-registry-tabs[data-orientation="vertical"] > .td-tabpanel {
+  flex: 1 1 auto;
+  min-width: 0;
+}
