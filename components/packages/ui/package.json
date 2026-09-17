@@ -1,0 +1,46 @@
+{
+  "name": "@mithtech-bengaluru/tonaldepth-ui",
+  "version": "0.0.0-alpha.0",
+  "description": "TonalDepth on shadcn's component foundation — Radix behaviour, TonalDepth material",
+  "license": "UNLICENSED",
+  "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./styles.css": "./dist/styles/index.css"
+  },
+  "scripts": {
+    "preview": "vite --config vite.config.ts",
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@mithtech-bengaluru/tonaldepth-core": "0.1.0-alpha.4",
+    "class-variance-authority": "^0.7.1",
+    "radix-ui": "^1.4.3"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0 || ^19.0.0",
+    "react-dom": "^18.2.0 || ^19.0.0"
+  },
+  "publishConfig": {
+    "registry": "https://npm.po5.in",
+    "access": "restricted"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mithtech-Bengaluru/tonaldepth.git",
+    "directory": "components/packages/ui"
+  }
+}

@@ -1,0 +1,5 @@
+/* The aggregate stylesheet. Tokens first — every component rule below reads
+   from them, and a consumer importing only this file gets the whole system. */
+@import "@mithtech-bengaluru/tonaldepth-core";
+
+@import "./button.css";
