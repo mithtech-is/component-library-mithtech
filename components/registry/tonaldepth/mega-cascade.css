@@ -102,15 +102,29 @@
 .td-registry-mega-items { display: flex; flex-direction: column; gap: 1px; margin: 0; padding: 0; list-style: none; min-width: 0; }
 .td-registry-mega-items a {
   display: block;
+  position: relative;
   min-width: 0;
-  padding: var(--td-sp-4) var(--td-sp-5);
+  padding: var(--td-sp-4) var(--td-sp-5) var(--td-sp-4) var(--td-sp-8);
   border-radius: var(--td-radius-3);
   font-family: var(--td-font-ui);
   font-size: 0.79rem;
+  line-height: 1.4;
   color: var(--td-ink-2);
   text-decoration: none;
   box-shadow: var(--td-row-rest);
   transition: color var(--td-t-base) var(--td-ease), background var(--td-t-base) var(--td-ease), box-shadow var(--td-t-base) var(--td-ease);
+}
+/* A brand dot in the left gutter, pinned to the first line of the label. */
+.td-registry-mega-items a::before {
+  content: "";
+  position: absolute;
+  left: var(--td-sp-4);
+  top: calc(var(--td-sp-4) + 0.55rem - 2px);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--td-brand);
+  opacity: 0.55;
 }
 .td-registry-mega-items a:hover { color: var(--td-ink); background: var(--td-surface); box-shadow: var(--td-row-hover); }
 .td-registry-mega-items a:active { color: var(--td-ink); background: var(--td-surface); box-shadow: var(--td-row-press); }
