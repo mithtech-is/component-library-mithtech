@@ -608,6 +608,16 @@ export const GUIDANCE = {
       { instead: "badge", because: "The pill states a status or category and cannot be removed. A chip is a value the reader can take off." },
     ],
   },
+  "linkchip": {
+    aliases: ["link chip", "tag link", "nav pill", "navigable pill", "topic pill", "tag pill", "pill link", "clickable tag"],
+    useCases: ["a row of topic pills under an article", "tags on a card that link to a hub", "an explore strip of related links", "pills that navigate rather than filter"],
+    whenToUse: "A pill in a row of pills that navigates — a tag rail, an explore strip, a set of related topics. The whole pill is the link.",
+    whenNotToUse: [
+      { instead: "chip", because: "The pill is a filter or a static value the reader is shown, not a link. Chip stays a span; only its × is interactive." },
+      { instead: "button", because: "The design shows a button or a CTA, not a pill in a row. Button variant='link' is an action styled as a link inside prose; LinkChip is a pill." },
+      { instead: "badge", because: "The pill states a status or category and does not go anywhere. A LinkChip navigates." },
+    ],
+  },
   "spinner": {
     aliases: ["spinner", "loader", "loading indicator", "busy indicator", "activity indicator", "throbber"],
     useCases: ["show something is loading", "indicate a wait with no percentage", "busy state on a button or a panel", "inline loading next to a label"],

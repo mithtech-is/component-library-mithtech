@@ -36,6 +36,7 @@ const ITEMS = {
   "button": { module: "button", symbols: ["Button"] },
   "badge": { module: "badge", symbols: ["Badge"] },
   "chip": { module: "chip", symbols: ["Chip"] },
+  "linkchip": { module: "linkchip", symbols: ["LinkChip"] },
   "spinner": { module: "spinner", symbols: ["Spinner"] },
   "segmented": { module: "segmented", symbols: ["Segmented"] },
   "ring": { module: "ring", symbols: ["Ring"] },

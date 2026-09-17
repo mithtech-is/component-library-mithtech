@@ -4,6 +4,7 @@ export * from "./icons";
 export * from "./brands";
 export { Badge, type BadgeProps, type BadgeVariant } from "./badge";
 export { Chip, type ChipProps } from "./chip";
+export { LinkChip, type LinkChipProps } from "./linkchip";
 export { Spinner, type SpinnerProps } from "./spinner";
 export { Segmented, type SegmentedProps, type SegmentedOption } from "./segmented";
 export { Ring, type RingProps, type RingTone } from "./ring";

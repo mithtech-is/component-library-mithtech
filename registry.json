@@ -119,6 +119,22 @@
       ]
     },
     {
+      "name": "linkchip",
+      "type": "registry:ui",
+      "title": "TonalDepth LinkChip",
+      "description": "A navigable pill — one tag or topic the reader can follow. Wears the same pill as Chip on an anchor whose whole surface is the link; the navigating counterpart to Chip's filter token.",
+      "registryDependencies": [
+        "@tonaldepth/tokens"
+      ],
+      "files": [
+        {
+          "path": "components/registry/tonaldepth/linkchip.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tonaldepth-linkchip.tsx"
+        }
+      ]
+    },
+    {
       "name": "spinner",
       "type": "registry:ui",
       "title": "TonalDepth Spinner",

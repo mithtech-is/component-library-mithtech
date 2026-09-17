@@ -29,6 +29,7 @@ const TABLES = {
   "button": ["button", "ButtonOwnProps", "Button"],
   "badge": ["badge", "BadgeProps", "Badge"],
   "chip": ["chip", "ChipProps", "Chip"],
+  "linkchip": ["linkchip", "LinkChipProps", "LinkChip"],
   "spinner": ["spinner", "SpinnerProps", "Spinner"],
   "segmented": ["segmented", "SegmentedProps", "Segmented"],
   "ring": ["ring", "RingProps", "Ring"],

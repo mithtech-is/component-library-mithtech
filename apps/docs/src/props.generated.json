@@ -75,6 +75,23 @@
       "—"
     ]
   ],
+  "linkchip": [
+    [
+      "href",
+      "string",
+      "required"
+    ],
+    [
+      "renderLink",
+      "(props: { className: string; href: string; style?: CSSProperties; children: ReactNode }) => ReactNode",
+      "—"
+    ],
+    [
+      "leading",
+      "ReactNode",
+      "—"
+    ]
+  ],
   "spinner": [
     [
       "size",

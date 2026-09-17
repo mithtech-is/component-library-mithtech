@@ -1,0 +1,25 @@
+/* LinkChip — a navigable pill.
+
+   It wears the base `.td-chip` recipe from tonaldepth-core ([[L16]]): the quiet
+   pill and its hover/press well are declared there and fire on the element
+   itself, so an anchor wearing `.td-chip` deepens on hover with no depth rule
+   here. This file adds only what an anchor needs and the filter `Chip` did not —
+   link semantics without an underline, the size pin every chip carries so it
+   cannot stretch inside a flex/grid row, and the keyboard focus ring a
+   non-focusable `<span>` never needed. */
+.td-react-linkchip {
+  width: fit-content;
+  max-width: 100%;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.td-react-linkchip:focus-visible {
+  outline: 2px solid var(--td-accent);
+  outline-offset: 2px;
+}
+
+.td-react-linkchip-lead {
+  display: inline-flex;
+  align-items: center;
+}
