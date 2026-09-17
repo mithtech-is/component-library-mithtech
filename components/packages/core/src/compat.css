@@ -389,6 +389,35 @@ html, body { margin: 0; background: var(--td-bg); }
 .td-row { display: flex; align-items: center; gap: var(--td-sp-5); flex-wrap: wrap; }
 .td-row-tight { display: flex; align-items: center; gap: var(--td-sp-3); flex-wrap: wrap; }
 
+/* Structural-list reset. When one of these layout primitives is applied to a
+   <ul>/<ol> (a perfectly ordinary thing to do — a stack of items is often a
+   list semantically), the element still arrives wearing the browser's ~40px
+   marker indent. The markers themselves don't paint on a flex/grid item, but
+   the phantom `padding-inline-start` shoves every child right, out of line with
+   whatever heading sits above the list. Zero it here, once, for the layout
+   classes, so consumers don't have to reach for `.td-reset-list` on every list.
+
+   Prose is deliberate. A real bullet list carries no layout class, so it never
+   matches this selector and `.td-prose ul/ol` keeps its 20px indent and brand
+   ::marker. But a layout-classed list *inside* `.td-prose` (common when rich
+   content embeds a component) is a tie: this reset and `.td-prose ul` are both
+   specificity (0,1,1). The second, `.td-prose`-scoped selector (0,2,1) settles
+   it explicitly — structural lists stay flush regardless of stylesheet order. */
+:is(ul, ol):is(
+  .td-stack, .td-stack-tight, .td-stack-loose,
+  .td-row, .td-row-tight,
+  .td-services, .td-articles, .td-kpi-grid, .td-case-metrics, .td-field-row, .td-toc
+),
+.td-prose :is(ul, ol):is(
+  .td-stack, .td-stack-tight, .td-stack-loose,
+  .td-row, .td-row-tight,
+  .td-services, .td-articles, .td-kpi-grid, .td-case-metrics, .td-field-row, .td-toc
+) {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
 /* Prose stacks cap at the measure — nothing is entitled to its
    container's width. */
 .td-stack-prose {
@@ -1918,6 +1947,17 @@ html, body { margin: 0; background: var(--td-bg); }
 .td-alert--warning { border-left-color: var(--td-warning); }
 .td-alert--error   { border-left-color: var(--td-error); }
 .td-alert--error .td-alert-icon { color: var(--td-error); }
+
+/* An alert's own layout (`.td-alert`) is a grid with `align-items: start`, so
+   the leading icon pins to the first line of a wrapping message. But the colour
+   modifiers (`.td-alert--*`) are sometimes reused on their own to tint a plain
+   `.td-row`/`.td-row-tight` callout, and those rows are `align-items: center` —
+   which drops the icon to the vertical middle of two-line text, floating off
+   the line it belongs to. Re-pin it to the top for any alert-coloured flex row.
+   Single-line callouts are unaffected (start and center coincide at one line). */
+:is(.td-alert--info, .td-alert--success, .td-alert--warning, .td-alert--error):is(.td-row, .td-row-tight) {
+  align-items: flex-start;
+}
 .td-toast {
   display: grid;
   grid-template-columns: 22px 1fr auto;
