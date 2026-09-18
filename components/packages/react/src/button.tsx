@@ -8,6 +8,13 @@ export type ButtonVariant =
   // housing with the lamp. `filled` is the papaya fill, which the system
   // reserves rather than reaches for ([[L11]]).
   | "primary" | "secondary" | "filled" | "outline" | "ghost" | "link"
+  // Flat. `chip` is the quiet pill — the design's flat `.td-chip` recipe worn on a
+  // button, for low-emphasis actions (Clear, Reset, Show more, an escape hatch)
+  // that must read flat, not as the raised housing every other variant wears. It
+  // carries no lamp: a chip reports state through its own hover/press well, not a
+  // filament. Use it where a `ghost`/`secondary` button would read as too loud a
+  // control next to the content it sits under.
+  | "chip"
   // Semantic — the fill carries the meaning
   | "destructive" | "accept" | "cancel" | "accent"
   // Channel — the lamp carries the meaning ([[L15]])
@@ -115,6 +122,11 @@ const baseClass: Record<ButtonVariant, string> = {
   outline: "td-primary",
   ghost: "td-primary",
   link: "td-primary",
+  // The flat pill. `.td-chip` is the design-system base recipe (the same one
+  // `Chip`/`LinkChip`/`ChoiceChips` wear), so the button housing is flat, not the
+  // raised `.td-primary`/`.td-coloured` well. None of the button-variant CSS
+  // applies — every modifier in button.css is scoped `:is(.td-primary, .td-coloured)`.
+  chip: "td-chip",
   destructive: "td-coloured",
   accept: "td-coloured",
   cancel: "td-coloured",

@@ -20,6 +20,15 @@
    100%` on it, which is the explicit choice this makes them make. */
 .td-registry-button:is(.td-primary, .td-coloured) { width: fit-content; max-width: 100%; }
 
+/* The flat `chip` variant wears the core `.td-chip` recipe, not the
+   `.td-primary`/`.td-coloured` housing — so none of the sizing and housing
+   modifiers in this file (all scoped `:is(.td-primary, .td-coloured)`) touch it,
+   and it renders as the quiet pill the base draws. It needs only the same stretch
+   guard `.td-registry-chip` carries: `.td-chip` is inline-flex, which CSS blockifies
+   to `flex` (filling its whole track) the moment it becomes a flex/grid item, so
+   pin a definite size. */
+.td-registry-button.td-registry-button--chip { width: fit-content; max-width: 100%; }
+
 /* The glow stays inside the housing. A `drop-shadow` is painted around the
    glyph with no regard for the button's edge, so the old 12px bloom spilled
    onto the page. Clipped at the BUTTON, which has padding around the glyph —
