@@ -203,12 +203,20 @@ export const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonPr
   const inert = disabled || loading;
   const classes = cx("td-react-button", baseClass[variant], `td-react-button--${size}`, `td-react-button--${variant}`, className);
   const style = glow ? { ...props.style, ["--td-lamp-glow" as string]: glow } : props.style;
+  const leadingMark = leading ?? defaultLeading[variant];
   const content = (
     <>
       {loading ? <span className="td-react-spinner" aria-hidden="true" /> : null}
       {!loading && showDot ? <span className="td-lamp" aria-hidden="true" /> : null}
-      {!loading && (leading ?? defaultLeading[variant])
-        ? <span className="td-react-button-lamp" aria-hidden="true">{leading ?? defaultLeading[variant]}</span>
+      {/* The `chip` variant has no lamp: a leading icon renders FLAT, as a direct
+          child of the `.td-chip` pill, so it keeps its own `td-icon` size and the
+          chip's gap spaces it from the label — the same DOM a hand-rolled
+          `<button className="td-chip">` draws. Every other variant houses the
+          leading icon in the lamp, which sizes it to 1.5em and lights it. */}
+      {!loading && leadingMark
+        ? (variant === "chip"
+            ? leadingMark
+            : <span className="td-react-button-lamp" aria-hidden="true">{leadingMark}</span>)
         : null}
       <span className={FILLED.includes(variant) ? "td-coloured-label" : "td-primary-label"}>
         {loading ? loadingLabel : children}
